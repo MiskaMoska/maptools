@@ -1,0 +1,117 @@
+debImport "+v2k" "-sverilog" "+incdir+../srcs" "-f" "filelist.f"
+debLoadSimResult /mnt/f/git/NVCIM-COMM/behavior_model/test_multicast/wave.fsdb
+wvCreateWindow
+wvRestoreSignal -win $_nWave2 "./wcfg/cfg1.rc" -overWriteAutoAlias on
+verdiDockWidgetMaximize -dock windowDock_nWave_2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvSetCursor -win $_nWave2 91682236.440678 -snap {("R20_local_cc" 5)}
+wvSetCursor -win $_nWave2 244485963.841808 -snap {("R20_local_cc" 4)}
+wvZoomIn -win $_nWave2
+wvSetCursor -win $_nWave2 12110830077.683617 -snap {("R20_local_cc" 5)}
+wvZoomIn -win $_nWave2
+wvZoomIn -win $_nWave2
+wvZoomIn -win $_nWave2
+wvZoomIn -win $_nWave2
+wvZoomIn -win $_nWave2
+wvZoomIn -win $_nWave2
+wvZoomIn -win $_nWave2
+wvSetCursor -win $_nWave2 2482115.002648 -snap {("R10_east_input_stage" 11)}
+wvSetCursor -win $_nWave2 1181959.525071 -snap {("R10_east_input_stage" 11)}
+wvZoomIn -win $_nWave2
+wvZoomIn -win $_nWave2
+wvZoomIn -win $_nWave2
+wvZoomIn -win $_nWave2
+wvZoomIn -win $_nWave2
+wvZoomIn -win $_nWave2
+wvSearchPrev -win $_nWave2
+wvSearchNext -win $_nWave2
+wvSearchNext -win $_nWave2
+wvSearchNext -win $_nWave2
+wvSearchNext -win $_nWave2
+wvSearchPrev -win $_nWave2
+wvSearchPrev -win $_nWave2
+wvSearchPrev -win $_nWave2
+wvSearchPrev -win $_nWave2
+wvSearchPrev -win $_nWave2
+wvSearchPrev -win $_nWave2
+wvSearchPrev -win $_nWave2
+wvZoomIn -win $_nWave2
+wvZoomIn -win $_nWave2
+wvZoomIn -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvScrollUp -win $_nWave2 2
+wvScrollUp -win $_nWave2 63
+wvScrollDown -win $_nWave2 0
+wvScrollDown -win $_nWave2 0
+wvSelectSignal -win $_nWave2 {( "R20_local_input_ctlr" 6 )} 
+wvSelectSignal -win $_nWave2 {( "R20_local_input_ctlr" 7 )} 
+wvSelectSignal -win $_nWave2 {( "R20_local_input_ctlr" 8 )} 
+wvSelectSignal -win $_nWave2 {( "R20_local_input_ctlr" 4 )} 
+wvSetCursor -win $_nWave2 96034.211412 -snap {("R20_local_input_ctlr" 4)}
+wvZoomIn -win $_nWave2
+wvSelectSignal -win $_nWave2 {( "R20_local_input_ctlr" 10 )} 
+wvSetCursor -win $_nWave2 97881.023170 -snap {("R20_local_input_ctlr" 10)}
+wvSetCursor -win $_nWave2 258553.646109 -snap {("R20_local_input_ctlr" 10)}
+wvZoomIn -win $_nWave2
+wvZoomIn -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvSetCursor -win $_nWave2 1462674.912275 -snap {("R20_local_input_ctlr" 4)}
+wvSetCursor -win $_nWave2 1543934.629623 -snap {("R20_local_input_ctlr" 4)}
+wvZoomIn -win $_nWave2
+wvZoomIn -win $_nWave2
+wvSetCursor -win $_nWave2 1236532.812516 -snap {("R20_local_input_ctlr" 4)}
+wvZoomIn -win $_nWave2
+wvZoomIn -win $_nWave2
+wvZoomIn -win $_nWave2
+wvZoomOut -win $_nWave2
+wvSelectSignal -win $_nWave2 {( "R20_local_input_ctlr" 8 )} 
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomIn -win $_nWave2
+wvZoomIn -win $_nWave2
+wvZoomIn -win $_nWave2
+wvSetCursor -win $_nWave2 1440859.448384 -snap {("R20_local_input_ctlr" 7)}
+wvZoomIn -win $_nWave2
+wvZoomIn -win $_nWave2
+wvZoomIn -win $_nWave2
+wvZoomOut -win $_nWave2
+wvZoomOut -win $_nWave2
+wvSelectSignal -win $_nWave2 {( "R20_local_input_ctlr" 10 )} 
+wvSelectSignal -win $_nWave2 {( "R20_local_input_ctlr" 6 )} 
+wvSelectSignal -win $_nWave2 {( "R20_local_input_ctlr" 13 )} 
+wvScrollDown -win $_nWave2 0
+wvSelectSignal -win $_nWave2 {( "R20_local_input_stage" 14 )} 
+debExit

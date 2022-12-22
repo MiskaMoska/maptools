@@ -1,0 +1,91 @@
+4        
+0 params.svh
+0 /eda/vcs/L-2016.06/etc/systemverilog/params.svh
+0 cast_network_config.svh
+0 /eda/vcs/L-2016.06/etc/systemverilog/cast_network_config.svh
+23
++incdir+./srcs
+-Mamsrun=
+-Masflags=
+-Mcc=gcc-4.8
+-Mcfl= -pipe -fPIC -O -I/eda/vcs/L-2016.06/include
+-Mcplusplus=g++-4.8
+-Mcrt0=
+-Mcrtn=
+-Mcsrc=
+-Mexternalobj=
+-Mldflags= -Wl,-no-as-needed -rdynamic
+-Mobjects= /eda/vcs/L-2016.06/linux64/lib/libvirsim.so /eda/vcs/L-2016.06/linux64/lib/liberrorinf.so /eda/vcs/L-2016.06/linux64/lib/libsnpsmalloc.so
+-Mout=simv
+-Msaverestoreobj=/eda/vcs/L-2016.06/linux64/lib/vcs_save_restore_new.o
+-Msyslibs=-ldl
+-Mvcsaceobjs=
+-Mxcflags= -pipe -fPIC -I/eda/vcs/L-2016.06/include
+-f filelist.f
+-full64
+-gen_obj
+-picarchive
+-sverilog
+/eda/vcs/L-2016.06/linux64/bin/vcs1
+37
+sysc_uni_pwd=/mnt/f/git/NVCIM-COMM/behavior_model
+XDG_DATA_DIRS=/usr/local/share:/usr/share:/var/lib/snapd/desktop
+WT_SESSION=97fe38c8-ca49-4f71-a3b9-6e7975b18bcb
+WT_PROFILE_ID={c6eaf9f4-32a7-5fdc-b5cf-066e8a4b1e40}
+WSL_INTEROP=/run/WSL/8_interop
+WSL_DISTRO_NAME=Ubuntu-18.04
+WSLENV=WT_SESSION::WT_PROFILE_ID
+VMR_MODE_FLAG=64
+VERDI_HOME=/eda/verdi/Verdi3_L-2016.06-1
+VCS_MX_HOME_INTERNAL=1
+VCS_MODE_FLAG=64
+VCS_HOME=/eda/vcs/L-2016.06
+VCS_DEPTH=0
+VCS_ARG_ADDED_FOR_TMP=1
+VCS_ARCH_OVERRIDE=linux
+VCS_ARCH=linux64
+UVM_HOME=/eda/vcs/L-2016.06/etc/uvm-1.1/src
+UNAME=/bin/uname
+TOOL_HOME=/eda/vcs/L-2016.06/linux64
+SYNOPSYS=/eda/syn/L-2016.03-SP1
+SCRNAME=vcs
+SCRIPT_NAME=vcs
+PT_HOME=/eda/pts/M-2016.12-SP1
+OVA_UUM=0
+NOVAS_HOME=/eda/verdi/Verdi3_L-2016.06-1
+NAME=DESKTOP-H9DJS7N
+MFLAGS=
+MAKE_TERMOUT=/dev/pts/0
+MAKE_TERMERR=/dev/pts/0
+MAKELEVEL=1
+MAKEFLAGS=
+LESSOPEN=| /usr/bin/lesspipe %s
+LESSCLOSE=/usr/bin/lesspipe %s %s
+LC_ALL=C
+HOSTTYPE=x86_64
+DC_HOME=/eda/syn/L-2016.03-SP1
+CUDA_INSTALL_PATH=/usr/local/cuda-10.0
+0
+16
+1671269536 ./srcs/cast_network_config.svh
+1671267657 ./srcs/params.svh
+1671270459 ./srcs/cast_network.sv
+1671082837 ./srcs/SyncFIFO_RTL.sv
+1671095280 ./srcs/mux_ready_5to1.sv
+1671084354 ./srcs/mux_data_valid_5to1.sv
+1671109901 ./srcs/cast_vc_allocator.sv
+1671268851 ./srcs/cast_router.sv
+1671179729 ./srcs/cast_route_table.sv
+1671084602 ./srcs/cast_output_stage.sv
+1671179963 ./srcs/cast_input_stage.sv
+1671175828 ./srcs/cast_input_controller.sv
+1671084505 ./srcs/cast_crossbar.sv
+1671269971 ./srcs/cast_credit_counter.sv
+1671180244 ./srcs/mtx_arbiter.sv
+1671268091 filelist.f
+4
+0 
+1464147802 /eda/vcs/L-2016.06/linux64/lib/libvirsim.so
+1464147272 /eda/vcs/L-2016.06/linux64/lib/liberrorinf.so
+1464147248 /eda/vcs/L-2016.06/linux64/lib/libsnpsmalloc.so
+1671270490 simv.daidir

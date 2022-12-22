@@ -1,0 +1,416 @@
+{
+    "Misc": {
+        "archive_dir": "archive.54",
+        "cwd": "/mnt/f/git/NVCIM-COMM/behavior_model/test_multicast",
+        "default_output_dir": "csrc",
+        "csrc": "csrc",
+        "csrc_abs": "/mnt/f/git/NVCIM-COMM/behavior_model/test_multicast/csrc",
+        "daidir_abs": "/mnt/f/git/NVCIM-COMM/behavior_model/test_multicast/simv.daidir",
+        "daidir": "simv.daidir"
+    },
+    "CurCompileModules": [
+        "...MASTER...",
+        "_vcs_unit__4221136581",
+        "_vcs_unit__4221136581",
+        "std",
+        "mtx_arbiter",
+        "cast_crossbar",
+        "cast_input_stage",
+        "cast_output_stage",
+        "cast_router",
+        "cast_router_0000",
+        "cast_router_0001",
+        "cast_router_0002",
+        "cast_router_0003",
+        "cast_router_0004",
+        "cast_router_0005",
+        "cast_router_0005",
+        "cast_router_0006",
+        "cast_router_0007",
+        "cast_vc_allocator",
+        "mux_data_valid_5to1",
+        "cast_network",
+        "monitor",
+        "top_tb"
+    ],
+    "CompileStatus": "Successful",
+    "MlibObjs": {},
+    "PEModules": [],
+    "LVLData": [
+        "SIM"
+    ],
+    "PrevCompiledModules": {
+        "cast_router_0000": {
+            "sVnSu_d": {
+                "mode": 4,
+                "bytes": 15732,
+                "mod": "cast_router_0000",
+                "checksum": 0,
+                "archive": "archive.54/_prev_archive_1.a",
+                "out": "sVnSu_d.o"
+            }
+        },
+        "cast_router_0005": {
+            "YqM0n_d": {
+                "mode": 4,
+                "bytes": 15733,
+                "mod": "cast_router_0005",
+                "checksum": 0,
+                "archive": "archive.54/_3964_archive_1.a",
+                "out": "YqM0n_d.o"
+            }
+        },
+        "cast_crossbar": {
+            "G5V9f_d": {
+                "mode": 4,
+                "bytes": 24502,
+                "mod": "cast_crossbar",
+                "checksum": 0,
+                "archive": "archive.54/_prev_archive_1.a",
+                "out": "G5V9f_d.o"
+            }
+        },
+        "top_tb": {
+            "W0eJz_d": {
+                "mode": 4,
+                "bytes": 27147,
+                "mod": "top_tb",
+                "checksum": 0,
+                "archive": "archive.54/_prev_archive_1.a",
+                "out": "W0eJz_d.o"
+            }
+        },
+        "monitor": {
+            "rF6Ju_d": {
+                "mode": 4,
+                "bytes": 21575,
+                "mod": "monitor",
+                "checksum": 0,
+                "archive": "archive.54/_prev_archive_1.a",
+                "out": "rF6Ju_d.o"
+            }
+        },
+        "cast_input_stage": {
+            "MbPIM_d": {
+                "mode": 4,
+                "bytes": 29951,
+                "mod": "cast_input_stage",
+                "checksum": 0,
+                "archive": "archive.54/_prev_archive_1.a",
+                "out": "MbPIM_d.o"
+            }
+        },
+        "std": {
+            "reYIK_d": {
+                "mode": 4,
+                "bytes": 33296,
+                "mod": "std",
+                "checksum": 0,
+                "archive": "archive.54/_prev_archive_1.a",
+                "out": "reYIK_d.o"
+            }
+        },
+        "cast_output_stage": {
+            "dPVL1_d": {
+                "mode": 4,
+                "bytes": 8644,
+                "mod": "cast_output_stage",
+                "checksum": 0,
+                "archive": "archive.54/_prev_archive_1.a",
+                "out": "dPVL1_d.o"
+            }
+        },
+        "mtx_arbiter": {
+            "cRVQY_d": {
+                "mode": 4,
+                "bytes": 13599,
+                "mod": "mtx_arbiter",
+                "checksum": 0,
+                "archive": "archive.54/_prev_archive_1.a",
+                "out": "cRVQY_d.o"
+            }
+        },
+        "cast_router_0001": {
+            "ttqvA_d": {
+                "mode": 4,
+                "bytes": 15733,
+                "mod": "cast_router_0001",
+                "checksum": 0,
+                "archive": "archive.54/_prev_archive_1.a",
+                "out": "ttqvA_d.o"
+            }
+        },
+        "cast_router_0002": {
+            "iEB2K_d": {
+                "mode": 4,
+                "bytes": 15733,
+                "mod": "cast_router_0002",
+                "checksum": 0,
+                "archive": "archive.54/_prev_archive_1.a",
+                "out": "iEB2K_d.o"
+            }
+        },
+        "_vcs_unit__4221136581": {
+            "wfx9Z_d": {
+                "mode": 4,
+                "bytes": 33966,
+                "mod": "_vcs_unit__4221136581",
+                "checksum": 0,
+                "archive": "archive.54/_3964_archive_1.a",
+                "out": "wfx9Z_d.o"
+            }
+        },
+        "cast_router_0003": {
+            "Z6WzB_d": {
+                "mode": 4,
+                "bytes": 15733,
+                "mod": "cast_router_0003",
+                "checksum": 0,
+                "archive": "archive.54/_prev_archive_1.a",
+                "out": "Z6WzB_d.o"
+            }
+        },
+        "cast_router_0004": {
+            "Rc24h_d": {
+                "mode": 4,
+                "bytes": 15733,
+                "mod": "cast_router_0004",
+                "checksum": 0,
+                "archive": "archive.54/_prev_archive_1.a",
+                "out": "Rc24h_d.o"
+            }
+        },
+        "cast_router_0007": {
+            "AbdKV_d": {
+                "mode": 4,
+                "bytes": 15733,
+                "mod": "cast_router_0007",
+                "checksum": 0,
+                "archive": "archive.54/_prev_archive_1.a",
+                "out": "AbdKV_d.o"
+            }
+        },
+        "cast_router": {
+            "Hvnf2_d": {
+                "mode": 4,
+                "bytes": 15712,
+                "mod": "cast_router",
+                "checksum": 0,
+                "archive": "archive.54/_prev_archive_1.a",
+                "out": "Hvnf2_d.o"
+            }
+        },
+        "cast_router_0006": {
+            "mTxPP_d": {
+                "mode": 4,
+                "bytes": 15733,
+                "mod": "cast_router_0006",
+                "checksum": 0,
+                "archive": "archive.54/_prev_archive_1.a",
+                "out": "mTxPP_d.o"
+            }
+        },
+        "cast_vc_allocator": {
+            "qwPkj_d": {
+                "mode": 4,
+                "bytes": 65202,
+                "mod": "cast_vc_allocator",
+                "checksum": 0,
+                "archive": "archive.54/_prev_archive_1.a",
+                "out": "qwPkj_d.o"
+            }
+        },
+        "cast_network": {
+            "BWBga_d": {
+                "mode": 4,
+                "bytes": 10925,
+                "mod": "cast_network",
+                "checksum": 0,
+                "archive": "archive.54/_prev_archive_1.a",
+                "out": "BWBga_d.o"
+            }
+        },
+        "mux_data_valid_5to1": {
+            "duMw2_d": {
+                "mode": 4,
+                "bytes": 9433,
+                "mod": "mux_data_valid_5to1",
+                "checksum": 0,
+                "archive": "archive.54/_prev_archive_1.a",
+                "out": "duMw2_d.o"
+            }
+        },
+        "...MASTER...": {
+            "amcQw_d": {
+                "mode": 4,
+                "bytes": 7569,
+                "mod": "...MASTER...",
+                "checksum": 0,
+                "out": "objs/amcQw_d.o"
+            }
+        }
+    },
+    "SIMBData": {
+        "out": "amcQwB.o",
+        "bytes": 116688
+    },
+    "NameTable": {
+        "cast_router_0003": [
+            "cast_router_0003",
+            "Z6WzB",
+            "module"
+        ],
+        "_vcs_unit__4221136581": [
+            "_vcs_unit__4221136581",
+            "wfx9Z",
+            "module"
+        ],
+        "cast_router_0002": [
+            "cast_router_0002",
+            "iEB2K",
+            "module"
+        ],
+        "cast_output_stage": [
+            "cast_output_stage",
+            "dPVL1",
+            "module"
+        ],
+        "std": [
+            "std",
+            "reYIK",
+            "module"
+        ],
+        "mtx_arbiter": [
+            "mtx_arbiter",
+            "cRVQY",
+            "module"
+        ],
+        "cast_router_0000": [
+            "cast_router_0000",
+            "sVnSu",
+            "module"
+        ],
+        "cast_router_0005": [
+            "cast_router_0005",
+            "YqM0n",
+            "module"
+        ],
+        "cast_crossbar": [
+            "cast_crossbar",
+            "G5V9f",
+            "module"
+        ],
+        "cast_input_stage": [
+            "cast_input_stage",
+            "MbPIM",
+            "module"
+        ],
+        "cast_router_0007": [
+            "cast_router_0007",
+            "AbdKV",
+            "module"
+        ],
+        "cast_router": [
+            "cast_router",
+            "Hvnf2",
+            "module"
+        ],
+        "cast_router_0006": [
+            "cast_router_0006",
+            "mTxPP",
+            "module"
+        ],
+        "cast_router_0001": [
+            "cast_router_0001",
+            "ttqvA",
+            "module"
+        ],
+        "cast_router_0004": [
+            "cast_router_0004",
+            "Rc24h",
+            "module"
+        ],
+        "cast_network": [
+            "cast_network",
+            "BWBga",
+            "module"
+        ],
+        "mux_data_valid_5to1": [
+            "mux_data_valid_5to1",
+            "duMw2",
+            "module"
+        ],
+        "cast_vc_allocator": [
+            "cast_vc_allocator",
+            "qwPkj",
+            "module"
+        ],
+        "monitor": [
+            "monitor",
+            "rF6Ju",
+            "module"
+        ],
+        "top_tb": [
+            "top_tb",
+            "W0eJz",
+            "module"
+        ],
+        "...MASTER...": [
+            "SIM",
+            "amcQw",
+            "module"
+        ]
+    },
+    "CompileStrategy": "fullobj",
+    "stat": {
+        "ru_self_cgstart": {
+            "ru_nivcsw": 5,
+            "ru_minflt": 5855,
+            "ru_utime_sec": 0.25960800000000001,
+            "ru_stime_sec": 0.079010999999999998,
+            "ru_maxrss_kb": 94688,
+            "ru_majflt": 0,
+            "ru_nvcsw": 3304
+        },
+        "Frontend(%)": 81.227765523067546,
+        "ru_childs_cgstart": {
+            "ru_nivcsw": 0,
+            "ru_minflt": 0,
+            "ru_utime_sec": 0.0,
+            "ru_stime_sec": 0.0,
+            "ru_maxrss_kb": 0,
+            "ru_majflt": 0,
+            "ru_nvcsw": 0
+        },
+        "quadSpeed": 134690.06783672524,
+        "nQuads": 8081,
+        "CodeGen(%)": 18.772234476932457,
+        "nMops": 24907,
+        "totalObjSize": 166250,
+        "ru_childs_end": {
+            "ru_nivcsw": 0,
+            "ru_minflt": 214,
+            "ru_utime_sec": 0.0031519999999999999,
+            "ru_stime_sec": 0.0,
+            "ru_maxrss_kb": 24432,
+            "ru_majflt": 0,
+            "ru_nvcsw": 48
+        },
+        "mopSpeed": 415137.4235378438,
+        "outputSizePerQuad": 20.0,
+        "ru_self_end": {
+            "ru_nivcsw": 7,
+            "ru_minflt": 8353,
+            "ru_utime_sec": 0.31960499999999997,
+            "ru_stime_sec": 0.094697000000000003,
+            "ru_maxrss_kb": 104896,
+            "ru_majflt": 0,
+            "ru_nvcsw": 4018
+        },
+        "mop/quad": 3.0821680485088478
+    },
+    "CurCompileUdps": {},
+    "CompileProcesses": [
+        "cgproc.3964.json"
+    ]
+}
