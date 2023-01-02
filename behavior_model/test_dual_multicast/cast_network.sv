@@ -61,12 +61,6 @@ wire    [`DW-1:0]   data_5_to_8_v0,	data_5_to_8_v1;
 wire                valid_5_to_8_v0,	valid_5_to_8_v1;
 wire                ready_8_to_5_v0,	ready_8_to_5_v1;
 
-localparam string aaa[2] = '{"what the fuck","fuck you"};
-
-initial begin
-    $display("RT_FILE@cast_network: %b",FCdn_list_0_0[0]);
-end
-
 /*Router 0,0*/    
 cast_router #(
     .isFC_list               (isFC_list_0_0),

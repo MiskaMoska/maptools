@@ -1,7 +1,9 @@
 /*The driver on the multicast source node input port*/
 `include "params.svh"
 
-module driver (
+module driver #(
+    parameter string id = "0" //destination node id
+)(
     input   wire    clk,
     input   wire    rstn,
     input   wire    ready,
@@ -20,7 +22,7 @@ initial
 begin
     addr = 0;
     cnt = 0;
-    $readmemb("/mnt/c/git/NVCIM-COMM/behavior_model/test_multicast/send_pool",packets);
+    $readmemb({"/mnt/c/git/NVCIM-COMM/behavior_model/test_dual_multicast/send_pool_",id},packets);
     // $display("cnt@driver: %f",cnt);
 end
 

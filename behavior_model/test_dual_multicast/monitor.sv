@@ -29,7 +29,7 @@ begin
     push = 0;
     cnt = 0;
     eject_cnt = 0;
-    file_id = $fopen({"/mnt/c/git/NVCIM-COMM/behavior_model/test_multicast/receive_pool_",id});
+    file_id = $fopen({"/mnt/c/git/NVCIM-COMM/behavior_model/test_dual_multicast/receive_pool_",id});
     wait(eject_cnt == 990);
     #25000
     $fclose(file_id);

@@ -5,7 +5,7 @@ Run this script under ./behavior_model/scripts
 import os
 from cast_path_config import *
 
-file_dir = '/mnt/f/git/NVCIM-COMM/behavior_model/config/'
+file_dir = '/mnt/c/git/NVCIM-COMM/behavior_model/test_dual_multicast/config/'
 file_name = 'cast_rt_'
 
 def dec2bin(dec_num, bit_wide=16):    
@@ -19,7 +19,8 @@ def dec2bin(dec_num, bit_wide=16):
             _, bin_num = bin(2**bit_wide + dec_num).split('b')    
     return bin_num 
 
-os.system('rm -rf ../config/cast_rt_*')
+os.chdir(file_dir)
+os.system('rm -rf cast_rt_*')
 #----------------------------------------------------------------------------------
 #Comment this segement before running to filter out valid rt config files 
 for x in range(W):
@@ -51,5 +52,5 @@ for key in keys:
         for id in input_dict.keys():
             file = file_dir + file_name + str(key[0]) + '_' + str(key[1]) + '_' + str(input_port)
             with open(file, 'a') as f:
-                f.write(str(dec2bin(input_dict[id], bit_wide=5))+str(dec2bin(id, bit_wide=SID_WIDTH)))
+                f.write(str(dec2bin(input_dict[id], bit_wide=5))+str(dec2bin(id, bit_wide=SID_WIDTH))+"\n")
                 f.flush()

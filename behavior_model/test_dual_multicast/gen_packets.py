@@ -1,6 +1,6 @@
 import random
-root_path = "/mnt/c/git/NVCIM-COMM/behavior_model/test_multicast/"
-driver_file_name = "send_pool"
+root_path = "/mnt/c/git/NVCIM-COMM/behavior_model/test_dual_multicast/"
+driver_file_name = "send_pool_1"
 
 DATA_WIDTH = 16
 PACKET_LEN = 16
@@ -30,7 +30,7 @@ class packet:
 if __name__ == "__main__":
     with open(root_path+driver_file_name,'w') as f:
         for i in range(TOTAL_LEN//PACKET_LEN):
-            pkt = packet(PACKET_LEN,1)
+            pkt = packet(PACKET_LEN,2) #note the stream ID
             for j in range(len(pkt.payload)):
                 f.write(pkt.payload[j]+'\n')
         f.flush()
