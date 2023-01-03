@@ -102,8 +102,8 @@ def gen_instances(data_width,w,h):
             router_txt = '''
 /*Router '''+str(j)+''','''+str(i)+'''*/    
 merge_router #(
-    .input_mask                     (input_mask['''+str(j)+''']['''+str(i)+''']),
-    .output_sel                     (output_sel['''+str(j)+''']['''+str(i)+'''])
+    .input_mask                     (input_mask_'''+str(j)+'''_'''+str(i)+'''),
+    .output_sel                     (output_sel_'''+str(j)+'''_'''+str(i)+''')
 )router'''+str(id)+'''(
     .clk                            (clk),
     .rstn                           (rstn),

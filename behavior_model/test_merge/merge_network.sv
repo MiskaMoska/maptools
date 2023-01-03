@@ -64,8 +64,8 @@ wire valid_o_2_2[5], ready_o_2_2[5];
 
 /*Router 0,0*/    
 merge_router #(
-    .input_mask                     (input_mask[0][0]),
-    .output_sel                     (output_sel[0][0])
+    .input_mask                     (input_mask_0_0),
+    .output_sel                     (output_sel_0_0)
 )router0(
     .clk                            (clk),
     .rstn                           (rstn),
@@ -90,8 +90,8 @@ end
 
 /*Router 0,1*/    
 merge_router #(
-    .input_mask                     (input_mask[0][1]),
-    .output_sel                     (output_sel[0][1])
+    .input_mask                     (input_mask_0_1),
+    .output_sel                     (output_sel_0_1)
 )router3(
     .clk                            (clk),
     .rstn                           (rstn),
@@ -122,8 +122,8 @@ end
 
 /*Router 0,2*/    
 merge_router #(
-    .input_mask                     (input_mask[0][2]),
-    .output_sel                     (output_sel[0][2])
+    .input_mask                     (input_mask_0_2),
+    .output_sel                     (output_sel_0_2)
 )router6(
     .clk                            (clk),
     .rstn                           (rstn),
@@ -154,8 +154,8 @@ end
 
 /*Router 1,0*/    
 merge_router #(
-    .input_mask                     (input_mask[1][0]),
-    .output_sel                     (output_sel[1][0])
+    .input_mask                     (input_mask_1_0),
+    .output_sel                     (output_sel_1_0)
 )router1(
     .clk                            (clk),
     .rstn                           (rstn),
@@ -183,8 +183,8 @@ end
 
 /*Router 1,1*/    
 merge_router #(
-    .input_mask                     (input_mask[1][1]),
-    .output_sel                     (output_sel[1][1])
+    .input_mask                     (input_mask_1_1),
+    .output_sel                     (output_sel_1_1)
 )router4(
     .clk                            (clk),
     .rstn                           (rstn),
@@ -218,8 +218,8 @@ end
 
 /*Router 1,2*/    
 merge_router #(
-    .input_mask                     (input_mask[1][2]),
-    .output_sel                     (output_sel[1][2])
+    .input_mask                     (input_mask_1_2),
+    .output_sel                     (output_sel_1_2)
 )router7(
     .clk                            (clk),
     .rstn                           (rstn),
@@ -253,8 +253,8 @@ end
 
 /*Router 2,0*/    
 merge_router #(
-    .input_mask                     (input_mask[2][0]),
-    .output_sel                     (output_sel[2][0])
+    .input_mask                     (input_mask_2_0),
+    .output_sel                     (output_sel_2_0)
 )router2(
     .clk                            (clk),
     .rstn                           (rstn),
@@ -279,8 +279,8 @@ end
 
 /*Router 2,1*/    
 merge_router #(
-    .input_mask                     (input_mask[2][1]),
-    .output_sel                     (output_sel[2][1])
+    .input_mask                     (input_mask_2_1),
+    .output_sel                     (output_sel_2_1)
 )router5(
     .clk                            (clk),
     .rstn                           (rstn),
@@ -311,8 +311,8 @@ end
 
 /*Router 2,2*/    
 merge_router #(
-    .input_mask                     (input_mask[2][2]),
-    .output_sel                     (output_sel[2][2])
+    .input_mask                     (input_mask_2_2),
+    .output_sel                     (output_sel_2_2)
 )router8(
     .clk                            (clk),
     .rstn                           (rstn),
