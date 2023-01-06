@@ -3,8 +3,7 @@
 
 module cast_converter #(
     parameter isCaster = 0, //indicate whether the current node is a caster
-    parameter isCastee = 0, //indicate whether the current node is a castee
-    parameter [9:0] stream_id = 1 //the stream id generated from the current node, fixed at 10-bit
+    parameter [9:0] stream_id = 0 //the stream id generated from the current node, fixed at 10-bit
 )(
     input       wire                            clk,
     input       wire                            rstn, 

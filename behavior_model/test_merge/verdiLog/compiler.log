@@ -1,0 +1,18 @@
+*design* DebussyLib (btIdent Verdi3_L-2016.06-1)
+Command arguments:
+    +define+verilog
+    +v2k
+    -sverilog
+    +incdir+../srcs+./
+    -f filelist.f
+        ../srcs/merge_router.sv
+        ../srcs/SyncFIFO_RTL.sv
+        ./merge_network.sv
+        ./driver.sv
+        ./monitor.sv
+        ./top_tb.sv
+
+Highest level modules:
+top_tb
+
+Total	0 error(s),   0 warning(s)

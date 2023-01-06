@@ -5,7 +5,7 @@ DATA_WIDTH = 16
 NETWORK_WIDTH = 3
 NETWORK_HEIGHT = 3
 
-file_name = "/mnt/c/git/NVCIM-COMM/behavior_model/srcs/merge_network.sv"
+file_name = "/mnt/c/git/NVCIM-COMM/behavior_model/test_merge/merge_network.sv"
 
 def gen_ports(w,h):
     port_str = '''//Merge Network
@@ -23,10 +23,10 @@ module merge_network(
     //router local ports
     input       wire        [`DW-1:0]           data_i[`NOC_WIDTH][`NOC_HEIGHT],
     input       wire                            valid_i[`NOC_WIDTH][`NOC_HEIGHT],
-    output      wire                            ready_o[`NOC_WIDTH][`NOC_HEIGHT],
+    output      reg                             ready_o[`NOC_WIDTH][`NOC_HEIGHT],
 
-    output      wire        [`DW-1:0]           data_o[`NOC_WIDTH][`NOC_HEIGHT],
-    output      wire                            valid_o[`NOC_WIDTH][`NOC_HEIGHT],
+    output      reg         [`DW-1:0]           data_o[`NOC_WIDTH][`NOC_HEIGHT],
+    output      reg                             valid_o[`NOC_WIDTH][`NOC_HEIGHT],
     input       wire                            ready_i[`NOC_WIDTH][`NOC_HEIGHT]
 );'''
     return port_str
@@ -47,22 +47,22 @@ def gen_instances(data_width,w,h):
                 north_valid_in = ''
                 north_ready_in = ''
             else:
-                north_data_in = '    data_i_'+str(j)+'_'+str(i)+'[3] = data_o_'+str(j)+'_'+str(i+1)+'[4];\n'
-                north_valid_in = '    valid_i_'+str(j)+'_'+str(i)+'[3] = valid_o_'+str(j)+'_'+str(i+1)+'[4];\n'
-                north_ready_in = '    ready_i_'+str(j)+'_'+str(i)+'[3] = ready_o_'+str(j)+'_'+str(i+1)+'[4];\n'
+                north_data_in = '    data_i_'+str(j)+'_'+str(i)+'[3] = data_o_'+str(j)+'_'+str(i-1)+'[4];\n'
+                north_valid_in = '    valid_i_'+str(j)+'_'+str(i)+'[3] = valid_o_'+str(j)+'_'+str(i-1)+'[4];\n'
+                north_ready_in = '    ready_i_'+str(j)+'_'+str(i)+'[3] = ready_o_'+str(j)+'_'+str(i-1)+'[4];\n'
             sigs += north_data_in + north_valid_in + north_ready_in 
 
             '''
             generate south port signals
             '''
-            if i == 0: #south boundary
+            if i == h-1: #south boundary
                 south_data_in = ''
                 south_valid_in = ''
                 south_ready_in = ''
             else:
-                south_data_in = '    data_i_'+str(j)+'_'+str(i)+'[4] = data_o_'+str(j)+'_'+str(i-1)+'[3];\n'
-                south_valid_in = '    valid_i_'+str(j)+'_'+str(i)+'[4] = valid_o_'+str(j)+'_'+str(i-1)+'[3];\n'
-                south_ready_in = '    ready_i_'+str(j)+'_'+str(i)+'[4] = ready_o_'+str(j)+'_'+str(i-1)+'[3];\n'
+                south_data_in = '    data_i_'+str(j)+'_'+str(i)+'[4] = data_o_'+str(j)+'_'+str(i+1)+'[3];\n'
+                south_valid_in = '    valid_i_'+str(j)+'_'+str(i)+'[4] = valid_o_'+str(j)+'_'+str(i+1)+'[3];\n'
+                south_ready_in = '    ready_i_'+str(j)+'_'+str(i)+'[4] = ready_o_'+str(j)+'_'+str(i+1)+'[3];\n'
             sigs += south_data_in + south_valid_in + south_ready_in
 
             '''
@@ -94,9 +94,9 @@ def gen_instances(data_width,w,h):
             '''
             generate local port signals
             '''
-            local_data_in = '    data_i_'+str(j)+'_'+str(i)+'[0] = data_o_['+str(j)+']['+str(i)+'];\n'
-            local_valid_in = '    valid_i_'+str(j)+'_'+str(i)+'[0] = valid_o_['+str(j)+']['+str(i)+'];\n'
-            local_ready_in = '    ready_i_'+str(j)+'_'+str(i)+'[0] = ready_o_['+str(j)+']['+str(i)+'];\n'
+            local_data_in = '    data_i_'+str(j)+'_'+str(i)+'[0] = data_i['+str(j)+']['+str(i)+'];\n'
+            local_valid_in = '    valid_i_'+str(j)+'_'+str(i)+'[0] = valid_i['+str(j)+']['+str(i)+'];\n'
+            local_ready_in = '    ready_i_'+str(j)+'_'+str(i)+'[0] = ready_i['+str(j)+']['+str(i)+'];\n'
             sigs += local_data_in + local_valid_in + local_ready_in
 
             router_txt = '''
@@ -133,11 +133,21 @@ wire valid_o_'''+str(j)+'''_'''+str(i)+'''[5], ready_o_'''+str(j)+'''_'''+str(i)
 '''
     return wires_str
 
+def gen_outputs(w,h):
+    out_str = "\nalways@(*) begin\n"
+    for i in range(w):
+        for j in range(h):
+            out_str += "    data_o["+str(i)+"]["+str(j)+"] = data_o_"+str(i)+"_"+str(j)+"[0];\n"
+            out_str += "    valid_o["+str(i)+"]["+str(j)+"] = valid_o_"+str(i)+"_"+str(j)+"[0];\n"
+            out_str += "    ready_o["+str(i)+"]["+str(j)+"] = ready_o_"+str(i)+"_"+str(j)+"[0];\n"
+    out_str += "end\n"
+    return out_str
 
 def gen_verilog_file():
     containt = ""
     containt += gen_ports(NETWORK_WIDTH,NETWORK_HEIGHT)
     containt += gen_wires(NETWORK_WIDTH,NETWORK_HEIGHT)
+    containt += gen_outputs(NETWORK_WIDTH,NETWORK_HEIGHT)
     containt += gen_instances(DATA_WIDTH,NETWORK_WIDTH,NETWORK_HEIGHT)
     containt += "\nendmodule"
 

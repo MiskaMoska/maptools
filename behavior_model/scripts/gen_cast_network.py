@@ -2,10 +2,11 @@
 Generate cast network system verilog file
 '''
 DATA_WIDTH = 16
-NETWORK_WIDTH = 3
-NETWORK_HEIGHT = 3
+NETWORK_WIDTH = 7
+NETWORK_HEIGHT = 8
+MODE = "stab" #"plain" no stab port; "stab" has stab port
 
-file_name = "/mnt/f/git/NVCIM-COMM/behavior_model/srcs/cast_network.sv"
+file_name = "/mnt/c/git/NVCIM-COMM/behavior_model/test_virtual_vgg16/cast_network.sv"
 
 def gen_instances(data_width,w,h):
     data_width = str(data_width)
@@ -59,9 +60,14 @@ def gen_instances(data_width,w,h):
             generate west port signals
             '''
             if j == 0: #west boundary
-                west_in_data = data_width + "'b0"
-                west_in_valid = "1'b0"
-                west_in_ready = ""
+                if i == 0 and MODE == "stab":
+                    west_in_data = "data_i_stab"
+                    west_in_valid = "valid_i_stab"
+                    west_in_ready = "ready_o_stab"
+                else:
+                    west_in_data = data_width + "'b0"
+                    west_in_valid = "1'b0"
+                    west_in_ready = ""
 
                 west_out_data = ""
                 west_out_valid = ""
@@ -166,7 +172,12 @@ module cast_network(
     input       wire                            ready_i[`NOC_WIDTH][`NOC_HEIGHT],'''
 
     port_str += "\n"
-
+    if MODE == "stab":
+        port_str += '''
+    input       wire        [`DW-1:0]           data_i_stab,
+    input       wire                            valid_i_stab,
+    output      wire                            ready_o_stab,
+'''
     port_str += '''
     //credit update signal input
     input       wire                            credit_upd[`NOC_WIDTH][`NOC_HEIGHT]\n'''

@@ -2,7 +2,7 @@
 
 module merge_router #(
     parameter  [4:0]  input_mask = 0, //[0]-local [1]-west [2]-east [3]-north [4]-south, 1 means assert
-    parameter  [4:0]  output_sel = 0, //[0]-local [1]-west [2]-east [3]-north [4]-south, one-hot code
+    parameter  [4:0]  output_sel = 0  //[0]-local [1]-west [2]-east [3]-north [4]-south, one-hot code
 )(
     input       wire                            clk,
     input       wire                            rstn,
@@ -16,29 +16,48 @@ module merge_router #(
     input       wire                            ready_i[5]
 );
 
-shortreal data_i_sr[5];
-shortreal sum;
+// /** float_point adder begin**/
+// shortreal data_i_sr[5];
+// shortreal sum;
 
+// always@(data_i) begin
+//     for(int i=0; i<5; i++) begin
+//         if(input_mask[i]) data_i_sr[i] = $bitstoshortreal(data_i[i]);
+//         else data_i_sr[i] = 0;
+//     end
+// end
+
+// always@(data_i_sr) begin
+//     sum = 0;
+//     for(int i=0; i<5; i++) begin
+//         if(input_mask[i]) sum = sum + data_i_sr[i];
+//     end
+// end
+
+// always@(sum) begin
+//     for(int i=0; i<5; i++) begin
+//         if(output_sel[i]) data_o[i] = $shortrealtobits(sum);
+//         else data_o[i] = 0;
+//     end
+// end
+// /** float_point adder end**/
+
+/** fixed_point adder begin**/
+reg [`DW-1:0] sum;
 always@(data_i) begin
-    for(int i=0; i<5; i++) begin
-        if(input_mask[i]) data_i_sr[i] = $bitstoshortreal(data_i[i]);
-        else data_i_sr[i] = 0;
-    end
-end
-
-always@(data_i_sr) begin
     sum = 0;
     for(int i=0; i<5; i++) begin
-        sum = sum + data_i_sr[i];
+        if(input_mask[i]) sum = sum + data_i[i];
     end
 end
 
 always@(sum) begin
     for(int i=0; i<5; i++) begin
-        if(output_sel[i]) data_o[i] = $shortrealtobits(sum);
+        if(output_sel[i]) data_o[i] = sum;
         else data_o[i] = 0;
     end
 end
+/** fixed_point adder end**/
 
 wire valid;
 assign valid = (~input_mask[0] | valid_i[0]) & (~input_mask[1] | valid_i[1]) & (~input_mask[2] | valid_i[2]) & (~input_mask[3] | valid_i[3]) & (~input_mask[4] | valid_i[4]);
@@ -55,7 +74,10 @@ assign ready = output_sel[0] & ready_i[0] | output_sel[1] & ready_i[1] |output_s
 
 always@(valid or ready) begin
     for(int i=0; i<5; i++) begin
-        ready_o[i] = valid & ready;
+        if(input_mask[i])
+            ready_o[i] = valid & ready;
+        else
+            ready_o[i] = 1'b0;
     end
 end
 

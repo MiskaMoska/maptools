@@ -1,0 +1,119 @@
+{
+    "reusePaths": {},
+    "Modules": {
+        "top_tb": {
+            "Compiled": "Yes",
+            "Compiled Times": 1
+        },
+        "...MASTER...": {},
+        "std": {
+            "Compiled": "Yes",
+            "Compiled Times": 1
+        },
+        "_vcs_unit__310759768": {
+            "Compiled": "Yes",
+            "Compiled Times": 1
+        },
+        "merge_network": {
+            "Compiled": "Yes",
+            "Compiled Times": 1
+        },
+        "merge_router": {
+            "Compiled": "Yes",
+            "Compiled Times": 1
+        },
+        "driver": {
+            "Compiled": "Yes",
+            "Compiled Times": 1
+        }
+    },
+    "ObjArchives": [
+        {
+            "archive": "archive.0/_13497_archive_1.a",
+            "objects": [
+                [
+                    "sNQJr_d.o",
+                    8981
+                ],
+                [
+                    "reYIK_d.o",
+                    33296
+                ],
+                [
+                    "emnyN_d.o",
+                    16395
+                ],
+                [
+                    "SwPef_d.o",
+                    97392
+                ],
+                [
+                    "yPgP1_d.o",
+                    13626
+                ],
+                [
+                    "W0eJz_d.o",
+                    38499
+                ]
+            ],
+            "size": 208189
+        }
+    ],
+    "CompUnits": {
+        "amcQw_d": {
+            "mod": "...MASTER...",
+            "out": "objs/amcQw_d.o",
+            "bytes": 7569,
+            "checksum": 0,
+            "mode": 4
+        },
+        "SwPef_d": {
+            "archive": "archive.0/_13497_archive_1.a",
+            "mod": "merge_network",
+            "out": "SwPef_d.o",
+            "bytes": 97392,
+            "checksum": 0,
+            "mode": 4
+        },
+        "sNQJr_d": {
+            "archive": "archive.0/_13497_archive_1.a",
+            "mod": "_vcs_unit__310759768",
+            "out": "sNQJr_d.o",
+            "bytes": 8981,
+            "checksum": 0,
+            "mode": 4
+        },
+        "emnyN_d": {
+            "archive": "archive.0/_13497_archive_1.a",
+            "mod": "merge_router",
+            "out": "emnyN_d.o",
+            "bytes": 16395,
+            "checksum": 0,
+            "mode": 4
+        },
+        "reYIK_d": {
+            "archive": "archive.0/_13497_archive_1.a",
+            "mod": "std",
+            "out": "reYIK_d.o",
+            "bytes": 33296,
+            "checksum": 0,
+            "mode": 4
+        },
+        "yPgP1_d": {
+            "archive": "archive.0/_13497_archive_1.a",
+            "mod": "driver",
+            "out": "yPgP1_d.o",
+            "bytes": 13626,
+            "checksum": 0,
+            "mode": 4
+        },
+        "W0eJz_d": {
+            "archive": "archive.0/_13497_archive_1.a",
+            "mod": "top_tb",
+            "out": "W0eJz_d.o",
+            "bytes": 38499,
+            "checksum": 0,
+            "mode": 4
+        }
+    }
+}
