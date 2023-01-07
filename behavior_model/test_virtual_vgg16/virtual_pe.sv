@@ -1,7 +1,7 @@
 //Not a behavior PE model, but a "virtual" PE model
 //This PE model only simulates the data dependencies between different network interfaces, but does not simulate the computational behavior of the PE
 //This PE model can only be used to verify where there exist deadlocks in the whole network
-`include "param.svh"
+`include "params.svh"
 
 module virtual_pe #(
     parameter isCaster = 0, //indicate whether the current node is a caster
@@ -26,12 +26,19 @@ module virtual_pe #(
 
     output      wire                            valid_o_merge,
     output      wire        [`DW-1:0]           data_o_merge,
-    input       wire                            ready_i_merge
+    input       wire                            ready_i_merge,
+
+    //credit update signal
+    output      wire                            credit_upd
 );
 
+wire valid;
+wire valid_i_pe, valid_o_pe, ready_o_nw, valid_o_nw, ready_o_pe, ready_i_pe;
+wire [`DW-1:0] data_i_pe, data_o_pe, data_o_nw;
 wire fifo_empty, fifo_full, fifo_read;
 wire [`DW-1:0] fifo_dout;
 assign fifo_read = ~fifo_empty & ready_o_nw;
+assign credit_upd = fifo_read;
 
 SyncFIFO_RTL #(
     .width                   (`DW),
@@ -48,9 +55,6 @@ SyncFIFO_RTL #(
     .data_i                  (data_i_cast),
     .data_o                  (fifo_dout)
 );
-
-wire valid_i_pe, valid_o_pe, ready_o_nw, valid_o_nw, ready_o_pe, ready_i_pe;
-wire [`DW-1:0] data_i_pe, data_o_pe, data_o_nw;
 
 cast_converter #(
     .isCaster                 (isCaster),
@@ -72,7 +76,6 @@ cast_converter #(
     .ready_i_nw               (ready_i_cast)
 );
 
-wire valid;
 assign valid = valid_o_pe & valid_i_merge;
 assign valid_i_pe = isCaster ? valid : 1'b0;
 assign data_i_pe = data_o_pe + data_i_merge;

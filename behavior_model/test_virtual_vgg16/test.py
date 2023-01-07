@@ -22,4 +22,6 @@ for i in dn_node:
     id = i[1]*7+i[0]
     data += 2**id
 
-print(dec2bin(data,bit_wide=56))
+for i in range(7):
+    for j in range(8):
+        print('localparam string rt_file_list_'+str(i)+'_'+str(j)+'[`CN] = \'{"/mnt/c/git/NVCIM-COMM/behavior_model/test_virtual_vgg16/config/cast_rt_'+str(i)+'_'+str(j)+'_0","/mnt/c/git/NVCIM-COMM/behavior_model/test_virtual_vgg16/config/cast_rt_'+str(i)+'_'+str(j)+'_1","/mnt/c/git/NVCIM-COMM/behavior_model/test_virtual_vgg16/config/cast_rt_'+str(i)+'_'+str(j)+'_2","/mnt/c/git/NVCIM-COMM/behavior_model/test_virtual_vgg16/config/cast_rt_'+str(i)+'_'+str(j)+'_3","/mnt/c/git/NVCIM-COMM/behavior_model/test_virtual_vgg16/config/cast_rt_'+str(i)+'_'+str(j)+'_4"};''')

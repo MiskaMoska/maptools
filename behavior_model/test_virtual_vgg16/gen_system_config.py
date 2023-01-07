@@ -1,44 +1,9 @@
 '''
-Cast network routing path configuration
+Generate isCaster and stream_id info to configure the PEs in "system.sv"
 '''
-W = 7 #cast network width
-H = 8 #cast network height
-RT_DEPTH = 16 #routing table depth
-SID_WIDTH = 10 #data width of stream ID
 
 PATH_DICT = dict()
 
-# ----------------------------------------------------------------------------------------------------- example begin
-# PATH_DICT['0,0'] = [(       2       ,       0       ,       0       ),(...),(...),...]
-#             ^               ^               ^               ^                 ^
-#       router position  input port      output port      stream ID        other paths
-# ----------------------------------------------------------------------------------------------------- example end
-# Note: A stream is a multicast tree, every multicast tree in the cast network has a unique stream ID.
-# Port specification: 0-local, 1-west, 2-east, 3-vert0, 4-vert1.
-
-# #test multicast
-# PATH_DICT[(0,0)] = [(2,0,1)]
-# PATH_DICT[(1,0)] = [(2,3,1),(2,1,1),(2,0,1)]
-# PATH_DICT[(2,0)] = [(0,1,1),(0,3,1)]
-# PATH_DICT[(0,1)] = [(2,0,1)]
-# PATH_DICT[(1,1)] = [(3,1,1),(3,3,1)]
-# PATH_DICT[(2,1)] = [(3,0,1)]
-# PATH_DICT[(0,2)] = [(2,0,1)]
-# PATH_DICT[(1,2)] = [(3,1,1),(3,0,1)]
-# PATH_DICT[(2,2)] = []
-
-#test dual-multicast
-# PATH_DICT[(0,0)] = [(2,0,1)]
-# PATH_DICT[(1,0)] = [(2,3,1),(2,1,1),(2,0,1),(0,2,2),(0,3,2)]
-# PATH_DICT[(2,0)] = [(0,1,1),(0,3,1),(1,0,2)]
-# PATH_DICT[(0,1)] = [(2,0,1)]
-# PATH_DICT[(1,1)] = [(3,1,1),(3,3,1),(3,0,2),(3,3,2)]
-# PATH_DICT[(2,1)] = [(3,0,1)]
-# PATH_DICT[(0,2)] = [(2,0,1)]
-# PATH_DICT[(1,2)] = [(3,1,1),(3,0,1),(3,2,2)]
-# PATH_DICT[(2,2)] = [(1,0,2)]
-
-#test virtual vgg16
 PATH_DICT[(0,0)] = [(1,0,1023),(0,2,1)]
 PATH_DICT[(1,0)] = [(0,2,2),(1,0,1)]
 PATH_DICT[(2,0)] = [(0,2,3),(1,0,2)]
@@ -97,4 +62,25 @@ PATH_DICT[(4,7)] = [(1,2,17),(1,0,17)]
 PATH_DICT[(5,7)] = [(1,2,17),(1,0,17),(0,3,1022)]
 PATH_DICT[(6,7)] = [(1,0,17)]
 
+isCaster = []
+stream_id = []
+keys = list(PATH_DICT.keys())
 
+for k in keys:
+    v = PATH_DICT[k]
+    flag = False
+    for path in v:
+        if path[0] == 0: 
+            flag = True
+            tmp = path[2]
+            break
+    if flag:
+        isCaster.append(1)
+        stream_id.append(tmp)
+    else:
+        isCaster.append(0)
+        stream_id.append(0)
+
+for i in range(len(keys)):
+    print(f"localparam isCaster_{keys[i][0]}_{keys[i][1]} = {isCaster[i]};")
+    print(f"localparam stream_id_{keys[i][0]}_{keys[i][1]} = {stream_id[i]};")

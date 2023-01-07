@@ -2,10 +2,10 @@
 Generate cast network system verilog file
 '''
 DATA_WIDTH = 16
-NETWORK_WIDTH = 3
-NETWORK_HEIGHT = 3
+NETWORK_WIDTH = 7
+NETWORK_HEIGHT = 8
 
-file_name = "/mnt/c/git/NVCIM-COMM/behavior_model/test_merge/merge_network.sv"
+file_name = "/mnt/c/git/NVCIM-COMM/behavior_model/test_virtual_vgg16/merge_network.sv"
 
 def gen_ports(w,h):
     port_str = '''//Merge Network

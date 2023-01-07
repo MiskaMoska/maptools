@@ -30,7 +30,7 @@ module cast_converter #(
 );
 
 /**packing**/
-localparam IDLE = 2'b00
+localparam IDLE = 2'b00;
 localparam HEAD = 2'b01;
 localparam BODY = 2'b11;
 localparam TAIL = 2'b10;
