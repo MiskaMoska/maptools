@@ -1,0 +1,128 @@
+'''
+Given an CDG, find all multicast dependency cycles
+A type: multicast dependency
+V type: contention dependency
+H type: serial dependency
+'''
+import networkx as nx
+import sys
+
+G = nx.MultiDiGraph()
+OCP = dict()
+W = 2
+H = 2
+
+def echo_ocp(ocp:dict):
+    occupied_list = []
+    for k in ocp.keys():
+        if ocp[k] != 0:
+            occupied_list.append(ocp[k])
+    print("occupation:",occupied_list)
+    return
+
+def DFS(G:nx.MultiDiGraph,start_edge,cur_edge,dep_chain,ocp,last_dep="A"):
+
+    # find A type dependency
+    if last_dep != "A":
+        if G.out_degree(cur_edge[0]) > 1:
+            for e in G.out_edges(cur_edge[0]):
+                if e != cur_edge: # for every other multicast edge
+                    if e == start_edge:
+                        dep_chain.append(e)
+                        print("find a cycle:",dep_chain)
+                        dep_chain.pop()
+                        echo_ocp(ocp)
+                        continue
+                    elif e in dep_chain:
+                        continue
+                    dep_chain.append(e)
+                    DFS(G,start_edge,e,dep_chain,ocp,last_dep="A")
+                    dep_chain.pop()
+
+    # find V type dependency
+    if last_dep != "V":
+        if G.in_degree(cur_edge[1]) > 1:
+            if ocp[cur_edge[1]] == False: # not occupied
+                for e in G.in_edges(cur_edge[1]):
+                    if e != cur_edge: # for every other content edge
+                        if e == start_edge:
+                            dep_chain.append(e)
+                            print("find a cycle:",dep_chain)
+                            dep_chain.pop()
+                            ocp[cur_edge[1]] = e # occupy
+                            echo_ocp(ocp)
+                            ocp[cur_edge[1]] = False # release
+                            continue
+                        elif e in dep_chain:
+                            continue
+                        ocp[cur_edge[1]] = e # occupy
+                        dep_chain.append(e)
+                        DFS(G,start_edge,e,dep_chain,ocp,last_dep="V")
+                        ocp[cur_edge[1]] = False # release
+                        dep_chain.pop()
+            else: #occupied
+                dep_chain.append(ocp[cur_edge[1]])
+                if ocp[cur_edge[1]] == start_edge:
+                    print("find a cycle:",dep_chain)
+                    echo_ocp(ocp)
+                elif ocp[cur_edge[1]] in dep_chain:
+                    pass
+                else:
+                    DFS(G,start_edge,ocp[cur_edge[1]],dep_chain,ocp,last_dep="V")
+                dep_chain.pop()
+
+    # find H type dependency
+    if G.out_degree(cur_edge[1]) > 0:
+        for e in G.out_edges(cur_edge[1]):
+            if e == start_edge:
+                dep_chain.append(e)
+                print("find a cycle:",dep_chain)
+                echo_ocp(ocp)
+                dep_chain.pop()
+                continue
+            elif e in dep_chain:
+                continue
+            dep_chain.append(e)
+            DFS(G,start_edge,e,dep_chain,ocp,last_dep="H")
+            dep_chain.pop()
+    return
+
+
+def search(G:nx.MultiDiGraph,ocp):
+    cnt = 0
+    for n in G.nodes():
+        if G.out_degree(n) > 1: # multicast node
+            for se in G.out_edges(n):
+                for de in G.out_edges(n):
+                    if de != se:
+                        cnt += 1
+                        DFS(G,se,de,[se,de],ocp,last_dep="A")
+
+
+if __name__ == "__main__":
+    legal_path = [['left_i','right_o'],['left_i','up_o'],['left_i','down_o'],['right_i','left_o'],['right_i','up_o'],['right_i','down_o'],['up_i','down_o'],['down_i','up_o']]
+    legal_node = ['left_i','left_o','right_i','right_o','up_i','up_o','down_i','down_o']
+
+    for i in range(W):
+        for j in range(H):
+            rc = []
+            for k in range(len(legal_node)):
+                G.add_node((i,j,legal_node[k]))
+            for k in range(len(legal_path)):
+                G.add_edge((i,j,legal_path[k][0]),(i,j,legal_path[k][1]))
+
+    for i in range(W-1):
+        for j in range(H):
+            G.add_edge((i,j,'right_o'),(i+1,j,'left_i'))
+            G.add_edge((i+1,j,'left_o'),(i,j,'right_i'))
+
+    for i in range(W):
+        for j in range(H-1):
+            G.add_edge((i,j+1,'up_o'),(i,j,'down_i'))
+            G.add_edge((i,j,'down_o'),(i,j+1,'up_i'))
+
+    for n in G.nodes():
+        OCP[n] = False
+
+    search(G,OCP)
+
