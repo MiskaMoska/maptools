@@ -32,13 +32,18 @@ def translate(chan_num:int,mode:str):
 
 CDG = nx.MultiDiGraph()
 SID = dict() # store the stream id of each edge in CDG
-nodes = ['cw_i','cw_o','ce_i','ce_o','cv0_i','cv0_o','cv1_i','cv1_o','cl_i','cl_o'] 
+NODE_ATTR = dict() # store whether each is a contention node, H type dependency only happens on contentions node
+cast_nodes = ['cw_i','cw_o','ce_i','ce_o','cv0_i','cv0_o','cv1_i','cv1_o','cl_i','cl_o'] 
 
 # generate cast nodes
 for i in range(W):
     for j in range(H):
-        for n in nodes:
+        for n in cast_nodes:
             CDG.add_node(f"{i}_{j}_"+n)
+            if n[-1] == "o":
+                NODE_ATTR[f"{i}_{j}_"+n] = True
+            else:
+                NODE_ATTR[f"{i}_{j}_"+n] = False
 
 # generate cast transfer edges according to cast_paths
 for k in cast_paths.keys():
@@ -69,6 +74,7 @@ for i in range(W):
 for i in range(W):
     for j in range(H):
         CDG.add_node(f"{i}_{j}_mrg")
+        NODE_ATTR[f"{i}_{j}_mrg"] = False
 
 # generate merge edges according to merge_paths
 for path in merge_paths:
@@ -78,10 +84,12 @@ for path in merge_paths:
     dy = path[1][1]
     CDG.add_edge(f"{sx}_{sy}_mrg",f"{dx}_{dy}_mrg")
 
-# generate 
+# generate cast-merge joint edges
 for i in range(W):
     for j in range(H):
-        if CDG.out_degree(f"{i}_{j}_mrg") == 0: #the current node is a caster
+        if CDG.out_degree(f"{i}_{j}_mrg") == 0 and CDG.in_degree(f"{i}_{j}_mrg") == 0: # is a island merge node
+            pass
+        elif CDG.out_degree(f"{i}_{j}_mrg") == 0: #the current node is a caster
             CDG.add_edge(f"{i}_{j}_cl_o",f"{i}_{j}_cl_i")
             CDG.add_edge(f"{i}_{j}_mrg",f"{i}_{j}_cl_i")
         else: # the current node is not a caster

@@ -7,16 +7,13 @@ H type: serial dependency
 import networkx as nx
 import sys
 from copy import deepcopy
-from build_cdg import CDG
-from build_cdg import SID
+from build_cdg import CDG,SID,NODE_ATTR
+
 
 file_name = "/mnt/c/git/nvcim-comm/behavior_model/scripts/cycle2"
 
 G = nx.MultiDiGraph()
 OCP = dict()
-
-W = 2
-H = 2
 
 def popp(lst:list):
     lst.pop()
@@ -34,7 +31,8 @@ def log_out(dep_chain:list,ocp:dict,f):
 
 def DFS(G:nx.MultiDiGraph,start_edge,cur_edge,dep_chain:list,ocp:dict,f,last_dep="A"):
 
-    # print(dep_chain)
+    # f.write(str(dep_chain)+"\n")
+
     if cur_edge == start_edge:
         log_out(dep_chain,ocp,f)
         return
@@ -50,13 +48,13 @@ def DFS(G:nx.MultiDiGraph,start_edge,cur_edge,dep_chain:list,ocp:dict,f,last_dep
             for e in G.out_edges(cur_edge[0]):
                 assert len(SID[cur_edge]) > 0, "error: current multicast edge has no stream id"
                 for id in SID[cur_edge]:
-                    if e != cur_edge and SID[e] == id: # for every other multicast edge with the same stream id
+                    if e != cur_edge and id in SID[e]: # for every other multicast edge with the same stream id
                         dep_chain.append(e)
                         DFS(G,start_edge,e,dep_chain,ocp,f,last_dep="A")
                         dep_chain.pop()
 
     # find V type dependency
-    if last_dep != "V":
+    if last_dep != "V" and NODE_ATTR[cur_edge[1]]:
         if G.in_degree(cur_edge[1]) > 1:
             if ocp[cur_edge[1]] == False: # not occupied
                 for e in G.in_edges(cur_edge[1]):
@@ -93,14 +91,14 @@ def DFS(G:nx.MultiDiGraph,start_edge,cur_edge,dep_chain:list,ocp:dict,f,last_dep
 
 def search(G:nx.MultiDiGraph,ocp:dict,f):
     for n in G.nodes():
-        if G.in_degree(n) > 1: # multicast node
+        if G.in_degree(n) > 1 and NODE_ATTR[n]: # contention node
             for de in G.in_edges(n):
-                ocp[n] = de
                 for se in G.in_edges(n):
+                    ocp[n] = se
                     if de != se:
                         DFS(G,se,de,[se,de],ocp,f,last_dep="V")
-                        print("---")
-                ocp[n] = False
+                        print("start searching at:",se,de)
+                    ocp[n] = False
 
 if __name__ == "__main__":
 
@@ -130,4 +128,8 @@ if __name__ == "__main__":
 
     with open(file_name,'w') as f:
         search(CDG,OCP,f)
+        # DFS(CDG,("3_1_cl_i","3_1_cw_o"),("3_1_ce_i","3_1_cw_o"),[("3_1_cl_i","3_1_cw_o"),("3_1_ce_i","3_1_cw_o")],OCP,f,last_dep="V")
+
+    # print(("3_1_cl_o","3_1_cl_i") in CDG.edges())
+    # print(NODE_ATTR["3_1_cw_o"])
 
