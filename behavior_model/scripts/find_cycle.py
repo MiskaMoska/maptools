@@ -1,26 +1,63 @@
 '''
-Given an CDG, find all multicast dependency cycles
+Given a CDG, find all multicast dependency cycles
 A type: multicast dependency
 V type: contention dependency
 H type: serial dependency
 '''
+from matplotlib import pyplot as plt
 import networkx as nx
 import sys
 from copy import deepcopy
-from build_cdg import CDG,SID,NODE_ATTR
+from build_cdg import CDG,SID,NODE_ATTR,W,H
 
 
 file_name = "/mnt/c/git/nvcim-comm/behavior_model/scripts/cycle2"
 
 G = nx.MultiDiGraph()
 OCP = dict()
+CYCLES = []
 
+#----------------------------------------------------------------------------------------------------
+# Functions to draw cycles
+#----------------------------------------------------------------------------------------------------
+def plot_routers():
+    for i in range(W):
+        for j in range(H):
+            plt.plot([0+i*5,0+i*5],[-0-j*5,-4-j*5],color='black',linewidth=1)
+            plt.plot([0+i*5,3+i*5],[-4-j*5,-4-j*5],color='black',linewidth=1)
+            plt.plot([3+i*5,4+i*5],[-4-j*5,-3-j*5],color='black',linewidth=1)
+            plt.plot([4+i*5,4+i*5],[-3-j*5,-0-j*5],color='black',linewidth=1)
+            plt.plot([4+i*5,0+i*5],[-0-j*5,-0-j*5],color='black',linewidth=1)
+
+def construct_cdg(cycle:list):
+    legal_node = ['cw_i','cw_o','ce_i','ce_o','cv0_i','cv1_i','cv1_o','cv0_o','cl_i','cl_o','mrg']
+    legal_xpos = [0,0,4,4,1,2,2,1,3.33+0.5,2.67+0.5,4.5]
+    legal_ypos = [2,1,1,2,0,0,4,4,2.67+0.5,3.33+0.5,4.5]
+    pos = dict()
+    edge_label = dict()
+    G=nx.MultiDiGraph()
+    for i in range(W):
+        for j in range(H):
+            for k in range(len(legal_node)):
+                G.add_node(f"{i}_{j}_"+legal_node[k])
+                pos[f"{i}_{j}_"+legal_node[k]]=(legal_xpos[k]+5*i,-(legal_ypos[k]+5*j))
+
+    G.add_edges_from(cycle)
+    for i in range(len(cycle)-1):
+        edge_label[cycle[i]] = i
+    return G,pos,edge_label
+
+
+#----------------------------------------------------------------------------------------------------
+# Functions to find cycles
+#----------------------------------------------------------------------------------------------------
 def popp(lst:list):
     lst.pop()
     return lst
 
 def log_out(dep_chain:list,ocp:dict,f):
     print("find one")
+    CYCLES.append(deepcopy(dep_chain))
     f.write("find a cycle:"+str(dep_chain)+"\n")
     occupied_list = []
     for k in ocp.keys():
@@ -78,17 +115,6 @@ def DFS(G:nx.MultiDiGraph,start_edge,cur_edge,dep_chain:list,ocp:dict,f,last_dep
     return
 
 
-# def search(G:nx.MultiDiGraph,ocp:dict,f):
-#     cnt = 0
-#     for n in G.nodes():
-#         if G.out_degree(n) > 1: # multicast node
-#             for se in G.out_edges(n):
-#                 for de in G.out_edges(n):
-#                     if de != se:
-#                         cnt += 1
-#                         print(cnt)
-#                         DFS(G,se,de,[se,de],ocp,f,last_dep="A")
-
 def search(G:nx.MultiDiGraph,ocp:dict,f):
     for n in G.nodes():
         if G.in_degree(n) > 1 and NODE_ATTR[n]: # contention node
@@ -96,40 +122,46 @@ def search(G:nx.MultiDiGraph,ocp:dict,f):
                 for se in G.in_edges(n):
                     ocp[n] = se
                     if de != se:
-                        DFS(G,se,de,[se,de],ocp,f,last_dep="V")
                         print("start searching at:",se,de)
+                        DFS(G,se,de,[se,de],ocp,f,last_dep="V")
                     ocp[n] = False
 
 if __name__ == "__main__":
 
-# if __name__ == "__main__":
-#     legal_path = [['left_i','right_o'],['left_i','up_o'],['left_i','down_o'],['right_i','left_o'],['right_i','up_o'],['right_i','down_o'],['up_i','down_o'],['down_i','up_o']]
-#     legal_node = ['left_i','left_o','right_i','right_o','up_i','up_o','down_i','down_o']
-
-#     for i in range(W):
-#         for j in range(H):
-#             rc = []
-#             for k in range(len(legal_node)):
-#                 G.add_node((i,j,legal_node[k]))
-#             for k in range(len(legal_path)):
-#                 G.add_edge((i,j,legal_path[k][0]),(i,j,legal_path[k][1]))
-
-#     for i in range(W-1):
-#         for j in range(H):
-#             G.add_edge((i,j,'right_o'),(i+1,j,'left_i'))
-#             G.add_edge((i+1,j,'left_o'),(i,j,'right_i'))
-
-#     for i in range(W):
-#         for j in range(H-1):
-#             G.add_edge((i,j+1,'up_o'),(i,j,'down_i'))
-#             G.add_edge((i,j,'down_o'),(i,j+1,'up_i'))
     for n in CDG.nodes():
         OCP[n] = False
 
     with open(file_name,'w') as f:
         search(CDG,OCP,f)
-        # DFS(CDG,("3_1_cl_i","3_1_cw_o"),("3_1_ce_i","3_1_cw_o"),[("3_1_cl_i","3_1_cw_o"),("3_1_ce_i","3_1_cw_o")],OCP,f,last_dep="V")
+        # OCP['3_1_cw_o'] = ('3_1_ce_i', '3_1_cw_o')
+        # DFS(CDG,('3_1_ce_i', '3_1_cw_o'), ('3_1_cl_i', '3_1_cw_o'),[('3_1_ce_i', '3_1_cw_o'), ('3_1_cl_i', '3_1_cw_o')],OCP,f,last_dep="V")
 
-    # print(("3_1_cl_o","3_1_cl_i") in CDG.edges())
-    # print(NODE_ATTR["3_1_cw_o"])
+    # find critical nodes begin
+    # critical_nodes = []
+    # for cycle in CYCLES:
+    #     for edge in cycle:
+    #         critical_nodes.append([])
+    #         if edge[0][-4:] == 'cl_o':
+    #             if edge[0][:-5] not in critical_nodes[-1]:
+    #                 critical_nodes[-1].append(edge[0][:-5])
+
+    # for item in critical_nodes:
+    #     if len(item) > 0:
+    #         print(item)
+    # find critical nodes begin
+
+    # draw cycles begin
+    cnt = 0
+    for cycle in CYCLES:
+        cnt += 1
+        plt.figure(figsize=(10,11))
+        plot_routers()
+        G,pos,el = construct_cdg(cycle)
+        nx.draw(G, pos, node_size = 20,width=1, arrowsize=10,node_color='black',edge_color='red',arrowstyle='-|>')
+        nx.draw_networkx_edge_labels(G,pos,edge_labels=el,font_size=7,font_color='blue',bbox=dict(alpha=0))
+        plt.savefig(f'/mnt/c/git/nvcim-comm/behavior_model/cycle_img/img_'+str(cnt)+'jpg',
+            dpi=400,bbox_inches='tight')
+        print(f"Finished saving {cnt} image")
+        # plt.show()
+    # draw cycles end
 

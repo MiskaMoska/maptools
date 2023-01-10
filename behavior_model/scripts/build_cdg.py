@@ -60,15 +60,17 @@ for k in cast_paths.keys():
         SID[(sn,dn)].append(path[2])
 
 # generate cast neighbor edges
+# horizontal links
 for i in range(W-1):
     for j in range(H):
         CDG.add_edge(f"{i}_{j}_ce_o",f"{i+1}_{j}_cw_i")
         CDG.add_edge(f"{i+1}_{j}_cw_o",f"{i}_{j}_ce_i")
 
-for i in range(W):
-    for j in range(H-1):
-        CDG.add_edge(f"{i}_{j}_cv0_o",f"{i}_{j+1}_cv0_i")
-        CDG.add_edge(f"{i}_{j}_cv1_o",f"{i}_{j+1}_cv1_i")
+# vertical links
+# for i in range(W):
+#     for j in range(H-1):
+#         CDG.add_edge(f"{i}_{j}_cv0_o",f"{i}_{j+1}_cv0_i")
+#         CDG.add_edge(f"{i}_{j}_cv1_o",f"{i}_{j+1}_cv1_i")
 
 # generate merge nodes
 for i in range(W):
@@ -82,7 +84,8 @@ for path in merge_paths:
     sy = path[0][1]
     dx = path[1][0]
     dy = path[1][1]
-    CDG.add_edge(f"{sx}_{sy}_mrg",f"{dx}_{dy}_mrg")
+    if sx != dx: # filter out all vertical links
+        CDG.add_edge(f"{sx}_{sy}_mrg",f"{dx}_{dy}_mrg")
 
 # generate cast-merge joint edges
 for i in range(W):
