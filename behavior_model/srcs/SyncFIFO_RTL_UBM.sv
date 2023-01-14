@@ -15,32 +15,33 @@ module SyncFIFO_RTL #(
 
     input   wire                        read_i, 
     input   wire                        write_i,
-    output  reg                         full_o, 
-    output  reg                         empty_o,
+    output  wire                        full_o, 
+    output  wire                        empty_o,
 
     input   wire    [width-1 : 0]       data_i,
     output  wire    [width-1 : 0]       data_o,
 
-    input   wire                        pop, // pop out the data at rp
-    input   wire                        read_reset // reset the rt_rp to rp
+    // when pop is high, a read operation pops out a data and increments rp, and rt_rp is set as rp
+    // when pop is low, a read operation does not pop out data and does not affect rp, but only increments the rt_rp
+    input   wire                        pop,
+
+    // when read_reset is high, rt_rp is reset to rp at the next clock edge
+    input   wire                        read_reset
 );
 
 reg [width-1 : 0] data_o_std;
 reg [width-1 : 0] mem [depth-1 : 0];
-reg [depth_LOG-1 : 0] wp, rp, rt_rp;
-reg w_flag, r_flag;
+reg [depth_LOG : 0] wp, rt_rp, rp;
 
 always@(posedge clk_i or posedge rst_i) 
 begin
     if(rst_i) 
     begin
         wp <= 0;
-        w_flag <= 0;
     end 
     else if(~full_o & write_i) 
     begin 
-        wp <= (wp==depth-1) ? 'b0 : wp+1;
-        w_flag <= (wp==depth-1) ? ~w_flag : w_flag;
+        wp <= (wp==2*depth-1) ? 'b0 : wp+1;
     end
 end
 
@@ -56,13 +57,25 @@ always@(posedge clk_i or posedge rst_i)
 begin
     if(rst_i) 
     begin
-        rp <= 0;
-        r_flag <= 0;
+        rt_rp <= 0;
     end 
+    else if(read_reset) rt_rp <= rp;
     else if(~empty_o & read_i) 
     begin 
-        rp <= (rp==depth-1) ? 'b0 : rp+1;
-        r_flag <= (rp==depth-1) ? ~r_flag : r_flag;
+        if(pop) rt_rp <= (rp==2*depth-1) ? 'b0 : rp+1;
+        else rt_rp <= (rt_rp==2*depth-1) ? 'b0 : rt_rp+1;
+    end
+end
+
+always@(posedge clk_i or posedge rst_i) 
+begin
+    if(rst_i) 
+    begin
+        rp <= 0;
+    end 
+    else if(~empty_o & read_i & pop) 
+    begin 
+        rp <= (rp==2*depth-1) ? 'b0 : rp+1;
     end
 end
 
@@ -72,36 +85,17 @@ begin
     else
     begin
         if(~empty_o & read_i)
-            data_o_std <= mem[rp];
+            data_o_std <= mem[rp[depth_LOG-1:0]];
     end
 end
 
-always@(*) 
-begin
-    if(wp==rp)
-    begin
-        if(r_flag==w_flag)
-        begin
-            full_o = 0;
-            empty_o = 1;
-        end 
-        else 
-        begin
-            full_o = 1;
-            empty_o = 0;
-        end
-    end 
-    else 
-    begin
-        full_o = 0;
-        empty_o = 0;
-    end
-end
+assign full_o = (wp[depth_LOG-1:0]==rp[depth_LOG-1:0]) ? wp[depth_LOG] != rp[depth_LOG] : 1'b0;
+assign empty_o = (wp[depth_LOG-1:0]==rt_rp[depth_LOG-1:0]) ? wp[depth_LOG] == rt_rp[depth_LOG] : 1'b0;
 
 generate if(FWFT == 0) begin: FWFT_MODE
     assign data_o = data_o_std;
 end else begin: STANDARD_MOD
-    assign data_o = mem[rp];
+    assign data_o = mem[rp[depth_LOG-1:0]];
 end endgenerate
 
 endmodule
