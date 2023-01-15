@@ -2,11 +2,11 @@
 Generate cast network system verilog file
 '''
 DATA_WIDTH = 16
-NETWORK_WIDTH = 7
-NETWORK_HEIGHT = 8
-MODE = "stab" #"plain" no stab port; "stab" has stab port
+NETWORK_WIDTH = 3
+NETWORK_HEIGHT = 3
+MODE = "plain" #"plain" no stab port; "stab" has stab port
 
-file_name = "/mnt/c/git/NVCIM-COMM/behavior_model/test_virtual_vgg16/cast_network.sv"
+file_name = "/mnt/c/git/NVCIM-COMM/behavior_model/test_dual_multicast/cast_network.sv"
 
 def gen_instances(data_width,w,h):
     data_width = str(data_width)
@@ -104,6 +104,7 @@ def gen_instances(data_width,w,h):
             router_txt = '''
 /*Router '''+str(j)+''','''+str(i)+'''*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_'''+str(j)+'''_'''+str(i)+'''),
     .isFC_list               (isFC_list_'''+str(j)+'''_'''+str(i)+'''),
     .FCdn_list               (FCdn_list_'''+str(j)+'''_'''+str(i)+'''),
     .FCpl_list               (FCpl_list_'''+str(j)+'''_'''+str(i)+'''),

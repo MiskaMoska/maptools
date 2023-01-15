@@ -1,6 +1,7 @@
 `include "params.svh"
 
 module cast_input_stage #(
+    parameter   isUBM = 0, //whether adopt unicast-based-multicast
     parameter   isFC = 0, //is the FC start port or not
     parameter   [`NOC_WIDTH*`NOC_HEIGHT-1:0] FCdn = {(`NOC_WIDTH*`NOC_HEIGHT){1'b0}}, //FC destination nodes
     parameter   int FCpl = 16, //FC packet length
@@ -30,6 +31,7 @@ wire            fifo_empty,fifo_full;
 wire [`DW-1:0]  fifo_din,fifo_dout;
 wire [`CN-1:0]  candidateOutVC;
 wire [15:0]     credit_cnt;
+wire            pop,read_reset;
 
 assign fifo_din = data_i;
 assign data_o = fifo_dout;
@@ -42,7 +44,7 @@ assign fifo_write = valid_i & ready_o;
 assign valid_o = ~fifo_empty & ready_i;
 assign ready_o = ~fifo_full;
 
-SyncFIFO_RTL #(
+SyncFIFO_RTL_UBM #(
     .width                   (`DW),
     .depth                   (2**`CAST_ROUTER_BUFFER_DEPTH_LOG),
     .depth_LOG               (`CAST_ROUTER_BUFFER_DEPTH_LOG),
@@ -55,7 +57,9 @@ SyncFIFO_RTL #(
     .full_o                  (fifo_full),
     .empty_o                 (fifo_empty),
     .data_i                  (fifo_din),
-    .data_o                  (fifo_dout)
+    .data_o                  (fifo_dout),
+    .pop                     (pop),
+    .read_reset              (read_reset)
 );
 
 cast_route_table #(
@@ -69,6 +73,7 @@ cast_route_table #(
 );
 
 cast_input_controller #(
+    .isUBM                   (isUBM),
     .isFC                    (isFC), 
     .FCpl                    (FCpl)
 )ctlr(
@@ -82,6 +87,8 @@ cast_input_controller #(
     .selXBVC                 (selXBVC),
     .flit_type               (fifo_dout[`DW-1:`DW-2]),
     .flit_fire               (fire),
+    .pop                     (pop),
+    .read_reset              (read_reset),
     .credit_cnt              (credit_cnt)
 );
 
@@ -95,7 +102,8 @@ cast_credit_counter #(
     .fire                    (fire),
     .flit_type               (fifo_dout[`DW-1:`DW-2]), 
     .credit_upd              (credit_upd),
-    .credit_cnt              (credit_cnt) 
+    .credit_cnt              (credit_cnt),
+    .pop                     (pop)
 );
 
 endmodule

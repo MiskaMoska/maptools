@@ -63,6 +63,7 @@ wire                ready_8_to_5_v0,	ready_8_to_5_v1;
 
 /*Router 0,0*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_0_0),
     .isFC_list               (isFC_list_0_0),
     .FCdn_list               (FCdn_list_0_0),
     .FCpl_list               (FCpl_list_0_0),
@@ -105,6 +106,7 @@ cast_router #(
 
 /*Router 0,1*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_0_1),
     .isFC_list               (isFC_list_0_1),
     .FCdn_list               (FCdn_list_0_1),
     .FCpl_list               (FCpl_list_0_1),
@@ -147,6 +149,7 @@ cast_router #(
 
 /*Router 0,2*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_0_2),
     .isFC_list               (isFC_list_0_2),
     .FCdn_list               (FCdn_list_0_2),
     .FCpl_list               (FCpl_list_0_2),
@@ -189,6 +192,7 @@ cast_router #(
 
 /*Router 1,0*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_1_0),
     .isFC_list               (isFC_list_1_0),
     .FCdn_list               (FCdn_list_1_0),
     .FCpl_list               (FCpl_list_1_0),
@@ -231,6 +235,7 @@ cast_router #(
 
 /*Router 1,1*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_1_1),
     .isFC_list               (isFC_list_1_1),
     .FCdn_list               (FCdn_list_1_1),
     .FCpl_list               (FCpl_list_1_1),
@@ -273,6 +278,7 @@ cast_router #(
 
 /*Router 1,2*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_1_2),
     .isFC_list               (isFC_list_1_2),
     .FCdn_list               (FCdn_list_1_2),
     .FCpl_list               (FCpl_list_1_2),
@@ -315,6 +321,7 @@ cast_router #(
 
 /*Router 2,0*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_2_0),
     .isFC_list               (isFC_list_2_0),
     .FCdn_list               (FCdn_list_2_0),
     .FCpl_list               (FCpl_list_2_0),
@@ -357,6 +364,7 @@ cast_router #(
 
 /*Router 2,1*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_2_1),
     .isFC_list               (isFC_list_2_1),
     .FCdn_list               (FCdn_list_2_1),
     .FCpl_list               (FCpl_list_2_1),
@@ -399,6 +407,7 @@ cast_router #(
 
 /*Router 2,2*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_2_2),
     .isFC_list               (isFC_list_2_2),
     .FCdn_list               (FCdn_list_2_2),
     .FCpl_list               (FCpl_list_2_2),

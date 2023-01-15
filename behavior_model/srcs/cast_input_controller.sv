@@ -15,41 +15,72 @@ module cast_input_controller #(
     output      wire        [`CN-1:0]           selXBVC, //to crossbar
     input       wire        [1:0]               flit_type,
     input       wire                            flit_fire,
-    output      reg                             pop, // to FIFO
+    output      wire                            pop, // to UBM FIFO
+    output      wire                            read_reset, // to UBM FIFO
     input       wire        [15:0]              credit_cnt //from credit counter
 );
 
-reg in_flight; // whether a unicast-based-multicast is being processed
+function bit isOneHot(input [`CN-1:0] data);
+    int cnt;
+    cnt = data[0] + data[1] + data[2] + data[3] + data[4];
+    // for(int i=0; i<`CN; i++) begin
+    //     cnt = cnt + data[i];
+    // end
+    if(cnt == 1) return 1'b1;
+    else return 1'b0;
+endfunction
+
+reg in_ubm; // whether a unicast-based-multicast is being processed
 reg [`CN-1:0] candidateOutVC_reg;
 wire [`CN-1:0] arb_req,arb_grt;
+reg pop_ubm;
+reg out_of_ubm;
+wire pop_non_ubm;
+wire isoh;
+assign isoh = isOneHot(candidateOutVC_reg);
+
+assign pop_non_ubm = out_of_ubm | ((isUBM == 1) & isOneHot(candidateOutVC) & (flit_type == `HEAD));
+assign pop = isUBM == 1 ? pop_ubm | pop_non_ubm : 1'b1;
+assign read_reset = in_ubm & (~pop_ubm) & (flit_type == `TAIL) & flit_fire;
 
 always@(posedge clk or negedge rstn) begin
-    if(~rstn) in_flight <= 1'b0;
+    if(~rstn) in_ubm <= 1'b0;
     else begin
-        if(~in_flight & (isUBM == 1) & ~isOneHot(candidateOutVC) & (flit_type == `HEAD) & flit_fire) 
-            in_flight <= 1'b1;
-        else if(in_flight & pop & (flit_type == `TAIL) & flit_fire) 
-            in_flight <= 1'b0;
+        // only under 2 conditions go into UBM state: 1.isUBM configured valid, 2.current packet has more than one expected output port.
+        if(~in_ubm & (isUBM == 1) & ~isOneHot(candidateOutVC) & (flit_type == `HEAD) & flit_fire) 
+            in_ubm <= 1'b1;
+        else if(in_ubm & pop & (flit_type == `TAIL) & flit_fire) 
+            in_ubm <= 1'b0;
     end
 end
 
-assign arb_req = (isUBM == 1) & (flit_type == `HEAD) ? (in_flight ? candidateOutVC_reg : candidateOutVC) : 0;
+always@(posedge clk or negedge rstn) begin
+    if(~rstn) out_of_ubm <= 1'b0;
+    else begin
+        if(~out_of_ubm & (isUBM == 1) & isOneHot(candidateOutVC) & (flit_type == `HEAD) & flit_fire)
+            out_of_ubm <= 1'b1;
+        else if(out_of_ubm & (flit_type == `TAIL) & flit_fire)
+            out_of_ubm <= 1'b0;
+    end
+end
+
+assign arb_req = (isUBM == 1) & (flit_type == `HEAD) ? (in_ubm ? candidateOutVC_reg : candidateOutVC) : 0;
 
 always@(posedge clk or negedge rstn) begin
-    if(~rstn) candidateOutVC <= 0;
+    if(~rstn) candidateOutVC_reg <= 0;
     else begin
         if((isUBM == 1) & (flit_type == `HEAD) & flit_fire)
-            candidateOutVC_reg <= candidateOutVC & (~arb_grt);
+            candidateOutVC_reg <= (in_ubm ? candidateOutVC_reg : candidateOutVC) & (~arb_grt);
     end
 end
 
 always@(posedge clk or negedge rstn) begin
-    if(~rstn) pop <= 1'b0;
+    if(~rstn) pop_ubm <= 1'b0;
     else begin
-        if(~pop & isOneHot(candidateOutVC_reg) & (flit_type == `TAIL) & flit_fire)
-            pop <= 1'b1;
-        else if(pop & (flit_type == `TAIL) & flit_fire)
-            pop <= 1'b0;
+        if(~pop_ubm & isOneHot(candidateOutVC_reg) & (flit_type == `TAIL) & flit_fire)
+            pop_ubm <= 1'b1;
+        else if(pop_ubm & (flit_type == `TAIL) & flit_fire)
+            pop_ubm <= 1'b0;
     end
 end
 

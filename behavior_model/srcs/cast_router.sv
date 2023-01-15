@@ -1,6 +1,7 @@
 `include "params.svh"
 
 module cast_router #(
+    parameter   isUBM_list[`CN] = '{(`CN){0}}, //whether adopt unicast-based-multicast
     parameter   isFC_list[`CN] = '{(`CN){0}}, //is the FC start port or not
     parameter   [`NOC_WIDTH*`NOC_HEIGHT-1:0] FCdn_list[`CN] = '{(`CN){{(`NOC_WIDTH*`NOC_HEIGHT){1'b0}}}}, //FC destination nodes
     parameter   int FCpl_list[`CN] = '{(`CN){16}}, //FC packet length
@@ -74,6 +75,7 @@ wire    [4:0]       valid_from,valid_to,ready_from,ready_to;
 wire    [4:0]       outVCAvailable,VCgranted,outVCAvailableReset;
 
 cast_input_stage #(
+    .isUBM                    (isUBM_list[1]),
     .isFC                     (isFC_list[1]), 
     .FCdn                     (FCdn_list[1]), 
     .FCpl                     (FCpl_list[1]), 
@@ -95,6 +97,7 @@ cast_input_stage #(
 );
 
 cast_input_stage #(
+    .isUBM                    (isUBM_list[2]),
     .isFC                     (isFC_list[2]), 
     .FCdn                     (FCdn_list[2]), 
     .FCpl                     (FCpl_list[2]), 
@@ -116,6 +119,7 @@ cast_input_stage #(
 );
 
 cast_input_stage #(
+    .isUBM                    (isUBM_list[3]),
     .isFC                     (isFC_list[3]), 
     .FCdn                     (FCdn_list[3]), 
     .FCpl                     (FCpl_list[3]), 
@@ -137,6 +141,7 @@ cast_input_stage #(
 );
 
 cast_input_stage #(
+    .isUBM                    (isUBM_list[4]),
     .isFC                     (isFC_list[4]), 
     .FCdn                     (FCdn_list[4]), 
     .FCpl                     (FCpl_list[4]), 
@@ -158,6 +163,7 @@ cast_input_stage #(
 );
 
 cast_input_stage #(
+    .isUBM                    (isUBM_list[0]),
     .isFC                     (isFC_list[0]), 
     .FCdn                     (FCdn_list[0]), 
     .FCpl                     (FCpl_list[0]), 

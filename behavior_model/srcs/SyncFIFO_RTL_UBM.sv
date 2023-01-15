@@ -4,7 +4,7 @@
     FIFO depth configurable
     Can be configured as FWFT mode or standard mode
 */
-module SyncFIFO_RTL #(
+module SyncFIFO_RTL_UBM #(
     parameter   width =                 32,
     parameter   depth =                 16,
     parameter   depth_LOG =             4,
@@ -85,7 +85,7 @@ begin
     else
     begin
         if(~empty_o & read_i)
-            data_o_std <= mem[rp[depth_LOG-1:0]];
+            data_o_std <= mem[rt_rp[depth_LOG-1:0]];
     end
 end
 
@@ -95,7 +95,7 @@ assign empty_o = (wp[depth_LOG-1:0]==rt_rp[depth_LOG-1:0]) ? wp[depth_LOG] == rt
 generate if(FWFT == 0) begin: FWFT_MODE
     assign data_o = data_o_std;
 end else begin: STANDARD_MOD
-    assign data_o = mem[rp[depth_LOG-1:0]];
+    assign data_o = mem[rt_rp[depth_LOG-1:0]];
 end endgenerate
 
 endmodule

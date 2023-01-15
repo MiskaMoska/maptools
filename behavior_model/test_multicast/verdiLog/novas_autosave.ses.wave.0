@@ -1,0 +1,211 @@
+Magic 271485
+Revision Verdi3_L-2016.06-1
+
+; Window Layout <x> <y> <width> <height> <signalwidth> <valuewidth>
+viewPort 0 28 1536 689 219 82
+
+; File list:
+; openDirFile [-d delimiter] [-s time_offset] [-rf auto_bus_rule_file] path_name file_name
+openDirFile -d / "" "/mnt/c/git/nvcim-comm/behavior_model/test_multicast/wave.fsdb"
+
+; file time scale:
+; fileTimeScale ### s|ms|us|ns|ps
+
+; signal spacing:
+signalSpacing 5
+
+; windowTimeUnit is used for zoom, cursor & marker
+; waveform viewport range
+zoom 0.000000 26048750.000000
+cursor 105000.000000
+marker 0.000000
+
+; user define markers
+; userMarker time_pos marker_name color linestyle
+; visible top row signal index
+top 45
+; marker line index
+markerPos 34
+
+; event list
+; addEvent event_name event_expression
+; curEvent event_name
+
+
+
+COMPLEX_EVENT_BEGIN
+
+
+COMPLEX_EVENT_END
+
+
+
+; toolbar current search type
+; curSTATUS search_type
+curSTATUS ByChange
+
+
+addGroup "R20_local_input_stage"
+activeDirFile "" "/mnt/c/git/nvcim-comm/behavior_model/test_multicast/wave.fsdb"
+addSignal -h 15 /top_tb/noc/router2/input_stage_local/VCgranted
+addSignal -h 15 -UNSIGNED -HEX -holdScope candidateOutVC[4:0]
+addSignal -h 15 -holdScope clk
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_cnt[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_o[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope fifo_din[15:0]
+addSignal -h 15 -holdScope fifo_full
+addSignal -h 15 -holdScope fifo_read
+addSignal -h 15 -holdScope fifo_write
+addSignal -h 15 -holdScope fire
+addSignal -c ID_YELLOW5 -ls solid -lw 1 -h 15 -holdScope ready_i
+addSubGroup "ready_i#Driver" -e FALSE
+addSignal -h 15 /top_tb/noc/router2/crossbar/mux_ready_to_input_vc0/mux_sel[0]
+addSignal -h 15 -holdScope ready_in[0]
+addSignal -h 15 -holdScope mux_sel[1]
+addSignal -h 15 -holdScope ready_in[1]
+addSignal -h 15 -holdScope mux_sel[2]
+addSignal -h 15 -holdScope ready_in[2]
+addSignal -h 15 -holdScope mux_sel[3]
+addSignal -h 15 -holdScope ready_in[3]
+addSignal -h 15 -holdScope mux_sel[4]
+addSignal -h 15 -holdScope ready_in[4]
+endSubGroup "ready_i#Driver"
+addSignal -h 15 /top_tb/noc/router2/input_stage_local/ready_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVC[4:0]
+addSignal -h 15 -holdScope rstn
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVC[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selXBVC[4:0]
+addSignal -h 15 -holdScope valid_i
+addSignal -h 15 -holdScope valid_o
+addGroup "R20_local_input_ctlr"
+addSignal -h 15 /top_tb/noc/router2/input_stage_local/ctlr/in_ubm
+addSignal -h 15 -holdScope VCgranted
+addSignal -h 15 /top_tb/noc/router2/input_stage_local/fifo_empty
+addSignal -h 15 -UNSIGNED -HEX -holdScope fifo_dout[15:0]
+addSignal -h 15 -UNSIGNED -HEX /top_tb/noc/router2/input_stage_local/ctlr/arb_grt[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope arb_req[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope candidateOutVC[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope candidateOutVC_reg[4:0]
+addSignal -h 15 -holdScope clk
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_cnt[15:0]
+addSignal -h 15 -holdScope fifo_empty
+addSignal -h 15 -holdScope flit_fire
+addSignal -h 15 -UNSIGNED -HEX -holdScope flit_type[1:0]
+addSignal -h 15 -holdScope outVCLock
+addSignal -h 15 -UNSIGNED -HEX -holdScope outVC[4:0]
+addSignal -h 15 -holdScope out_of_ubm
+addSignal -h 15 -holdScope pop
+addSignal -h 15 -holdScope pop_non_ubm
+addSignal -h 15 -holdScope pop_ubm
+addSignal -h 15 -holdScope read_reset
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVC[4:0]
+addSignal -h 15 -holdScope rstn
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVC[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selXBVC[4:0]
+addGroup "R21_vert0_input_stage"
+addSignal -h 15 /top_tb/noc/router5/input_stage_vert0/VCgranted
+addSignal -h 15 -UNSIGNED -HEX -holdScope candidateOutVC[4:0]
+addSignal -h 15 -holdScope clk
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_cnt[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_o[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope fifo_dout[15:0]
+addSignal -h 15 -holdScope fifo_empty
+addSignal -h 15 -holdScope fifo_full
+addSignal -h 15 -holdScope fifo_read
+addSignal -h 15 -holdScope fire
+addSignal -h 15 -holdScope ready_i
+addSignal -h 15 -UNSIGNED -HEX -holdScope fifo_din[15:0]
+addSignal -h 15 -holdScope fifo_write
+addSignal -c ID_YELLOW5 -ls solid -lw 1 -h 15 -holdScope ready_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVC[4:0]
+addSignal -h 15 -holdScope rstn
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVC[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selXBVC[4:0]
+addSignal -h 15 -holdScope valid_i
+addSignal -h 15 -holdScope valid_o
+addGroup "R10_east_input_stage"
+addSignal -h 15 /top_tb/noc/router1/input_stage_east/VCgranted
+addSignal -h 15 -UNSIGNED -HEX -holdScope candidateOutVC[4:0]
+addSignal -h 15 -holdScope clk
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_cnt[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_o[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope fifo_din[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope fifo_dout[15:0]
+addSignal -h 15 -holdScope fifo_empty
+addSignal -h 15 -holdScope fifo_full
+addSignal -h 15 -holdScope fifo_read
+addSignal -h 15 -holdScope fifo_write
+addSignal -h 15 -holdScope fire
+addSignal -h 15 -holdScope ready_i
+addSignal -c ID_YELLOW5 -ls solid -lw 1 -h 15 -holdScope ready_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVC[4:0]
+addSignal -h 15 -holdScope rstn
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVC[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selXBVC[4:0]
+addSignal -h 15 -holdScope valid_i
+addSignal -h 15 -holdScope valid_o
+addGroup "R20_local_cc"
+addSignal -h 15 -UNSIGNED -HEX /top_tb/noc/router2/input_stage_local/cc/credit_inc[0:8]
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_upd[0:2]
+addSignal -h 15 /top_tb/noc/router2/input_stage_local/ctlr/VCgranted
+addSignal -h 15 -UNSIGNED -HEX -holdScope candidateOutVC[4:0]
+addSignal -h 15 -holdScope clk
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_cnt[15:0]
+addSignal -h 15 -holdScope fifo_empty
+addSignal -h 15 -holdScope flit_fire
+addSignal -h 15 -UNSIGNED -HEX -holdScope flit_type[1:0]
+addSignal -h 15 -holdScope outVCLock
+addSignal -h 15 -UNSIGNED -HEX -holdScope outVC[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVC[4:0]
+addSignal -h 15 -holdScope rstn
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVC[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selXBVC[4:0]
+addSignal -h 15 /top_tb/noc/router2/input_stage_local/cc/clk
+addSignal -h 15 -UNSIGNED -HEX -holdScope cnt[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_cnt[15:0]
+addSignal -h 15 -holdScope fire
+addSignal -h 15 -holdScope flag
+addSignal -h 15 -UNSIGNED -HEX -holdScope flit_type[1:0]
+addSignal -h 15 -holdScope rstn
+addSignal -h 15 -UNSIGNED -HEX -holdScope dn[8:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope pl[4:0]
+addGroup "G7"
+
+; getSignalForm Scope Hierarchy Status
+; active file of getSignalForm
+activeDirFile "" "/mnt/c/git/nvcim-comm/behavior_model/test_multicast/wave.fsdb"
+
+GETSIGNALFORM_SCOPE_HIERARCHY_BEGIN
+getSignalForm close
+
+"/_$novas_unit__1"
+"/top_tb"
+"/top_tb/noc"
+"/top_tb/noc/router2"
+"/top_tb/noc/router2/input_stage_local"
+
+SCOPE_LIST_BEGIN
+"/_$novas_unit__1"
+"/top_tb"
+"/top_tb/noc/router2"
+"/top_tb/noc/router2/input_stage_local"
+"/top_tb/noc"
+"/top_tb/noc/router2/input_stage_vert0"
+"/top_tb/noc/router2/input_stage_local/rt"
+"/top_tb/noc/router2/input_stage_local/ctlr"
+"/top_tb/noc/router2/input_stage_local/rt/Unnamed_$cast_route_table_sv_21"
+"/top_tb/noc/router2/input_stage_local/fifo"
+"/top_tb/noc/router5/input_stage_vert0"
+"/top_tb/noc/router5"
+"/top_tb/noc/router1/input_stage_east"
+"/top_tb/noc/router1"
+"/top_tb/noc/router2/vc_allocator"
+"/top_tb/noc/router2/input_stage_local/cc"
+SCOPE_LIST_END
+
+GETSIGNALFORM_SCOPE_HIERARCHY_END
+
+

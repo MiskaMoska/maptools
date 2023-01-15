@@ -1,0 +1,232 @@
+{
+    "CurCompileUdps": {},
+    "CompileProcesses": [
+        "cgproc.20825.json"
+    ],
+    "MlibObjs": {},
+    "CompileStatus": "Successful",
+    "PrevCompiledModules": {},
+    "CompileStrategy": "fullobj",
+    "stat": {
+        "mop/quad": 3.1520872420262664,
+        "totalObjSize": 576998,
+        "quadSpeed": 88475.743868531354,
+        "ru_self_cgstart": {
+            "ru_utime_sec": 0.15898799999999999,
+            "ru_stime_sec": 0.048918999999999997,
+            "ru_majflt": 0,
+            "ru_maxrss_kb": 94700,
+            "ru_minflt": 7106,
+            "ru_nivcsw": 6,
+            "ru_nvcsw": 2345
+        },
+        "CodeGen(%)": 37.743562433431492,
+        "ru_childs_cgstart": {
+            "ru_utime_sec": 0.0020430000000000001,
+            "ru_stime_sec": 0.0,
+            "ru_majflt": 0,
+            "ru_maxrss_kb": 24436,
+            "ru_minflt": 202,
+            "ru_nivcsw": 0,
+            "ru_nvcsw": 19
+        },
+        "ru_childs_end": {
+            "ru_utime_sec": 0.0020430000000000001,
+            "ru_stime_sec": 0.0,
+            "ru_majflt": 0,
+            "ru_maxrss_kb": 24436,
+            "ru_minflt": 202,
+            "ru_nivcsw": 0,
+            "ru_nvcsw": 19
+        },
+        "nMops": 26881,
+        "nQuads": 8528,
+        "Frontend(%)": 62.256437566568508,
+        "ru_self_end": {
+            "ru_utime_sec": 0.25537599999999999,
+            "ru_stime_sec": 0.058040000000000001,
+            "ru_majflt": 0,
+            "ru_maxrss_kb": 103584,
+            "ru_minflt": 9048,
+            "ru_nivcsw": 9,
+            "ru_nvcsw": 3026
+        },
+        "mopSpeed": 278883.26347678131,
+        "outputSizePerQuad": 67.0
+    },
+    "NameTable": {
+        "cast_output_stage": [
+            "cast_output_stage",
+            "dPVL1",
+            "module"
+        ],
+        "cast_vc_allocator": [
+            "cast_vc_allocator",
+            "qwPkj",
+            "module"
+        ],
+        "std": [
+            "std",
+            "reYIK",
+            "module"
+        ],
+        "_vcs_unit__1440584671": [
+            "_vcs_unit__1440584671",
+            "RJj8p",
+            "module"
+        ],
+        "cast_router_0006": [
+            "cast_router_0006",
+            "mTxPP",
+            "module"
+        ],
+        "mtx_arbiter": [
+            "mtx_arbiter",
+            "cRVQY",
+            "module"
+        ],
+        "cast_network": [
+            "cast_network",
+            "BWBga",
+            "module"
+        ],
+        "cast_router": [
+            "cast_router",
+            "Hvnf2",
+            "module"
+        ],
+        "cast_crossbar": [
+            "cast_crossbar",
+            "G5V9f",
+            "module"
+        ],
+        "cast_router_0007": [
+            "cast_router_0007",
+            "AbdKV",
+            "module"
+        ],
+        "cast_router_0005": [
+            "cast_router_0005",
+            "YqM0n",
+            "module"
+        ],
+        "cast_input_stage": [
+            "cast_input_stage",
+            "MbPIM",
+            "module"
+        ],
+        "cast_router_0000": [
+            "cast_router_0000",
+            "sVnSu",
+            "module"
+        ],
+        "monitor": [
+            "monitor",
+            "rF6Ju",
+            "module"
+        ],
+        "cast_router_0001": [
+            "cast_router_0001",
+            "ttqvA",
+            "module"
+        ],
+        "cast_router_0002": [
+            "cast_router_0002",
+            "iEB2K",
+            "module"
+        ],
+        "cast_router_0003": [
+            "cast_router_0003",
+            "Z6WzB",
+            "module"
+        ],
+        "cast_router_0004": [
+            "cast_router_0004",
+            "Rc24h",
+            "module"
+        ],
+        "top_tb": [
+            "top_tb",
+            "W0eJz",
+            "module"
+        ],
+        "mux_data_valid_5to1": [
+            "mux_data_valid_5to1",
+            "duMw2",
+            "module"
+        ],
+        "driver": [
+            "driver",
+            "yPgP1",
+            "module"
+        ],
+        "...MASTER...": [
+            "SIM",
+            "amcQw",
+            "module"
+        ]
+    },
+    "SIMBData": {
+        "out": "amcQwB.o",
+        "bytes": 118954
+    },
+    "CurCompileModules": [
+        "...MASTER...",
+        "...MASTER...",
+        "_vcs_unit__1440584671",
+        "_vcs_unit__1440584671",
+        "std",
+        "std",
+        "mtx_arbiter",
+        "mtx_arbiter",
+        "cast_crossbar",
+        "cast_crossbar",
+        "cast_input_stage",
+        "cast_input_stage",
+        "cast_output_stage",
+        "cast_output_stage",
+        "cast_router",
+        "cast_router",
+        "cast_router_0000",
+        "cast_router_0000",
+        "cast_router_0001",
+        "cast_router_0001",
+        "cast_router_0002",
+        "cast_router_0002",
+        "cast_router_0003",
+        "cast_router_0003",
+        "cast_router_0004",
+        "cast_router_0004",
+        "cast_router_0005",
+        "cast_router_0005",
+        "cast_router_0006",
+        "cast_router_0006",
+        "cast_router_0007",
+        "cast_router_0007",
+        "cast_vc_allocator",
+        "cast_vc_allocator",
+        "mux_data_valid_5to1",
+        "mux_data_valid_5to1",
+        "cast_network",
+        "cast_network",
+        "driver",
+        "driver",
+        "monitor",
+        "monitor",
+        "top_tb",
+        "top_tb"
+    ],
+    "LVLData": [
+        "SIM"
+    ],
+    "PEModules": [],
+    "Misc": {
+        "cwd": "/mnt/c/git/nvcim-comm/behavior_model/test_dual_multicast",
+        "csrc_abs": "/mnt/c/git/nvcim-comm/behavior_model/test_dual_multicast/csrc",
+        "csrc": "csrc",
+        "default_output_dir": "csrc",
+        "daidir": "simv.daidir",
+        "daidir_abs": "/mnt/c/git/nvcim-comm/behavior_model/test_dual_multicast/simv.daidir",
+        "archive_dir": "archive.0"
+    }
+}

@@ -1,3 +1,13 @@
+localparam isUBM_list_0_0[`CN] = '{1,1,1,1,1};
+localparam isUBM_list_1_0[`CN] = '{1,1,1,1,1};
+localparam isUBM_list_2_0[`CN] = '{1,1,1,1,1};
+localparam isUBM_list_0_1[`CN] = '{1,1,1,1,1};
+localparam isUBM_list_1_1[`CN] = '{1,1,1,1,1};
+localparam isUBM_list_2_1[`CN] = '{1,1,1,1,1};
+localparam isUBM_list_0_2[`CN] = '{1,1,1,1,1};
+localparam isUBM_list_1_2[`CN] = '{1,1,1,1,1};
+localparam isUBM_list_2_2[`CN] = '{1,1,1,1,1};
+
 localparam isFC_list_0_0[`CN] = '{0,0,0,0,0};
 localparam isFC_list_1_0[`CN] = '{0,0,0,0,0};
 localparam isFC_list_2_0[`CN] = '{1,0,0,0,0};

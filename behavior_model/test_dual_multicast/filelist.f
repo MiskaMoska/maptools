@@ -10,6 +10,7 @@
 ../srcs/mux_data_valid_5to1.sv
 ../srcs/mux_ready_5to1.sv
 ../srcs/SyncFIFO_RTL.sv
+../srcs/SyncFIFO_RTL_UBM.sv
 
 ./cast_network.sv
 ./driver.sv

@@ -2,7 +2,7 @@ Magic 271485
 Revision Verdi3_L-2016.06-1
 
 ; Window Layout <x> <y> <width> <height> <signalwidth> <valuewidth>
-viewPort 0 28 1707 892 219 82
+viewPort 0 28 1536 689 219 82
 
 ; File list:
 ; openDirFile [-d delimiter] [-s time_offset] [-rf auto_bus_rule_file] path_name file_name
@@ -16,16 +16,16 @@ signalSpacing 5
 
 ; windowTimeUnit is used for zoom, cursor & marker
 ; waveform viewport range
-zoom 0.000000 407011.718750
-cursor 104000.000000
+zoom 3581703.125000 5209750.000000
+cursor 4345000.000000
 marker 0.000000
 
 ; user define markers
 ; userMarker time_pos marker_name color linestyle
 ; visible top row signal index
-top 111
+top 167
 ; marker line index
-markerPos 147
+markerPos 194
 
 ; event list
 ; addEvent event_name event_expression
@@ -54,7 +54,6 @@ addSignal -h 15 -UNSIGNED -HEX -holdScope credit_cnt[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_i[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_o[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope fifo_din[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope fifo_dout[15:0]
 addSignal -h 15 -holdScope fifo_empty
 addSignal -h 15 -holdScope fifo_full
 addSignal -h 15 -holdScope fifo_read
@@ -81,15 +80,26 @@ addSignal -h 15 -UNSIGNED -HEX -holdScope selXBVC[4:0]
 addSignal -h 15 -holdScope valid_i
 addSignal -h 15 -holdScope valid_o
 addGroup "R20_local_input_ctlr"
-addSignal -h 15 /top_tb/noc/router2/input_stage_local/ctlr/VCgranted
+addSignal -h 15 /top_tb/noc/router2/input_stage_local/ctlr/in_ubm
+addSignal -h 15 -holdScope VCgranted
+addSignal -h 15 -UNSIGNED -HEX /top_tb/noc/router2/input_stage_local/fifo_dout[15:0]
+addSignal -h 15 -UNSIGNED -HEX /top_tb/noc/router2/input_stage_local/ctlr/arb_grt[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope arb_req[4:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope candidateOutVC[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope candidateOutVC_reg[4:0]
 addSignal -h 15 -holdScope clk
 addSignal -h 15 -UNSIGNED -HEX -holdScope credit_cnt[15:0]
 addSignal -h 15 -holdScope fifo_empty
 addSignal -h 15 -holdScope flit_fire
 addSignal -h 15 -UNSIGNED -HEX -holdScope flit_type[1:0]
+addSignal -h 15 -holdScope isoh
 addSignal -h 15 -holdScope outVCLock
 addSignal -h 15 -UNSIGNED -HEX -holdScope outVC[4:0]
+addSignal -h 15 -holdScope out_of_ubm
+addSignal -h 15 -holdScope pop
+addSignal -h 15 -holdScope pop_non_ubm
+addSignal -h 15 -holdScope pop_ubm
+addSignal -h 15 -holdScope read_reset
 addSignal -h 15 -UNSIGNED -HEX -holdScope reqVC[4:0]
 addSignal -h 15 -holdScope rstn
 addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVC[4:0]
@@ -195,6 +205,42 @@ addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVC[4:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope selXBVC[4:0]
 addSignal -h 15 -holdScope valid_i
 addSignal -h 15 -holdScope valid_o
+addSignal -h 15 /top_tb/noc/router2/input_stage_local/ctlr/VCgranted
+addSignal -h 15 -UNSIGNED -HEX -holdScope candidateOutVC[4:0]
+addSignal -h 15 -holdScope clk
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_cnt[15:0]
+addSignal -h 15 -holdScope fifo_empty
+addSignal -h 15 -holdScope flit_fire
+addSignal -h 15 -UNSIGNED -HEX -holdScope flit_type[1:0]
+addSignal -h 15 -holdScope outVCLock
+addSignal -h 15 -UNSIGNED -HEX -holdScope outVC[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVC[4:0]
+addSignal -h 15 -holdScope rstn
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVC[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selXBVC[4:0]
+addSignal -h 15 -holdScope VCgranted
+addSignal -h 15 -UNSIGNED -HEX -holdScope arb_grt[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope arb_req[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope candidateOutVC[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope candidateOutVC_reg[4:0]
+addSignal -h 15 -holdScope clk
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_cnt[15:0]
+addSignal -h 15 -holdScope fifo_empty
+addSignal -h 15 -holdScope flit_fire
+addSignal -h 15 -UNSIGNED -HEX -holdScope flit_type[1:0]
+addSignal -h 15 -holdScope in_ubm
+addSignal -h 15 -holdScope isoh
+addSignal -h 15 -holdScope outVCLock
+addSignal -h 15 -UNSIGNED -HEX -holdScope outVC[4:0]
+addSignal -h 15 -holdScope out_of_ubm
+addSignal -h 15 -holdScope pop
+addSignal -h 15 -holdScope pop_non_ubm
+addSignal -h 15 -holdScope pop_ubm
+addSignal -h 15 -holdScope read_reset
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVC[4:0]
+addSignal -h 15 -holdScope rstn
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVC[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selXBVC[4:0]
 addGroup "G8"
 
 ; getSignalForm Scope Hierarchy Status
@@ -207,7 +253,7 @@ getSignalForm close
 "/_$novas_unit__1"
 "/top_tb"
 "/top_tb/noc"
-"/top_tb/noc/router1"
+"/top_tb/noc/router4"
 
 SCOPE_LIST_BEGIN
 "/_$novas_unit__1"

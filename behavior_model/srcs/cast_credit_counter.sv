@@ -12,7 +12,9 @@ module cast_credit_counter #(
     input       wire        [1:0]               flit_type, //input port flit type
 
     input       wire                            credit_upd[`NOC_WIDTH][`NOC_HEIGHT],
-    output      wire        [15:0]              credit_cnt 
+    output      wire        [15:0]              credit_cnt,
+
+    input       wire                            pop //consume credit only when popping
 );
 
 wire [4:0] pl;
@@ -70,7 +72,7 @@ always@(posedge clk or negedge rstn) begin
     if(~rstn) cnt <= `BUFFER_ALLOC;
     else if(~isFC) cnt = 65535; //indicate this is not a FC start node
     else begin
-        if((flit_type == `HEAD) & fire)
+        if((flit_type == `HEAD) & pop & fire)
             cnt = cnt - FCpl;
     end
 end

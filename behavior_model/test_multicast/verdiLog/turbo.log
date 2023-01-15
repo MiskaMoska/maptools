@@ -1,0 +1,3 @@
+Command Line: /eda/verdi/Verdi3_L-2016.06-1/platform/LINUXAMD64/bin/Novas +v2k -sverilog +incdir+../srcs+./ -f filelist.f -ssf wave.fsdb -sswr ./wcfg/cfg1.rc
+uname(Linux DESKTOP-H9DJS7N 5.10.102.1-microsoft-standard-WSL2 #1 SMP Wed Mar 2 00:30:59 UTC 2022 x86_64)
+au time 2204.229099 75.153693 117.053628 delta 598532096 598532096 total 987697152 987697152
