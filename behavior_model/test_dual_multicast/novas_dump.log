@@ -162,7 +162,7 @@ SHELL=/bin/bash
 TERM=xterm-256color
 SCRIPT_NAME=vcs
 LM_LICENSE_FILE=27000@DESKTOP-H9DJS7N
-SNPS_VCS_TMPDIR=/tmp/vcs_20230115054610_20418
+SNPS_VCS_TMPDIR=/tmp/vcs_20230115122345_580
 MAKELEVEL=1
 VERDI_HOME=/eda/verdi/Verdi3_L-2016.06-1
 SHLVL=3
@@ -185,9 +185,9 @@ SPECMAN_OUTPUT_TO_TTY=1
 Runtime command line arguments:
 argv[0]=simv
 186 profile - 100
-          CPU/Mem usage: 0.020 sys,  0.140 user,  228.66M sys,  0.00M vm
+          CPU/Mem usage: 0.020 sys,  0.130 user,  232.87M sys,  0.00M vm
 187 VC callback profile - scalar:0 vector:0
-188 Sun Jan 15 13:46:12 2023
+188 Sun Jan 15 20:23:47 2023
 189 pliAppInit
 190 *Verdi3* : FSDB_GATE is set.
 191 *Verdi3* : FSDB_RTL is set.
@@ -199,54 +199,55 @@ argv[0]=simv
 197 (C) 1996 - 2016 by Synopsys, Inc.
 198 sps_call_fsdbDumpfile at 0 : ./top_tb.sv(38)
 199 argv[0]: wave.fsdb
-200 *Verdi3* : Create FSDB file 'wave.fsdb'
-201 sps_call_fsdbDumpvars at 0 : ./top_tb.sv(39)
-202 argv[0]: 0
-203 argv[1]: (handle)0x2dd02a8 top_tb.noc
-204 *Verdi3* : Begin traversing the scope (top_tb.noc), layer (0).
-205 *Verdi3* : End of traversing.
-206 fsdbDumpvars traverse var: profile - 
-          CPU/Mem usage: 0.040 sys,  0.160 user,  318.82M sys,  0.00M vm
-                   incr: 0.010 sys,  0.020 user,  9.81M sys,  0.00M vm
-                   accu: 0.010 sys,  0.020 user,  9.81M sys,  0.00M vm
-              accu incr: 0.010 sys,  0.020 user,  9.81M sys,  0.00M vm
+200 *Verdi3* FSDB WARNING: The FSDB file already exists. Overwriting the FSDB file may crash the programs that are using this file.
+201 *Verdi3* : Create FSDB file 'wave.fsdb'
+202 sps_call_fsdbDumpvars at 0 : ./top_tb.sv(39)
+203 argv[0]: 0
+204 argv[1]: (handle)0x2a668b8 top_tb.noc
+205 *Verdi3* : Begin traversing the scope (top_tb.noc), layer (0).
+206 *Verdi3* : End of traversing.
+207 fsdbDumpvars traverse var: profile - 
+          CPU/Mem usage: 0.030 sys,  0.140 user,  323.03M sys,  0.00M vm
+                   incr: 0.000 sys,  0.010 user,  9.82M sys,  0.00M vm
+                   accu: 0.000 sys,  0.010 user,  9.82M sys,  0.00M vm
+              accu incr: 0.000 sys,  0.010 user,  9.82M sys,  0.00M vm
 
           Count usage: 6014 var,  3182 idcode,  1813 callback
                  incr: 6014 var,  3182 idcode,  1813 callback
                  accu: 6014 var,  3182 idcode,  1813 callback
             accu incr: 6014 var,  3182 idcode,  1813 callback
-207 VC callback profile - scalar:0 vector:0
-208 Sun Jan 15 13:46:12 2023
-209 fsdbDumpvars: profile - 
-          CPU/Mem usage: 0.040 sys,  0.160 user,  320.00M sys,  0.00M vm
+208 VC callback profile - scalar:0 vector:0
+209 Sun Jan 15 20:23:47 2023
+210 fsdbDumpvars: profile - 
+          CPU/Mem usage: 0.030 sys,  0.140 user,  324.22M sys,  0.00M vm
                    incr: 0.000 sys,  0.000 user,  1.19M sys,  0.00M vm
-                   accu: 0.010 sys,  0.020 user,  11.00M sys,  0.00M vm
+                   accu: 0.000 sys,  0.010 user,  11.01M sys,  0.00M vm
               accu incr: 0.000 sys,  0.000 user,  1.19M sys,  0.00M vm
 
           Count usage: 6014 var,  3182 idcode,  1813 callback
                  incr: 0 var,  0 idcode,  0 callback
                  accu: 6014 var,  3182 idcode,  1813 callback
             accu incr: 0 var,  0 idcode,  0 callback
-210 VC callback profile - scalar:885 vector:973
-211 Sun Jan 15 13:46:12 2023
-212 sps_call_fsdbDumpMDA at 0 : ./top_tb.sv(40)
-213 *Verdi3* : Begin traversing the MDAs, layer (0).
-214 *Verdi3* : Enable +mda and +packedmda dumping.
-215 *Verdi3* : End of traversing the MDAs.
-216 fsdbDumpMDA traverse var: profile - 
-          CPU/Mem usage: 0.040 sys,  0.160 user,  320.59M sys,  0.00M vm
-                   incr: 0.000 sys,  0.000 user,  0.59M sys,  0.00M vm
-                   accu: 0.000 sys,  0.000 user,  0.59M sys,  0.00M vm
-              accu incr: 0.000 sys,  0.000 user,  0.59M sys,  0.00M vm
+211 VC callback profile - scalar:885 vector:973
+212 Sun Jan 15 20:23:47 2023
+213 sps_call_fsdbDumpMDA at 0 : ./top_tb.sv(40)
+214 *Verdi3* : Begin traversing the MDAs, layer (0).
+215 *Verdi3* : Enable +mda and +packedmda dumping.
+216 *Verdi3* : End of traversing the MDAs.
+217 fsdbDumpMDA traverse var: profile - 
+          CPU/Mem usage: 0.030 sys,  0.140 user,  324.80M sys,  0.00M vm
+                   incr: 0.000 sys,  0.000 user,  0.58M sys,  0.00M vm
+                   accu: 0.000 sys,  0.000 user,  0.58M sys,  0.00M vm
+              accu incr: 0.000 sys,  0.000 user,  0.58M sys,  0.00M vm
 
           Count usage: 12478 var,  8728 idcode,  2060 callback
                  incr: 6464 var,  5546 idcode,  247 callback
                  accu: 6464 var,  5546 idcode,  247 callback
             accu incr: 6464 var,  5546 idcode,  247 callback
-217 VC callback profile - scalar:885 vector:973
-218 Sun Jan 15 13:46:12 2023
-219 fsdbDumpMDA: profile - 
-          CPU/Mem usage: 0.040 sys,  0.160 user,  320.73M sys,  0.00M vm
+218 VC callback profile - scalar:885 vector:973
+219 Sun Jan 15 20:23:47 2023
+220 fsdbDumpMDA: profile - 
+          CPU/Mem usage: 0.030 sys,  0.140 user,  324.94M sys,  0.00M vm
                    incr: 0.000 sys,  0.000 user,  0.14M sys,  0.00M vm
                    accu: 0.000 sys,  0.000 user,  0.72M sys,  0.00M vm
               accu incr: 0.000 sys,  0.000 user,  0.14M sys,  0.00M vm
@@ -255,12 +256,12 @@ argv[0]=simv
                  incr: 0 var,  0 idcode,  0 callback
                  accu: 6464 var,  5546 idcode,  247 callback
             accu incr: 0 var,  0 idcode,  0 callback
-220 VC callback profile - scalar:1227 vector:6961
-221 Sun Jan 15 13:46:12 2023
-222 End of simulation at 104195000
-223 VC callback profile - scalar:40028 vector:71631
-224 Sun Jan 15 13:46:14 2023
-225 Parallel profile    -  Flush:4 Expand:0 ProduceWait:0 ConsumerWait:0 BlockUsed:0
-226                        ProduceTime:0.456429500 ConsumerTime:0.000000000 Buffer:64MB
-227 SimExit
-228 Sim process exit
+221 VC callback profile - scalar:1227 vector:6961
+222 Sun Jan 15 20:23:47 2023
+223 End of simulation at 104195000
+224 VC callback profile - scalar:51594 vector:166840
+225 Sun Jan 15 20:23:49 2023
+226 Parallel profile    -  Flush:4 Expand:0 ProduceWait:0 ConsumerWait:1 BlockUsed:1
+227                        ProduceTime:0.454993000 ConsumerTime:0.006825800 Buffer:64MB
+228 SimExit
+229 Sim process exit

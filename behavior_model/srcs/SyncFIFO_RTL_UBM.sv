@@ -49,7 +49,7 @@ always@(posedge clk_i)
 begin
     if(~full_o & write_i)
     begin
-        mem[wp] <= data_i;
+        mem[wp[depth_LOG-1:0]] <= data_i;
     end
 end
 
