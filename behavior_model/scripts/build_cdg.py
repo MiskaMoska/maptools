@@ -2,8 +2,11 @@ import networkx as nx
 from cast_path_config import PATH_DICT as cast_paths
 from merge_path_config import Paths as merge_paths
 
+# user defined begin
 W = 7
 H = 8
+unicast_nodes = ['3_1_cl_i','3_1_ce_i']
+# user defined end
 
 def translate(chan_num:int,mode:str):
     if mode == 'i':
@@ -32,7 +35,8 @@ def translate(chan_num:int,mode:str):
 
 CDG = nx.MultiDiGraph()
 SID = dict() # store the stream id of each edge in CDG
-NODE_ATTR = dict() # store whether each is a contention node, H type dependency only happens on contentions node
+IS_CONTENT = dict() # store whether each is a contention node, V type dependency only happens on contentions node
+IS_UNICAST = dict() # store whether a node is a unicast-based multicast node, the unicast-based multicast is used to break out deadlock loops
 cast_nodes = ['cw_i','cw_o','ce_i','ce_o','cv0_i','cv0_o','cv1_i','cv1_o','cl_i','cl_o'] 
 
 # generate cast nodes
@@ -40,10 +44,11 @@ for i in range(W):
     for j in range(H):
         for n in cast_nodes:
             CDG.add_node(f"{i}_{j}_"+n)
+            IS_UNICAST[f"{i}_{j}_"+n] = False
             if n[-1] == "o":
-                NODE_ATTR[f"{i}_{j}_"+n] = True
+                IS_CONTENT[f"{i}_{j}_"+n] = True
             else:
-                NODE_ATTR[f"{i}_{j}_"+n] = False
+                IS_CONTENT[f"{i}_{j}_"+n] = False
 
 # generate cast transfer edges according to cast_paths
 for k in cast_paths.keys():
@@ -76,7 +81,8 @@ for i in range(W-1):
 for i in range(W):
     for j in range(H):
         CDG.add_node(f"{i}_{j}_mrg")
-        NODE_ATTR[f"{i}_{j}_mrg"] = False
+        IS_UNICAST[f"{i}_{j}_mrg"] = False
+        IS_CONTENT[f"{i}_{j}_mrg"] = False
 
 # generate merge edges according to merge_paths
 for path in merge_paths:
@@ -98,6 +104,7 @@ for i in range(W):
         else: # the current node is not a caster
             CDG.add_edge(f"{i}_{j}_cl_o",f"{i}_{j}_mrg")
 
-
-# for k in SID:
-#     print(SID[k])
+# pick out unicast-based multicast node
+for node in unicast_nodes:
+    assert node in CDG.nodes(), f"the user defined unicast node {node} is invalid"
+    IS_UNICAST[node] = True

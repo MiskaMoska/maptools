@@ -4,14 +4,15 @@ A type: multicast dependency
 V type: contention dependency
 H type: serial dependency
 '''
+import sys
+import rewrite as rw
 from matplotlib import pyplot as plt
 import networkx as nx
-import sys
 from copy import deepcopy
-from build_cdg import CDG,SID,NODE_ATTR,W,H
+from build_cdg import CDG,SID,IS_CONTENT,IS_UNICAST,W,H
 
 
-file_name = "/mnt/c/git/nvcim-comm/behavior_model/scripts/cycle2"
+file_name = "/mnt/c/git/nvcim-comm/behavior_model/scripts/cycle_log"
 
 G = nx.MultiDiGraph()
 OCP = dict()
@@ -80,7 +81,7 @@ def DFS(G:nx.MultiDiGraph,start_edge,cur_edge,dep_chain:list,ocp:dict,f,last_dep
     dep_chain.append(cur_edge)
 
     # find A type dependency
-    if last_dep != "A":
+    if last_dep != "A" and not IS_UNICAST[cur_edge[0]]:
         if G.out_degree(cur_edge[0]) > 1:
             for e in G.out_edges(cur_edge[0]):
                 assert len(SID[cur_edge]) > 0, "error: current multicast edge has no stream id"
@@ -91,7 +92,7 @@ def DFS(G:nx.MultiDiGraph,start_edge,cur_edge,dep_chain:list,ocp:dict,f,last_dep
                         dep_chain.pop()
 
     # find V type dependency
-    if last_dep != "V" and NODE_ATTR[cur_edge[1]]:
+    if last_dep != "V" and IS_CONTENT[cur_edge[1]]:
         if G.in_degree(cur_edge[1]) > 1:
             if ocp[cur_edge[1]] == False: # not occupied
                 for e in G.in_edges(cur_edge[1]):
@@ -117,7 +118,7 @@ def DFS(G:nx.MultiDiGraph,start_edge,cur_edge,dep_chain:list,ocp:dict,f,last_dep
 
 def search(G:nx.MultiDiGraph,ocp:dict,f):
     for n in G.nodes():
-        if G.in_degree(n) > 1 and NODE_ATTR[n]: # contention node
+        if G.in_degree(n) > 1 and IS_CONTENT[n]: # contention node
             for de in G.in_edges(n):
                 for se in G.in_edges(n):
                     ocp[n] = se
@@ -127,7 +128,6 @@ def search(G:nx.MultiDiGraph,ocp:dict,f):
                     ocp[n] = False
 
 if __name__ == "__main__":
-
     for n in CDG.nodes():
         OCP[n] = False
 
@@ -135,6 +135,11 @@ if __name__ == "__main__":
         search(CDG,OCP,f)
         # OCP['3_1_cw_o'] = ('3_1_ce_i', '3_1_cw_o')
         # DFS(CDG,('3_1_ce_i', '3_1_cw_o'), ('3_1_cl_i', '3_1_cw_o'),[('3_1_ce_i', '3_1_cw_o'), ('3_1_cl_i', '3_1_cw_o')],OCP,f,last_dep="V")
+    print(f"self-defined algorithm find {len(CYCLES)} cycle(s)")
+    if rw.find_cycle(CDG):
+        print(f"graph-loop algorithm find cycle(s)")
+    else:
+        print(f"graph-loop algorithm find no cycle")
 
     # find critical nodes begin
     # critical_nodes = []
