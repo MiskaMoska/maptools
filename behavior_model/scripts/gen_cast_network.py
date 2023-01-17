@@ -104,11 +104,12 @@ def gen_instances(data_width,w,h):
             router_txt = '''
 /*Router '''+str(j)+''','''+str(i)+'''*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_'''+str(j)+'''_'''+str(i)+'''),
     .isFC_list               (isFC_list_'''+str(j)+'''_'''+str(i)+'''),
     .FCdn_list               (FCdn_list_'''+str(j)+'''_'''+str(i)+'''),
     .FCpl_list               (FCpl_list_'''+str(j)+'''_'''+str(i)+'''),
     .rt_file_list            (rt_file_list_'''+str(j)+'''_'''+str(i)+''')
-)router'''+str(id)+'''(
+)router_'''+str(j)+'''_'''+str(i)+'''(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           ('''+west_in_data+'''),

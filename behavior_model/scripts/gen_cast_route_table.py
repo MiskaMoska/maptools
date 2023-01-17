@@ -5,7 +5,7 @@ Run this script under ./behavior_model/scripts
 import os
 from cast_path_config import *
 
-file_dir = '/mnt/c/git/NVCIM-COMM/behavior_model/test_dual_multicast/config/'
+file_dir = '/mnt/c/git/NVCIM-COMM/behavior_model/test_virtual_vgg16/config/'
 file_name = 'cast_rt_'
 
 def dec2bin(dec_num, bit_wide=16):    

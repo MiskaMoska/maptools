@@ -330,11 +330,12 @@ wire                ready_55_to_48_v0,	ready_55_to_48_v1;
 
 /*Router 0,0*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_0_0),
     .isFC_list               (isFC_list_0_0),
     .FCdn_list               (FCdn_list_0_0),
     .FCpl_list               (FCpl_list_0_0),
     .rt_file_list            (rt_file_list_0_0)
-)router0(
+)router_0_0(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_i_stab),
@@ -372,11 +373,12 @@ cast_router #(
 
 /*Router 0,1*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_0_1),
     .isFC_list               (isFC_list_0_1),
     .FCdn_list               (FCdn_list_0_1),
     .FCpl_list               (FCpl_list_0_1),
     .rt_file_list            (rt_file_list_0_1)
-)router7(
+)router_0_1(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (16'b0),
@@ -414,11 +416,12 @@ cast_router #(
 
 /*Router 0,2*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_0_2),
     .isFC_list               (isFC_list_0_2),
     .FCdn_list               (FCdn_list_0_2),
     .FCpl_list               (FCpl_list_0_2),
     .rt_file_list            (rt_file_list_0_2)
-)router14(
+)router_0_2(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (16'b0),
@@ -456,11 +459,12 @@ cast_router #(
 
 /*Router 0,3*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_0_3),
     .isFC_list               (isFC_list_0_3),
     .FCdn_list               (FCdn_list_0_3),
     .FCpl_list               (FCpl_list_0_3),
     .rt_file_list            (rt_file_list_0_3)
-)router21(
+)router_0_3(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (16'b0),
@@ -498,11 +502,12 @@ cast_router #(
 
 /*Router 0,4*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_0_4),
     .isFC_list               (isFC_list_0_4),
     .FCdn_list               (FCdn_list_0_4),
     .FCpl_list               (FCpl_list_0_4),
     .rt_file_list            (rt_file_list_0_4)
-)router28(
+)router_0_4(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (16'b0),
@@ -540,11 +545,12 @@ cast_router #(
 
 /*Router 0,5*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_0_5),
     .isFC_list               (isFC_list_0_5),
     .FCdn_list               (FCdn_list_0_5),
     .FCpl_list               (FCpl_list_0_5),
     .rt_file_list            (rt_file_list_0_5)
-)router35(
+)router_0_5(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (16'b0),
@@ -582,11 +588,12 @@ cast_router #(
 
 /*Router 0,6*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_0_6),
     .isFC_list               (isFC_list_0_6),
     .FCdn_list               (FCdn_list_0_6),
     .FCpl_list               (FCpl_list_0_6),
     .rt_file_list            (rt_file_list_0_6)
-)router42(
+)router_0_6(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (16'b0),
@@ -624,11 +631,12 @@ cast_router #(
 
 /*Router 0,7*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_0_7),
     .isFC_list               (isFC_list_0_7),
     .FCdn_list               (FCdn_list_0_7),
     .FCpl_list               (FCpl_list_0_7),
     .rt_file_list            (rt_file_list_0_7)
-)router49(
+)router_0_7(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (16'b0),
@@ -666,11 +674,12 @@ cast_router #(
 
 /*Router 1,0*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_1_0),
     .isFC_list               (isFC_list_1_0),
     .FCdn_list               (FCdn_list_1_0),
     .FCpl_list               (FCpl_list_1_0),
     .rt_file_list            (rt_file_list_1_0)
-)router1(
+)router_1_0(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_0_to_1),
@@ -708,11 +717,12 @@ cast_router #(
 
 /*Router 1,1*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_1_1),
     .isFC_list               (isFC_list_1_1),
     .FCdn_list               (FCdn_list_1_1),
     .FCpl_list               (FCpl_list_1_1),
     .rt_file_list            (rt_file_list_1_1)
-)router8(
+)router_1_1(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_7_to_8),
@@ -750,11 +760,12 @@ cast_router #(
 
 /*Router 1,2*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_1_2),
     .isFC_list               (isFC_list_1_2),
     .FCdn_list               (FCdn_list_1_2),
     .FCpl_list               (FCpl_list_1_2),
     .rt_file_list            (rt_file_list_1_2)
-)router15(
+)router_1_2(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_14_to_15),
@@ -792,11 +803,12 @@ cast_router #(
 
 /*Router 1,3*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_1_3),
     .isFC_list               (isFC_list_1_3),
     .FCdn_list               (FCdn_list_1_3),
     .FCpl_list               (FCpl_list_1_3),
     .rt_file_list            (rt_file_list_1_3)
-)router22(
+)router_1_3(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_21_to_22),
@@ -834,11 +846,12 @@ cast_router #(
 
 /*Router 1,4*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_1_4),
     .isFC_list               (isFC_list_1_4),
     .FCdn_list               (FCdn_list_1_4),
     .FCpl_list               (FCpl_list_1_4),
     .rt_file_list            (rt_file_list_1_4)
-)router29(
+)router_1_4(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_28_to_29),
@@ -876,11 +889,12 @@ cast_router #(
 
 /*Router 1,5*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_1_5),
     .isFC_list               (isFC_list_1_5),
     .FCdn_list               (FCdn_list_1_5),
     .FCpl_list               (FCpl_list_1_5),
     .rt_file_list            (rt_file_list_1_5)
-)router36(
+)router_1_5(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_35_to_36),
@@ -918,11 +932,12 @@ cast_router #(
 
 /*Router 1,6*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_1_6),
     .isFC_list               (isFC_list_1_6),
     .FCdn_list               (FCdn_list_1_6),
     .FCpl_list               (FCpl_list_1_6),
     .rt_file_list            (rt_file_list_1_6)
-)router43(
+)router_1_6(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_42_to_43),
@@ -960,11 +975,12 @@ cast_router #(
 
 /*Router 1,7*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_1_7),
     .isFC_list               (isFC_list_1_7),
     .FCdn_list               (FCdn_list_1_7),
     .FCpl_list               (FCpl_list_1_7),
     .rt_file_list            (rt_file_list_1_7)
-)router50(
+)router_1_7(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_49_to_50),
@@ -1002,11 +1018,12 @@ cast_router #(
 
 /*Router 2,0*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_2_0),
     .isFC_list               (isFC_list_2_0),
     .FCdn_list               (FCdn_list_2_0),
     .FCpl_list               (FCpl_list_2_0),
     .rt_file_list            (rt_file_list_2_0)
-)router2(
+)router_2_0(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_1_to_2),
@@ -1044,11 +1061,12 @@ cast_router #(
 
 /*Router 2,1*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_2_1),
     .isFC_list               (isFC_list_2_1),
     .FCdn_list               (FCdn_list_2_1),
     .FCpl_list               (FCpl_list_2_1),
     .rt_file_list            (rt_file_list_2_1)
-)router9(
+)router_2_1(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_8_to_9),
@@ -1086,11 +1104,12 @@ cast_router #(
 
 /*Router 2,2*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_2_2),
     .isFC_list               (isFC_list_2_2),
     .FCdn_list               (FCdn_list_2_2),
     .FCpl_list               (FCpl_list_2_2),
     .rt_file_list            (rt_file_list_2_2)
-)router16(
+)router_2_2(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_15_to_16),
@@ -1128,11 +1147,12 @@ cast_router #(
 
 /*Router 2,3*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_2_3),
     .isFC_list               (isFC_list_2_3),
     .FCdn_list               (FCdn_list_2_3),
     .FCpl_list               (FCpl_list_2_3),
     .rt_file_list            (rt_file_list_2_3)
-)router23(
+)router_2_3(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_22_to_23),
@@ -1170,11 +1190,12 @@ cast_router #(
 
 /*Router 2,4*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_2_4),
     .isFC_list               (isFC_list_2_4),
     .FCdn_list               (FCdn_list_2_4),
     .FCpl_list               (FCpl_list_2_4),
     .rt_file_list            (rt_file_list_2_4)
-)router30(
+)router_2_4(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_29_to_30),
@@ -1212,11 +1233,12 @@ cast_router #(
 
 /*Router 2,5*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_2_5),
     .isFC_list               (isFC_list_2_5),
     .FCdn_list               (FCdn_list_2_5),
     .FCpl_list               (FCpl_list_2_5),
     .rt_file_list            (rt_file_list_2_5)
-)router37(
+)router_2_5(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_36_to_37),
@@ -1254,11 +1276,12 @@ cast_router #(
 
 /*Router 2,6*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_2_6),
     .isFC_list               (isFC_list_2_6),
     .FCdn_list               (FCdn_list_2_6),
     .FCpl_list               (FCpl_list_2_6),
     .rt_file_list            (rt_file_list_2_6)
-)router44(
+)router_2_6(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_43_to_44),
@@ -1296,11 +1319,12 @@ cast_router #(
 
 /*Router 2,7*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_2_7),
     .isFC_list               (isFC_list_2_7),
     .FCdn_list               (FCdn_list_2_7),
     .FCpl_list               (FCpl_list_2_7),
     .rt_file_list            (rt_file_list_2_7)
-)router51(
+)router_2_7(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_50_to_51),
@@ -1338,11 +1362,12 @@ cast_router #(
 
 /*Router 3,0*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_3_0),
     .isFC_list               (isFC_list_3_0),
     .FCdn_list               (FCdn_list_3_0),
     .FCpl_list               (FCpl_list_3_0),
     .rt_file_list            (rt_file_list_3_0)
-)router3(
+)router_3_0(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_2_to_3),
@@ -1380,11 +1405,12 @@ cast_router #(
 
 /*Router 3,1*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_3_1),
     .isFC_list               (isFC_list_3_1),
     .FCdn_list               (FCdn_list_3_1),
     .FCpl_list               (FCpl_list_3_1),
     .rt_file_list            (rt_file_list_3_1)
-)router10(
+)router_3_1(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_9_to_10),
@@ -1422,11 +1448,12 @@ cast_router #(
 
 /*Router 3,2*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_3_2),
     .isFC_list               (isFC_list_3_2),
     .FCdn_list               (FCdn_list_3_2),
     .FCpl_list               (FCpl_list_3_2),
     .rt_file_list            (rt_file_list_3_2)
-)router17(
+)router_3_2(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_16_to_17),
@@ -1464,11 +1491,12 @@ cast_router #(
 
 /*Router 3,3*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_3_3),
     .isFC_list               (isFC_list_3_3),
     .FCdn_list               (FCdn_list_3_3),
     .FCpl_list               (FCpl_list_3_3),
     .rt_file_list            (rt_file_list_3_3)
-)router24(
+)router_3_3(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_23_to_24),
@@ -1506,11 +1534,12 @@ cast_router #(
 
 /*Router 3,4*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_3_4),
     .isFC_list               (isFC_list_3_4),
     .FCdn_list               (FCdn_list_3_4),
     .FCpl_list               (FCpl_list_3_4),
     .rt_file_list            (rt_file_list_3_4)
-)router31(
+)router_3_4(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_30_to_31),
@@ -1548,11 +1577,12 @@ cast_router #(
 
 /*Router 3,5*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_3_5),
     .isFC_list               (isFC_list_3_5),
     .FCdn_list               (FCdn_list_3_5),
     .FCpl_list               (FCpl_list_3_5),
     .rt_file_list            (rt_file_list_3_5)
-)router38(
+)router_3_5(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_37_to_38),
@@ -1590,11 +1620,12 @@ cast_router #(
 
 /*Router 3,6*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_3_6),
     .isFC_list               (isFC_list_3_6),
     .FCdn_list               (FCdn_list_3_6),
     .FCpl_list               (FCpl_list_3_6),
     .rt_file_list            (rt_file_list_3_6)
-)router45(
+)router_3_6(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_44_to_45),
@@ -1632,11 +1663,12 @@ cast_router #(
 
 /*Router 3,7*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_3_7),
     .isFC_list               (isFC_list_3_7),
     .FCdn_list               (FCdn_list_3_7),
     .FCpl_list               (FCpl_list_3_7),
     .rt_file_list            (rt_file_list_3_7)
-)router52(
+)router_3_7(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_51_to_52),
@@ -1674,11 +1706,12 @@ cast_router #(
 
 /*Router 4,0*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_4_0),
     .isFC_list               (isFC_list_4_0),
     .FCdn_list               (FCdn_list_4_0),
     .FCpl_list               (FCpl_list_4_0),
     .rt_file_list            (rt_file_list_4_0)
-)router4(
+)router_4_0(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_3_to_4),
@@ -1716,11 +1749,12 @@ cast_router #(
 
 /*Router 4,1*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_4_1),
     .isFC_list               (isFC_list_4_1),
     .FCdn_list               (FCdn_list_4_1),
     .FCpl_list               (FCpl_list_4_1),
     .rt_file_list            (rt_file_list_4_1)
-)router11(
+)router_4_1(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_10_to_11),
@@ -1758,11 +1792,12 @@ cast_router #(
 
 /*Router 4,2*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_4_2),
     .isFC_list               (isFC_list_4_2),
     .FCdn_list               (FCdn_list_4_2),
     .FCpl_list               (FCpl_list_4_2),
     .rt_file_list            (rt_file_list_4_2)
-)router18(
+)router_4_2(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_17_to_18),
@@ -1800,11 +1835,12 @@ cast_router #(
 
 /*Router 4,3*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_4_3),
     .isFC_list               (isFC_list_4_3),
     .FCdn_list               (FCdn_list_4_3),
     .FCpl_list               (FCpl_list_4_3),
     .rt_file_list            (rt_file_list_4_3)
-)router25(
+)router_4_3(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_24_to_25),
@@ -1842,11 +1878,12 @@ cast_router #(
 
 /*Router 4,4*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_4_4),
     .isFC_list               (isFC_list_4_4),
     .FCdn_list               (FCdn_list_4_4),
     .FCpl_list               (FCpl_list_4_4),
     .rt_file_list            (rt_file_list_4_4)
-)router32(
+)router_4_4(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_31_to_32),
@@ -1884,11 +1921,12 @@ cast_router #(
 
 /*Router 4,5*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_4_5),
     .isFC_list               (isFC_list_4_5),
     .FCdn_list               (FCdn_list_4_5),
     .FCpl_list               (FCpl_list_4_5),
     .rt_file_list            (rt_file_list_4_5)
-)router39(
+)router_4_5(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_38_to_39),
@@ -1926,11 +1964,12 @@ cast_router #(
 
 /*Router 4,6*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_4_6),
     .isFC_list               (isFC_list_4_6),
     .FCdn_list               (FCdn_list_4_6),
     .FCpl_list               (FCpl_list_4_6),
     .rt_file_list            (rt_file_list_4_6)
-)router46(
+)router_4_6(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_45_to_46),
@@ -1968,11 +2007,12 @@ cast_router #(
 
 /*Router 4,7*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_4_7),
     .isFC_list               (isFC_list_4_7),
     .FCdn_list               (FCdn_list_4_7),
     .FCpl_list               (FCpl_list_4_7),
     .rt_file_list            (rt_file_list_4_7)
-)router53(
+)router_4_7(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_52_to_53),
@@ -2010,11 +2050,12 @@ cast_router #(
 
 /*Router 5,0*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_5_0),
     .isFC_list               (isFC_list_5_0),
     .FCdn_list               (FCdn_list_5_0),
     .FCpl_list               (FCpl_list_5_0),
     .rt_file_list            (rt_file_list_5_0)
-)router5(
+)router_5_0(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_4_to_5),
@@ -2052,11 +2093,12 @@ cast_router #(
 
 /*Router 5,1*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_5_1),
     .isFC_list               (isFC_list_5_1),
     .FCdn_list               (FCdn_list_5_1),
     .FCpl_list               (FCpl_list_5_1),
     .rt_file_list            (rt_file_list_5_1)
-)router12(
+)router_5_1(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_11_to_12),
@@ -2094,11 +2136,12 @@ cast_router #(
 
 /*Router 5,2*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_5_2),
     .isFC_list               (isFC_list_5_2),
     .FCdn_list               (FCdn_list_5_2),
     .FCpl_list               (FCpl_list_5_2),
     .rt_file_list            (rt_file_list_5_2)
-)router19(
+)router_5_2(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_18_to_19),
@@ -2136,11 +2179,12 @@ cast_router #(
 
 /*Router 5,3*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_5_3),
     .isFC_list               (isFC_list_5_3),
     .FCdn_list               (FCdn_list_5_3),
     .FCpl_list               (FCpl_list_5_3),
     .rt_file_list            (rt_file_list_5_3)
-)router26(
+)router_5_3(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_25_to_26),
@@ -2178,11 +2222,12 @@ cast_router #(
 
 /*Router 5,4*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_5_4),
     .isFC_list               (isFC_list_5_4),
     .FCdn_list               (FCdn_list_5_4),
     .FCpl_list               (FCpl_list_5_4),
     .rt_file_list            (rt_file_list_5_4)
-)router33(
+)router_5_4(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_32_to_33),
@@ -2220,11 +2265,12 @@ cast_router #(
 
 /*Router 5,5*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_5_5),
     .isFC_list               (isFC_list_5_5),
     .FCdn_list               (FCdn_list_5_5),
     .FCpl_list               (FCpl_list_5_5),
     .rt_file_list            (rt_file_list_5_5)
-)router40(
+)router_5_5(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_39_to_40),
@@ -2262,11 +2308,12 @@ cast_router #(
 
 /*Router 5,6*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_5_6),
     .isFC_list               (isFC_list_5_6),
     .FCdn_list               (FCdn_list_5_6),
     .FCpl_list               (FCpl_list_5_6),
     .rt_file_list            (rt_file_list_5_6)
-)router47(
+)router_5_6(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_46_to_47),
@@ -2304,11 +2351,12 @@ cast_router #(
 
 /*Router 5,7*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_5_7),
     .isFC_list               (isFC_list_5_7),
     .FCdn_list               (FCdn_list_5_7),
     .FCpl_list               (FCpl_list_5_7),
     .rt_file_list            (rt_file_list_5_7)
-)router54(
+)router_5_7(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_53_to_54),
@@ -2346,11 +2394,12 @@ cast_router #(
 
 /*Router 6,0*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_6_0),
     .isFC_list               (isFC_list_6_0),
     .FCdn_list               (FCdn_list_6_0),
     .FCpl_list               (FCpl_list_6_0),
     .rt_file_list            (rt_file_list_6_0)
-)router6(
+)router_6_0(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_5_to_6),
@@ -2388,11 +2437,12 @@ cast_router #(
 
 /*Router 6,1*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_6_1),
     .isFC_list               (isFC_list_6_1),
     .FCdn_list               (FCdn_list_6_1),
     .FCpl_list               (FCpl_list_6_1),
     .rt_file_list            (rt_file_list_6_1)
-)router13(
+)router_6_1(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_12_to_13),
@@ -2430,11 +2480,12 @@ cast_router #(
 
 /*Router 6,2*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_6_2),
     .isFC_list               (isFC_list_6_2),
     .FCdn_list               (FCdn_list_6_2),
     .FCpl_list               (FCpl_list_6_2),
     .rt_file_list            (rt_file_list_6_2)
-)router20(
+)router_6_2(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_19_to_20),
@@ -2472,11 +2523,12 @@ cast_router #(
 
 /*Router 6,3*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_6_3),
     .isFC_list               (isFC_list_6_3),
     .FCdn_list               (FCdn_list_6_3),
     .FCpl_list               (FCpl_list_6_3),
     .rt_file_list            (rt_file_list_6_3)
-)router27(
+)router_6_3(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_26_to_27),
@@ -2514,11 +2566,12 @@ cast_router #(
 
 /*Router 6,4*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_6_4),
     .isFC_list               (isFC_list_6_4),
     .FCdn_list               (FCdn_list_6_4),
     .FCpl_list               (FCpl_list_6_4),
     .rt_file_list            (rt_file_list_6_4)
-)router34(
+)router_6_4(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_33_to_34),
@@ -2556,11 +2609,12 @@ cast_router #(
 
 /*Router 6,5*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_6_5),
     .isFC_list               (isFC_list_6_5),
     .FCdn_list               (FCdn_list_6_5),
     .FCpl_list               (FCpl_list_6_5),
     .rt_file_list            (rt_file_list_6_5)
-)router41(
+)router_6_5(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_40_to_41),
@@ -2598,11 +2652,12 @@ cast_router #(
 
 /*Router 6,6*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_6_6),
     .isFC_list               (isFC_list_6_6),
     .FCdn_list               (FCdn_list_6_6),
     .FCpl_list               (FCpl_list_6_6),
     .rt_file_list            (rt_file_list_6_6)
-)router48(
+)router_6_6(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_47_to_48),
@@ -2640,11 +2695,12 @@ cast_router #(
 
 /*Router 6,7*/    
 cast_router #(
+    .isUBM_list              (isUBM_list_6_7),
     .isFC_list               (isFC_list_6_7),
     .FCdn_list               (FCdn_list_6_7),
     .FCpl_list               (FCpl_list_6_7),
     .rt_file_list            (rt_file_list_6_7)
-)router55(
+)router_6_7(
     .clk                   (clk),
     .rstn                  (rstn),
     .west_data_i           (data_54_to_55),

@@ -10,9 +10,11 @@
 ../srcs/mux_data_valid_5to1.sv
 ../srcs/mux_ready_5to1.sv
 ../srcs/SyncFIFO_RTL.sv
+../srcs/SyncFIFO_RTL_UBM.sv
 ../srcs/merge_router.sv
 ../srcs/cast_converter.sv
 
+./SyncFIFO_RTL_CNT.sv
 ./cast_network.sv
 ./merge_network.sv
 ./system.sv

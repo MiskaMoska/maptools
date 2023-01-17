@@ -5,19 +5,28 @@ module top_tb;
 
 reg clk;
 reg rstn;
-reg [9:0] addr;
+reg [12:0] addr;
 
 integer file0,file1;
-(* ramstyle = "AUTO" *) reg [`DW-1 : 0] packets [0:999];
+(* ramstyle = "AUTO" *) reg [`DW-1 : 0] packets [0:2999];
 wire [`DW-1:0] data_i_stab;
 wire valid_i_stab, ready_o_stab;
-assign valid_i_stab = rstn;
+assign valid_i_stab = rstn & (addr < 2992);
 
 wire [`DW-1:0] data_o_flee0, data_o_flee1;
 wire valid_o_flee0, valid_o_flee1;
 wire ready_i_flee0, ready_i_flee1;
 
-assign ready_i_flee0 = rstn;
+reg [31:0] push;
+always@(posedge clk or negedge rstn) begin
+    if(~rstn) push <= 0;
+    else begin
+        if(push == 15) push <= 0;
+        else push <= push + 1;
+    end
+end
+
+assign ready_i_flee0 = rstn & (push > 10);
 assign ready_i_flee1 = rstn;
 
 always@(posedge clk) begin
@@ -36,8 +45,8 @@ initial begin
     # 33 rstn = 0;
     # 71 rstn = 1;
     // #10000 $stop;
-    wait(addr == 992);
-    # 50000
+    wait(addr == 2992);
+    # 500000
     $fclose(file0);
     $fclose(file1);
     $stop;

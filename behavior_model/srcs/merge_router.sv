@@ -43,17 +43,19 @@ module merge_router #(
 // /** float_point adder end**/
 
 /** fixed_point adder begin**/
-reg [`DW-1:0] sum;
+wire sum_flit;
+reg [`DW-3:0] sum;
+assign sum_flit = {`BODY,sum};
 always@(data_i) begin
     sum = 0;
     for(int i=0; i<5; i++) begin
-        if(input_mask[i]) sum = sum + data_i[i];
+        if(input_mask[i]) sum = sum + data_i[i][`DW-3:0];
     end
 end
 
-always@(sum) begin
+always@(sum_flit) begin
     for(int i=0; i<5; i++) begin
-        if(output_sel[i]) data_o[i] = sum;
+        if(output_sel[i]) data_o[i] = sum_flit;
         else data_o[i] = 0;
     end
 end

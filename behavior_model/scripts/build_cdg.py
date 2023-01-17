@@ -5,7 +5,8 @@ from merge_path_config import Paths as merge_paths
 # user defined begin
 W = 7
 H = 8
-unicast_nodes = ['3_1_cl_i','3_1_ce_i']
+# unicast_nodes = ['3_1_cl_i','3_1_ce_i']
+unicast_nodes = []
 # user defined end
 
 def translate(chan_num:int,mode:str):

@@ -74,6 +74,24 @@ wire    [`DW-1:0]   data_from_vc5,data_to_vc5;
 wire    [4:0]       valid_from,valid_to,ready_from,ready_to;
 wire    [4:0]       outVCAvailable,VCgranted,outVCAvailableReset;
 
+reg [31:0] local_cnt,west_cnt,east_cnt,vert0_cnt,vert1_cnt; // counts how many flits have been fired from each input port
+always@(posedge clk or negedge rstn) begin
+    if(~rstn) begin
+        local_cnt <= 0; 
+        west_cnt <= 0; 
+        east_cnt <= 0; 
+        vert0_cnt <= 0; 
+        vert1_cnt <= 0; 
+    end
+    else begin
+        if(local_valid_i & local_ready_o) local_cnt <= local_cnt + 1'b1;
+        if(west_valid_i & west_ready_o) west_cnt <= west_cnt + 1'b1;
+        if(east_valid_i & east_ready_o) east_cnt <= east_cnt + 1'b1;
+        if(vert0_valid_i & vert0_ready_o) vert0_cnt <= vert0_cnt + 1'b1;
+        if(vert1_valid_i & vert1_ready_o) vert1_cnt <= vert1_cnt + 1'b1;
+    end
+end
+
 cast_input_stage #(
     .isUBM                    (isUBM_list[1]),
     .isFC                     (isFC_list[1]), 
