@@ -136,7 +136,7 @@ if __name__ == "__main__":
         # OCP['3_1_cw_o'] = ('3_1_ce_i', '3_1_cw_o')
         # DFS(CDG,('3_1_ce_i', '3_1_cw_o'), ('3_1_cl_i', '3_1_cw_o'),[('3_1_ce_i', '3_1_cw_o'), ('3_1_cl_i', '3_1_cw_o')],OCP,f,last_dep="V")
     print(f"self-defined algorithm find {len(CYCLES)} cycle(s)")
-    if rw.find_cycle(CDG):
+    if rw.find_cycle(CDG) != False:
         print(f"graph-loop algorithm find cycle(s)")
     else:
         print(f"graph-loop algorithm find no cycle")

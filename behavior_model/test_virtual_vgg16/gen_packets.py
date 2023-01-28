@@ -4,7 +4,7 @@ driver_file_name = "send_pool"
 
 DATA_WIDTH = 16
 PACKET_LEN = 16
-TOTAL_LEN = 3000
+TOTAL_LEN = 10000
 SID_WIDTH = 10 # stream ID data width
 
 def dec2bin(dec_num, bit_wide=16):    

@@ -5,13 +5,13 @@ module top_tb;
 
 reg clk;
 reg rstn;
-reg [12:0] addr;
+reg [31:0] addr;
 
 integer file0,file1;
-(* ramstyle = "AUTO" *) reg [`DW-1 : 0] packets [0:2999];
+(* ramstyle = "AUTO" *) reg [`DW-1 : 0] packets [0:10000];
 wire [`DW-1:0] data_i_stab;
 wire valid_i_stab, ready_o_stab;
-assign valid_i_stab = rstn & (addr < 2992);
+assign valid_i_stab = rstn & (addr < 10000);
 
 wire [`DW-1:0] data_o_flee0, data_o_flee1;
 wire valid_o_flee0, valid_o_flee1;
@@ -26,15 +26,16 @@ always@(posedge clk or negedge rstn) begin
     end
 end
 
-assign ready_i_flee0 = rstn & (push > 10);
+assign ready_i_flee0 = rstn & (push > 14);
 assign ready_i_flee1 = rstn;
 
 always@(posedge clk) begin
     $display("rom_addr@driver: %f",addr);
 end
 
+real t;
+
 initial begin
-    $display("fuck you~~~~~~~~~~~~~");
     $fsdbDumpfile("wave.fsdb");
     $fsdbDumpvars(0,dut);
     $fsdbDumpMDA(); //show array values 
@@ -45,10 +46,12 @@ initial begin
     # 33 rstn = 0;
     # 71 rstn = 1;
     // #10000 $stop;
-    wait(addr == 2992);
+    wait(addr == 10000);
+    t = $realtime;
     # 500000
     $fclose(file0);
     $fclose(file1);
+    $display("elapsed sending time: %f",t);
     $stop;
 end
 

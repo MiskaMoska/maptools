@@ -6,8 +6,8 @@
 `define         NOC_WIDTH                       7
 `define         NOC_HEIGHT                      8
 
-`define         BUFFER_ALLOC                    128
-`define         BUFFER_ALLOC_LOG                7
+`define         BUFFER_ALLOC                    32
+`define         BUFFER_ALLOC_LOG                5
 
 `define         ROUTE_TABLE_DEPTH               16
 `define         CAST_ROUTER_BUFFER_DEPTH_LOG    4
