@@ -9,8 +9,11 @@ The procedure of mapping contains 6 steps:
 5. Cast Routing Plan
 6. Merge Routing Plan
 ------------------------------------------
+TODO only for series structure, need to provide support for ResNet structure
+TODO need to provide support for random region division
 '''
 import random
+import networkx as nx
 
 # PE array width
 PE_Array_Width = 7
@@ -95,7 +98,7 @@ def Cast_Targets_Placement(model_regions:list)->list:
             temp2 = []
             j = 0
             for region2 in model_regions[layer+1]:
-                assert len(region2) % src_node_num == 0, "regions illegal divided"
+                assert len(region2) % src_node_num == 0, "regions illegally divided"
                 unit = len(region2) // src_node_num
                 for k in range(unit):
                     idx = indices[j][i * unit + k]
@@ -106,6 +109,132 @@ def Cast_Targets_Placement(model_regions:list)->list:
         cast_targets.append(temp1)
     return cast_targets
 
+def Route_DyXY(w,h,sx,sy,dx,dy,path:list,region=None)->list:
+    if sx == dx and sy == dy:
+        return
+    if sx != dx and sy != dy:
+        randbit = True if random.random() > 0.5 else False
+        if randbit:
+            nxt_sx = sx
+            nxt_sy = sy + (1 if sy < dy else -1)
+        else:
+            nxt_sy = sy
+            nxt_sx = sx + (1 if sx < dx else -1)
+    else:
+        if sx == dx:
+            nxt_sx = sx
+            nxt_sy = sy + (1 if sy < dy else -1)
+        elif sy == dy:
+            nxt_sy = sy
+            nxt_sx = sx + (1 if sx < dx else -1)
+
+    # if constrained routing region considered
+    if region:
+        if (nxt_sx + nxt_sy * w) not in region:
+            if sy == nxt_sy:
+                nxt_sx = sx
+                nxt_sy = sy + (1 if sy < dy else -1)
+            elif sx == nxt_sx:
+                nxt_sy = sy
+                nxt_sx = sx + (1 if sx < dx else -1)
+        assert (nxt_sx + nxt_sy * w) in region, "critical error ecountered at merge path"
+    path.append(((sx,sy),(nxt_sx,nxt_sy)))
+    Route_DyXY(w,h,nxt_sx,nxt_sy,dx,dy,path,region=region)
+
+def Get_Channel_From_Edge(bias_pos:tuple,now_pos:tuple,root_pos:tuple):
+    if bias_pos[0] < now_pos[0]: # west
+        return 1
+    if bias_pos[0] > now_pos[0]: # east
+        return 2
+    if now_pos[0] < root_pos[0]: # vert0
+        return 3
+    return 4 # vert1
+
+def Cast_Routing_Plan(w,h,merge_nodes,cast_targets):
+    path_dict = dict() # create the cast dict
+    for x in range(w):
+        for y in range(h):
+            path_dict[(x,y)] = []
+    sid = 0
+    for layer in range(len(merge_nodes)-1):
+        src_nodes = merge_nodes[layer]
+        for i in range(len(src_nodes)):
+            sid += 1
+            src_node = src_nodes[i]
+            src_node_pos = (src_node % w, src_node // w)
+            dst_nodes = cast_targets[layer][i]
+
+            # keep generating the multicast tree until it is valid
+            # valid means every node in the multicast tree has no more than 1 in_edge
+            while True:
+                # for each multicast tree
+                # create the simple cast graph where each node represents a cast router
+                g = nx.MultiDiGraph()
+
+                # complete the simple cast graph by the generated multicast tree
+                paths = []
+                for dst_node in dst_nodes:
+                    path = []
+                    Route_DyXY(w,h,src_node % w, src_node // w, dst_node % w, dst_node // w, path)
+                    paths.extend(path)
+                paths = list(set(paths))
+                g.add_edges_from(paths)
+
+                # verify the validity of the generated multicast tree
+                flag = True
+                for node in g.nodes():
+                    if g.in_degree(node) > 1:
+                        flag = False
+                        break
+                if flag:
+                    break
+
+            # complete the complex cast graph according to each multicast tree in the simple cast graph
+            for node in g.nodes():
+                if g.in_degree(node) > 0 and g.out_degree(node) > 0: # inter node
+                    src_pos = (list(g.in_edges(node)))[0][0]
+                    src_chan = Get_Channel_From_Edge(src_pos,node,src_node_pos)
+                    for de in g.out_edges(node):
+                        dst_pos = de[1]
+                        dst_chan = Get_Channel_From_Edge(dst_pos,node,src_node_pos)
+                        path_dict[node].append((src_chan,dst_chan,sid))
+    return path_dict
+
+def Merge_Routing_Plan(w,h,merge_nodes:list,model_regions:list):
+    merge_paths = []
+    for layer in range(len(merge_nodes)):
+        root_nodes = merge_nodes[layer]
+        for i in range(len(root_nodes)):
+            root_node = root_nodes[i]
+            region_nodes = model_regions[layer][i]
+
+            while True:
+                # for each merge tree
+                # create the simple merge graph where each node represents a merge router
+                g = nx.MultiDiGraph()
+
+                # complete the simple merge graph by the generated multicast tree
+                paths = []
+                for src_node in region_nodes:
+                    if src_node != root_node: # for non-root nodes
+                        path = []
+                        Route_DyXY(w,h,src_node % w, src_node // w, root_node % w, root_node // w, path, region=region_nodes)
+                        paths.extend(path)
+                paths = list(set(paths))
+                g.add_edges_from(paths)
+            
+                # verify the validity of the generated multicast tree
+                flag = True
+                for node in g.nodes():
+                    if g.out_degree(node) > 1:
+                        flag = False
+                        break
+                if flag:
+                    break
+
+            merge_paths.extend(paths)
+    return merge_paths
+
 
 
 if __name__ == "__main__":
@@ -113,11 +242,18 @@ if __name__ == "__main__":
     model_regions = Adjacent_Regions_Placement(PE_Array_Width,PE_Array_Height,projected_model,Model_PEs_I,Model_PEs_O)
     merge_nodes = Merge_Node_Selection(model_regions)
     cast_targets =  Cast_Targets_Placement(model_regions)
-
-    # generate cast communication pairs
-    for i in range(len(merge_nodes)-1):
-        nodes = merge_nodes[i]
-        for j in range(len(nodes)):
-            node = nodes[j]
-            targets = cast_targets[i][j]
-            print(f"{node}->{targets}")
+    cast_paths = Cast_Routing_Plan(PE_Array_Width,PE_Array_Height,merge_nodes,cast_targets)
+    print("\ncast_paths:")
+    for k,v in cast_paths.items():
+        print(k,v)
+    merge_paths = Merge_Routing_Plan(PE_Array_Width,PE_Array_Height,merge_nodes,model_regions)
+    print("\nmerge_paths:")
+    for i in merge_paths:
+        print(i)
+    # # generate cast communication pairs
+    # for i in range(len(merge_nodes)-1):
+    #     nodes = merge_nodes[i]
+    #     for j in range(len(nodes)):
+    #         node = nodes[j]
+    #         targets = cast_targets[i][j]
+    #         print(f"{node}->{targets}")
