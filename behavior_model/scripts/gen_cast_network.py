@@ -2,11 +2,11 @@
 Generate cast network system verilog file
 '''
 DATA_WIDTH = 16
-NETWORK_WIDTH = 7
-NETWORK_HEIGHT = 8
+NETWORK_WIDTH = 5
+NETWORK_HEIGHT = 11
 MODE = "stab" #"plain" no stab port; "stab" has stab port
 
-file_name = "/mnt/c/git/NVCIM-COMM/behavior_model/test_virtual_vgg16/cast_network.sv"
+file_name = "/mnt/c/git/NVCIM-COMM/behavior_model/test_no_contention/cast_network.sv"
 
 def gen_instances(data_width,w,h):
     data_width = str(data_width)

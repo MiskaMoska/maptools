@@ -1,10 +1,11 @@
 import networkx as nx
-from cast_path_config import PATH_DICT as cast_paths
-from merge_path_config import Paths as merge_paths
+# from cast_path_config import PATH_DICT as cast_paths
+# from merge_path_config import Paths as merge_paths
+from optimal_comm import cast_paths, merge_paths
 
 # user defined begin
-W = 7
-H = 8
+W = 5
+H = 11
 # unicast_nodes = ['3_1_cl_i','3_1_ce_i']
 unicast_nodes = []
 # user defined end
@@ -97,7 +98,7 @@ for path in merge_paths:
 # generate cast-merge joint edges
 for i in range(W):
     for j in range(H):
-        if CDG.out_degree(f"{i}_{j}_mrg") == 0 and CDG.in_degree(f"{i}_{j}_mrg") == 0: # is a island merge node
+        if CDG.out_degree(f"{i}_{j}_mrg") == 0 and CDG.in_degree(f"{i}_{j}_mrg") == 0: # is an island merge node
             pass
         elif CDG.out_degree(f"{i}_{j}_mrg") == 0: #the current node is a caster
             CDG.add_edge(f"{i}_{j}_cl_o",f"{i}_{j}_cl_i")

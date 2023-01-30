@@ -164,7 +164,7 @@ if __name__ == "__main__":
         G,pos,el = construct_cdg(cycle)
         nx.draw(G, pos, node_size = 20,width=1, arrowsize=10,node_color='black',edge_color='red',arrowstyle='-|>')
         nx.draw_networkx_edge_labels(G,pos,edge_labels=el,font_size=7,font_color='blue',bbox=dict(alpha=0))
-        plt.savefig(f'/mnt/c/git/nvcim-comm/behavior_model/cycle_img/img_'+str(cnt)+'jpg',
+        plt.savefig(f'/mnt/c/git/nvcim-comm/behavior_model/cycle_img/img_'+str(cnt),
             dpi=400,bbox_inches='tight')
         print(f"Finished saving {cnt} image")
         # plt.show()
