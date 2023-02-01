@@ -11,6 +11,7 @@ The procedure of mapping contains 6 steps:
 ------------------------------------------
 TODO only for series structure, need to provide support for ResNet structure
 TODO need to provide support for random region division
+#// TODO need to privide support for random merge node selection
 '''
 import random
 import networkx as nx
@@ -68,7 +69,7 @@ class Mapper(object):
 
     def Adjacent_Regions_Placement(self):
         '''
-        Cut the regions following ascending order of the model-indices of the PEs only
+        Divide the regions following ascending order of the model-indices of the PEs only
         '''
         # dependency check
         assert len(self.projected_model) > 0, "error when adjacent regions placing: projected model not provided"
@@ -82,15 +83,32 @@ class Mapper(object):
 
     def Merge_Node_Selection(self):
         '''
-        Select the last node of each region as the merge node
+        #// Select the last node of each region as the merge node
+        Select an arbitrate node in each region as the merge node, 
+        note that the y-axis coordinate of selected merge node must be the largest among all nodes in the current region
         '''
         # dependency check
         assert len(self.model_regions) > 0, "error when merge node selecting: model regions not provided"
         self.merge_nodes = []
+        # for regions in self.model_regions:
+        #     temp = []
+        #     for pes in regions:
+        #         temp.append(pes[-1])
+        #     self.merge_nodes.append(temp)
         for regions in self.model_regions:
             temp = []
-            for pes in regions:
-                temp.append(pes[-1])
+            for region in regions:
+                max_y_pos = 0
+                valid_region = []
+                for pe in region:
+                    y_pos = pe // self.w
+                    if y_pos > max_y_pos:
+                        max_y_pos = y_pos
+                        valid_region.clear()
+                    if y_pos == max_y_pos:
+                        valid_region.append(pe)
+                idx = random.randint(0,len(valid_region)-1)
+                temp.append(valid_region[idx])
             self.merge_nodes.append(temp)
 
     def Cast_Targets_Placement(self):
@@ -283,9 +301,25 @@ class Mapper(object):
         self.Cast_Routing_Plan()
         self.Merge_Routing_Plan()
 
+    def Get_Contention_Level(self):
+        '''
+        This method evaluates the contention level after mapping
+        '''
+        cnt = 0
+        for paths in self.cast_paths.values():
+            local_dict = dict()
+            for path in paths:
+                if path[1] not in local_dict.keys():
+                    local_dict[path[1]] = []
+                local_dict[path[1]].append(path[0])
+            for v in local_dict.values():
+                if len(v) > 1:
+                    cnt += 1
+        return cnt
+
 # only to test the function of the mapper
 if __name__ == "__main__":
-    maper = Mapper(7,8,[1,1,1,1,1,2,2,2,4,4,4,4,4],[1,1,1,1,1,1,1,2,2,2,2,2,2])
+    maper = Mapper(5,11,[1,1,1,1,1,2,2,2,4,4,4,4,4],[1,1,1,1,1,1,1,2,2,2,2,2,2])
     maper.Run_Mapping()
     print("\ncast_paths:")
     for k,v in maper.cast_paths.items():
