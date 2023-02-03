@@ -1,6 +1,5 @@
 import networkx as nx
 from copy import deepcopy
-from mapper import Mapper
 
 class DeadlockAnalyzer(object):
 
@@ -205,14 +204,15 @@ class DeadlockAnalyzer(object):
         if not self.log is None:
             self.f.flush()
             self.f.close()
+        
+        print(f"find {len(self.cloops)} complex loop(s)")
+        print(f"find {len(self.sloops)} simple loop(s)")
 
 
 if __name__ == "__main__":
+    from mapper import Mapper
     file_name = "/mnt/c/git/nvcim-comm/behavior_model/scripts/loop.log"
     maper = Mapper(5,11,[1,1,1,1,1,2,2,2,4,4,4,4,4],[1,1,1,1,1,1,1,2,2,2,2,2,2])
     maper.Run_Mapping()
     dla = DeadlockAnalyzer(5,11,maper.cast_paths,maper.merge_paths,log=None)
     dla.Run_Analyzing()
-
-    print(f"find {len(dla.cloops)} complex loop(s)")
-    print(f"find {len(dla.sloops)} simple loop(s)")
