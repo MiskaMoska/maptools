@@ -1,4 +1,4 @@
-//packing and upacking
+//packing and unpacking
 `include "params.svh"
 
 module cast_converter #(

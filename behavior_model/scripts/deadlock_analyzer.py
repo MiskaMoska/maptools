@@ -1,10 +1,13 @@
+import os
 import networkx as nx
+from matplotlib import pyplot as plt
 from copy import deepcopy
 
 class DeadlockAnalyzer(object):
 
     def __init__(self,w,h,cast_paths:dict,merge_paths:list,
-                    ubm_channels:list=[],log=None):
+                    ubm_channels:list=[],log=None,
+                    dir_name="/mnt/c/git/nvcim-comm/behavior_model/scripts"):
         self.w = w
         self.h = h
         self.cast_paths = cast_paths # generated from mapper
@@ -14,6 +17,7 @@ class DeadlockAnalyzer(object):
         self.cloops = [] # complex loops
         self.sloops = [] # simple loops
         self.log = log
+        self.dir_name = dir_name
 
     def __build_CDG(self):
         self.cdg = nx.MultiDiGraph()
@@ -143,7 +147,7 @@ class DeadlockAnalyzer(object):
             return
         dep_chain.append(cur_edge)
 
-        # find A type dependency
+        # find M type dependency
         if last_dep != "M" and not self.is_ubm[cur_edge[0]]:
             if self.cdg.out_degree(cur_edge[0]) > 1:
                 for e in self.cdg.out_edges(cur_edge[0]):
@@ -154,7 +158,7 @@ class DeadlockAnalyzer(object):
                             self.__DFS(start_edge,e,dep_chain,ocp,last_dep="M")
                             dep_chain.pop()
 
-        # find V type dependency
+        # find C type dependency
         if last_dep != "C" and self.is_ubm[cur_edge[1]]:
             if self.cdg.in_degree(cur_edge[1]) > 1:
                 if ocp[cur_edge[1]] == False: # not occupied
@@ -170,7 +174,7 @@ class DeadlockAnalyzer(object):
                     self.__DFS(start_edge,ocp[cur_edge[1]],dep_chain,ocp,last_dep="C")
                     dep_chain.pop()
 
-        # find H type dependency
+        # find S type dependency
         if self.cdg.out_degree(cur_edge[1]) > 0:
             for e in self.cdg.out_edges(cur_edge[1]):
                 dep_chain.append(e)
@@ -208,11 +212,54 @@ class DeadlockAnalyzer(object):
         print(f"find {len(self.cloops)} complex loop(s)")
         print(f"find {len(self.sloops)} simple loop(s)")
 
+    def __plot_routers(self):
+        for i in range(self.w):
+            for j in range(self.h):
+                plt.plot([0+i*5,0+i*5],[-0-j*5,-4-j*5],color='black',linewidth=1)
+                plt.plot([0+i*5,3+i*5],[-4-j*5,-4-j*5],color='black',linewidth=1)
+                plt.plot([3+i*5,4+i*5],[-4-j*5,-3-j*5],color='black',linewidth=1)
+                plt.plot([4+i*5,4+i*5],[-3-j*5,-0-j*5],color='black',linewidth=1)
+                plt.plot([4+i*5,0+i*5],[-0-j*5,-0-j*5],color='black',linewidth=1)
+
+    def __build_pcdg(self,loop):
+        legal_node = ['cw_i','cw_o','ce_i','ce_o','cv0_i','cv1_i','cv1_o','cv0_o','cl_i','cl_o','mrg']
+        legal_xpos = [0,0,4,4,1,2,2,1,3.33+0.5,2.67+0.5,4.5]
+        legal_ypos = [2,1,1,2,0,0,4,4,2.67+0.5,3.33+0.5,4.5]
+        pos = dict()
+        edge_label = dict()
+        pcdg=nx.MultiDiGraph()
+        for i in range(self.w):
+            for j in range(self.h):
+                for k in range(len(legal_node)):
+                    pcdg.add_node(f"{i}_{j}_"+legal_node[k])
+                    pos[f"{i}_{j}_"+legal_node[k]]=(legal_xpos[k]+5*i,-(legal_ypos[k]+5*j))
+
+        pcdg.add_edges_from(loop)
+        for i in range(len(loop)-1):
+            edge_label[loop[i]] = i
+        return pcdg,pos,edge_label
+
+    def Plot_CLoops(self):
+        os.chdir(self.dir_name)
+        os.system("rm -rf cloop_img")
+        os.system("mkdir cloop_img")
+        cnt = 0
+        for cl in self.cloops:
+            cnt += 1
+            plt.figure(figsize=(self.w,self.h))
+            self.__plot_routers()
+            pcdg,pos,el = self.__build_pcdg(cl)
+            nx.draw(pcdg, pos, node_size = 20,width=1, arrowsize=10,node_color='black',edge_color='red',arrowstyle='-|>')
+            nx.draw_networkx_edge_labels(pcdg,pos,edge_labels=el,font_size=7,font_color='blue',bbox=dict(alpha=0))
+            plt.savefig(self.dir_name + f'/cloop_img/img_'+str(cnt),
+                dpi=400,bbox_inches='tight')
+            print(f"Finished saving {cnt} image")
+
 
 if __name__ == "__main__":
     from mapper import Mapper
-    file_name = "/mnt/c/git/nvcim-comm/behavior_model/scripts/loop.log"
     maper = Mapper(5,11,[1,1,1,1,1,2,2,2,4,4,4,4,4],[1,1,1,1,1,1,1,2,2,2,2,2,2])
     maper.Run_Mapping()
     dla = DeadlockAnalyzer(5,11,maper.cast_paths,maper.merge_paths,log=None)
     dla.Run_Analyzing()
+    dla.Plot_CLoops()

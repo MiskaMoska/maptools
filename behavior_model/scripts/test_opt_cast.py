@@ -11,7 +11,6 @@ from mapplot import *
 if __name__ == "__main__":
     W = 7
     H = 8
-    file_name = "/mnt/c/git/nvcim-comm/behavior_model/scripts/loop.log"
     maper = Mapper(W,H,[1,1,1,1,1,2,2,2,4,4,4,4,4],[1,1,1,1,1,1,1,2,2,2,2,2,2])
     con_accu = 10000
     cnt = 0
@@ -19,7 +18,7 @@ if __name__ == "__main__":
         cnt += 1
         maper.Run_Mapping()
         # con = maper.Get_Contention_Level()
-        dla = DeadlockAnalyzer(W,H,maper.cast_paths,maper.merge_paths,log=file_name)
+        dla = DeadlockAnalyzer(W,H,maper.cast_paths,maper.merge_paths)
         dla.Run_Analyzing()
         if len(dla.sloops) == 0:
             print("\n\n")
@@ -35,7 +34,7 @@ if __name__ == "__main__":
         #     G,pos,el = construct_cdg(maper.w,maper.h,maper.cast_paths,maper.merge_paths)
         #     ec = get_edge_colors(G)
         #     nx.draw(G, pos, node_size = 20,width=1, arrowsize=10,node_color='black',edge_color='blue',arrowstyle='-|>')
-        #     plt.savefig(f'/mnt/c/git/nvcim-comm/behavior_model/opt_cast/contention_level_'+str(con_accu),
+        #     plt.savefig(f'/mnt/c/git/nvcim-comm/behavior_model/scripts/opt_cast/contention_level_'+str(con_accu),
         #                     dpi=400,bbox_inches='tight')
         #     print(f"Finished saving the image")
 
