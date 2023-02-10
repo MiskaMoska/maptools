@@ -21,9 +21,11 @@ if __name__ == "__main__":
         dla = DeadlockAnalyzer(W,H,maper.cast_paths,maper.merge_paths)
         dla.Run_Analyzing()
         if len(dla.sloops) == 0:
-            print("\n\n")
+            print("Finished!!\n\n")
             print(f"find {len(dla.cloops)} complex loop(s)")
             print("accumulated_contention_level:",maper.Get_Contention_Level())
+            dla.Plot_CLoops()
+            break
 
         # if con < con_accu:
         #     con_accu = con

@@ -182,6 +182,76 @@ class DeadlockAnalyzer(object):
                 dep_chain.pop()
         return
 
+    @staticmethod
+    def valid_dep(pe,ae)->bool:
+        if pe[0] == ae[0]: # multicast dependency
+            return True
+        elif pe[1] == ae[1]: # contention dependency
+            return True
+        elif pe[1] == ae[0]: # serial dependency
+            return True
+        return False
+
+    def __simplify_loops(self):
+        '''
+        simplify loops by removing additional edges in each loop and removing repetitious loops
+        '''
+        for i,cloop in enumerate(self.cloops):
+            temp_loop = []
+            for j,e in enumerate(cloop[:-1]):
+                if j == 0:
+                    pe = cloop[-2]
+                else:
+                    pe = cloop[j-1]
+                if j == len(cloop)-2:
+                    pe = cloop[0]
+                else:
+                    ae = cloop[j+1]
+                if self.valid_dep(pe,ae):
+                    continue
+                temp_loop.append(deepcopy(e))
+            temp_loop.append(temp_loop[0])
+            self.cloops[i] = tuple(temp_loop)
+        self.cloops = list(set(self.cloops))
+
+    def __reorg_loops(self): #bug!! deserted!
+        '''
+        1. Reorganize cloops by removing isolated multicast edges.
+            Because the removal of isolated multicast dependency cannot break the cloop,
+            if we remove it when DeadlockKiller.__get_UBMs() by mistake, the loop cannot be resolved.
+            So, we should remove it in early to avoid mislead
+
+        2. Removes the simple loops from self.cloops.
+            The raw cloops gotten from the MCS loop search algorithm contains simple loops.
+            If the cloop still contains multicast dependencies, then the cloop is a complex loop, 
+            otherwise, it is a simple loop and should be removed from self.cloops.
+
+        3. Get simple loops, the simple loops removed from cloops will be added to self.sloops.
+        '''
+        cloops_copy = []
+        self.sloops = []
+        for cloop in self.cloops:
+            graph = nx.MultiDiGraph()
+            graph.add_edges_from(cloop[:-1])
+            for n in graph.nodes():
+                if graph.in_degree(n) == 1 and graph.out_degree(n) == 0: # isolated node(edge)
+                    ise = list(graph.in_edges(n))[0]
+                    cloop.remove((ise[0],ise[1])) # remove edge from cloop
+                    graph.remove_edges_from([ise]) # remove edge from graph
+            
+            # verify whether it is a simple loop
+            is_simple = True
+            for n in graph.nodes():
+                if graph.out_degree(n) > 1: # it still contains multicast dependency
+                    is_simple = False
+                    break
+            if is_simple:
+                self.sloops.append(tuple(cloop)) # add to simple loops
+            else:
+                cloops_copy.append(tuple(cloop)) # add to complex loops
+        self.cloops = cloops_copy
+
+
     def Run_Analyzing(self):
         if not self.log is None:
             self.f = open(self.log,'w')
@@ -198,9 +268,14 @@ class DeadlockAnalyzer(object):
                         if de != se:
                             self.__DFS(se,de,[se,de],ocp,last_dep="C")
                         ocp[n] = False
-        
+
         # search simple loops:
-        self.sloops = [*nx.simple_cycles(self.cdg)]
+        # self.sloops = [*nx.simple_cycles(self.cdg)]
+        # get simple loops
+        self.__simplify_loops()
+        # self.cloops = set(self.cloops)
+        # self.sloops = set(self.sloops)
+
         if not self.log is None:
             for sloop in self.sloops:
                 self.f.write("find a simple loop:"+str(sloop)+"\n")
@@ -240,9 +315,17 @@ class DeadlockAnalyzer(object):
         return pcdg,pos,edge_label
 
     def Plot_CLoops(self):
+        '''
+        Plot all the complex loops and save the figures to self.dir_name/cloop_img/
+        Always call this method after calling self.Run_Analyzing()
+        '''
         os.chdir(self.dir_name)
         os.system("rm -rf cloop_img")
+        os.system("rm -rf sloop_img")
         os.system("mkdir cloop_img")
+        os.system("mkdir sloop_img")
+
+        # save complex loop figures
         cnt = 0
         for cl in self.cloops:
             cnt += 1
@@ -253,7 +336,20 @@ class DeadlockAnalyzer(object):
             nx.draw_networkx_edge_labels(pcdg,pos,edge_labels=el,font_size=7,font_color='blue',bbox=dict(alpha=0))
             plt.savefig(self.dir_name + f'/cloop_img/img_'+str(cnt),
                 dpi=400,bbox_inches='tight')
-            print(f"Finished saving {cnt} image")
+            print(f"Finished saving {cnt} complex loop image")
+
+        # save simple loop figures
+        cnt = 0
+        for sl in self.sloops:
+            cnt += 1
+            plt.figure(figsize=(self.w,self.h))
+            self.__plot_routers()
+            pcdg,pos,el = self.__build_pcdg(sl)
+            nx.draw(pcdg, pos, node_size = 20,width=1, arrowsize=10,node_color='black',edge_color='red',arrowstyle='-|>')
+            nx.draw_networkx_edge_labels(pcdg,pos,edge_labels=el,font_size=7,font_color='blue',bbox=dict(alpha=0))
+            plt.savefig(self.dir_name + f'/sloop_img/img_'+str(cnt),
+                dpi=400,bbox_inches='tight')
+            print(f"Finished saving {cnt} simple loop image")
 
 
 if __name__ == "__main__":

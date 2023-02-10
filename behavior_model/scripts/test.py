@@ -38,7 +38,13 @@ def Route_DyXY(sx,sy,dx,dy,path:list,sid=0)->list:
 # for i in range(100):
 #     print(random.randint(0,5))
 
-a = [1,3,3,6436,3]
-for i in a:
-    print(a)
-print(len(a))
+# a = [1,3,3,6436,3]
+# for i in a:
+#     print(a)
+# print(len(a))
+
+a = [1,2,1,3,1,1,1]
+
+del a[0,1,2]
+
+print(a)
