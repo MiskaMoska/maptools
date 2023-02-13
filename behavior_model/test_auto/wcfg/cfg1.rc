@@ -2,11 +2,11 @@ Magic 271485
 Revision Verdi3_L-2016.06-1
 
 ; Window Layout <x> <y> <width> <height> <signalwidth> <valuewidth>
-viewPort 0 28 1536 689 415 65
+viewPort 0 28 2194 1059 415 65
 
 ; File list:
 ; openDirFile [-d delimiter] [-s time_offset] [-rf auto_bus_rule_file] path_name file_name
-openDirFile -d / "" "/mnt/c/git/nvcim-comm/behavior_model/test_virtual_vgg16/wave.fsdb"
+openDirFile -d / "" "/mnt/c/git/nvcim-comm/behavior_model/test_auto/wave.fsdb"
 
 ; file time scale:
 ; fileTimeScale ### s|ms|us|ns|ps
@@ -16,16 +16,37 @@ signalSpacing 5
 
 ; windowTimeUnit is used for zoom, cursor & marker
 ; waveform viewport range
-zoom 0.000000 96752950.000000
-cursor 49385000.000000
+zoom 3556375.976562 3947186.523438
+cursor 2985000.000000
 marker 0.000000
 
 ; user define markers
 ; userMarker time_pos marker_name color linestyle
 ; visible top row signal index
-top 191
+top 1470
 ; marker line index
-markerPos 209
+markerPos 1513
+
+; rename signal list
+; addRenameSig new_name org_name
+activeDirFile "" "/mnt/c/git/nvcim-comm/behavior_model/test_auto/wave.fsdb"
+
+addRenameSig "/top_tb/dut/cast_nw/router_3_6/R36_west_data_i[15:0]" "/top_tb/dut/cast_nw/router_3_6/west_data_i[15:0]"
+
+; rename signal list
+; addRenameSig new_name org_name
+
+addRenameSig "/top_tb/dut/cast_nw/router_2_6/R26_vert1_data_i[15:0]" "/top_tb/dut/cast_nw/router_2_6/vert1_data_i[15:0]"
+
+; rename signal list
+; addRenameSig new_name org_name
+
+addRenameSig "/top_tb/dut/cast_nw/router_2_5/R25_vert1_data_i[15:0]" "/top_tb/dut/cast_nw/router_2_5/vert1_data_i[15:0]"
+
+; rename signal list
+; addRenameSig new_name org_name
+
+addRenameSig "/top_tb/dut/cast_nw/router_2_6/vc_allocator/R26_outVCAvailable[4:0]" "/top_tb/dut/cast_nw/router_2_6/vc_allocator/outVCAvailable[4:0]"
 
 ; event list
 ; addEvent event_name event_expression
@@ -45,11 +66,11 @@ COMPLEX_EVENT_END
 curSTATUS ByChange
 
 
-addGroup "R26"
-activeDirFile "" "/mnt/c/git/nvcim-comm/behavior_model/test_virtual_vgg16/wave.fsdb"
-addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/cast_nw/router_2_6/VCgranted[4:0]
+addGroup "R14" -e FALSE
+activeDirFile "" "/mnt/c/git/nvcim-comm/behavior_model/test_auto/wave.fsdb"
+addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/cast_nw/router_1_4/VCgranted[4:0]
 addSignal -h 15 -holdScope clk
-addSignal -h 15 -UNSIGNED -HEX -holdScope credit_upd[0:6]
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_upd[0:4]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc0[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc1[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc2[15:0]
@@ -62,221 +83,14 @@ addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc2[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc3[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc4[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc5[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope east_data_i[15:0]
-addSignal -h 15 -holdScope east_valid_o
-addSignal -h 15 -UNSIGNED -HEX -holdScope east_data_o[15:0]
-addSignal -h 15 -holdScope east_ready_i
-addSignal -h 15 -holdScope east_ready_o
-addSignal -h 15 -holdScope east_valid_i
-addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_i[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_o[15:0]
-addSignal -h 15 -holdScope local_ready_i
-addSignal -h 15 -holdScope local_ready_o
-addSignal -h 15 -holdScope local_valid_i
-addSignal -h 15 -holdScope local_valid_o
-addSignal -h 15 -UNSIGNED -HEX -holdScope outVCAvailableReset[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope outVCAvailable[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope ready_from[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope ready_to[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC0[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC1[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC2[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC3[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC4[4:0]
-addSignal -h 15 -holdScope rstn
-addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC0[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC1[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC2[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC3[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC4[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC0[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC1[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC2[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC3[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC4[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope valid_from[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope valid_to[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_i[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_o[15:0]
-addSignal -h 15 -holdScope vert0_ready_i
-addSignal -h 15 -holdScope vert0_ready_o
-addSignal -h 15 -holdScope vert0_valid_i
-addSignal -h 15 -holdScope vert0_valid_o
-addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_data_i[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_data_o[15:0]
-addSignal -h 15 -holdScope vert1_ready_i
-addSignal -h 15 -holdScope vert1_ready_o
-addSignal -h 15 -holdScope vert1_valid_i
-addSignal -h 15 -holdScope vert1_valid_o
-addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_i[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_o[15:0]
-addSignal -h 15 -holdScope west_ready_i
-addSignal -h 15 -holdScope west_ready_o
-addSignal -h 15 -holdScope west_valid_i
-addSignal -h 15 -holdScope west_valid_o
-addGroup "R11"
-addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/cast_nw/router_1_1/VCgranted[4:0]
-addSignal -h 15 -holdScope clk
-addSignal -h 15 -UNSIGNED -HEX -holdScope credit_upd[0:6]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc0[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc1[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc2[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc3[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc4[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc5[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc0[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc1[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc2[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc3[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc4[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc5[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope east_cnt[31:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope east_data_i[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope east_data_o[15:0]
 addSignal -h 15 -holdScope east_ready_i
 addSignal -h 15 -holdScope east_ready_o
 addSignal -h 15 -holdScope east_valid_i
 addSignal -h 15 -holdScope east_valid_o
-addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_i[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_o[15:0]
-addSignal -h 15 -holdScope local_ready_i
-addSignal -h 15 -holdScope local_ready_o
-addSignal -h 15 -holdScope local_valid_i
-addSignal -h 15 -holdScope local_valid_o
-addSignal -h 15 -UNSIGNED -HEX -holdScope outVCAvailableReset[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope outVCAvailable[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope ready_from[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope ready_to[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC0[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC1[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC2[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC3[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC4[4:0]
-addSignal -h 15 -holdScope rstn
-addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC0[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC1[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC2[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC3[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC4[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC0[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC1[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC2[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC3[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC4[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope valid_from[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope valid_to[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_i[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_o[15:0]
-addSignal -h 15 -holdScope vert0_ready_i
-addSignal -h 15 -holdScope vert0_ready_o
-addSignal -h 15 -holdScope vert0_valid_i
-addSignal -h 15 -holdScope vert0_valid_o
-addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_data_i[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_data_o[15:0]
-addSignal -h 15 -holdScope vert1_ready_i
-addSignal -h 15 -holdScope vert1_ready_o
-addSignal -h 15 -holdScope vert1_valid_i
-addSignal -h 15 -holdScope vert1_valid_o
-addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_i[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_o[15:0]
-addSignal -h 15 -holdScope west_ready_i
-addSignal -h 15 -holdScope west_ready_o
-addSignal -h 15 -holdScope west_valid_i
-addSignal -h 15 -holdScope west_valid_o
-addGroup "R12"
-addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/cast_nw/router_1_2/VCgranted[4:0]
-addSignal -h 15 -holdScope clk
-addSignal -h 15 -UNSIGNED -HEX -holdScope credit_upd[0:6]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc0[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc1[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc2[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc3[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc4[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc5[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc0[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc1[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc2[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc3[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc4[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc5[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope east_data_i[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope east_data_o[15:0]
-addSignal -h 15 -holdScope east_ready_i
-addSignal -h 15 -holdScope east_ready_o
-addSignal -h 15 -holdScope east_valid_i
-addSignal -h 15 -holdScope east_valid_o
-addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_i[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_o[15:0]
-addSignal -h 15 -holdScope local_ready_i
-addSignal -h 15 -holdScope local_ready_o
-addSignal -h 15 -holdScope local_valid_i
-addSignal -h 15 -holdScope local_valid_o
-addSignal -h 15 -UNSIGNED -HEX -holdScope outVCAvailableReset[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope outVCAvailable[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope ready_from[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope ready_to[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC0[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC1[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC2[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC3[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC4[4:0]
-addSignal -h 15 -holdScope rstn
-addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC0[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC1[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC2[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC3[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC4[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC0[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC1[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC2[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC3[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC4[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope valid_from[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope valid_to[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_i[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_o[15:0]
-addSignal -h 15 -holdScope vert0_ready_i
-addSignal -h 15 -holdScope vert0_ready_o
-addSignal -h 15 -holdScope vert0_valid_i
-addSignal -h 15 -holdScope vert0_valid_o
-addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_data_i[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_data_o[15:0]
-addSignal -h 15 -holdScope vert1_ready_i
-addSignal -h 15 -holdScope vert1_ready_o
-addSignal -h 15 -holdScope vert1_valid_i
-addSignal -h 15 -holdScope vert1_valid_o
-addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_i[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_o[15:0]
-addSignal -h 15 -holdScope west_ready_i
-addSignal -h 15 -holdScope west_ready_o
-addSignal -h 15 -holdScope west_valid_i
-addSignal -h 15 -holdScope west_valid_o
-addGroup "R42"
-addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/cast_nw/router_4_2/east_cnt[31:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope local_cnt[31:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_cnt[31:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_cnt[31:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope west_cnt[31:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope VCgranted[4:0]
-addSignal -h 15 -holdScope clk
-addSignal -h 15 -UNSIGNED -HEX -holdScope credit_upd[0:6]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc0[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc1[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc2[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc3[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc4[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc5[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc0[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc1[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc2[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc3[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc4[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc5[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope east_data_i[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope east_data_o[15:0]
-addSignal -h 15 -holdScope east_ready_i
-addSignal -h 15 -holdScope east_ready_o
-addSignal -h 15 -holdScope east_valid_i
-addSignal -h 15 -holdScope east_valid_o
 addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_i[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_o[15:0]
 addSignal -h 15 -holdScope local_ready_i
@@ -305,28 +119,31 @@ addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC3[4:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC4[4:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope valid_from[4:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope valid_to[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_cnt[31:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_i[15:0]
+addSignal -h 15 -holdScope vert0_valid_i
+addSignal -h 15 -holdScope vert0_ready_o
 addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_o[15:0]
 addSignal -h 15 -holdScope vert0_ready_i
-addSignal -h 15 -holdScope vert0_ready_o
-addSignal -h 15 -holdScope vert0_valid_i
 addSignal -h 15 -holdScope vert0_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_cnt[31:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_data_i[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_data_o[15:0]
 addSignal -h 15 -holdScope vert1_ready_i
 addSignal -h 15 -holdScope vert1_ready_o
 addSignal -h 15 -holdScope vert1_valid_i
 addSignal -h 15 -holdScope vert1_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope west_cnt[31:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_i[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_o[15:0]
 addSignal -h 15 -holdScope west_ready_i
 addSignal -h 15 -holdScope west_ready_o
 addSignal -h 15 -holdScope west_valid_i
 addSignal -h 15 -holdScope west_valid_o
-addGroup "R33"
+addGroup "R33" -e FALSE
 addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/cast_nw/router_3_3/VCgranted[4:0]
 addSignal -h 15 -holdScope clk
-addSignal -h 15 -UNSIGNED -HEX -holdScope credit_upd[0:6]
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_upd[0:4]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc0[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc1[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc2[15:0]
@@ -339,12 +156,14 @@ addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc2[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc3[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc4[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc5[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope east_cnt[31:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope east_data_i[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope east_data_o[15:0]
 addSignal -h 15 -holdScope east_ready_i
 addSignal -h 15 -holdScope east_ready_o
 addSignal -h 15 -holdScope east_valid_i
 addSignal -h 15 -holdScope east_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope local_cnt[31:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_i[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_o[15:0]
 addSignal -h 15 -holdScope local_ready_i
@@ -373,28 +192,31 @@ addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC3[4:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC4[4:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope valid_from[4:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope valid_to[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_cnt[31:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_i[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_o[15:0]
 addSignal -h 15 -holdScope vert0_ready_i
 addSignal -h 15 -holdScope vert0_ready_o
 addSignal -h 15 -holdScope vert0_valid_i
 addSignal -h 15 -holdScope vert0_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_cnt[31:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_data_i[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_data_o[15:0]
 addSignal -h 15 -holdScope vert1_ready_i
 addSignal -h 15 -holdScope vert1_ready_o
 addSignal -h 15 -holdScope vert1_valid_i
 addSignal -h 15 -holdScope vert1_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope west_cnt[31:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_i[15:0]
+addSignal -h 15 -holdScope west_valid_i
+addSignal -h 15 -holdScope west_ready_o
 addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_o[15:0]
 addSignal -h 15 -holdScope west_ready_i
-addSignal -h 15 -holdScope west_ready_o
-addSignal -h 15 -holdScope west_valid_i
 addSignal -h 15 -holdScope west_valid_o
-addGroup "R04"
-addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/cast_nw/router_0_4/VCgranted[4:0]
+addGroup "R02" -e FALSE
+addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/cast_nw/router_0_2/VCgranted[4:0]
 addSignal -h 15 -holdScope clk
-addSignal -h 15 -UNSIGNED -HEX -holdScope credit_upd[0:6]
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_upd[0:4]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc0[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc1[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc2[15:0]
@@ -407,12 +229,14 @@ addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc2[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc3[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc4[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc5[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope east_cnt[31:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope east_data_i[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope east_data_o[15:0]
 addSignal -h 15 -holdScope east_ready_i
 addSignal -h 15 -holdScope east_ready_o
 addSignal -h 15 -holdScope east_valid_i
 addSignal -h 15 -holdScope east_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope local_cnt[31:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_i[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_o[15:0]
 addSignal -h 15 -holdScope local_ready_i
@@ -441,28 +265,31 @@ addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC3[4:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC4[4:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope valid_from[4:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope valid_to[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_cnt[31:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_i[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_o[15:0]
 addSignal -h 15 -holdScope vert0_ready_i
 addSignal -h 15 -holdScope vert0_ready_o
 addSignal -h 15 -holdScope vert0_valid_i
 addSignal -h 15 -holdScope vert0_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_cnt[31:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_data_i[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_data_o[15:0]
 addSignal -h 15 -holdScope vert1_ready_i
 addSignal -h 15 -holdScope vert1_ready_o
 addSignal -h 15 -holdScope vert1_valid_i
 addSignal -h 15 -holdScope vert1_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope west_cnt[31:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_i[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_o[15:0]
 addSignal -h 15 -holdScope west_ready_i
 addSignal -h 15 -holdScope west_ready_o
 addSignal -h 15 -holdScope west_valid_i
 addSignal -h 15 -holdScope west_valid_o
-addGroup "R44"
-addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/cast_nw/router_4_4/VCgranted[4:0]
+addGroup "R21" -e FALSE
+addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/cast_nw/router_2_1/VCgranted[4:0]
 addSignal -h 15 -holdScope clk
-addSignal -h 15 -UNSIGNED -HEX -holdScope credit_upd[0:6]
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_upd[0:4]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc0[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc1[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc2[15:0]
@@ -475,12 +302,14 @@ addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc2[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc3[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc4[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc5[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope east_cnt[31:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope east_data_i[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope east_data_o[15:0]
 addSignal -h 15 -holdScope east_ready_i
 addSignal -h 15 -holdScope east_ready_o
 addSignal -h 15 -holdScope east_valid_i
 addSignal -h 15 -holdScope east_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope local_cnt[31:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_i[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_o[15:0]
 addSignal -h 15 -holdScope local_ready_i
@@ -509,28 +338,84 @@ addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC3[4:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC4[4:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope valid_from[4:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope valid_to[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_cnt[31:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_i[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_o[15:0]
 addSignal -h 15 -holdScope vert0_ready_i
 addSignal -h 15 -holdScope vert0_ready_o
 addSignal -h 15 -holdScope vert0_valid_i
 addSignal -h 15 -holdScope vert0_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_cnt[31:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_data_i[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_data_o[15:0]
 addSignal -h 15 -holdScope vert1_ready_i
 addSignal -h 15 -holdScope vert1_ready_o
 addSignal -h 15 -holdScope vert1_valid_i
 addSignal -h 15 -holdScope vert1_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope west_cnt[31:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_i[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_o[15:0]
 addSignal -h 15 -holdScope west_ready_i
 addSignal -h 15 -holdScope west_ready_o
 addSignal -h 15 -holdScope west_valid_i
 addSignal -h 15 -holdScope west_valid_o
-addGroup "R55"
-addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/cast_nw/router_5_5/VCgranted[4:0]
+addGroup "R21_local_ctlr" -e FALSE
+addSignal -h 15 /top_tb/dut/cast_nw/router_2_1/input_stage_local/ctlr/VCgranted
+addSignal -h 15 -UNSIGNED -HEX -holdScope arb_grt[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope arb_req[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope candidateOutVC[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope candidateOutVC_reg[4:0]
 addSignal -h 15 -holdScope clk
-addSignal -h 15 -UNSIGNED -HEX -holdScope credit_upd[0:6]
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_cnt[15:0]
+addSignal -h 15 -holdScope fifo_empty
+addSignal -h 15 -holdScope flit_fire
+addSignal -h 15 -UNSIGNED -HEX -holdScope flit_type[1:0]
+addSignal -h 15 -holdScope in_ubm
+addSignal -h 15 -holdScope isoh
+addSignal -h 15 -holdScope outVCLock
+addSignal -h 15 -UNSIGNED -HEX -holdScope outVC[4:0]
+addSignal -h 15 -holdScope out_of_ubm
+addSignal -h 15 -holdScope pop
+addSignal -h 15 -holdScope pop_non_ubm
+addSignal -h 15 -holdScope pop_ubm
+addSignal -h 15 -holdScope read_reset
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVC[4:0]
+addSignal -h 15 -holdScope rstn
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVC[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selXBVC[4:0]
+addGroup "R21_local_stage" -e FALSE
+addSignal -h 15 /top_tb/dut/cast_nw/router_2_1/input_stage_local/VCgranted
+addSignal -h 15 -UNSIGNED -HEX -holdScope candidateOutVC[4:0]
+addSignal -h 15 -holdScope clk
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_cnt[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_upd[0:4]
+addSignal -h 15 -holdScope valid_i
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_i[15:0]
+addSignal -h 15 -holdScope ready_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_o[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope fifo_din[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope fifo_dout[15:0]
+addSignal -h 15 -holdScope fifo_empty
+addSignal -h 15 -holdScope fifo_full
+addSignal -h 15 -holdScope fifo_read
+addSignal -h 15 -holdScope fifo_write
+addSignal -h 15 -holdScope fire
+addSignal -h 15 -holdScope pop
+addSignal -h 15 -holdScope read_reset
+addSignal -h 15 -holdScope ready_i
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVC[4:0]
+addSignal -h 15 -holdScope rstn
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVC[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selXBVC[4:0]
+addSignal -h 15 -holdScope valid_o
+addGroup "R21_local_ready5to1" -e FALSE
+addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/cast_nw/router_2_1/crossbar/mux_ready_to_input_vc0/mux_sel[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope ready_in[4:0]
+addSignal -h 15 -holdScope ready_out
+addGroup "R22" -e FALSE
+addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/cast_nw/router_2_2/VCgranted[4:0]
+addSignal -h 15 -holdScope clk
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_upd[0:4]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc0[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc1[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc2[15:0]
@@ -543,12 +428,14 @@ addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc2[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc3[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc4[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc5[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope east_cnt[31:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope east_data_i[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope east_data_o[15:0]
 addSignal -h 15 -holdScope east_ready_i
 addSignal -h 15 -holdScope east_ready_o
 addSignal -h 15 -holdScope east_valid_i
 addSignal -h 15 -holdScope east_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope local_cnt[31:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_i[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_o[15:0]
 addSignal -h 15 -holdScope local_ready_i
@@ -577,28 +464,600 @@ addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC3[4:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC4[4:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope valid_from[4:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope valid_to[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_cnt[31:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_i[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_o[15:0]
 addSignal -h 15 -holdScope vert0_ready_i
 addSignal -h 15 -holdScope vert0_ready_o
 addSignal -h 15 -holdScope vert0_valid_i
 addSignal -h 15 -holdScope vert0_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_cnt[31:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_data_i[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_data_o[15:0]
 addSignal -h 15 -holdScope vert1_ready_i
 addSignal -h 15 -holdScope vert1_ready_o
 addSignal -h 15 -holdScope vert1_valid_i
 addSignal -h 15 -holdScope vert1_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope west_cnt[31:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_i[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_o[15:0]
 addSignal -h 15 -holdScope west_ready_i
 addSignal -h 15 -holdScope west_ready_o
 addSignal -h 15 -holdScope west_valid_i
 addSignal -h 15 -holdScope west_valid_o
-addGroup "R06"
+addGroup "R12" -e FALSE
+addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/cast_nw/router_1_2/VCgranted[4:0]
+addSignal -h 15 -holdScope clk
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_upd[0:4]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc0[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc1[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc2[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc3[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc4[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc5[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc0[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc1[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc2[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc3[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc4[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc5[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope east_cnt[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope east_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope east_data_o[15:0]
+addSignal -h 15 -holdScope east_ready_i
+addSignal -h 15 -holdScope east_ready_o
+addSignal -h 15 -holdScope east_valid_i
+addSignal -h 15 -holdScope east_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope local_cnt[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_o[15:0]
+addSignal -h 15 -holdScope local_ready_i
+addSignal -h 15 -holdScope local_ready_o
+addSignal -h 15 -holdScope local_valid_i
+addSignal -h 15 -holdScope local_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope outVCAvailableReset[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope outVCAvailable[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope ready_from[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope ready_to[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC0[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC1[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC2[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC3[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC4[4:0]
+addSignal -h 15 -holdScope rstn
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC0[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC1[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC2[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC3[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC4[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC0[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC1[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC2[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC3[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC4[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope valid_from[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope valid_to[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_cnt[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_o[15:0]
+addSignal -h 15 -holdScope vert0_ready_i
+addSignal -h 15 -holdScope vert0_ready_o
+addSignal -h 15 -holdScope vert0_valid_i
+addSignal -h 15 -holdScope vert0_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_cnt[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_data_o[15:0]
+addSignal -h 15 -holdScope vert1_ready_i
+addSignal -h 15 -holdScope vert1_ready_o
+addSignal -h 15 -holdScope vert1_valid_i
+addSignal -h 15 -holdScope vert1_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope west_cnt[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_o[15:0]
+addSignal -h 15 -holdScope west_ready_i
+addSignal -h 15 -holdScope west_ready_o
+addSignal -h 15 -holdScope west_valid_i
+addSignal -h 15 -holdScope west_valid_o
+addGroup "R01" -e FALSE
+addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/cast_nw/router_0_1/VCgranted[4:0]
+addSignal -h 15 -holdScope clk
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_upd[0:4]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc0[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc1[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc2[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc3[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc4[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc5[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc0[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc1[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc2[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc3[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc4[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc5[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope east_cnt[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope east_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope east_data_o[15:0]
+addSignal -h 15 -holdScope east_ready_i
+addSignal -h 15 -holdScope east_ready_o
+addSignal -h 15 -holdScope east_valid_i
+addSignal -h 15 -holdScope east_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope local_cnt[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_o[15:0]
+addSignal -h 15 -holdScope local_ready_i
+addSignal -h 15 -holdScope local_ready_o
+addSignal -h 15 -holdScope local_valid_i
+addSignal -h 15 -holdScope local_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope outVCAvailableReset[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope outVCAvailable[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope ready_from[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope ready_to[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC0[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC1[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC2[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC3[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC4[4:0]
+addSignal -h 15 -holdScope rstn
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC0[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC1[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC2[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC3[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC4[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC0[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC1[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC2[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC3[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC4[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope valid_from[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope valid_to[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_cnt[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_o[15:0]
+addSignal -h 15 -holdScope vert0_ready_i
+addSignal -h 15 -holdScope vert0_ready_o
+addSignal -h 15 -holdScope vert0_valid_i
+addSignal -h 15 -holdScope vert0_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_cnt[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_data_o[15:0]
+addSignal -h 15 -holdScope vert1_ready_i
+addSignal -h 15 -holdScope vert1_ready_o
+addSignal -h 15 -holdScope vert1_valid_i
+addSignal -h 15 -holdScope vert1_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope west_cnt[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_o[15:0]
+addSignal -h 15 -holdScope west_ready_i
+addSignal -h 15 -holdScope west_ready_o
+addSignal -h 15 -holdScope west_valid_i
+addSignal -h 15 -holdScope west_valid_o
+addGroup "M01" -e FALSE
+addSignal -h 15 /top_tb/dut/merge_nw/router5/clk
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_i[0:4]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_o[0:4]
+addSignal -h 15 -holdScope ready
+addSignal -h 15 -UNSIGNED -HEX -holdScope ready_i[0:4]
+addSignal -h 15 -UNSIGNED -HEX -holdScope ready_o[0:4]
+addSignal -h 15 -holdScope rstn
+addSignal -h 15 -UNSIGNED -HEX -holdScope sum[13:0]
+addSignal -h 15 -holdScope sum_flit
+addSignal -h 15 -holdScope valid
+addSignal -h 15 -UNSIGNED -HEX -holdScope valid_i[0:4]
+addSignal -h 15 -UNSIGNED -HEX -holdScope valid_o[0:4]
+addGroup "M02" -e FALSE
+addSignal -h 15 /top_tb/dut/merge_nw/router10/clk
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_i[0:4]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_o[0:4]
+addSignal -h 15 -holdScope ready
+addSignal -h 15 -UNSIGNED -HEX -holdScope ready_i[0:4]
+addSignal -h 15 -UNSIGNED -HEX -holdScope ready_o[0:4]
+addSignal -h 15 -holdScope rstn
+addSignal -h 15 -UNSIGNED -HEX -holdScope sum[13:0]
+addSignal -h 15 -holdScope sum_flit
+addSignal -h 15 -holdScope valid
+addSignal -h 15 -UNSIGNED -HEX -holdScope valid_i[0:4]
+addSignal -h 15 -UNSIGNED -HEX -holdScope valid_o[0:4]
+addGroup "merge_network" -e FALSE
+addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/merge_nw/ready_o_0_2[0:4]
+addSignal -h 15 -UNSIGNED -HEX -holdScope ready_i_0_1[0:4]
+addGroup "R02_local_stage" -e FALSE
+addSignal -h 15 /top_tb/dut/cast_nw/router_0_2/input_stage_local/VCgranted
+addSignal -h 15 -UNSIGNED -HEX -holdScope candidateOutVC[4:0]
+addSignal -h 15 -holdScope clk
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_cnt[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_upd[0:4]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_o[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope fifo_din[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope fifo_dout[15:0]
+addSignal -h 15 -holdScope fifo_empty
+addSignal -h 15 -holdScope fifo_full
+addSignal -h 15 -holdScope fifo_read
+addSignal -h 15 -holdScope fifo_write
+addSignal -h 15 -holdScope fire
+addSignal -h 15 -holdScope pop
+addSignal -h 15 -holdScope read_reset
+addSignal -h 15 -holdScope ready_i
+addSignal -h 15 -holdScope ready_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVC[4:0]
+addSignal -h 15 -holdScope rstn
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVC[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selXBVC[4:0]
+addSignal -h 15 -holdScope valid_i
+addSignal -h 15 -holdScope valid_o
+addGroup "R04_local_stage" -e FALSE
+addSignal -h 15 /top_tb/dut/cast_nw/router_0_4/input_stage_local/VCgranted
+addSignal -h 15 -UNSIGNED -HEX -holdScope candidateOutVC[4:0]
+addSignal -h 15 -holdScope clk
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_cnt[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_upd[0:4]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_o[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope fifo_din[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope fifo_dout[15:0]
+addSignal -h 15 -holdScope fifo_empty
+addSignal -h 15 -holdScope fifo_full
+addSignal -h 15 -holdScope fifo_read
+addSignal -h 15 -holdScope fifo_write
+addSignal -h 15 -holdScope fire
+addSignal -h 15 -holdScope pop
+addSignal -h 15 -holdScope read_reset
+addSignal -h 15 -holdScope ready_i
+addSignal -h 15 -holdScope ready_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVC[4:0]
+addSignal -h 15 -holdScope rstn
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVC[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selXBVC[4:0]
+addSignal -h 15 -holdScope valid_i
+addSignal -h 15 -holdScope valid_o
+addGroup "R14_local_stage" -e FALSE
+addSignal -h 15 /top_tb/dut/cast_nw/router_1_4/input_stage_local/VCgranted
+addSignal -h 15 -UNSIGNED -HEX -holdScope candidateOutVC[4:0]
+addSignal -h 15 -holdScope clk
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_cnt[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_upd[0:4]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_o[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope fifo_din[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope fifo_dout[15:0]
+addSignal -h 15 -holdScope fifo_empty
+addSignal -h 15 -holdScope fifo_full
+addSignal -h 15 -holdScope fifo_read
+addSignal -h 15 -holdScope fifo_write
+addSignal -h 15 -holdScope fire
+addSignal -h 15 -holdScope pop
+addSignal -h 15 -holdScope read_reset
+addSignal -h 15 -holdScope ready_i
+addSignal -h 15 -holdScope ready_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVC[4:0]
+addSignal -h 15 -holdScope rstn
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVC[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selXBVC[4:0]
+addSignal -h 15 -holdScope valid_i
+addSignal -h 15 -holdScope valid_o
+addGroup "R28_local_stage" -e FALSE
+addSignal -h 15 /top_tb/dut/cast_nw/router_2_8/input_stage_local/VCgranted
+addSignal -h 15 -UNSIGNED -HEX -holdScope candidateOutVC[4:0]
+addSignal -h 15 -holdScope clk
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_cnt[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_upd[0:4]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_o[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope fifo_din[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope fifo_dout[15:0]
+addSignal -h 15 -holdScope fifo_empty
+addSignal -h 15 -holdScope fifo_full
+addSignal -h 15 -holdScope fifo_read
+addSignal -h 15 -holdScope fifo_write
+addSignal -h 15 -holdScope fire
+addSignal -h 15 -holdScope pop
+addSignal -h 15 -holdScope read_reset
+addSignal -h 15 -holdScope ready_i
+addSignal -h 15 -holdScope ready_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVC[4:0]
+addSignal -h 15 -holdScope rstn
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVC[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selXBVC[4:0]
+addSignal -h 15 -holdScope valid_i
+addSignal -h 15 -holdScope valid_o
+addGroup "R28" -e FALSE
+addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/cast_nw/router_2_8/VCgranted[4:0]
+addSignal -h 15 -holdScope clk
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_upd[0:4]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc0[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc1[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc2[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc3[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc4[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc5[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc0[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc1[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc2[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc3[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc4[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc5[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope east_cnt[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope east_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope east_data_o[15:0]
+addSignal -h 15 -holdScope east_ready_i
+addSignal -h 15 -holdScope east_ready_o
+addSignal -h 15 -holdScope east_valid_i
+addSignal -h 15 -holdScope east_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope local_cnt[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_o[15:0]
+addSignal -h 15 -holdScope local_ready_i
+addSignal -h 15 -holdScope local_ready_o
+addSignal -h 15 -holdScope local_valid_i
+addSignal -h 15 -holdScope local_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope outVCAvailableReset[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope outVCAvailable[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope ready_from[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope ready_to[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC0[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC1[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC2[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC3[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC4[4:0]
+addSignal -h 15 -holdScope rstn
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC0[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC1[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC2[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC3[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC4[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC0[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC1[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC2[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC3[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC4[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope valid_from[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope valid_to[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_cnt[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_o[15:0]
+addSignal -h 15 -holdScope vert0_ready_i
+addSignal -h 15 -holdScope vert0_ready_o
+addSignal -h 15 -holdScope vert0_valid_i
+addSignal -h 15 -holdScope vert0_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_cnt[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_data_o[15:0]
+addSignal -h 15 -holdScope vert1_ready_i
+addSignal -h 15 -holdScope vert1_ready_o
+addSignal -h 15 -holdScope vert1_valid_i
+addSignal -h 15 -holdScope vert1_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope west_cnt[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_o[15:0]
+addSignal -h 15 -holdScope west_ready_i
+addSignal -h 15 -holdScope west_ready_o
+addSignal -h 15 -holdScope west_valid_i
+addSignal -h 15 -holdScope west_valid_o
+addGroup "R26" -e FALSE
+addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/cast_nw/router_2_6/VCgranted[4:0]
+addSignal -h 15 -holdScope clk
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_upd[0:4]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc0[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc1[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc2[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc3[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc4[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc5[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc0[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc1[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc2[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc3[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc4[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc5[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope east_cnt[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope east_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope east_data_o[15:0]
+addSignal -h 15 -holdScope east_ready_i
+addSignal -h 15 -holdScope east_ready_o
+addSignal -h 15 -holdScope east_valid_i
+addSignal -h 15 -holdScope east_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope local_cnt[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_o[15:0]
+addSignal -h 15 -holdScope local_ready_i
+addSignal -h 15 -holdScope local_ready_o
+addSignal -h 15 -holdScope local_valid_i
+addSignal -h 15 -holdScope local_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope outVCAvailableReset[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope outVCAvailable[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope ready_from[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope ready_to[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC0[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC1[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC2[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC3[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC4[4:0]
+addSignal -h 15 -holdScope rstn
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC0[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC1[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC2[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC3[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC4[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC0[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC1[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC2[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC3[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC4[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope valid_from[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope valid_to[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_cnt[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_o[15:0]
+addSignal -h 15 -holdScope vert0_ready_i
+addSignal -h 15 -holdScope vert0_ready_o
+addSignal -h 15 -holdScope vert0_valid_i
+addSignal -h 15 -holdScope vert0_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_cnt[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_data_o[15:0]
+addSignal -h 15 -holdScope vert1_ready_i
+addSignal -h 15 -holdScope vert1_ready_o
+addSignal -h 15 -holdScope vert1_valid_i
+addSignal -h 15 -holdScope vert1_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope west_cnt[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_o[15:0]
+addSignal -h 15 -holdScope west_ready_i
+addSignal -h 15 -holdScope west_ready_o
+addSignal -h 15 -holdScope west_valid_i
+addSignal -h 15 -holdScope west_valid_o
+addGroup "R26_local_stage" -e FALSE
+addSignal -h 15 /top_tb/dut/cast_nw/router_2_6/input_stage_local/VCgranted
+addSignal -h 15 -UNSIGNED -HEX -holdScope candidateOutVC[4:0]
+addSignal -h 15 -holdScope clk
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_cnt[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_upd[0:4]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_o[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope fifo_din[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope fifo_dout[15:0]
+addSignal -h 15 -holdScope fifo_empty
+addSignal -h 15 -holdScope fifo_full
+addSignal -h 15 -holdScope fifo_read
+addSignal -h 15 -holdScope fifo_write
+addSignal -h 15 -holdScope fire
+addSignal -h 15 -holdScope pop
+addSignal -h 15 -holdScope read_reset
+addSignal -h 15 -holdScope ready_i
+addSignal -h 15 -holdScope ready_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVC[4:0]
+addSignal -h 15 -holdScope rstn
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVC[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selXBVC[4:0]
+addSignal -h 15 -holdScope valid_i
+addSignal -h 15 -holdScope valid_o
+addGroup "R37_local_stage" -e FALSE
+addSignal -h 15 /top_tb/dut/cast_nw/router_3_7/input_stage_local/VCgranted
+addSignal -h 15 -UNSIGNED -HEX -holdScope candidateOutVC[4:0]
+addSignal -h 15 -holdScope clk
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_cnt[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_upd[0:4]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_o[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope fifo_din[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope fifo_dout[15:0]
+addSignal -h 15 -holdScope fifo_empty
+addSignal -h 15 -holdScope fifo_full
+addSignal -h 15 -holdScope fifo_read
+addSignal -h 15 -holdScope fifo_write
+addSignal -h 15 -holdScope fire
+addSignal -h 15 -holdScope pop
+addSignal -h 15 -holdScope read_reset
+addSignal -h 15 -holdScope ready_i
+addSignal -h 15 -holdScope ready_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVC[4:0]
+addSignal -h 15 -holdScope rstn
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVC[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selXBVC[4:0]
+addSignal -h 15 -holdScope valid_i
+addSignal -h 15 -holdScope valid_o
+addGroup "R15_local_stage" -e FALSE
+addSignal -h 15 /top_tb/dut/cast_nw/router_1_5/input_stage_local/VCgranted
+addSignal -h 15 -UNSIGNED -HEX -holdScope candidateOutVC[4:0]
+addSignal -h 15 -holdScope clk
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_cnt[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_upd[0:4]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_o[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope fifo_din[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope fifo_dout[15:0]
+addSignal -h 15 -holdScope fifo_empty
+addSignal -h 15 -holdScope fifo_full
+addSignal -h 15 -holdScope fifo_read
+addSignal -h 15 -holdScope fifo_write
+addSignal -h 15 -holdScope fire
+addSignal -h 15 -holdScope pop
+addSignal -h 15 -holdScope read_reset
+addSignal -h 15 -holdScope ready_i
+addSignal -h 15 -holdScope ready_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVC[4:0]
+addSignal -h 15 -holdScope rstn
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVC[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selXBVC[4:0]
+addSignal -h 15 -holdScope valid_i
+addSignal -h 15 -holdScope valid_o
+addGroup "R05" -e FALSE
+addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/cast_nw/router_0_5/VCgranted[4:0]
+addSignal -h 15 -holdScope clk
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_upd[0:4]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc0[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc1[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc2[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc3[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc4[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc5[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc0[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc1[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc2[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc3[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc4[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc5[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope east_cnt[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope east_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope east_data_o[15:0]
+addSignal -h 15 -holdScope east_ready_i
+addSignal -h 15 -holdScope east_ready_o
+addSignal -h 15 -holdScope east_valid_i
+addSignal -h 15 -holdScope east_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope local_cnt[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_o[15:0]
+addSignal -h 15 -holdScope local_ready_i
+addSignal -h 15 -holdScope local_ready_o
+addSignal -h 15 -holdScope local_valid_i
+addSignal -h 15 -holdScope local_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope outVCAvailableReset[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope outVCAvailable[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope ready_from[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope ready_to[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC0[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC1[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC2[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC3[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC4[4:0]
+addSignal -h 15 -holdScope rstn
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC0[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC1[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC2[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC3[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC4[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC0[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC1[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC2[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC3[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC4[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope valid_from[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope valid_to[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_cnt[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_o[15:0]
+addSignal -h 15 -holdScope vert0_ready_i
+addSignal -h 15 -holdScope vert0_ready_o
+addSignal -h 15 -holdScope vert0_valid_i
+addSignal -h 15 -holdScope vert0_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_cnt[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_data_o[15:0]
+addSignal -h 15 -holdScope vert1_ready_i
+addSignal -h 15 -holdScope vert1_ready_o
+addSignal -h 15 -holdScope vert1_valid_i
+addSignal -h 15 -holdScope vert1_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope west_cnt[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_o[15:0]
+addSignal -h 15 -holdScope west_ready_i
+addSignal -h 15 -holdScope west_ready_o
+addSignal -h 15 -holdScope west_valid_i
+addSignal -h 15 -holdScope west_valid_o
+addGroup "R06" -e FALSE
 addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/cast_nw/router_0_6/VCgranted[4:0]
 addSignal -h 15 -holdScope clk
-addSignal -h 15 -UNSIGNED -HEX -holdScope credit_upd[0:6]
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_upd[0:4]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc0[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc1[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc2[15:0]
@@ -611,12 +1070,14 @@ addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc2[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc3[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc4[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc5[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope east_cnt[31:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope east_data_i[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope east_data_o[15:0]
 addSignal -h 15 -holdScope east_ready_i
 addSignal -h 15 -holdScope east_ready_o
 addSignal -h 15 -holdScope east_valid_i
 addSignal -h 15 -holdScope east_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope local_cnt[31:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_i[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_o[15:0]
 addSignal -h 15 -holdScope local_ready_i
@@ -645,28 +1106,31 @@ addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC3[4:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC4[4:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope valid_from[4:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope valid_to[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_cnt[31:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_i[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_o[15:0]
 addSignal -h 15 -holdScope vert0_ready_i
 addSignal -h 15 -holdScope vert0_ready_o
 addSignal -h 15 -holdScope vert0_valid_i
 addSignal -h 15 -holdScope vert0_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_cnt[31:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_data_i[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_data_o[15:0]
 addSignal -h 15 -holdScope vert1_ready_i
 addSignal -h 15 -holdScope vert1_ready_o
 addSignal -h 15 -holdScope vert1_valid_i
 addSignal -h 15 -holdScope vert1_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope west_cnt[31:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_i[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_o[15:0]
 addSignal -h 15 -holdScope west_ready_i
 addSignal -h 15 -holdScope west_ready_o
 addSignal -h 15 -holdScope west_valid_i
 addSignal -h 15 -holdScope west_valid_o
-addGroup "R16"
-addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/cast_nw/router_1_6/VCgranted[4:0]
+addGroup "R46" -e FALSE
+addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/cast_nw/router_4_6/VCgranted[4:0]
 addSignal -h 15 -holdScope clk
-addSignal -h 15 -UNSIGNED -HEX -holdScope credit_upd[0:6]
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_upd[0:4]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc0[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc1[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc2[15:0]
@@ -679,12 +1143,14 @@ addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc2[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc3[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc4[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc5[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope east_cnt[31:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope east_data_i[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope east_data_o[15:0]
 addSignal -h 15 -holdScope east_ready_i
 addSignal -h 15 -holdScope east_ready_o
 addSignal -h 15 -holdScope east_valid_i
 addSignal -h 15 -holdScope east_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope local_cnt[31:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_i[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_o[15:0]
 addSignal -h 15 -holdScope local_ready_i
@@ -713,96 +1179,31 @@ addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC3[4:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC4[4:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope valid_from[4:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope valid_to[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_cnt[31:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_i[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_o[15:0]
 addSignal -h 15 -holdScope vert0_ready_i
 addSignal -h 15 -holdScope vert0_ready_o
 addSignal -h 15 -holdScope vert0_valid_i
 addSignal -h 15 -holdScope vert0_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_cnt[31:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_data_i[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_data_o[15:0]
 addSignal -h 15 -holdScope vert1_ready_i
 addSignal -h 15 -holdScope vert1_ready_o
 addSignal -h 15 -holdScope vert1_valid_i
 addSignal -h 15 -holdScope vert1_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope west_cnt[31:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_i[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_o[15:0]
 addSignal -h 15 -holdScope west_ready_i
 addSignal -h 15 -holdScope west_ready_o
 addSignal -h 15 -holdScope west_valid_i
 addSignal -h 15 -holdScope west_valid_o
-addGroup "R15"
-addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/cast_nw/router_1_5/VCgranted[4:0]
-addSignal -h 15 -holdScope clk
-addSignal -h 15 -UNSIGNED -HEX -holdScope credit_upd[0:6]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc0[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc1[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc2[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc3[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc4[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc5[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc0[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc1[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc2[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc3[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc4[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc5[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope east_data_i[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope east_data_o[15:0]
-addSignal -h 15 -holdScope east_ready_i
-addSignal -h 15 -holdScope east_ready_o
-addSignal -h 15 -holdScope east_valid_i
-addSignal -h 15 -holdScope east_valid_o
-addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_i[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_o[15:0]
-addSignal -h 15 -holdScope local_ready_i
-addSignal -h 15 -holdScope local_ready_o
-addSignal -h 15 -holdScope local_valid_i
-addSignal -h 15 -holdScope local_valid_o
-addSignal -h 15 -UNSIGNED -HEX -holdScope outVCAvailableReset[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope outVCAvailable[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope ready_from[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope ready_to[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC0[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC1[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC2[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC3[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC4[4:0]
-addSignal -h 15 -holdScope rstn
-addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC0[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC1[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC2[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC3[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC4[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC0[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC1[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC2[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC3[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC4[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope valid_from[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope valid_to[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_i[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_o[15:0]
-addSignal -h 15 -holdScope vert0_ready_i
-addSignal -h 15 -holdScope vert0_ready_o
-addSignal -h 15 -holdScope vert0_valid_i
-addSignal -h 15 -holdScope vert0_valid_o
-addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_data_i[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_data_o[15:0]
-addSignal -h 15 -holdScope vert1_ready_i
-addSignal -h 15 -holdScope vert1_ready_o
-addSignal -h 15 -holdScope vert1_valid_i
-addSignal -h 15 -holdScope vert1_valid_o
-addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_i[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_o[15:0]
-addSignal -h 15 -holdScope west_ready_i
-addSignal -h 15 -holdScope west_ready_o
-addSignal -h 15 -holdScope west_valid_i
-addSignal -h 15 -holdScope west_valid_o
-addGroup "R37"
+addGroup "R37" -e FALSE
 addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/cast_nw/router_3_7/VCgranted[4:0]
 addSignal -h 15 -holdScope clk
-addSignal -h 15 -UNSIGNED -HEX -holdScope credit_upd[0:6]
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_upd[0:4]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc0[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc1[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc2[15:0]
@@ -815,138 +1216,378 @@ addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc2[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc3[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc4[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc5[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope east_cnt[31:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope east_data_i[15:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope east_data_o[15:0]
 addSignal -h 15 -holdScope east_ready_i
 addSignal -h 15 -holdScope east_ready_o
 addSignal -h 15 -holdScope east_valid_i
 addSignal -h 15 -holdScope east_valid_o
-addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_i[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_o[15:0]
-addSignal -h 15 -holdScope local_ready_i
-addSignal -h 15 -holdScope local_ready_o
-addSignal -h 15 -holdScope local_valid_i
-addSignal -h 15 -holdScope local_valid_o
-addSignal -h 15 -UNSIGNED -HEX -holdScope outVCAvailableReset[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope outVCAvailable[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope ready_from[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope ready_to[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC0[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC1[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC2[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC3[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC4[4:0]
-addSignal -h 15 -holdScope rstn
-addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC0[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC1[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC2[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC3[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC4[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC0[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC1[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC2[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC3[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC4[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope valid_from[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope valid_to[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_i[15:0]
-addSignal -h 15 -holdScope vert1_valid_i
-addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_data_i[15:0]
-addSignal -h 15 -holdScope vert0_valid_o
-addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_o[15:0]
-addSignal -h 15 -holdScope vert0_ready_i
-addSignal -h 15 -holdScope vert0_ready_o
-addSignal -h 15 -holdScope vert0_valid_i
-addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_data_o[15:0]
-addSignal -h 15 -holdScope vert1_ready_i
-addSignal -h 15 -holdScope vert1_ready_o
-addSignal -h 15 -holdScope vert1_valid_o
-addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_i[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_o[15:0]
-addSignal -h 15 -holdScope west_ready_i
-addSignal -h 15 -holdScope west_ready_o
-addSignal -h 15 -holdScope west_valid_i
-addSignal -h 15 -holdScope west_valid_o
-addGroup "R00"
-addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/cast_nw/router_0_0/VCgranted[4:0]
-addSignal -h 15 -holdScope clk
-addSignal -h 15 -UNSIGNED -HEX -holdScope credit_upd[0:6]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc0[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc1[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc2[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc3[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc4[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc5[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc0[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc1[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc2[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc3[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc4[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc5[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope east_data_i[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope east_data_o[15:0]
-addSignal -h 15 -holdScope east_ready_i
-addSignal -h 15 -holdScope east_ready_o
-addSignal -h 15 -holdScope east_valid_i
-addSignal -h 15 -holdScope east_valid_o
-addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_i[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_o[15:0]
-addSignal -h 15 -holdScope local_ready_i
-addSignal -h 15 -holdScope local_ready_o
-addSignal -h 15 -holdScope local_valid_i
-addSignal -h 15 -holdScope local_valid_o
-addSignal -h 15 -UNSIGNED -HEX -holdScope outVCAvailableReset[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope outVCAvailable[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope ready_from[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope ready_to[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC0[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC1[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC2[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC3[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC4[4:0]
-addSignal -h 15 -holdScope rstn
-addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC0[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC1[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC2[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC3[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC4[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC0[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC1[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC2[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC3[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC4[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope valid_from[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope valid_to[4:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_i[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_o[15:0]
-addSignal -h 15 -holdScope vert0_ready_i
-addSignal -h 15 -holdScope vert0_ready_o
-addSignal -h 15 -holdScope vert0_valid_i
-addSignal -h 15 -holdScope vert0_valid_o
-addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_data_i[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_data_o[15:0]
-addSignal -h 15 -holdScope vert1_ready_i
-addSignal -h 15 -holdScope vert1_ready_o
-addSignal -h 15 -holdScope vert1_valid_i
-addSignal -h 15 -holdScope vert1_valid_o
-addSignal -h 15 -holdScope west_valid_i
-addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_i[15:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_o[15:0]
-addSignal -h 15 -holdScope west_ready_i
-addSignal -h 15 -holdScope west_ready_o
-addSignal -h 15 -holdScope west_valid_o
-addGroup "R31"
-addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/cast_nw/router_3_1/east_cnt[31:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope local_cnt[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_o[15:0]
+addSignal -h 15 -holdScope local_ready_i
+addSignal -h 15 -holdScope local_ready_o
+addSignal -h 15 -holdScope local_valid_i
+addSignal -h 15 -holdScope local_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope outVCAvailableReset[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope outVCAvailable[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope ready_from[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope ready_to[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC0[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC1[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC2[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC3[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC4[4:0]
+addSignal -h 15 -holdScope rstn
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC0[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC1[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC2[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC3[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC4[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC0[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC1[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC2[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC3[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC4[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope valid_from[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope valid_to[4:0]
 addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_cnt[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_o[15:0]
+addSignal -h 15 -holdScope vert0_ready_i
+addSignal -h 15 -holdScope vert0_ready_o
+addSignal -h 15 -holdScope vert0_valid_i
+addSignal -h 15 -holdScope vert0_valid_o
 addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_cnt[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_data_o[15:0]
+addSignal -h 15 -holdScope vert1_ready_i
+addSignal -h 15 -holdScope vert1_ready_o
+addSignal -h 15 -holdScope vert1_valid_i
+addSignal -h 15 -holdScope vert1_valid_o
 addSignal -h 15 -UNSIGNED -HEX -holdScope west_cnt[31:0]
-addGroup "R51"
-addGroup "G16"
+addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_o[15:0]
+addSignal -h 15 -holdScope west_ready_i
+addSignal -h 15 -holdScope west_ready_o
+addSignal -h 15 -holdScope west_valid_i
+addSignal -h 15 -holdScope west_valid_o
+addGroup "R47" -e FALSE
+addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/cast_nw/router_4_7/VCgranted[4:0]
+addSignal -h 15 -holdScope clk
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_upd[0:4]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc0[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc1[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc2[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc3[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc4[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc5[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc0[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc1[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc2[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc3[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc4[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc5[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope east_cnt[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope east_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope east_data_o[15:0]
+addSignal -h 15 -holdScope east_ready_i
+addSignal -h 15 -holdScope east_ready_o
+addSignal -h 15 -holdScope east_valid_i
+addSignal -h 15 -holdScope east_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope local_cnt[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_o[15:0]
+addSignal -h 15 -holdScope local_ready_i
+addSignal -h 15 -holdScope local_ready_o
+addSignal -h 15 -holdScope local_valid_i
+addSignal -h 15 -holdScope local_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope outVCAvailableReset[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope outVCAvailable[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope ready_from[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope ready_to[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC0[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC1[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC2[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC3[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC4[4:0]
+addSignal -h 15 -holdScope rstn
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC0[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC1[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC2[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC3[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC4[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC0[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC1[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC2[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC3[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC4[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope valid_from[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope valid_to[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_cnt[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_o[15:0]
+addSignal -h 15 -holdScope vert0_ready_i
+addSignal -h 15 -holdScope vert0_ready_o
+addSignal -h 15 -holdScope vert0_valid_i
+addSignal -h 15 -holdScope vert0_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_cnt[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_data_o[15:0]
+addSignal -h 15 -holdScope vert1_ready_i
+addSignal -h 15 -holdScope vert1_ready_o
+addSignal -h 15 -holdScope vert1_valid_i
+addSignal -h 15 -holdScope vert1_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope west_cnt[31:0]
+addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/cast_nw/router_3_7/west_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/cast_nw/router_4_7/west_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_o[15:0]
+addSignal -h 15 -holdScope west_ready_i
+addSignal -h 15 -holdScope west_ready_o
+addSignal -h 15 -holdScope west_valid_i
+addSignal -h 15 -holdScope west_valid_o
+addGroup "R25"
+addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/cast_nw/router_2_5/VCgranted[4:0]
+addSignal -h 15 -holdScope clk
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_upd[0:4]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc0[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc1[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc2[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc3[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc4[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc5[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc0[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc1[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc2[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc3[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc4[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc5[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope east_cnt[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope east_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope east_data_o[15:0]
+addSignal -h 15 -holdScope east_ready_i
+addSignal -h 15 -holdScope east_ready_o
+addSignal -h 15 -holdScope east_valid_i
+addSignal -h 15 -holdScope east_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope local_cnt[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_o[15:0]
+addSignal -h 15 -holdScope local_ready_i
+addSignal -h 15 -holdScope local_ready_o
+addSignal -h 15 -holdScope local_valid_i
+addSignal -h 15 -holdScope local_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope outVCAvailableReset[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope outVCAvailable[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope ready_from[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope ready_to[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC0[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC1[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC2[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC3[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC4[4:0]
+addSignal -h 15 -holdScope rstn
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC0[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC1[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC2[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC3[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC4[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC0[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC1[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC2[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC3[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC4[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope valid_from[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope valid_to[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_cnt[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_o[15:0]
+addSignal -h 15 -holdScope vert0_ready_i
+addSignal -h 15 -holdScope vert0_ready_o
+addSignal -h 15 -holdScope vert0_valid_i
+addSignal -h 15 -holdScope vert0_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_cnt[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope R25_vert1_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/cast_nw/router_2_6/R26_vert1_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/cast_nw/router_3_6/R36_west_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/cast_nw/router_2_5/vert1_data_o[15:0]
+addSignal -h 15 -holdScope vert1_ready_i
+addSignal -h 15 -holdScope vert1_ready_o
+addSignal -h 15 -holdScope vert1_valid_i
+addSignal -h 15 -holdScope vert1_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope west_cnt[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_o[15:0]
+addSignal -h 15 -holdScope west_ready_i
+addSignal -h 15 -holdScope west_ready_o
+addSignal -h 15 -holdScope west_valid_i
+addSignal -h 15 -holdScope west_valid_o
+addGroup "R36"
+addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/cast_nw/router_3_6/VCgranted[4:0]
+addSignal -h 15 -holdScope clk
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_upd[0:4]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc0[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc1[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc2[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc3[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc4[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_from_vc5[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc0[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc1[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc2[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc3[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc4[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_to_vc5[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope east_cnt[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope east_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope east_data_o[15:0]
+addSignal -h 15 -holdScope east_ready_i
+addSignal -h 15 -holdScope east_ready_o
+addSignal -h 15 -holdScope east_valid_i
+addSignal -h 15 -holdScope east_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope local_cnt[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_o[15:0]
+addSignal -h 15 -holdScope local_ready_i
+addSignal -h 15 -holdScope local_ready_o
+addSignal -h 15 -holdScope local_valid_i
+addSignal -h 15 -holdScope local_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope outVCAvailableReset[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope outVCAvailable[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope ready_from[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope ready_to[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC0[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC1[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC2[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC3[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVCfromVC4[4:0]
+addSignal -h 15 -holdScope rstn
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC0[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC1[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC2[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC3[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC4[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC0[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC1[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC2[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC3[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selVCfromVC4[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope valid_from[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope valid_to[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_cnt[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert0_data_o[15:0]
+addSignal -h 15 -holdScope vert0_ready_i
+addSignal -h 15 -holdScope vert0_ready_o
+addSignal -h 15 -holdScope vert0_valid_i
+addSignal -h 15 -holdScope vert0_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_cnt[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope vert1_data_o[15:0]
+addSignal -h 15 -holdScope vert1_ready_i
+addSignal -h 15 -holdScope vert1_ready_o
+addSignal -h 15 -holdScope vert1_valid_i
+addSignal -h 15 -holdScope vert1_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope west_cnt[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_o[15:0]
+addSignal -h 15 -holdScope west_ready_i
+addSignal -h 15 -holdScope west_ready_o
+addSignal -h 15 -holdScope west_valid_i
+addSignal -h 15 -holdScope west_valid_o
+addGroup "CMP"
+addSignal -h 15 -UNSIGNED -BIN /top_tb/dut/cast_nw/router_2_6/vc_allocator/R26_outVCAvailable[4:0]
+addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/cast_nw/router_2_5/R25_vert1_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/cast_nw/router_2_6/R26_vert1_data_i[15:0]
+addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/cast_nw/router_3_6/R36_west_data_i[15:0]
+addGroup "R26_vert1_ctlr"
+addSignal -h 15 /top_tb/dut/cast_nw/router_2_6/input_stage_vert1/ctlr/VCgranted
+addSignal -h 15 -UNSIGNED -HEX -holdScope arb_grt[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope arb_req[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope candidateOutVC[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope candidateOutVC_reg[4:0]
+addSignal -h 15 -holdScope clk
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_cnt[15:0]
+addSignal -h 15 -holdScope fifo_empty
+addSignal -h 15 -holdScope flit_fire
+addSignal -h 15 -UNSIGNED -HEX -holdScope flit_type[1:0]
+addSignal -h 15 -holdScope in_ubm
+addSignal -h 15 -holdScope isoh
+addSignal -h 15 -holdScope outVCLock
+addSignal -h 15 -UNSIGNED -HEX -holdScope outVC[4:0]
+addSignal -h 15 -holdScope out_of_ubm
+addSignal -h 15 -holdScope pop
+addSignal -h 15 -holdScope pop_non_ubm
+addSignal -h 15 -holdScope pop_ubm
+addSignal -h 15 -holdScope read_reset
+addSignal -h 15 -UNSIGNED -BIN -holdScope reqVC[4:0]
+addSignal -h 15 -UNSIGNED -BIN /top_tb/dut/cast_nw/router_2_6/crossbar/mux_ready_to_input_vc4/ready_in[4:0]
+addSignal -h 15 /top_tb/dut/cast_nw/router_2_6/input_stage_vert1/ctlr/rstn
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVC[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selXBVC[4:0]
+addGroup "R26_ready_to_vert1"
+addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/cast_nw/router_2_6/crossbar/mux_ready_to_input_vc4/mux_sel[4:0]
+addSignal -h 15 -holdScope ready_out
+addGroup "R26_west_ctrl"
+addSignal -h 15 /top_tb/dut/cast_nw/router_2_6/input_stage_west/ctlr/VCgranted
+addSignal -h 15 -UNSIGNED -HEX -holdScope arb_grt[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope arb_req[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope candidateOutVC[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope candidateOutVC_reg[4:0]
+addSignal -h 15 -holdScope clk
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_cnt[15:0]
+addSignal -h 15 -holdScope fifo_empty
+addSignal -h 15 -holdScope flit_fire
+addSignal -h 15 -UNSIGNED -HEX -holdScope flit_type[1:0]
+addSignal -h 15 -holdScope in_ubm
+addSignal -h 15 -holdScope isoh
+addSignal -h 15 -holdScope outVCLock
+addSignal -h 15 -UNSIGNED -HEX -holdScope outVC[4:0]
+addSignal -h 15 -holdScope out_of_ubm
+addSignal -h 15 -holdScope pop
+addSignal -h 15 -holdScope pop_non_ubm
+addSignal -h 15 -holdScope pop_ubm
+addSignal -h 15 -holdScope read_reset
+addSignal -h 15 -UNSIGNED -BIN -holdScope reqVC[4:0]
+addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/cast_nw/router_2_6/crossbar/mux_ready_to_input_vc1/ready_in[4:0]
+addSignal -h 15 /top_tb/dut/cast_nw/router_2_6/input_stage_west/ctlr/rstn
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVC[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selXBVC[4:0]
+addGroup "R26_local_ctrl"
+addSignal -h 15 /top_tb/dut/cast_nw/router_2_6/input_stage_local/ctlr/VCgranted
+addSignal -h 15 -UNSIGNED -HEX -holdScope arb_grt[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope arb_req[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope candidateOutVC[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope candidateOutVC_reg[4:0]
+addSignal -h 15 -holdScope clk
+addSignal -h 15 -UNSIGNED -HEX -holdScope credit_cnt[15:0]
+addSignal -h 15 -holdScope fifo_empty
+addSignal -h 15 -holdScope flit_fire
+addSignal -h 15 -UNSIGNED -HEX -holdScope flit_type[1:0]
+addSignal -h 15 -holdScope in_ubm
+addSignal -h 15 -holdScope isoh
+addSignal -h 15 -holdScope outVCLock
+addSignal -h 15 -UNSIGNED -HEX -holdScope outVC[4:0]
+addSignal -h 15 -holdScope out_of_ubm
+addSignal -h 15 -holdScope pop
+addSignal -h 15 -holdScope pop_non_ubm
+addSignal -h 15 -holdScope pop_ubm
+addSignal -h 15 -holdScope read_reset
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVC[4:0]
+addSignal -h 15 -holdScope rstn
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVC[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selXBVC[4:0]
+addGroup "G36"
+addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/cast_nw/router_2_6/vc_allocator/VCgranted[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope arb_grt_from_VC2[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope arb_grt_from_VC4[4:0]
+addSignal -h 15 -UNSIGNED -BIN -holdScope arb_req_to_VC2[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVCtoVC2[4:0]
+addGroup "G37"
 
 ; getSignalForm Scope Hierarchy Status
 ; active file of getSignalForm
-activeDirFile "" "/mnt/c/git/nvcim-comm/behavior_model/test_virtual_vgg16/wave.fsdb"
+activeDirFile "" "/mnt/c/git/nvcim-comm/behavior_model/test_auto/wave.fsdb"
 
 GETSIGNALFORM_SCOPE_HIERARCHY_BEGIN
 getSignalForm close
@@ -955,13 +1596,16 @@ getSignalForm close
 "/top_tb"
 "/top_tb/dut"
 "/top_tb/dut/cast_nw"
-"/top_tb/dut/cast_nw/router_0_0"
+"/top_tb/dut/cast_nw/router_0_5"
 "/top_tb/dut/cast_nw/router_0_6"
-"/top_tb/dut/cast_nw/router_1_1"
-"/top_tb/dut/cast_nw/router_3_1"
-"/top_tb/dut/cast_nw/router_3_7"
-"/top_tb/dut/cast_nw/router_4_4"
-"/top_tb/dut/pe_3_1"
+"/top_tb/dut/cast_nw/router_1_5"
+"/top_tb/dut/cast_nw/router_1_5/input_stage_local"
+"/top_tb/dut/cast_nw/router_2_5"
+"/top_tb/dut/cast_nw/router_2_6"
+"/top_tb/dut/cast_nw/router_2_6/vc_allocator"
+"/top_tb/dut/cast_nw/router_2_6/vc_allocator/arbiterVC2"
+"/top_tb/dut/cast_nw/router_4_6"
+"/top_tb/dut/cast_nw/router_4_7"
 
 SCOPE_LIST_BEGIN
 "/_$novas_unit__1"
@@ -999,6 +1643,58 @@ SCOPE_LIST_BEGIN
 "/top_tb/dut/cast_nw/router_3_4"
 "/top_tb/dut/cast_nw/router_3_1"
 "/top_tb/dut/cast_nw/router_5_1"
+"/top_tb/dut/cast_nw/router_1_3"
+"/top_tb/dut/cast_nw/router_1_4"
+"/top_tb/dut/cast_nw/router_3_1/crossbar"
+"/top_tb/dut/cast_nw/router_0_2"
+"/top_tb/dut/cast_nw/router_2_1"
+"/top_tb/dut/cast_nw/router_2_1/input_stage_local/ctlr"
+"/top_tb/dut/cast_nw/router_2_1/input_stage_local"
+"/top_tb/dut/cast_nw/router_2_1/crossbar/mux_data_valid_to_output_vc0"
+"/top_tb/dut/cast_nw/router_2_1/crossbar/mux_ready_to_input_vc0"
+"/top_tb/dut/cast_nw/router_2_1/crossbar"
+"/top_tb/dut/cast_nw/router_2_2"
+"/top_tb/dut/cast_nw/router_0_1"
+"/top_tb/dut/merge_nw/router5"
+"/top_tb/dut/merge_nw"
+"/top_tb/dut/merge_nw/router11"
+"/top_tb/dut/merge_nw/router10"
+"/top_tb/dut/cast_nw/router_0_2/input_stage_local"
+"/top_tb/dut/cast_nw/router_0_2/input_stage_vert0"
+"/top_tb/dut/cast_nw/router_0_2/input_stage_local/cc"
+"/top_tb/dut/cast_nw/router_0_4/input_stage_local"
+"/top_tb/dut/cast_nw/router_1_4/input_stage_local"
+"/top_tb/dut/cast_nw/router_2_8"
+"/top_tb/dut/cast_nw/router_2_8/input_stage_east"
+"/top_tb/dut/cast_nw/router_2_8/input_stage_local"
+"/top_tb/dut/cast_nw/router_2_6/input_stage_east"
+"/top_tb/dut/cast_nw/router_2_6/input_stage_local"
+"/top_tb/dut/cast_nw/router_3_7/input_stage_east"
+"/top_tb/dut/cast_nw/router_3_7/input_stage_local"
+"/top_tb/dut/cast_nw/router_1_5/input_stage_east"
+"/top_tb/dut/cast_nw/router_1_5/input_stage_local"
+"/top_tb/dut/cast_nw/router_0_5"
+"/top_tb/dut/cast_nw/router_4_6"
+"/top_tb/dut/cast_nw/router_4_7"
+"/top_tb/dut/cast_nw/router_2_4"
+"/top_tb/dut/cast_nw/router_2_5"
+"/top_tb/dut/cast_nw/router_3_6"
+"/top_tb/dut/cast_nw/router_2_6/vc_allocator"
+"/top_tb/dut/cast_nw/router_2_6/input_stage_vert1"
+"/top_tb/dut/cast_nw/router_2_6/input_stage_vert1/cc"
+"/top_tb/dut/cast_nw/router_2_6/input_stage_vert1/ctlr"
+"/top_tb/dut/cast_nw/router_2_6/crossbar/mux_ready_to_input_vc0"
+"/top_tb/dut/cast_nw/router_2_6/crossbar/mux_ready_to_input_vc1"
+"/top_tb/dut/cast_nw/router_2_6/crossbar/mux_ready_to_input_vc2"
+"/top_tb/dut/cast_nw/router_2_6/crossbar/mux_ready_to_input_vc3"
+"/top_tb/dut/cast_nw/router_2_6/crossbar/mux_ready_to_input_vc4"
+"/top_tb/dut/cast_nw/router_2_6/crossbar"
+"/top_tb/dut/cast_nw/router_2_6/vc_allocator/arbiterVC0"
+"/top_tb/dut/cast_nw/router_2_6/input_stage_west"
+"/top_tb/dut/cast_nw/router_2_6/input_stage_west/ctlr"
+"/top_tb/dut/cast_nw/router_2_6/input_stage_local/ctlr"
+"/top_tb/dut/cast_nw/router_2_6/vc_allocator/arbiterVC1"
+"/top_tb/dut/cast_nw/router_2_6/vc_allocator/arbiterVC2"
 SCOPE_LIST_END
 
 GETSIGNALFORM_SCOPE_HIERARCHY_END

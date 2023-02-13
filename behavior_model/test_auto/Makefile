@@ -14,7 +14,7 @@ run:
 	$(TOP_MODULE)   					 \
 	$(TIMESCALE)						 \
 	$(INCDIR)						     \
-	$(FSDB) -R # -R means run simulation right after compilation
+	$(FSDB) -R
 
 verdi:
 	verdi +v2k -sverilog $(INCDIR) -f filelist.f -ssf wave.fsdb -sswr ./wcfg/cfg1.rc

@@ -1,3 +1,7 @@
+/*
+    Merge router without register
+*/
+
 `include "params.svh"
 
 module merge_router #(
@@ -72,7 +76,7 @@ always@(valid) begin
 end
 
 wire ready;
-assign ready = output_sel[0] & ready_i[0] | output_sel[1] & ready_i[1] |output_sel[2] & ready_i[2] | output_sel[3] & ready_i[3] | output_sel[4] & ready_i[4];
+assign ready = output_sel[0] & ready_i[0] | output_sel[1] & ready_i[1] | output_sel[2] & ready_i[2] | output_sel[3] & ready_i[3] | output_sel[4] & ready_i[4];
 
 always@(valid or ready) begin
     for(int i=0; i<5; i++) begin

@@ -2,8 +2,6 @@
 A test script to test the optimization of cast communication plan
 The object is to reduce contentions of cast communication as much as possible
 '''
-import networkx as nx
-import rewrite as rw
 from mapper import Mapper
 from deadlock_analyzer import DeadlockAnalyzer
 from mapplot import *
@@ -24,7 +22,7 @@ if __name__ == "__main__":
             print("Finished!!\n\n")
             print(f"find {len(dla.cloops)} complex loop(s)")
             print("accumulated_contention_level:",maper.Get_Contention_Level())
-            dla.Plot_CLoops()
+            dla.Plot_Loops()
             break
 
         # if con < con_accu:

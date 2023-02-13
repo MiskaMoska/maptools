@@ -7,7 +7,8 @@ reg clk;
 reg rstn;
 reg [31:0] addr;
 
-integer file0,file1;
+integer file0,file1,state_file;
+
 (* ramstyle = "AUTO" *) reg [`DW-1 : 0] packets [0:10000];
 wire [`DW-1:0] data_i_stab;
 wire valid_i_stab, ready_o_stab;
@@ -49,6 +50,7 @@ initial begin
     $fsdbDumpMDA(); //show array values 
     file0 = $fopen("/mnt/c/git/NVCIM-COMM/behavior_model/test_auto/receive_pool_flee0");
     file1 = $fopen("/mnt/c/git/NVCIM-COMM/behavior_model/test_auto/receive_pool_flee1");
+    state_file = $fopen("/mnt/c/git/NVCIM-COMM/behavior_model/test_auto/run_state");
     clk = 0;
     rstn = 1;
     # 33 rstn = 0;
@@ -57,10 +59,35 @@ initial begin
     wait(addr == 10000);
     t = $realtime;
     # 500000
+    $fwrite(state_file,"%s","normal");
     $fclose(file0);
     $fclose(file1);
+    $fclose(state_file);
     $display("elapsed sending time: %f",t);
-    $stop;
+    $finish;
+end
+
+// deadlock detection
+initial begin
+    int win;
+    int start_addr;
+    forever begin
+        @(posedge clk)
+        if(~rstn) win <= 0;
+        else begin
+            if(win == 9999) win <= 0;
+            else win <= win + 1;
+            if(win == 0) start_addr <= addr;
+            else if(win == 9999 && addr != 10000 && addr == start_addr) begin // deadlock occurs
+                $fwrite(state_file,"%s","deadlock");
+                $fclose(file0);
+                $fclose(file1);
+                $fclose(state_file);
+                $display("ERROR: deadlock detected!!!!!");
+                $finish;
+            end
+        end
+    end
 end
 
 always #5 clk = ~clk;

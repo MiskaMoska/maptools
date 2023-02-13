@@ -15,10 +15,12 @@ TODO need to provide support for random region division
 '''
 import random
 import networkx as nx
+from matplotlib import pyplot as plt
 
 class Mapper(object):
 
-    def __init__(self,w,h,pes_i,pes_o):
+    def __init__(self,w,h,pes_i,pes_o,
+                    dir_name="/mnt/c/git/nvcim-comm/behavior_model/scripts"):
         # PE array width
         self.w = w
         # PE array height
@@ -27,6 +29,7 @@ class Mapper(object):
         self.pes_i = pes_i # VGG 16
         # occupied PEs by output channels of each layer of the AI model
         self.pes_o = pes_o # VGG 16
+        self.dir_name = dir_name
 
         # intermediate representations
         self.projected_model = []
@@ -35,6 +38,8 @@ class Mapper(object):
         self.cast_targets = []
         self.cast_paths = dict()
         self.merge_paths = []
+
+    
 
     @staticmethod
     def genReverseS(w,h)->list:
@@ -301,9 +306,9 @@ class Mapper(object):
         self.Cast_Routing_Plan()
         self.Merge_Routing_Plan()
 
-    def Get_Contention_Level(self):
+    def Get_Contention_Level(self)->int:
         '''
-        This method evaluates the contention level after mapping
+        This method evaluates the contention level after mapping,
         '''
         cnt = 0
         for paths in self.cast_paths.values():
@@ -311,23 +316,123 @@ class Mapper(object):
             for path in paths:
                 if path[1] not in local_dict.keys():
                     local_dict[path[1]] = []
-                local_dict[path[1]].append(path[0])
+                local_dict[path[1]].append(path[2])
             for v in local_dict.values():
-                if len(v) > 1:
+                if len(v) > 1: # there is a channel who has multiple input edges
                     cnt += 1
         return cnt
+
+    def __plot_routers(self):
+        for i in range(self.w):
+            for j in range(self.h):
+                plt.plot([0+i*5,0+i*5],[-0-j*5,-4-j*5],color='black',linewidth=1)
+                plt.plot([0+i*5,3+i*5],[-4-j*5,-4-j*5],color='black',linewidth=1)
+                plt.plot([3+i*5,4+i*5],[-4-j*5,-3-j*5],color='black',linewidth=1)
+                plt.plot([4+i*5,4+i*5],[-3-j*5,-0-j*5],color='black',linewidth=1)
+                plt.plot([4+i*5,0+i*5],[-0-j*5,-0-j*5],color='black',linewidth=1)
+
+    @staticmethod
+    def translate(chan_num:int,mode:str):
+        if mode == 'i':
+            if chan_num == 0:
+                return "cl_i"
+            elif chan_num == 1:
+                return "cw_i"
+            elif chan_num == 2:
+                return "ce_i"
+            elif chan_num == 3:
+                return "cv0_i"
+            elif chan_num == 4:
+                return "cv1_i"
+        
+        elif mode == 'o':
+            if chan_num == 0:
+                return "cl_o"
+            elif chan_num == 1:
+                return "cw_o"
+            elif chan_num == 2:
+                return "ce_o"
+            elif chan_num == 3:
+                return "cv0_o"
+            elif chan_num == 4:
+                return "cv1_o"
+
+    @staticmethod
+    def try_add_edge(G:nx.MultiDiGraph,e:tuple):
+        G.add_edge(e[0],e[1])
+        if G.in_degree(e[0]) == 0 and G.out_degree(e[1]) == 0:
+            G.remove_edge(e[0],e[1])
+
+    def __build_cdg(self):
+        legal_node = ['cw_i','cw_o','ce_i','ce_o','cv0_i','cv1_i','cv1_o','cv0_o','cl_i','cl_o','mrg']
+        legal_xpos = [0,0,4,4,1,2,2,1,3.33+0.5,2.67+0.5,4.5]
+        legal_ypos = [2,1,1,2,0,0,4,4,2.67+0.5,3.33+0.5,4.5]
+        pos = dict()
+        G=nx.MultiDiGraph()
+        for i in range(self.w):
+            for j in range(self.h):
+                for k in range(len(legal_node)):
+                    G.add_node(f"{i}_{j}_"+legal_node[k])
+                    pos[f"{i}_{j}_"+legal_node[k]]=(legal_xpos[k]+5*i,-(legal_ypos[k]+5*j))
+
+        # generate cast inner edges according to cast_paths
+        for k,v in self.cast_paths.items():
+            for p in v:
+                G.add_edge(f"{k[0]}_{k[1]}_"+Mapper.translate(p[0],'i'),f"{k[0]}_{k[1]}_"+Mapper.translate(p[1],'o'))
+        
+        # generate merge edges according to merge_paths
+        for p in self.merge_paths:
+            G.add_edge(f"{p[0][0]}_{p[0][1]}_"+'mrg',f"{p[1][0]}_{p[1][1]}_"+'mrg')
+        
+        # generate cast-merge joint edges
+        for i in range(self.w):
+            for j in range(self.h):
+                if G.out_degree(f"{i}_{j}_mrg") == 0: 
+                    if G.in_degree(f"{i}_{j}_cl_o") > 0: # the current node is a caster
+                        G.add_edge(f"{i}_{j}_cl_o",f"{i}_{j}_cl_i")
+                        G.add_edge(f"{i}_{j}_mrg",f"{i}_{j}_cl_i")
+                else: # the current node is not a caster
+                    G.add_edge(f"{i}_{j}_cl_o",f"{i}_{j}_mrg")
+
+        # generate cast neighbor edges
+        for i in range(self.w-1):
+            for j in range(self.h):
+                Mapper.try_add_edge(G,(f"{i}_{j}_ce_o",f"{i+1}_{j}_cw_i"))
+                Mapper.try_add_edge(G,(f"{i+1}_{j}_cw_o",f"{i}_{j}_ce_i"))
+
+        for i in range(self.w):
+            for j in range(self.h-1):
+                Mapper.try_add_edge(G,(f"{i}_{j}_cv0_o",f"{i}_{j+1}_cv0_i"))
+                Mapper.try_add_edge(G,(f"{i}_{j}_cv1_o",f"{i}_{j+1}_cv1_i"))
+        return G,pos
+
+    def Plot_Map(self):
+        plt.figure(figsize=(self.w,self.h))
+        self.__plot_routers()
+        G,pos = self.__build_cdg()
+        nx.draw(G, pos, node_size = 20,width=1, arrowsize=10,node_color='black',edge_color='blue',arrowstyle='-|>')
+        plt.savefig(self.dir_name + f'/img_map',dpi=400,bbox_inches='tight')
+        print(f"Finished saving map image")
 
 # only to test the function of the mapper
 if __name__ == "__main__":
     maper = Mapper(5,11,[1,1,1,1,1,2,2,2,4,4,4,4,4],[1,1,1,1,1,1,1,2,2,2,2,2,2])
     maper.Run_Mapping()
-    print("\ncast_paths:")
-    for k,v in maper.cast_paths.items():
-        print(k,v)
-    print("\nmerge_paths:")
-    for i in maper.merge_paths:
-        print(i)
-    print(maper.pes)
+    maper.Plot_Map()
+    # cl,e2e_dict = maper.Run_Contention_Analysis()
+    # print("contention level:",cl)
+    # print("e2e_dict")
+    # for k,v in e2e_dict.items():
+    #     print(k,v)
+    # print("\ncast_paths:")
+    # for k,v in maper.cast_paths.items():
+    #     print(k,v)
+    # print("\nmerge_paths:")
+    # for i in maper.merge_paths:
+    #     print(i)
+    # print(maper.pes)
+    # print(maper.cast_targets)
+
     # # generate cast communication pairs
     # for i in range(len(merge_nodes)-1):
     #     nodes = merge_nodes[i]

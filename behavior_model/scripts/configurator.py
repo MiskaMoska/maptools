@@ -10,7 +10,7 @@ Configure the hardware network according to cast_paths and merge_paths
 7.Generate System Config Info
 8.Generate System Header
 ---------------------------------------------------------------
-TODO to support E2E-FC and UBM configuration in cast_config_info
+TODO Only support E2E-FC at local port, not at other ports
 '''
 import os
 import networkx as nx
@@ -18,12 +18,15 @@ import networkx as nx
 class Configurator(object):
 
     def __init__(self,w,h,cast_paths:dict,merge_paths:list,merge_nodes:list,
-                    data_width=16,root_dir="/mnt/c/git/nvcim-comm/behavior_model/test_auto/"):
+                    data_width:int=16,e2e_dict:dict=dict(),ubm_nodes:list=[],
+                    root_dir="/mnt/c/git/nvcim-comm/behavior_model/test_auto/"):
         self.w = w
         self.h = h
         self.cast_paths = cast_paths
         self.merge_paths = merge_paths
         self.merge_nodes = merge_nodes
+        self.e2e_dict = e2e_dict # for deadlock killing
+        self.ubm_nodes = ubm_nodes # for deadlock killing
 
         self.__get_flee_ports()
         self.data_width = data_width
@@ -376,25 +379,45 @@ wire                ready_'''+str(i+(j+1)*w)+'''_to_'''+str(i+j*w)+'''_v0,\tread
                         f.flush()
         print("finish generating all cast routing tables")
 
+    def __get_ubm_info(self,x,y):
+        local = "1" if f"{x}_{y}_cl_i"  in self.ubm_nodes else "0"
+        west  = "1" if f"{x}_{y}_cw_i"  in self.ubm_nodes else "0"
+        east  = "1" if f"{x}_{y}_ce_i"  in self.ubm_nodes else "0"
+        vert0 = "1" if f"{x}_{y}_cv0_i" in self.ubm_nodes else "0"
+        vert1 = "1" if f"{x}_{y}_cv1_i" in self.ubm_nodes else "0"
+        return local,west,east,vert0,vert1
+
     def Generate_Cast_Config_Info(self):
+        '''
+        Only support E2E-FC at local port, not at other ports
+        '''
         file_name = self.root_dir + "cast_network_config.svh"
         containt = ""
         for x in range(self.w):
             for y in range(self.h):
-                containt += "localparam isUBM_list_"+str(x)+"_"+str(y)+"[`CN] = '{0,0,0,0,0};\n"
+                local,west,east,vert0,vert1 = self.__get_ubm_info(x,y)
+                containt += "localparam isUBM_list_"+str(x)+"_"+str(y)+"[`CN] = '{"+local+","+west+","+east+","+vert0+","+vert1+"};\n"
 
         for x in range(self.w):
             for y in range(self.h):
-                containt += "localparam isFC_list_"+str(x)+"_"+str(y)+"[`CN] = '{0,0,0,0,0};\n"
+                m = 1 if (x + y * self.w) in self.e2e_dict.keys() else 0 # is e2e source node or not 
+                containt += "localparam isFC_list_"+str(x)+"_"+str(y)+"[`CN] = '{"+str(m)+",0,0,0,0};\n"
 
         bits = str(self.w*self.h)+"'b0"
         for x in range(self.w):
             for y in range(self.h):
-                containt += "localparam [`NOC_WIDTH*`NOC_HEIGHT-1:0] FCdn_list_"+str(x)+"_"+str(y)+"[`CN] = '{"+bits+","+bits+","+bits+","+bits+","+bits+"};\n"
+                k = x + y * self.w
+                data = 0
+                if k in self.e2e_dict.keys():
+                    for i in self.e2e_dict[k]:
+                        data += 2**i
+                    data = Configurator.dec2bin(data,bit_wide=self.w*self.h)
+                containt += "localparam [`NOC_WIDTH*`NOC_HEIGHT-1:0] FCdn_list_"+str(x)+"_"+str(y)+"[`CN] = '{"+str(self.w*self.h)+"'b"+str(data)+","+bits+","+bits+","+bits+","+bits+"};\n"
 
         for x in range(self.w):
             for y in range(self.h):
-                containt += "localparam int FCpl_list_"+str(x)+"_"+str(y)+"[`CN] = '{0,0,0,0,0};\n"
+                m = "`PKT_LEN" if (x + y * self.w) in self.e2e_dict.keys() else "0" # is e2e source node or not 
+                containt += "localparam int FCpl_list_"+str(x)+"_"+str(y)+"[`CN] = '{"+m+",0,0,0,0};\n"
 
         for x in range(self.w):
             for y in range(self.h):

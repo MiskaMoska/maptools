@@ -49,7 +49,6 @@ def construct_cdg(w,h,cast_paths:dict,merge_paths:list):
     legal_xpos = [0,0,4,4,1,2,2,1,3.33+0.5,2.67+0.5,4.5]
     legal_ypos = [2,1,1,2,0,0,4,4,2.67+0.5,3.33+0.5,4.5]
     pos = dict()
-    edge_label = dict()
     G=nx.MultiDiGraph()
     for i in range(w):
         for j in range(h):
@@ -86,7 +85,7 @@ def construct_cdg(w,h,cast_paths:dict,merge_paths:list):
         for j in range(h-1):
             try_add_edge(G,(f"{i}_{j}_cv0_o",f"{i}_{j+1}_cv0_i"))
             try_add_edge(G,(f"{i}_{j}_cv1_o",f"{i}_{j+1}_cv1_i"))
-    return G,pos,edge_label
+    return G,pos
 
 def get_edge_colors(G:nx.MultiDiGraph):
     edge_color = []

@@ -74,7 +74,8 @@ wire    [`DW-1:0]   data_from_vc5,data_to_vc5;
 wire    [4:0]       valid_from,valid_to,ready_from,ready_to;
 wire    [4:0]       outVCAvailable,VCgranted,outVCAvailableReset;
 
-reg [31:0] local_cnt,west_cnt,east_cnt,vert0_cnt,vert1_cnt; // counts how many flits have been fired from each input port
+// counts how many iterations have been fired from each input port
+reg [31:0] local_cnt,west_cnt,east_cnt,vert0_cnt,vert1_cnt; 
 always@(posedge clk or negedge rstn) begin
     if(~rstn) begin
         local_cnt <= 0; 

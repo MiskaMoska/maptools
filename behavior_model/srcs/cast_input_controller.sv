@@ -113,5 +113,5 @@ end
 assign selXBVC = outVCLock ? outVC : 
                     VCgranted ? selOutVC : 5'b0;
 
-assign reqVC = (flit_type == `HEAD) & (~outVCLock) & (~fifo_empty) & (isFC ? (credit_cnt > FCpl) : 1'b1) ? ((isUBM == 1) ? arb_grt : candidateOutVC) : 0;
+assign reqVC = (flit_type == `HEAD) & (~outVCLock) & (~fifo_empty) & (isFC ? (credit_cnt >= FCpl) : 1'b1) ? ((isUBM == 1) ? arb_grt : candidateOutVC) : 0;
 endmodule
