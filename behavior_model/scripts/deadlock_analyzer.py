@@ -326,8 +326,8 @@ class DeadlockAnalyzer(object):
             print(f"Finished saving {cnt} simple loop image")
 
 if __name__ == "__main__":
-    from mapper import Mapper
-    maper = Mapper(5,11,[1,1,1,1,1,2,2,2,4,4,4,4,4],[1,1,1,1,1,1,1,2,2,2,2,2,2])
+    from noc_mapper import NocMapper
+    maper = NocMapper(5,11,[1,1,1,1,1,2,2,2,4,4,4,4,4],[1,1,1,1,1,1,1,2,2,2,2,2,2])
     maper.Run_Mapping()
     dla = DeadlockAnalyzer(5,11,maper.cast_paths,maper.merge_paths,log=None)
     dla.Run_Analyzing()

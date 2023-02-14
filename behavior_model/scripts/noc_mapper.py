@@ -1,5 +1,5 @@
 '''
-Randomly map the AI model onto the PE array and generate cast and merge routing graphs
+Randomly map the AI model onto the PE array or NoC, then generate cast and merge routing graphs
 The procedure of mapping contains 6 steps:
 ------------------------------------------
 1. Reverse-S Projection
@@ -17,18 +17,29 @@ import random
 import networkx as nx
 from matplotlib import pyplot as plt
 
-class Mapper(object):
+class NocMapper(object):
 
     def __init__(self,w,h,pes_i,pes_o,
                     dir_name="/mnt/c/git/nvcim-comm/behavior_model/scripts"):
-        # PE array width
+        '''
+            Parameters
+            ----------
+            w : int
+                PE (Tile) array width
+
+            h : int
+                PE (Tile) array height
+
+            pes_i : list[int]
+                occupied PEs (Tiles) by input channels of each layer of the AI model
+
+            pes_o : list[int]
+                occupied PEs (Tiles) by output channels of each layer of the AI model
+        '''
         self.w = w
-        # PE array height
         self.h = h
-        # occupied PEs by input channels of each layer of the AI model
-        self.pes_i = pes_i # VGG 16
-        # occupied PEs by output channels of each layer of the AI model
-        self.pes_o = pes_o # VGG 16
+        self.pes_i = pes_i 
+        self.pes_o = pes_o 
         self.dir_name = dir_name
 
         # intermediate representations
@@ -38,8 +49,6 @@ class Mapper(object):
         self.cast_targets = []
         self.cast_paths = dict()
         self.merge_paths = []
-
-    
 
     @staticmethod
     def genReverseS(w,h)->list:
@@ -178,7 +187,7 @@ class Mapper(object):
                     nxt_sx = sx + (1 if sx < dx else -1)
             assert (nxt_sx + nxt_sy * w) in region, "critical error ecountered at merge path"
         path.append(((sx,sy),(nxt_sx,nxt_sy)))
-        Mapper.routeDyXY(w,h,nxt_sx,nxt_sy,dx,dy,path,region=region)
+        NocMapper.routeDyXY(w,h,nxt_sx,nxt_sy,dx,dy,path,region=region)
 
     @staticmethod
     def getChannel(bias_pos:tuple,now_pos:tuple,root_pos:tuple):
@@ -378,7 +387,7 @@ class Mapper(object):
         # generate cast inner edges according to cast_paths
         for k,v in self.cast_paths.items():
             for p in v:
-                G.add_edge(f"{k[0]}_{k[1]}_"+Mapper.translate(p[0],'i'),f"{k[0]}_{k[1]}_"+Mapper.translate(p[1],'o'))
+                G.add_edge(f"{k[0]}_{k[1]}_"+NocMapper.translate(p[0],'i'),f"{k[0]}_{k[1]}_"+NocMapper.translate(p[1],'o'))
         
         # generate merge edges according to merge_paths
         for p in self.merge_paths:
@@ -397,13 +406,13 @@ class Mapper(object):
         # generate cast neighbor edges
         for i in range(self.w-1):
             for j in range(self.h):
-                Mapper.try_add_edge(G,(f"{i}_{j}_ce_o",f"{i+1}_{j}_cw_i"))
-                Mapper.try_add_edge(G,(f"{i+1}_{j}_cw_o",f"{i}_{j}_ce_i"))
+                NocMapper.try_add_edge(G,(f"{i}_{j}_ce_o",f"{i+1}_{j}_cw_i"))
+                NocMapper.try_add_edge(G,(f"{i+1}_{j}_cw_o",f"{i}_{j}_ce_i"))
 
         for i in range(self.w):
             for j in range(self.h-1):
-                Mapper.try_add_edge(G,(f"{i}_{j}_cv0_o",f"{i}_{j+1}_cv0_i"))
-                Mapper.try_add_edge(G,(f"{i}_{j}_cv1_o",f"{i}_{j+1}_cv1_i"))
+                NocMapper.try_add_edge(G,(f"{i}_{j}_cv0_o",f"{i}_{j+1}_cv0_i"))
+                NocMapper.try_add_edge(G,(f"{i}_{j}_cv1_o",f"{i}_{j+1}_cv1_i"))
         return G,pos
 
     def Plot_Map(self):
@@ -414,29 +423,9 @@ class Mapper(object):
         plt.savefig(self.dir_name + f'/img_map',dpi=400,bbox_inches='tight')
         print(f"Finished saving map image")
 
-# only to test the function of the mapper
+
 if __name__ == "__main__":
-    maper = Mapper(5,11,[1,1,1,1,1,2,2,2,4,4,4,4,4],[1,1,1,1,1,1,1,2,2,2,2,2,2])
+    maper = NocMapper(5,11,[1,1,1,1,1,2,2,2,4,4,4,4,4],[1,1,1,1,1,1,1,2,2,2,2,2,2])
     maper.Run_Mapping()
     maper.Plot_Map()
-    # cl,e2e_dict = maper.Run_Contention_Analysis()
-    # print("contention level:",cl)
-    # print("e2e_dict")
-    # for k,v in e2e_dict.items():
-    #     print(k,v)
-    # print("\ncast_paths:")
-    # for k,v in maper.cast_paths.items():
-    #     print(k,v)
-    # print("\nmerge_paths:")
-    # for i in maper.merge_paths:
-    #     print(i)
-    # print(maper.pes)
-    # print(maper.cast_targets)
-
-    # # generate cast communication pairs
-    # for i in range(len(merge_nodes)-1):
-    #     nodes = merge_nodes[i]
-    #     for j in range(len(nodes)):
-    #         node = nodes[j]
-    #         targets = cast_targets[i][j]
-    #         print(f"{node}->{targets}")
+    print(maper.model_regions)

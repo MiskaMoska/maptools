@@ -224,10 +224,10 @@ class DeadlockKiller(object):
             print(f"Finished saving {cnt} remain loop image")
 
 if __name__ == "__main__":
-    from mapper import Mapper
+    from noc_mapper import NocMapper
     from deadlock_analyzer import DeadlockAnalyzer
     while True:
-        maper = Mapper(5,11,[1,1,1,1,1,2,2,2,4,4,4,4,4],[1,1,1,1,1,1,1,2,2,2,2,2,2])
+        maper = NocMapper(5,11,[1,1,1,1,1,2,2,2,4,4,4,4,4],[1,1,1,1,1,1,1,2,2,2,2,2,2])
         maper.Run_Mapping()
         dla = DeadlockAnalyzer(5,11,maper.cast_paths,maper.merge_paths,log=None)
         dla.Run_Analyzing()

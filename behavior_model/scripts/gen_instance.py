@@ -22,7 +22,6 @@ INST_SPACE = 15
 #//////////////////////////////////////////////////////////////////////
 mod_file_name = os.path.join(mod_file_root,mod_file_path)
 
-
 def get_mod_txt(file_path):
     """
     This method returns the raw module statement text in a verilog/systemverilog file
@@ -48,8 +47,6 @@ def get_mod_txt(file_path):
         print("cannot find module statement in:",file_path)
         return 0
 
-
-
 def remove_cmt(mod_txt_lst,cmt = "//"):
     """
     This method removes all the comments in a module text 
@@ -63,8 +60,6 @@ def remove_cmt(mod_txt_lst,cmt = "//"):
                 mod_txt_lst[i] = ""
             else:
                 mod_txt_lst[i] = string[:idx]
-
-
 
 def pick_out_name(str,index):
     """
@@ -94,8 +89,6 @@ def pick_out_name(str,index):
             return "404nofound"
         if flag == 1 and index == 0:
             return name
-
-
 
 def pick_out_all_name(temp_data,instance,sign):
     """
@@ -127,8 +120,6 @@ def pick_out_all_name(temp_data,instance,sign):
                 if sign in temp_data:
                     now_name = now_name + ","
                 instance.append(now_name) 
-
-
 
 def extract_instance(mod_txt,name = "myname"):
     """
@@ -173,8 +164,6 @@ def extract_instance(mod_txt,name = "myname"):
 
     return instance
 
-
-
 def beautify(inst_lst):
     """
     This method creates space between instance names and module names,
@@ -203,10 +192,6 @@ def beautify(inst_lst):
     
     return dst_inst_lst
 
-
-
-
-# program entrance
 if __name__=="__main__":
 
     inst_name = input("please input the instance name:")

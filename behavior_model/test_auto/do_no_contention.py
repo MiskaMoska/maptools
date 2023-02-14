@@ -1,7 +1,7 @@
 import sys
 sys.path.append("..") 
 from scripts.configurator import Configurator
-from scripts.mapper import Mapper
+from behavior_model.scripts.noc_mapper import NoC_Mapper
 from scripts.deadlock_analyzer import DeadlockAnalyzer
 
 W = 5
@@ -9,7 +9,7 @@ H = 11
 
 accum_con = 1000
 while(True):
-    maper = Mapper(W,H,[1,1,1,1,1,2,2,2,4,4,4,4,4],[1,1,1,1,1,1,1,2,2,2,2,2,2])
+    maper = NoC_Mapper(W,H,[1,1,1,1,1,2,2,2,4,4,4,4,4],[1,1,1,1,1,1,1,2,2,2,2,2,2])
     maper.Run_Mapping()
     con = maper.Get_Contention_Level()
 

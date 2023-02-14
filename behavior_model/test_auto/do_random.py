@@ -6,14 +6,14 @@
 import sys
 sys.path.append("..") 
 from scripts.configurator import Configurator
-from scripts.mapper import Mapper
+from scripts.noc_mapper import NocMapper
 from scripts.deadlock_analyzer import DeadlockAnalyzer
 from scripts.deadlock_killer import DeadlockKiller
 
 W = 5
 H = 11
 
-maper = Mapper(W,H,[1,1,1,1,1,2,2,2,4,4,4,4,4],[1,1,1,1,1,1,1,2,2,2,2,2,2])
+maper = NocMapper(W,H,[1,1,1,1,1,2,2,2,4,4,4,4,4],[1,1,1,1,1,1,1,2,2,2,2,2,2])
 maper.Run_Mapping()
 maper.Plot_Map()
 con = maper.Get_Contention_Level()
