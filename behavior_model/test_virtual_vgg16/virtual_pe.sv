@@ -38,7 +38,7 @@ wire [`DW-1:0] data_i_pe, data_o_pe, data_o_nw;
 wire fifo_empty, fifo_full, fifo_read;
 wire [`DW-1:0] fifo_dout;
 wire [`DW-3:0] sum;
-wire [5:0] ofifo_cnt;
+wire [7:0] ofifo_cnt;
 wire ofifo_full;
 wire [`DW-1:0] ofifo_dout;
 

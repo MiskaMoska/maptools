@@ -7,8 +7,8 @@
 `define         NOC_WIDTH                       5
 `define         NOC_HEIGHT                      11
 
-`define         BUFFER_ALLOC                    32
-`define         BUFFER_ALLOC_LOG                5
+`define         BUFFER_ALLOC                    256
+`define         BUFFER_ALLOC_LOG                8
 
 `define         ROUTE_TABLE_DEPTH               16
 `define         CAST_ROUTER_BUFFER_DEPTH_LOG    4
@@ -16,6 +16,7 @@
 `define         PKT_LEN                         16
 `define         PKT_LEN_LOG                     4
 
+`define         NUM_POOL_LAYER                  1
 
 //packet contents begin
 

@@ -18,7 +18,7 @@ import networkx as nx
 class Configurator(object):
 
     def __init__(self,w,h,cast_paths:dict,merge_paths:list,merge_nodes:list,
-                    data_width:int=16,e2e_dict:dict=dict(),ubm_nodes:list=[],
+                    data_width:int=16,e2e_dict:dict=dict(),ubm_nodes:list=[],pool_layers:list=[],
                     root_dir="/mnt/c/git/nvcim-comm/behavior_model/test_auto/"):
         self.w = w
         self.h = h
@@ -27,6 +27,7 @@ class Configurator(object):
         self.merge_nodes = merge_nodes
         self.e2e_dict = e2e_dict # for deadlock killing
         self.ubm_nodes = ubm_nodes # for deadlock killing
+        self.pool_layers = pool_layers # which layer has 2*2 pooling
 
         self.__get_flee_ports()
         self.data_width = data_width
@@ -709,6 +710,7 @@ merge_network merge_nw(
                 containt += '''
 virtual_pe #(
     .isCaster                    (isCaster_'''+str(i)+'''_'''+str(j)+'''),
+    .isPooler                    (isPooler_'''+str(i)+'''_'''+str(j)+'''),
     .stream_id                   (stream_id_'''+str(i)+'''_'''+str(j)+''')
 )pe_'''+str(i)+'''_'''+str(j)+'''(
     .clk                         (clk),
@@ -738,6 +740,7 @@ virtual_pe #(
 
     def Generate_System_Config_Info(self):
         file_name = self.root_dir + "system_config.svh"
+        isPooler = []
         isCaster = []
         stream_id = []
         keys = list(self.cast_paths.keys())
@@ -756,8 +759,18 @@ virtual_pe #(
             else:
                 isCaster.append(0)
                 stream_id.append(0)
+            flag = False
+            for i in self.pool_layers:
+                if k[0] + k[1] * self.w in self.merge_nodes[i]: # is pool
+                    flag = True
+                    break
+            if flag:
+                isPooler.append(1)
+            else:
+                isPooler.append(0)
         containt = ""
         for i in range(len(keys)):
+            containt += f"localparam isPooler_{keys[i][0]}_{keys[i][1]} = {isPooler[i]};\n"
             containt += f"localparam isCaster_{keys[i][0]}_{keys[i][1]} = {isCaster[i]};\n"
             containt += f"localparam stream_id_{keys[i][0]}_{keys[i][1]} = {stream_id[i]};\n"
 
@@ -779,8 +792,8 @@ virtual_pe #(
 `define         NOC_WIDTH                       {self.w}
 `define         NOC_HEIGHT                      {self.h}
 
-`define         BUFFER_ALLOC                    32
-`define         BUFFER_ALLOC_LOG                5
+`define         BUFFER_ALLOC                    256
+`define         BUFFER_ALLOC_LOG                8
 
 `define         ROUTE_TABLE_DEPTH               16
 `define         CAST_ROUTER_BUFFER_DEPTH_LOG    4
@@ -788,6 +801,7 @@ virtual_pe #(
 `define         PKT_LEN                         16
 `define         PKT_LEN_LOG                     4
 
+`define         NUM_POOL_LAYER                  {len(self.pool_layers)}
 
 //packet contents begin
 

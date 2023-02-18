@@ -429,3 +429,4 @@ if __name__ == "__main__":
     maper.Run_Mapping()
     maper.Plot_Map()
     print(maper.model_regions)
+    print(maper.merge_nodes)

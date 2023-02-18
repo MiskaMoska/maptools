@@ -24,6 +24,7 @@ dla.Run_Analyzing()
 dlk = DeadlockKiller(W,H,maper.merge_nodes,maper.cast_targets,maper.cast_paths,dla.sloops,dla.cloops)
 dlk.Run_Killing()
 dlk.Plot_Remain_Loops()
-cfg = Configurator(W,H,maper.cast_paths,maper.merge_paths,maper.merge_nodes,e2e_dict=dlk.e2e_dict,ubm_nodes=dlk.ubm_nodes)
+cfg = Configurator(W,H,maper.cast_paths,maper.merge_paths,maper.merge_nodes,
+                    e2e_dict=dlk.e2e_dict,ubm_nodes=dlk.ubm_nodes,pool_layers=[1,3,6,9,12])
 cfg.Run_Configuring()
 

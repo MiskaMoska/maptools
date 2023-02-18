@@ -68,6 +68,7 @@ merge_network merge_nw(
 
 virtual_pe #(
     .isCaster                    (isCaster_0_0),
+    .isPooler                    (isPooler_0_0),
     .stream_id                   (stream_id_0_0)
 )pe_0_0(
     .clk                         (clk),
@@ -90,6 +91,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_0_1),
+    .isPooler                    (isPooler_0_1),
     .stream_id                   (stream_id_0_1)
 )pe_0_1(
     .clk                         (clk),
@@ -112,6 +114,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_0_2),
+    .isPooler                    (isPooler_0_2),
     .stream_id                   (stream_id_0_2)
 )pe_0_2(
     .clk                         (clk),
@@ -134,6 +137,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_0_3),
+    .isPooler                    (isPooler_0_3),
     .stream_id                   (stream_id_0_3)
 )pe_0_3(
     .clk                         (clk),
@@ -156,6 +160,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_0_4),
+    .isPooler                    (isPooler_0_4),
     .stream_id                   (stream_id_0_4)
 )pe_0_4(
     .clk                         (clk),
@@ -178,6 +183,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_0_5),
+    .isPooler                    (isPooler_0_5),
     .stream_id                   (stream_id_0_5)
 )pe_0_5(
     .clk                         (clk),
@@ -200,6 +206,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_0_6),
+    .isPooler                    (isPooler_0_6),
     .stream_id                   (stream_id_0_6)
 )pe_0_6(
     .clk                         (clk),
@@ -222,6 +229,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_0_7),
+    .isPooler                    (isPooler_0_7),
     .stream_id                   (stream_id_0_7)
 )pe_0_7(
     .clk                         (clk),
@@ -244,6 +252,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_0_8),
+    .isPooler                    (isPooler_0_8),
     .stream_id                   (stream_id_0_8)
 )pe_0_8(
     .clk                         (clk),
@@ -266,6 +275,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_0_9),
+    .isPooler                    (isPooler_0_9),
     .stream_id                   (stream_id_0_9)
 )pe_0_9(
     .clk                         (clk),
@@ -288,6 +298,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_0_10),
+    .isPooler                    (isPooler_0_10),
     .stream_id                   (stream_id_0_10)
 )pe_0_10(
     .clk                         (clk),
@@ -310,6 +321,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_1_0),
+    .isPooler                    (isPooler_1_0),
     .stream_id                   (stream_id_1_0)
 )pe_1_0(
     .clk                         (clk),
@@ -332,6 +344,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_1_1),
+    .isPooler                    (isPooler_1_1),
     .stream_id                   (stream_id_1_1)
 )pe_1_1(
     .clk                         (clk),
@@ -354,6 +367,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_1_2),
+    .isPooler                    (isPooler_1_2),
     .stream_id                   (stream_id_1_2)
 )pe_1_2(
     .clk                         (clk),
@@ -376,6 +390,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_1_3),
+    .isPooler                    (isPooler_1_3),
     .stream_id                   (stream_id_1_3)
 )pe_1_3(
     .clk                         (clk),
@@ -398,6 +413,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_1_4),
+    .isPooler                    (isPooler_1_4),
     .stream_id                   (stream_id_1_4)
 )pe_1_4(
     .clk                         (clk),
@@ -420,6 +436,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_1_5),
+    .isPooler                    (isPooler_1_5),
     .stream_id                   (stream_id_1_5)
 )pe_1_5(
     .clk                         (clk),
@@ -442,6 +459,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_1_6),
+    .isPooler                    (isPooler_1_6),
     .stream_id                   (stream_id_1_6)
 )pe_1_6(
     .clk                         (clk),
@@ -464,6 +482,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_1_7),
+    .isPooler                    (isPooler_1_7),
     .stream_id                   (stream_id_1_7)
 )pe_1_7(
     .clk                         (clk),
@@ -486,6 +505,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_1_8),
+    .isPooler                    (isPooler_1_8),
     .stream_id                   (stream_id_1_8)
 )pe_1_8(
     .clk                         (clk),
@@ -508,6 +528,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_1_9),
+    .isPooler                    (isPooler_1_9),
     .stream_id                   (stream_id_1_9)
 )pe_1_9(
     .clk                         (clk),
@@ -530,6 +551,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_1_10),
+    .isPooler                    (isPooler_1_10),
     .stream_id                   (stream_id_1_10)
 )pe_1_10(
     .clk                         (clk),
@@ -552,6 +574,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_2_0),
+    .isPooler                    (isPooler_2_0),
     .stream_id                   (stream_id_2_0)
 )pe_2_0(
     .clk                         (clk),
@@ -574,6 +597,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_2_1),
+    .isPooler                    (isPooler_2_1),
     .stream_id                   (stream_id_2_1)
 )pe_2_1(
     .clk                         (clk),
@@ -596,6 +620,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_2_2),
+    .isPooler                    (isPooler_2_2),
     .stream_id                   (stream_id_2_2)
 )pe_2_2(
     .clk                         (clk),
@@ -618,6 +643,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_2_3),
+    .isPooler                    (isPooler_2_3),
     .stream_id                   (stream_id_2_3)
 )pe_2_3(
     .clk                         (clk),
@@ -640,6 +666,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_2_4),
+    .isPooler                    (isPooler_2_4),
     .stream_id                   (stream_id_2_4)
 )pe_2_4(
     .clk                         (clk),
@@ -662,6 +689,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_2_5),
+    .isPooler                    (isPooler_2_5),
     .stream_id                   (stream_id_2_5)
 )pe_2_5(
     .clk                         (clk),
@@ -684,6 +712,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_2_6),
+    .isPooler                    (isPooler_2_6),
     .stream_id                   (stream_id_2_6)
 )pe_2_6(
     .clk                         (clk),
@@ -706,6 +735,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_2_7),
+    .isPooler                    (isPooler_2_7),
     .stream_id                   (stream_id_2_7)
 )pe_2_7(
     .clk                         (clk),
@@ -728,6 +758,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_2_8),
+    .isPooler                    (isPooler_2_8),
     .stream_id                   (stream_id_2_8)
 )pe_2_8(
     .clk                         (clk),
@@ -750,6 +781,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_2_9),
+    .isPooler                    (isPooler_2_9),
     .stream_id                   (stream_id_2_9)
 )pe_2_9(
     .clk                         (clk),
@@ -772,6 +804,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_2_10),
+    .isPooler                    (isPooler_2_10),
     .stream_id                   (stream_id_2_10)
 )pe_2_10(
     .clk                         (clk),
@@ -794,6 +827,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_3_0),
+    .isPooler                    (isPooler_3_0),
     .stream_id                   (stream_id_3_0)
 )pe_3_0(
     .clk                         (clk),
@@ -816,6 +850,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_3_1),
+    .isPooler                    (isPooler_3_1),
     .stream_id                   (stream_id_3_1)
 )pe_3_1(
     .clk                         (clk),
@@ -838,6 +873,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_3_2),
+    .isPooler                    (isPooler_3_2),
     .stream_id                   (stream_id_3_2)
 )pe_3_2(
     .clk                         (clk),
@@ -860,6 +896,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_3_3),
+    .isPooler                    (isPooler_3_3),
     .stream_id                   (stream_id_3_3)
 )pe_3_3(
     .clk                         (clk),
@@ -882,6 +919,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_3_4),
+    .isPooler                    (isPooler_3_4),
     .stream_id                   (stream_id_3_4)
 )pe_3_4(
     .clk                         (clk),
@@ -904,6 +942,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_3_5),
+    .isPooler                    (isPooler_3_5),
     .stream_id                   (stream_id_3_5)
 )pe_3_5(
     .clk                         (clk),
@@ -926,6 +965,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_3_6),
+    .isPooler                    (isPooler_3_6),
     .stream_id                   (stream_id_3_6)
 )pe_3_6(
     .clk                         (clk),
@@ -948,6 +988,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_3_7),
+    .isPooler                    (isPooler_3_7),
     .stream_id                   (stream_id_3_7)
 )pe_3_7(
     .clk                         (clk),
@@ -970,6 +1011,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_3_8),
+    .isPooler                    (isPooler_3_8),
     .stream_id                   (stream_id_3_8)
 )pe_3_8(
     .clk                         (clk),
@@ -992,6 +1034,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_3_9),
+    .isPooler                    (isPooler_3_9),
     .stream_id                   (stream_id_3_9)
 )pe_3_9(
     .clk                         (clk),
@@ -1014,6 +1057,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_3_10),
+    .isPooler                    (isPooler_3_10),
     .stream_id                   (stream_id_3_10)
 )pe_3_10(
     .clk                         (clk),
@@ -1036,6 +1080,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_4_0),
+    .isPooler                    (isPooler_4_0),
     .stream_id                   (stream_id_4_0)
 )pe_4_0(
     .clk                         (clk),
@@ -1058,6 +1103,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_4_1),
+    .isPooler                    (isPooler_4_1),
     .stream_id                   (stream_id_4_1)
 )pe_4_1(
     .clk                         (clk),
@@ -1080,6 +1126,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_4_2),
+    .isPooler                    (isPooler_4_2),
     .stream_id                   (stream_id_4_2)
 )pe_4_2(
     .clk                         (clk),
@@ -1102,6 +1149,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_4_3),
+    .isPooler                    (isPooler_4_3),
     .stream_id                   (stream_id_4_3)
 )pe_4_3(
     .clk                         (clk),
@@ -1124,6 +1172,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_4_4),
+    .isPooler                    (isPooler_4_4),
     .stream_id                   (stream_id_4_4)
 )pe_4_4(
     .clk                         (clk),
@@ -1146,6 +1195,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_4_5),
+    .isPooler                    (isPooler_4_5),
     .stream_id                   (stream_id_4_5)
 )pe_4_5(
     .clk                         (clk),
@@ -1168,6 +1218,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_4_6),
+    .isPooler                    (isPooler_4_6),
     .stream_id                   (stream_id_4_6)
 )pe_4_6(
     .clk                         (clk),
@@ -1190,6 +1241,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_4_7),
+    .isPooler                    (isPooler_4_7),
     .stream_id                   (stream_id_4_7)
 )pe_4_7(
     .clk                         (clk),
@@ -1212,6 +1264,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_4_8),
+    .isPooler                    (isPooler_4_8),
     .stream_id                   (stream_id_4_8)
 )pe_4_8(
     .clk                         (clk),
@@ -1234,6 +1287,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_4_9),
+    .isPooler                    (isPooler_4_9),
     .stream_id                   (stream_id_4_9)
 )pe_4_9(
     .clk                         (clk),
@@ -1256,6 +1310,7 @@ virtual_pe #(
 
 virtual_pe #(
     .isCaster                    (isCaster_4_10),
+    .isPooler                    (isPooler_4_10),
     .stream_id                   (stream_id_4_10)
 )pe_4_10(
     .clk                         (clk),

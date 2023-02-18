@@ -5,6 +5,7 @@
 
 module virtual_pe #(
     parameter isCaster = 0, //indicate whether the current node is a caster
+    parameter isPooler = 0, //pooling (2*2) or not
     parameter [9:0] stream_id = 0 //the stream id generated from the current node, fixed at 10-bit
 )(
     input       wire                            clk,
@@ -38,9 +39,10 @@ wire [`DW-1:0] data_i_pe, data_o_pe, data_o_nw;
 wire fifo_empty, fifo_full, fifo_read;
 wire [`DW-1:0] fifo_dout;
 wire [`DW-3:0] sum;
-wire [5:0] ofifo_cnt;
+wire [7:0] ofifo_cnt;
 wire ofifo_full;
 wire [`DW-1:0] ofifo_dout;
+reg [1:0] pool_cnt;
 
 assign data_o_cast = ofifo_dout;
 assign fifo_read = ~fifo_empty & ready_o_nw;
@@ -68,7 +70,7 @@ cast_converter #(
 )converter(
     .clk                      (clk),
     .rstn                     (rstn),
-    .valid_i_pe               (valid_i_pe),
+    .valid_i_pe               (isPooler ? (pool_cnt == 2'b11) : valid_i_pe),
     .data_i_pe                (data_i_pe),
     .ready_o_pe               (ready_o_pe),
     .valid_o_pe               (valid_o_pe),
@@ -81,6 +83,16 @@ cast_converter #(
     .data_o_nw                (data_o_nw),
     .ready_i_nw               (~ofifo_full)
 );
+
+// animate 2*2 pooling behavior 
+always@(posedge clk or negedge rstn) begin
+    if(~rstn) pool_cnt <= 0;
+    else begin
+        if(valid_i_pe) begin
+            pool_cnt <= pool_cnt + 1'b1;
+        end
+    end
+end
 
 assign valid = valid_o_pe & valid_i_merge;
 assign valid_i_pe = isCaster ? valid : 1'b0;
@@ -101,8 +113,8 @@ assign ready_o_cast = ~fifo_full;
 
 SyncFIFO_RTL_CNT #(
     .width                   (`DW),
-    .depth                   (32),
-    .depth_LOG               (5),
+    .depth                   (128),
+    .depth_LOG               (7),
     .FWFT                    (1)
 )cast_send_fifo(
     .clk_i                   (clk),
