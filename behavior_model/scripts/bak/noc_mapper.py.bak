@@ -18,11 +18,10 @@ TODO the num_chan_i of the first layer cannot exceed the width of Xbar
 import random
 import networkx as nx
 from matplotlib import pyplot as plt
-from typing import List, Dict, Tuple
 
 class NocMapper(object):
 
-    def __init__(self,model:List[List[List[List[Dict]]]],w,h,
+    def __init__(self,model,w,h,
                     dir_name="/mnt/c/git/nvcim-comm/behavior_model/scripts"):
         '''
             Parameters
@@ -77,7 +76,7 @@ class NocMapper(object):
             self.pes_i.append(cnt) # number of pes in all blocks in each region
 
     @staticmethod
-    def genReverseS(w,h)->List:
+    def genReverseS(w,h)->list:
         '''
         generate reverse-s path
         '''
@@ -239,7 +238,7 @@ class NocMapper(object):
 
 
     @staticmethod
-    def routeDyXY(w,h,sx,sy,dx,dy,path:List,region=None)->List:
+    def routeDyXY(w,h,sx,sy,dx,dy,path:list,region=None)->list:
         if sx == dx and sy == dy:
             return
         if sx != dx and sy != dy:
@@ -272,7 +271,7 @@ class NocMapper(object):
         NocMapper.routeDyXY(w,h,nxt_sx,nxt_sy,dx,dy,path,region=region)
 
     @staticmethod
-    def getChannel(bias_pos: Tuple, now_pos: Tuple, root_pos: Tuple):
+    def getChannel(bias_pos:tuple,now_pos:tuple,root_pos:tuple):
         if bias_pos[0] < now_pos[0]: # west
             return 1
         if bias_pos[0] > now_pos[0]: # east
@@ -450,7 +449,7 @@ class NocMapper(object):
                 return "cv1_o"
 
     @staticmethod
-    def try_add_edge(G:nx.MultiDiGraph,e:Tuple):
+    def try_add_edge(G:nx.MultiDiGraph,e:tuple):
         G.add_edge(e[0],e[1])
         if G.in_degree(e[0]) == 0 and G.out_degree(e[1]) == 0:
             G.remove_edge(e[0],e[1])

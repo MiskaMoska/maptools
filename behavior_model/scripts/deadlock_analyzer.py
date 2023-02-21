@@ -2,6 +2,7 @@ import os
 import networkx as nx
 from matplotlib import pyplot as plt
 from copy import deepcopy
+from typing import List, Dict, Tuple
 
 class DeadlockAnalyzer(object):
 

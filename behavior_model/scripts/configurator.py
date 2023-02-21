@@ -14,11 +14,12 @@ TODO Only support E2E-FC at local port, not at other ports
 '''
 import os
 import networkx as nx
+from typing import List, Dict, Tuple
 
 class Configurator(object):
 
-    def __init__(self,w,h,cast_paths:dict,merge_paths:list,merge_nodes:list,
-                    data_width:int=16,e2e_dict:dict=dict(),ubm_nodes:list=[],pool_layers:list=[],
+    def __init__(self,w,h,cast_paths:Dict,merge_paths:List,merge_nodes:List,
+                    data_width:int=16,e2e_dict:Dict=Dict(),ubm_nodes:List=[],pool_layers:List=[],
                     root_dir="/mnt/c/git/nvcim-comm/behavior_model/test_auto/"):
         self.w = w
         self.h = h
