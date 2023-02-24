@@ -49,7 +49,7 @@ class TileMapper(object):
         self.h = h
         self.num_xbar = num_xbar
 
-    def __map_one_slice(self,slc_len,ks,start_ci,end_ci,start_co,end_co,
+    def __map_one_slice(self,layer_idx,slc_len,ks,start_ci,end_ci,start_co,end_co,
                             layer_tile_config_i:List):
         slc_pt = (self.h // slc_len) # max slices per tile
         pes_i = math.ceil((ks**2) / slc_pt) 
@@ -61,14 +61,14 @@ class TileMapper(object):
                 it = slc_pt
             for k in range(it):
                 icfg.append((j*slc_pt+k,start_ci,end_ci))
-            layer_tile_config_i.append({'icfg':icfg,'ocfg':(start_co,end_co)})
+            layer_tile_config_i.append({'layer':layer_idx,'icfg':icfg,'ocfg':(start_co,end_co)})
 
     def Run_Mapping(self):
         '''
         Get model segments by distributing each model layer to several tiles
         '''
         self.tile_config = []
-        for layer in self.model:
+        for layer_idx, layer in enumerate(self.model):
             layer_tile_config = []
             if self.num_xbar > 1: # STMX
                 pass
@@ -87,7 +87,7 @@ class TileMapper(object):
                     # input vector mapping
                     if layer['ci'] <= self.w:
                         layer_tile_config[i].append([]) # add a new block
-                        self.__map_one_slice(layer['ci'],layer['ks'],0,layer['ci'],
+                        self.__map_one_slice(layer_idx,layer['ci'],layer['ks'],0,layer['ci'],
                                                 start_co,end_co,layer_tile_config[i][0])
 
                     else:
@@ -101,7 +101,7 @@ class TileMapper(object):
                                 slc_len = self.w
                             start_ci = j * self.w
                             end_ci = j * self.w + slc_len
-                            self.__map_one_slice(slc_len,layer['ks'],start_ci,end_ci,
+                            self.__map_one_slice(layer_idx,slc_len,layer['ks'],start_ci,end_ci,
                                                     start_co,end_co,layer_tile_config[i][j])
 
             self.tile_config.append(layer_tile_config)

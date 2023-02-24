@@ -46,14 +46,14 @@ if __name__ == "__main__":
 
     print('\ntile_map')
     for k,v in nm.tile_map.items():
-        print('pos:',k,'config:',v['icfg'])
+        print('pos:',k,'config:',v)
     
-    print('\ncast_comms')
-    for i in nm.cast_comms:
-        print(i)
+    # print('\ncast_comms')
+    # for i in nm.cast_comms:
+    #     print(i)
 
-    print('\nmerge_comms')
-    for i in nm.merge_comms:
-        print(i)
+    # print('\nmerge_comms')
+    # for i in nm.merge_comms:
+    #     print(i)
 
     nm.Plot_Map()
