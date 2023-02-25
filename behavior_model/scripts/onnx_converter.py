@@ -8,11 +8,15 @@ TODO need to support sigmoid in efficientnet
 import sys
 import onnx
 import networkx as nx
-from typing import Any, List, Dict, Tuple, Optional
+from typing import Any, List, Dict, Tuple, Optional, Generator
 from graphviz import Digraph
 from copy import deepcopy 
 
+__all__ = ['OnnxConverter']
+
 class OperatorGraph(object):
+
+    valid_ops = ['Conv','Conv-Pool','Pool','Conv-Add','Conv-Pool-Add','Pool-Add','GlobalPool','Add','Mul','Concat']
 
     def __init__(self, graph: nx.MultiDiGraph, dicts: Dict[str, Dict], arch: str) -> None:
         '''
@@ -21,6 +25,18 @@ class OperatorGraph(object):
         self.graph = deepcopy(graph)
         self.dicts = deepcopy(dicts)
         self.arch = arch
+
+    @property
+    def trunk(self) -> List[str]:
+        # Find and return the nodes in the trunk
+        return list(nx.dag_longest_path(self.graph))
+    
+    @property
+    def nodes(self) -> Generator[Dict, None, None]:
+        for n in nx.topological_sort(self.graph):
+            tmp = {'name':n}
+            tmp.update(self.dicts[n])
+            yield tmp
 
     def info(self, node: str) -> Dict:
         return self.dicts[node]
@@ -48,7 +64,7 @@ class OperatorGraph(object):
                 break
         self.graph.remove_nodes_from(_to_rmv)
 
-    def _fuse_dict(self, snode: str, dnode: str, name: str) -> None:
+    def _fuse_dict(self, snode: str, dnode: str) -> None:
         # Fuse dict to another's
         tmp = deepcopy(self.dicts[snode])
         tmp.pop('op_type')
@@ -65,7 +81,7 @@ class OperatorGraph(object):
                 pred_type = self.op_type(self.pred(n))
                 assert pred_type in ['Conv','Add'], \
                     f"the predecessor of an activation node must be Conv or Add rather than {pred_type}"
-                self._fuse_dict(n,self.pred(n),self.op_type(n))
+                self._fuse_dict(n,self.pred(n))
                 ks2rmv.append(n)
                 succs = list(self.graph.successors(n)) # successors of act
                 es = [(self.pred(n), node) for node in succs] # edges to be added 
@@ -90,7 +106,7 @@ class OperatorGraph(object):
                 if pred_type not in ['Conv']: # for non-resnet archs
                     continue
                 self.set_op_type(self.pred(n),'Conv-Pool') # fuse pool will change the op-type of the predecessor
-                self._fuse_dict(n,self.pred(n),self.op_type(n))
+                self._fuse_dict(n,self.pred(n))
                 succs = list(self.graph.successors(n)) # successors of pool
                 es = [(self.pred(n), node) for node in succs] # edges to be added 
                 ns2rmv.append(n)
@@ -137,11 +153,6 @@ class OperatorGraph(object):
             if self.op_type(n) in ['MaxPool','AveragePool','GlobalAveragePool']:
                 self.set_op_type(n,'Pool')
 
-    @property
-    def trunk(self) -> List[str]:
-        # Find and return the nodes in the trunk
-        return list(nx.dag_longest_path(self.graph))
-
     def _fuse_add(self) -> None:
         # Fuse add to its trunk predecessor
         trunk = self.trunk
@@ -175,7 +186,6 @@ class OperatorGraph(object):
 class OnnxConverter(object):
 
     valid_ops = ['Conv','Mul','Add','Relu','PRelu','MaxPool','AveragePool','GlobalAveragePool','HardSigmoid','Flatten','Gemm','Concat','Softmax']
-    nvcim_ops = ['Conv','Conv-Pool','Pool','Conv-Add','Conv-Pool-Add','Pool-Add','GlobalPool','Add','Mul','Concat']
     valid_archs = ['vgg','resnet','googlenet','squeezenet']
     merge_ops = ['Mul','Add','Concat']
 
@@ -408,6 +418,10 @@ class OnnxConverter(object):
         self.op_graph = self.og.graph
         self.op_dicts = self.og.dicts
 
+    def Run_Conversion(self) -> None:
+        self.construct_raw_graph()
+        self.construct_op_graph()
+
     def _print_dict(self, dicts: Dict[str, Dict]) -> None:
         for v in dicts.values():
             print("\n"+"-"*20)
@@ -441,9 +455,10 @@ class OnnxConverter(object):
 if __name__ == "__main__":
     model = onnx.load("../models/simp-resnet50.onnx")
     oc = OnnxConverter(model,arch='resnet')
-    oc.construct_raw_graph()
-    oc.construct_op_graph()
+    oc.Run_Conversion()
     oc.plot_op_graph()
     # oc.print_op_dict()
+    # print(type(oc.og.nodes))
+
 
 

@@ -22,8 +22,27 @@ def Route_DyXY(sx,sy,dx,dy,path:list,sid=0)->list:
     path.append(((sx,sy),(nxt_sx,nxt_sy)))
     Route_DyXY(nxt_sx,nxt_sy,dx,dy,path,sid=sid)
 
-a = [1,2,1,3,1,1,1]
+G = nx.MultiDiGraph()
+G.add_edge(1,2)
+G.add_edge(1,3)
+G.add_edge(2,3)
+G.add_edge(2,5)
+G.add_edge(3,4)
+G.add_edge(4,5)
 
-del a[0,1,2]
 
-print(a)
+d = {1:111,2:222,3:333,4:444,5:555}
+
+def gen():
+    a = [1,2,3,4,5]
+    for i in a:
+        yield i
+
+
+def wrap():
+    for i in gen():
+        yield d[i]
+
+for m in wrap():
+    print(m)
+

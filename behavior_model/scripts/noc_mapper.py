@@ -28,6 +28,7 @@ class NocMapper(object):
             Parameters
             ----------
             model : list[list[list[list[dict]]]]
+                model -> layer -> region -> block -> tile
                 TileMapper.tile_config
                 TODO spec
 
