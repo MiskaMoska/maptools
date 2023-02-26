@@ -32,7 +32,7 @@ MODEL_TEST[3] = {'ci':512, 'co':580, 'ks':3}
 MODEL_TEST[4] = {'ci':580, 'co':256, 'ks':3}
 
 if __name__ == "__main__":
-    from tile_mapper import TileMapper
+    from behavior_model.scripts.xbar_mapper import TileMapper
     from noc_mapper import NocMapper
     tm = TileMapper(MODEL_VGG16,w=256,h=256*5)
     tm.Run_Mapping()

@@ -1,5 +1,6 @@
 import random
 import networkx as nx
+import numpy as np
 
 def Route_DyXY(sx,sy,dx,dy,path:list,sid=0)->list:
     if sx == dx and sy == dy:
@@ -22,27 +23,30 @@ def Route_DyXY(sx,sy,dx,dy,path:list,sid=0)->list:
     path.append(((sx,sy),(nxt_sx,nxt_sy)))
     Route_DyXY(nxt_sx,nxt_sy,dx,dy,path,sid=sid)
 
-G = nx.MultiDiGraph()
-G.add_edge(1,2)
-G.add_edge(1,3)
-G.add_edge(2,3)
-G.add_edge(2,5)
-G.add_edge(3,4)
-G.add_edge(4,5)
+# G = nx.MultiDiGraph()
+
+# G.add_node(6,name='this')
+# G.add_edge(1,2)
+
+# for e in G.edges:
+#     print(type(e))
+# # d = {1:111,2:222,3:333,4:444,5:555}
+
+# print([1,2] in [1,2,3,4]) 
+a = np.array([[1,2,3],[3,4,5]])
+# print(a[0,2])
+print(np.sum(a[0],axis=0))
+
+# def gen():
+#     a = [1,2,3,4,5]
+#     for i in a:
+#         yield i
 
 
-d = {1:111,2:222,3:333,4:444,5:555}
+# def wrap():
+#     for i in gen():
+#         yield d[i]
 
-def gen():
-    a = [1,2,3,4,5]
-    for i in a:
-        yield i
-
-
-def wrap():
-    for i in gen():
-        yield d[i]
-
-for m in wrap():
-    print(m)
+# for m in wrap():
+#     print(m)
 

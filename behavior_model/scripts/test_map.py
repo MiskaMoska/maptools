@@ -10,7 +10,10 @@ if __name__ == "__main__":
     oc = OnnxConverter(model,arch='resnet')
     oc.Run_Conversion()
     og = oc.og
-    xm = XbarMapper(og, 256, 256)
+    xm = XbarMapper(og, 256, 256*5)
     xm._xbar_map_resnet()
-    xm.Print_Config()
+    ctg = xm.ctg
+    ctg.Plot_CTG()
+    # xm._xbar_map_resnet()
+    # xm.Print_Config()
     

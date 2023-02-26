@@ -7,6 +7,7 @@ TODO need to support sigmoid in efficientnet
 
 import sys
 import onnx
+import onnx.numpy_helper as onh
 import networkx as nx
 from typing import Any, List, Dict, Tuple, Optional, Generator
 from graphviz import Digraph
@@ -30,13 +31,27 @@ class OperatorGraph(object):
     def trunk(self) -> List[str]:
         # Find and return the nodes in the trunk
         return list(nx.dag_longest_path(self.graph))
-    
+
+
     @property
-    def nodes(self) -> Generator[Dict, None, None]:
+    def node_dicts(self) -> Generator[Dict, None, None]:
         for n in nx.topological_sort(self.graph):
             tmp = {'name':n}
             tmp.update(self.dicts[n])
             yield tmp
+
+    @property
+    def nodes(self) -> Generator[str, None, None]:
+        for n in self.graph.nodes:
+            yield n
+
+    @property
+    def egdes(self) -> Generator[Tuple, None, None]:
+        for e in self.graph.edges:
+            yield e
+
+    def in_degree(self, node: str) -> int:
+        return self.graph.in_degree(node)
 
     def info(self, node: str) -> Dict:
         return self.dicts[node]
@@ -295,8 +310,8 @@ class OnnxConverter(object):
         bias = None
         if len(node.input[2]): # if has bias
             bias = self._get_tensor(node.input[2]) # input[2] should be weight
-        d['conv_weight'] = weight
-        d['conv_bias'] = bias
+        d['conv_weight'] = onh.to_array(weight)
+        d['conv_bias'] = onh.to_array(bias)
         d['conv_num_inchan'] = weight.dims[1] # input channel number
         d['conv_num_outchan'] = weight.dims[0] # output channel number
 
@@ -317,8 +332,8 @@ class OnnxConverter(object):
         bias = None
         if len(node.input[2]): # if has bias
             bias = self._get_tensor(node.input[2]) # input[2] should be weight
-        d['fc_weight'] = weight
-        d['fc_bias'] = bias
+        d['fc_weight'] = onh.to_array(weight)
+        d['fc_bias'] = onh.to_array(bias)
         d['fc_len_inv'] = weight.dims[1] # input vector length
         d['fc_len_outv'] = weight.dims[0] # output vector length
 
