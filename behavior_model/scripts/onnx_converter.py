@@ -32,7 +32,6 @@ class OperatorGraph(object):
         # Find and return the nodes in the trunk
         return list(nx.dag_longest_path(self.graph))
 
-
     @property
     def node_dicts(self) -> Generator[Dict, None, None]:
         for n in nx.topological_sort(self.graph):
@@ -71,11 +70,13 @@ class OperatorGraph(object):
         self.dicts[node]['op_type'] = type
 
     def _cut_graph(self) -> None:
-        # Remove all layers after AveragePool
+        # Remove all layers after the last AveragePool
+        _to_rmv = []
         sort = list(nx.topological_sort(self.graph))
-        for n in sort:
-            if self.dicts[n]['op_type'] == 'GlobalAveragePool':
-                _to_rmv = sort[sort.index(n)+1:]
+        sort.reverse()
+        for i,n in enumerate(sort):
+            if self.op_type(n) in ['GlobalAveragePool','AveragePool']:
+                _to_rmv = sort[:i+1]
                 break
         self.graph.remove_nodes_from(_to_rmv)
 
@@ -433,7 +434,7 @@ class OnnxConverter(object):
         self.op_graph = self.og.graph
         self.op_dicts = self.og.dicts
 
-    def Run_Conversion(self) -> None:
+    def run_conversion(self) -> None:
         self.construct_raw_graph()
         self.construct_op_graph()
 
@@ -470,7 +471,7 @@ class OnnxConverter(object):
 if __name__ == "__main__":
     model = onnx.load("../models/simp-resnet50.onnx")
     oc = OnnxConverter(model,arch='resnet')
-    oc.Run_Conversion()
+    oc.run_conversion()
     oc.plot_op_graph()
     # oc.print_op_dict()
     # print(type(oc.og.nodes))

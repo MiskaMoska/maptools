@@ -8,9 +8,11 @@ import networkx as nx
 from utils import *
 from graphviz import Digraph
 from onnx_converter import OperatorGraph
-from typing import List, Dict, Tuple, Any
+from functools import cached_property
+from typing import List, Dict, Tuple, Any, Generator
 
-__all__ = ['XbarMapper']
+
+__all__ = ['CTG','XbarMapper']
 
 class CTG(object):
 
@@ -21,19 +23,39 @@ class CTG(object):
                     arch: str = 'resnet') -> None:
         '''
         Communication Trace Graph
+        TODO support first layer cast comm
         '''
         self.opgraph = opgraph
         self.match_dict = match_dict
         self.map_list = map_list
         self.dicts = map_dict
 
-        self.xbar_nodes: List[str] = []
+        self.xbar_nodes: List[Tuple[int, int, int, int]] = []
         self.cast_comms: List[str] = []
         self.merge_comms: List[str] = []
         self.collect_comms: List[str] = []
 
         if arch == 'resnet':
             self._build_ctg_resnet()
+
+    @cached_property
+    def regions(self) -> Generator:
+        '''
+        Returns all regions in turn
+        A region is a set of xbars that execute the same range of output channels in Conv layer
+        '''
+        idx = 0
+        base_idx = 0
+        for i, mtx in enumerate(self.map_list):
+            for j in range(mtx.shape[0]):
+                base_idx += idx
+                idx = 0
+                region = []
+                for k in range(mtx.shape[1]):
+                    for t in range(mtx[j, k]):
+                        region.append((i, j, k, t))
+                        idx += 1
+                yield base_idx, region
 
     def _build_ctg_resnet(self) -> None:
         self.graph = nx.MultiDiGraph()
@@ -48,6 +70,7 @@ class CTG(object):
             s_lid = self.match_dict[e[1]]
             p_mtx = self.map_list[p_lid] # source node map info matrix
             s_mtx = self.map_list[s_lid] # dst node map info matrix
+
             if self.opgraph.in_degree(e[1]) > 1 \
                 and not is_subseq([e[0],e[1]],self.opgraph.trunk): # collect
                 assert p_mtx.shape[0] == s_mtx.shape[0], "#regions not match for collect communication"
@@ -59,6 +82,7 @@ class CTG(object):
                     self.collect_comms.append(comm_name)
                     self.graph.add_edge(src_xbar, comm_name)
                     self.graph.add_edge(comm_name, dst_xbar)
+
             else: # cast
                 assert p_mtx.shape[0] == s_mtx.shape[1], "#regions in last later does not match #blocks in this layer"
                 for i in range(p_mtx.shape[0]): # for each region in the last layer
@@ -86,9 +110,46 @@ class CTG(object):
                             node = (lid, i, j, k)
                             if node != dst_xbar:
                                 self.graph.add_edge(node, comm_name)
+    @cached_property
+    def cast_num(self) -> int:
+        return len(self.cast_comms)
 
+    @cached_property
+    def merge_num(self) -> int:
+        return len(self.merge_comms)
 
-    def Plot_CTG(self) -> None:
+    @cached_property
+    def collect_num(self) -> int:
+        return len(self.collect_comms)
+
+    @cached_property
+    def cast_trees(self) -> Generator[Tuple, None, None]:
+        for c in self.cast_comms:
+            src = self.graph.predecessors(c)
+            src = list(src)[0]
+            dst = self.graph.successors(c)
+            dst = list(dst)
+            yield (src, dst)
+
+    @cached_property
+    def merge_trees(self) -> Generator[Tuple, None, None]:
+        for m in self.merge_comms:
+            src = self.graph.predecessors(m)
+            src = list(src)
+            dst = self.graph.successors(m)
+            dst = list(dst)[0]
+            yield (src, dst)
+
+    @cached_property
+    def collect_pairs(self) -> Generator[Tuple, None, None]:
+        for p in self.collect_comms:
+            src = self.graph.predecessors(p)
+            src = list(src)[0]
+            dst = self.graph.successors(p)
+            dst = list(dst)[0]
+            yield (src, dst)
+
+    def plot_ctg(self) -> None:
         dot = Digraph('graph')
         dot.attr(rankdir='LR')
         # for n in self.graph.nodes:
@@ -102,14 +163,20 @@ class CTG(object):
                 shape = 'rectangle'
             dot.node(str(n),str(n), fontname='Arial',shape=shape)
         for e in self.graph.edges:
-            dot.edge(str(e[0]),str(e[1]))
+            if e[0] in self.cast_comms or e[1] in self.cast_comms:
+                color = 'red'
+            elif e[0] in self.merge_comms or e[1] in self.merge_comms:
+                color = 'blue'
+            elif e[0] in self.collect_comms or e[1] in self.collect_comms:
+                color = 'purple'
+            dot.edge(str(e[0]),str(e[1]),color=color)
         dot.view()
 
 
 class XbarMapper(object):
 
     def __init__(self, opgraph: OperatorGraph, 
-                    w: int = 256, h: int = 256, arch: str = 'resnet') -> None:
+                    w: int, h: int, arch: str = 'resnet') -> None:
         '''
         Parameters
         ----------
@@ -228,20 +295,15 @@ class XbarMapper(object):
         '''
         pass
 
-    # def 
-
-    # def Print_Config(self):
-    #     for i,layer in enumerate(self.xbar_config):
-    #         for j,region in enumerate(layer):
-    #             print('\n')
-    #             print('-'*50)
-    #             print(f'layer{i+1}_region{j+1}')
-    #             print('-'*50)
-    #             for k,block in enumerate(region):
-    #                 print('`'*50)
-    #                 print(f'block{k+1}')
-    #                 for h,tile in enumerate(block):
-    #                     print(f'\ntile{h}')
-    #                     print('icfg:',tile['icfg'])
-    #                     print('ocfg:',tile['ocfg'])
+    def print_config(self) -> None:
+        '''
+        Print xbar configs
+        '''
+        total = 0
+        for i, mtx in enumerate(self.map_list):
+            sum = np.sum(mtx)
+            total += sum
+            print(f"layer{i}: #region-{mtx.shape[0]}, #block-{mtx.shape[1]}, #xbar-{sum}")
+        print("-"*70)
+        print(f"total #xbar-{total}")
 

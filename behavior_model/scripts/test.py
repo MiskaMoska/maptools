@@ -1,6 +1,7 @@
 import random
 import networkx as nx
 import numpy as np
+from random import shuffle
 
 def Route_DyXY(sx,sy,dx,dy,path:list,sid=0)->list:
     if sx == dx and sy == dy:
@@ -23,30 +24,43 @@ def Route_DyXY(sx,sy,dx,dy,path:list,sid=0)->list:
     path.append(((sx,sy),(nxt_sx,nxt_sy)))
     Route_DyXY(nxt_sx,nxt_sy,dx,dy,path,sid=sid)
 
-# G = nx.MultiDiGraph()
+G = nx.MultiDiGraph()
 
-# G.add_node(6,name='this')
-# G.add_edge(1,2)
+edges = [
+    ((2,0),(1,0)),
+    ((1,0),(0,0)),
+    ((2,0),(3,0)),
+    ((2,1),(1,1)),
+    ((1,1),(0,1)),
+    ((2,1),(3,1)),
+    ((2,2),(1,2)),
+    ((1,2),(0,2)),
+    ((2,2),(3,2)),
+    ((0,0),(0,1)),
+    ((0,1),(0,2)),
+    ((1,0),(1,1)),
+    ((1,1),(1,2)),
+    ((2,0),(2,1)),
+    ((2,1),(2,2)),
+    ((3,0),(3,1)),
+    ((3,1),(3,2))
+]
 
-# for e in G.edges:
-#     print(type(e))
-# # d = {1:111,2:222,3:333,4:444,5:555}
+# G.add_edges_from(edges)
 
-# print([1,2] in [1,2,3,4]) 
-a = np.array([[1,2,3],[3,4,5]])
-# print(a[0,2])
-print(np.sum(a[0],axis=0))
-
-# def gen():
-#     a = [1,2,3,4,5]
-#     for i in a:
-#         yield i
+# print(nx.algorithms.approximation.steiner_tree(G,[(3,0),(2,1),(3,2),(1,2),(0,2)]))
 
 
-# def wrap():
-#     for i in gen():
-#         yield d[i]
+def _gen_reverse_s(w: int, h: int):
+    '''
+    generate reverse-s path
+    '''
+    rs_path = []
+    for i in range(h):
+        for j in range(w):
+            idx = (i+1)*w-j-1 if i % 2 else i*w+j
+            rs_path.append((idx % w, idx // w))
+    return rs_path
 
-# for m in wrap():
-#     print(m)
-
+a = [1,2,3]
+print(a.reverse())
