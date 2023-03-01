@@ -6,15 +6,17 @@ from random import shuffle
 import networkx as nx
 from matplotlib import pyplot as plt
 from typing import List, Dict, Tuple, Any, Optional
+from functools import cached_property
 from xbar_mapper import *
 from copy import deepcopy
+from ctg import *
+from utils import *
 
 __all__ = ['NocMapper']
 
 class NocMapper(object):
 
-    def __init__(self, ctg: CTG, w: int, h: int,
-                    dir_name="/mnt/c/git/nvcim-comm/behavior_model/scripts"):
+    def __init__(self, ctg: CTG, w: int, h: int, *args, **kwargs) -> None:
         '''
             Parameters
             ----------
@@ -27,13 +29,31 @@ class NocMapper(object):
             h : int
                 xbar array height
 
-            dir_name : str
-                root path to save the map figure
+            kwargs : Dict
+                dir_name : str = './'
+                    root path to save the map figure.
+            
+                cast_method : bool = 'steiner'
+                    'dyxy'      : DyXY-routing-based algorithm to run cast routing path plan, random.
+                    'steiner'   : minimum steiner-tree-based algorithm to run cast routing path plan, deterministic.
+        
+            Key Members:
+            --------------
+            self.map_dict : Dict[Tuple[int, int, int, int], Tuple[int, int]]
+                Map the logical xbar (marked as a 4-element tuple) to the physical xbar (marked as a 2-element tuple)
+
+            self.cast_paths : Dict[Tuple[int, int], List]
+                cast paths whose key is the position of the physical xbar and the value is its path config information.
+
+            self.merge_paths : List[Tuple[Tuple[int, int], Tuple[int, int]]]
+                merge paths whose elements are the 1-to-1 neighbor paths
         '''
         self.ctg = ctg
         self.w = w
         self.h = h
-        self.dir_name = dir_name
+        self.dir_name = './'
+        self.cast_method = 'steiner'
+        self.__dict__.update(kwargs)
 
         self.map_dict: Dict[Tuple[int, int, int, int], Tuple[int, int]] = dict()
 
@@ -43,16 +63,9 @@ class NocMapper(object):
         self.merge_nodes = []
         self.cast_targets = []
 
-        # network mapping config info
-        self.tile_map = dict()
-
-        # ifinity bandwidth communication config info
-        self.cast_comms = list()
-        self.merge_comms = list()
-
         # network routing config info
-        self.cast_paths = dict()
-        self.merge_paths = []
+        self.cast_paths : Dict[Tuple[int, int], List] = dict()
+        self.merge_paths : List[Tuple[Tuple[int, int], Tuple[int, int]]] = []
 
     @staticmethod
     def _gen_reverse_s(w: int, h: int) -> List[Tuple[int, int]]:
@@ -174,32 +187,36 @@ class NocMapper(object):
             print(f"starting cast plan {sid}/{cast_num} ....")
             # keep generating the multicast tree until it is valid
             # valid means every node in the multicast tree has no more than 1 in_edge
-            # TODO need to be replaced by steiner tree algorithm
-            while True:
-                # for each multicast tree
-                # create the simple cast graph where each node represents a cast router
-                g = nx.MultiDiGraph()
+            if self.cast_method == 'steiner':
+                dst_nodes = [self.map_dict[n] for n in dst_nodes]
+                base_g = build_mesh(dst_nodes + [root_node])
+                g = nx.algorithms.approximation.steiner_tree(base_g, dst_nodes + [root_node], method='kou')
+                g = nx.dfs_tree(g, source=root_node)
+            elif self.cast_method == 'dyxy':
+                while True:
+                    # for each multicast tree
+                    # create the simple cast graph where each node represents a cast router
+                    g = nx.MultiDiGraph()
 
-                # complete the simple cast graph by the generated multicast tree
-                paths = []
-                for dst_node in dst_nodes:
-                    dst_node = self.map_dict[dst_node]
-                    path = []
-                    self._route_dyxy(self.w, self.h,
-                                        root_node[0], root_node[1], 
-                                        dst_node[0], dst_node[1], path)
-                    paths.extend(path)
-                paths = list(set(paths))
-                g.add_edges_from(paths)
+                    # complete the simple cast graph by the generated multicast tree
+                    paths = []
+                    for dst_node in dst_nodes:
+                        path = []
+                        self._route_dyxy(self.w, self.h,
+                                            root_node[0], root_node[1], 
+                                            dst_node[0], dst_node[1], path)
+                        paths.extend(path)
+                    paths = list(set(paths))
+                    g.add_edges_from(paths)
 
-                # verify the validity of the generated multicast tree
-                flag = True
-                for node in g.nodes():
-                    if g.in_degree(node) > 1:
-                        flag = False
+                    # verify the validity of the generated multicast tree
+                    flag = True
+                    for node in g.nodes():
+                        if g.in_degree(node) > 1:
+                            flag = False
+                            break
+                    if flag:
                         break
-                if flag:
-                    break
 
             # complete the complex cast graph according to each multicast tree in the simple cast graph
             for node in g.nodes():
@@ -217,7 +234,7 @@ class NocMapper(object):
                             dst_chan = self._get_channel(dst_pos,node,root_node)
                             self.cast_paths[node].append((src_chan,dst_chan,sid))
 
-                    if (node[0] + node[1] * self.w) in dst_nodes: # target node
+                    if node in dst_nodes: # target node
                         assert g.in_degree(node) == 1, "target node in multicast tree has multiple input paths"
                         src_pos = list(g.predecessors(node))[0]
                         src_chan = self._get_channel(src_pos,node,root_node)
@@ -242,7 +259,6 @@ class NocMapper(object):
             print(f"starting merge plan {sid}/{merge_num} ....")
             # keep generating the merge tree until it is valid
             # valid means every node in the merge tree has no more than 1 in_edge
-            # TODO need to be replaced by spanning tree algorithm
             while True:
                 # for each merge tree
                 # create the simple merge graph where each node represents a merge router
@@ -304,21 +320,24 @@ class NocMapper(object):
                 max_cnt = cnt
         print(f"max_cnt: {max_cnt}")
 
-    # def Get_Contention_Level(self)->int:
-    #     '''
-    #     This method evaluates the contention level after mapping,
-    #     '''
-    #     cnt = 0
-    #     for paths in self.cast_paths.values():
-    #         local_dict = dict()
-    #         for path in paths:
-    #             if path[1] not in local_dict.keys():
-    #                 local_dict[path[1]] = []
-    #             local_dict[path[1]].append(path[2])
-    #         for v in local_dict.values():
-    #             if len(v) > 1: # there is a channel who has multiple input edges
-    #                 cnt += 1
-    #     return cnt
+    @cached_property
+    def contention_coefficient(self) -> float:
+        '''
+        This method evaluates the contention coefficient after mapping
+        The contention coefficient is the average number of streams that each allocated channel supports.
+        '''
+        cnt = 0
+        alloc_chan = 0
+        for paths in self.cast_paths.values():
+            local_dict = dict()
+            for path in paths:
+                if path[1] not in local_dict.keys():
+                    local_dict[path[1]] = []
+                local_dict[path[1]].append(path[2])
+            for v in local_dict.values():
+                cnt += len(v)
+                alloc_chan += 1
+        return cnt / alloc_chan
 
     def _plot_routers(self) -> None:
         for i in range(self.w):

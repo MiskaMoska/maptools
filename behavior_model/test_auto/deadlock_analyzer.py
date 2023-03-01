@@ -8,7 +8,7 @@ class DeadlockAnalyzer(object):
 
     def __init__(self,w,h,cast_paths:dict,merge_paths:list,
                     ubm_channels:list=[],log=None,
-                    dir_name="/mnt/c/git/nvcim-comm/behavior_model/scripts"):
+                    dir_name="/mnt/c/git/nvcim-comm/behavior_model/test_auto"):
         self.w = w
         self.h = h
         self.cast_paths = cast_paths # generated from mapper

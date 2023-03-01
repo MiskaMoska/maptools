@@ -4,17 +4,16 @@ Get cases from ./behavior_model/scripts/cases and run configuration
 
 import sys
 import pickle
-sys.path.append("..") 
-from scripts.configurator import Configurator
-from scripts.noc_mapper import NocMapper
-from scripts.deadlock_analyzer import DeadlockAnalyzer
-from scripts.deadlock_killer import DeadlockKiller
+from configurator import Configurator
+from noc_mapper import NocMapper
+from deadlock_analyzer import DeadlockAnalyzer
+from deadlock_killer import DeadlockKiller
 
 W = 5
 H = 11
-CONTENT_LEVEL = 0
+CONTENT_LEVEL = 10
 
-save_file = f"/mnt/c/git/nvcim-comm/behavior_model/scripts/cases/w{W}_h{H}_cl{CONTENT_LEVEL}.pkl"
+save_file = f"/mnt/c/git/nvcim-comm/behavior_model/test_auto/cases/w{W}_h{H}_cl{CONTENT_LEVEL}.pkl"
 
 with open(save_file, 'rb') as f_read:
     case_dict = pickle.load(f_read)

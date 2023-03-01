@@ -3,12 +3,10 @@
 循环产生随机的通信规划，消除死锁环，运行VCS仿真查看是否会死锁
 '''
 
-import sys
-sys.path.append("..") 
-from scripts.configurator import Configurator
-from scripts.noc_mapper import NocMapper
-from scripts.deadlock_analyzer import DeadlockAnalyzer
-from scripts.deadlock_killer import DeadlockKiller
+from configurator import Configurator
+from noc_mapper import NocMapper
+from deadlock_analyzer import DeadlockAnalyzer
+from deadlock_killer import DeadlockKiller
 
 W = 5
 H = 11
