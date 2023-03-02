@@ -20,7 +20,7 @@ module merge_router #(
     input       wire                            ready_i[5]
 );
 
-// /** float_point adder begin**/
+/** float_point adder begin**/
 shortreal data_i_sr[5];
 shortreal sum;
 
@@ -44,7 +44,7 @@ always@(sum) begin
         else data_o[i] = 0;
     end
 end
-// /** float_point adder end**/
+/** float_point adder end**/
 
 /** fixed_point adder begin**/
 // wire sum_flit;

@@ -2,8 +2,8 @@ import os
 # Function: generate a verilog instance from a verilog module file
 # User only need to change the path of the verilog file
 #//////////////////////////////////////////////////////////////////////
-mod_file_root = "/mnt/c/git/nvcim-comm/behavior_model"
-mod_file_path = "test_virtual_vgg16/system.sv"
+mod_file_root = "/mnt/c/git/nvcim-comm/network"
+mod_file_path = "virtual_pe.sv"
 #/mode_file_root//mode_file_path/
 #this two parameters determine the absolute file path of the module file
 
