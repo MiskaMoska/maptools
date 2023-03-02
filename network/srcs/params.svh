@@ -13,7 +13,7 @@
 `define         ROUTE_TABLE_DEPTH               16
 `define         CAST_ROUTER_BUFFER_DEPTH_LOG    4
 
-`define         PKT_LEN                         18
+`define         PKT_LEN                         16
 `define         PKT_LEN_LOG                     4
 
 //packet contents begin

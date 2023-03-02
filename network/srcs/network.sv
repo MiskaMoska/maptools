@@ -1,4 +1,3 @@
-
 `include "params.svh"
 `include "network_config.svh"
 
@@ -37,7 +36,7 @@ module network(
 
         output      wire        [`DW-1:0]       merge_data_o[`NOC_WIDTH][`NOC_HEIGHT],
         output      wire                        merge_valid_o[`NOC_WIDTH][`NOC_HEIGHT],
-        input       wire                        merge_ready_i[`NOC_WIDTH][`NOC_HEIGHT],
+        input       wire                        merge_ready_i[`NOC_WIDTH][`NOC_HEIGHT]
 );
 
 wire [`DW-1:0] data_stab, data_flee0, data_flee1;
@@ -74,18 +73,18 @@ cast_converter #(
 cast_converter #(
     .isCaster                 (0),
     .stream_id                (1022)
-)converter_stab(
+)converter_flee0(
     .clk                      (clk),
     .rstn                     (rstn),
     .valid_i_pe               (1'b0),
     .data_i_pe                ({(`DW){1'b0}}),
     .ready_o_pe               (),
-    .valid_o_pe               (valid_flee0),
-    .data_o_pe                (data_flee0),
-    .ready_i_pe               (ready_flee0),
-    .valid_i_nw               (valid_o_flee0),
-    .data_i_nw                (data_o_flee0),
-    .ready_o_nw               (ready_i_flee0),
+    .valid_o_pe               (valid_o_flee0),
+    .data_o_pe                (data_o_flee0),
+    .ready_i_pe               (ready_i_flee0),
+    .valid_i_nw               (valid_flee0),
+    .data_i_nw                (data_flee0),
+    .ready_o_nw               (ready_flee0),
     .valid_o_nw               (),
     .data_o_nw                (),
     .ready_i_nw               (1'b0)
@@ -95,18 +94,18 @@ cast_converter #(
 cast_converter #(
     .isCaster                 (0),
     .stream_id                (1022)
-)converter_stab(
+)converter_flee1(
     .clk                      (clk),
     .rstn                     (rstn),
     .valid_i_pe               (1'b0),
     .data_i_pe                ({(`DW){1'b0}}),
     .ready_o_pe               (),
-    .valid_o_pe               (valid_flee1),
-    .data_o_pe                (data_flee1),
-    .ready_i_pe               (ready_flee1),
-    .valid_i_nw               (valid_o_flee1),
-    .data_i_nw                (data_o_flee1),
-    .ready_o_nw               (ready_i_flee1),
+    .valid_o_pe               (valid_o_flee1),
+    .data_o_pe                (data_o_flee1),
+    .ready_i_pe               (ready_i_flee1),
+    .valid_i_nw               (valid_flee1),
+    .data_i_nw                (data_flee1),
+    .ready_o_nw               (ready_flee1),
     .valid_o_nw               (),
     .data_o_nw                (),
     .ready_i_nw               (1'b0)
@@ -115,12 +114,12 @@ cast_converter #(
 cast_network cast_nw(
     .clk                                               (clk),
     .rstn                                              (rstn),
-    .data_i                                            (cast_data_i_nw),
-    .valid_i                                           (cast_valid_i_nw),
-    .ready_o                                           (cast_ready_o_nw),
-    .data_o                                            (cast_data_o_nw),
-    .valid_o                                           (cast_valid_o_nw),
-    .ready_i                                           (cast_ready_i_nw),
+    .data_i                                            (data_i_cast_nw),
+    .valid_i                                           (valid_i_cast_nw),
+    .ready_o                                           (ready_o_cast_nw),
+    .data_o                                            (data_o_cast_nw),
+    .valid_o                                           (valid_o_cast_nw),
+    .ready_i                                           (ready_i_cast_nw),
     .data_i_stab                                       (data_stab),
     .valid_i_stab                                      (valid_stab),
     .ready_o_stab                                      (ready_stab),
@@ -136,13 +135,15 @@ cast_network cast_nw(
 merge_network merge_nw(
     .clk                                            (clk),
     .rstn                                           (rstn),
-    .data_i                                         (merge_data_i_nw),
-    .valid_i                                        (merge_valid_i_nw),
-    .ready_o                                        (merge_ready_o_nw),
-    .data_o                                         (merge_data_o_nw),
-    .valid_o                                        (merge_valid_o_nw),
-    .ready_i                                        (merge_ready_i_nw)
+    .data_i                                         (data_i_merge_nw),
+    .valid_i                                        (valid_i_merge_nw),
+    .ready_o                                        (ready_o_merge_nw),
+    .data_o                                         (data_o_merge_nw),
+    .valid_o                                        (valid_o_merge_nw),
+    .ready_i                                        (ready_i_merge_nw)
 );
+
+
 
 network_interface #(
     .isCaster                       (isCaster_0_0),

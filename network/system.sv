@@ -1,4 +1,3 @@
-
 `include "params.svh"
 `include "network_config.svh"
 
@@ -38,14 +37,14 @@ network nw(
     .cast_data_i                                          (cast_data_pe_2_nw),
     .cast_valid_i                                         (cast_valid_pe_2_nw),
     .cast_ready_o                                         (cast_ready_nw_2_pe),
-    .cast_data_o                                          (cast_data_nw_2_pw),
-    .cast_valid_o                                         (cast_valid_nw_2_pw),
+    .cast_data_o                                          (cast_data_nw_2_pe),
+    .cast_valid_o                                         (cast_valid_nw_2_pe),
     .cast_ready_i                                         (cast_ready_pe_2_nw),
     .merge_data_i                                         (merge_data_pe_2_nw),
     .merge_valid_i                                        (merge_valid_pe_2_nw),
     .merge_ready_o                                        (merge_ready_nw_2_pe),
-    .merge_data_o                                         (merge_data_nw_2_pw),
-    .merge_valid_o                                        (merge_valid_nw_2_pw),
+    .merge_data_o                                         (merge_data_nw_2_pe),
+    .merge_valid_o                                        (merge_valid_nw_2_pe),
     .merge_ready_i                                        (merge_ready_pe_2_nw)
 );
 
@@ -65,7 +64,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[0][0]),
     .merge_data_o                (merge_data_pe_2_nw[0][0]),
     .merge_valid_o               (merge_valid_pe_2_nw[0][0]),
-    .merge_ready_i               (merge_ready_nw_2_pe[0][0]),
+    .merge_ready_i               (merge_ready_nw_2_pe[0][0])
 );
 
 
@@ -85,7 +84,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[0][1]),
     .merge_data_o                (merge_data_pe_2_nw[0][1]),
     .merge_valid_o               (merge_valid_pe_2_nw[0][1]),
-    .merge_ready_i               (merge_ready_nw_2_pe[0][1]),
+    .merge_ready_i               (merge_ready_nw_2_pe[0][1])
 );
 
 
@@ -105,7 +104,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[0][2]),
     .merge_data_o                (merge_data_pe_2_nw[0][2]),
     .merge_valid_o               (merge_valid_pe_2_nw[0][2]),
-    .merge_ready_i               (merge_ready_nw_2_pe[0][2]),
+    .merge_ready_i               (merge_ready_nw_2_pe[0][2])
 );
 
 
@@ -125,7 +124,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[0][3]),
     .merge_data_o                (merge_data_pe_2_nw[0][3]),
     .merge_valid_o               (merge_valid_pe_2_nw[0][3]),
-    .merge_ready_i               (merge_ready_nw_2_pe[0][3]),
+    .merge_ready_i               (merge_ready_nw_2_pe[0][3])
 );
 
 
@@ -145,7 +144,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[0][4]),
     .merge_data_o                (merge_data_pe_2_nw[0][4]),
     .merge_valid_o               (merge_valid_pe_2_nw[0][4]),
-    .merge_ready_i               (merge_ready_nw_2_pe[0][4]),
+    .merge_ready_i               (merge_ready_nw_2_pe[0][4])
 );
 
 
@@ -165,7 +164,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[0][5]),
     .merge_data_o                (merge_data_pe_2_nw[0][5]),
     .merge_valid_o               (merge_valid_pe_2_nw[0][5]),
-    .merge_ready_i               (merge_ready_nw_2_pe[0][5]),
+    .merge_ready_i               (merge_ready_nw_2_pe[0][5])
 );
 
 
@@ -185,7 +184,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[0][6]),
     .merge_data_o                (merge_data_pe_2_nw[0][6]),
     .merge_valid_o               (merge_valid_pe_2_nw[0][6]),
-    .merge_ready_i               (merge_ready_nw_2_pe[0][6]),
+    .merge_ready_i               (merge_ready_nw_2_pe[0][6])
 );
 
 
@@ -205,7 +204,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[0][7]),
     .merge_data_o                (merge_data_pe_2_nw[0][7]),
     .merge_valid_o               (merge_valid_pe_2_nw[0][7]),
-    .merge_ready_i               (merge_ready_nw_2_pe[0][7]),
+    .merge_ready_i               (merge_ready_nw_2_pe[0][7])
 );
 
 
@@ -225,7 +224,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[0][8]),
     .merge_data_o                (merge_data_pe_2_nw[0][8]),
     .merge_valid_o               (merge_valid_pe_2_nw[0][8]),
-    .merge_ready_i               (merge_ready_nw_2_pe[0][8]),
+    .merge_ready_i               (merge_ready_nw_2_pe[0][8])
 );
 
 
@@ -245,7 +244,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[0][9]),
     .merge_data_o                (merge_data_pe_2_nw[0][9]),
     .merge_valid_o               (merge_valid_pe_2_nw[0][9]),
-    .merge_ready_i               (merge_ready_nw_2_pe[0][9]),
+    .merge_ready_i               (merge_ready_nw_2_pe[0][9])
 );
 
 
@@ -265,7 +264,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[0][10]),
     .merge_data_o                (merge_data_pe_2_nw[0][10]),
     .merge_valid_o               (merge_valid_pe_2_nw[0][10]),
-    .merge_ready_i               (merge_ready_nw_2_pe[0][10]),
+    .merge_ready_i               (merge_ready_nw_2_pe[0][10])
 );
 
 
@@ -285,7 +284,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[1][0]),
     .merge_data_o                (merge_data_pe_2_nw[1][0]),
     .merge_valid_o               (merge_valid_pe_2_nw[1][0]),
-    .merge_ready_i               (merge_ready_nw_2_pe[1][0]),
+    .merge_ready_i               (merge_ready_nw_2_pe[1][0])
 );
 
 
@@ -305,7 +304,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[1][1]),
     .merge_data_o                (merge_data_pe_2_nw[1][1]),
     .merge_valid_o               (merge_valid_pe_2_nw[1][1]),
-    .merge_ready_i               (merge_ready_nw_2_pe[1][1]),
+    .merge_ready_i               (merge_ready_nw_2_pe[1][1])
 );
 
 
@@ -325,7 +324,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[1][2]),
     .merge_data_o                (merge_data_pe_2_nw[1][2]),
     .merge_valid_o               (merge_valid_pe_2_nw[1][2]),
-    .merge_ready_i               (merge_ready_nw_2_pe[1][2]),
+    .merge_ready_i               (merge_ready_nw_2_pe[1][2])
 );
 
 
@@ -345,7 +344,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[1][3]),
     .merge_data_o                (merge_data_pe_2_nw[1][3]),
     .merge_valid_o               (merge_valid_pe_2_nw[1][3]),
-    .merge_ready_i               (merge_ready_nw_2_pe[1][3]),
+    .merge_ready_i               (merge_ready_nw_2_pe[1][3])
 );
 
 
@@ -365,7 +364,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[1][4]),
     .merge_data_o                (merge_data_pe_2_nw[1][4]),
     .merge_valid_o               (merge_valid_pe_2_nw[1][4]),
-    .merge_ready_i               (merge_ready_nw_2_pe[1][4]),
+    .merge_ready_i               (merge_ready_nw_2_pe[1][4])
 );
 
 
@@ -385,7 +384,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[1][5]),
     .merge_data_o                (merge_data_pe_2_nw[1][5]),
     .merge_valid_o               (merge_valid_pe_2_nw[1][5]),
-    .merge_ready_i               (merge_ready_nw_2_pe[1][5]),
+    .merge_ready_i               (merge_ready_nw_2_pe[1][5])
 );
 
 
@@ -405,7 +404,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[1][6]),
     .merge_data_o                (merge_data_pe_2_nw[1][6]),
     .merge_valid_o               (merge_valid_pe_2_nw[1][6]),
-    .merge_ready_i               (merge_ready_nw_2_pe[1][6]),
+    .merge_ready_i               (merge_ready_nw_2_pe[1][6])
 );
 
 
@@ -425,7 +424,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[1][7]),
     .merge_data_o                (merge_data_pe_2_nw[1][7]),
     .merge_valid_o               (merge_valid_pe_2_nw[1][7]),
-    .merge_ready_i               (merge_ready_nw_2_pe[1][7]),
+    .merge_ready_i               (merge_ready_nw_2_pe[1][7])
 );
 
 
@@ -445,7 +444,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[1][8]),
     .merge_data_o                (merge_data_pe_2_nw[1][8]),
     .merge_valid_o               (merge_valid_pe_2_nw[1][8]),
-    .merge_ready_i               (merge_ready_nw_2_pe[1][8]),
+    .merge_ready_i               (merge_ready_nw_2_pe[1][8])
 );
 
 
@@ -465,7 +464,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[1][9]),
     .merge_data_o                (merge_data_pe_2_nw[1][9]),
     .merge_valid_o               (merge_valid_pe_2_nw[1][9]),
-    .merge_ready_i               (merge_ready_nw_2_pe[1][9]),
+    .merge_ready_i               (merge_ready_nw_2_pe[1][9])
 );
 
 
@@ -485,7 +484,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[1][10]),
     .merge_data_o                (merge_data_pe_2_nw[1][10]),
     .merge_valid_o               (merge_valid_pe_2_nw[1][10]),
-    .merge_ready_i               (merge_ready_nw_2_pe[1][10]),
+    .merge_ready_i               (merge_ready_nw_2_pe[1][10])
 );
 
 
@@ -505,7 +504,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[2][0]),
     .merge_data_o                (merge_data_pe_2_nw[2][0]),
     .merge_valid_o               (merge_valid_pe_2_nw[2][0]),
-    .merge_ready_i               (merge_ready_nw_2_pe[2][0]),
+    .merge_ready_i               (merge_ready_nw_2_pe[2][0])
 );
 
 
@@ -525,7 +524,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[2][1]),
     .merge_data_o                (merge_data_pe_2_nw[2][1]),
     .merge_valid_o               (merge_valid_pe_2_nw[2][1]),
-    .merge_ready_i               (merge_ready_nw_2_pe[2][1]),
+    .merge_ready_i               (merge_ready_nw_2_pe[2][1])
 );
 
 
@@ -545,7 +544,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[2][2]),
     .merge_data_o                (merge_data_pe_2_nw[2][2]),
     .merge_valid_o               (merge_valid_pe_2_nw[2][2]),
-    .merge_ready_i               (merge_ready_nw_2_pe[2][2]),
+    .merge_ready_i               (merge_ready_nw_2_pe[2][2])
 );
 
 
@@ -565,7 +564,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[2][3]),
     .merge_data_o                (merge_data_pe_2_nw[2][3]),
     .merge_valid_o               (merge_valid_pe_2_nw[2][3]),
-    .merge_ready_i               (merge_ready_nw_2_pe[2][3]),
+    .merge_ready_i               (merge_ready_nw_2_pe[2][3])
 );
 
 
@@ -585,7 +584,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[2][4]),
     .merge_data_o                (merge_data_pe_2_nw[2][4]),
     .merge_valid_o               (merge_valid_pe_2_nw[2][4]),
-    .merge_ready_i               (merge_ready_nw_2_pe[2][4]),
+    .merge_ready_i               (merge_ready_nw_2_pe[2][4])
 );
 
 
@@ -605,7 +604,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[2][5]),
     .merge_data_o                (merge_data_pe_2_nw[2][5]),
     .merge_valid_o               (merge_valid_pe_2_nw[2][5]),
-    .merge_ready_i               (merge_ready_nw_2_pe[2][5]),
+    .merge_ready_i               (merge_ready_nw_2_pe[2][5])
 );
 
 
@@ -625,7 +624,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[2][6]),
     .merge_data_o                (merge_data_pe_2_nw[2][6]),
     .merge_valid_o               (merge_valid_pe_2_nw[2][6]),
-    .merge_ready_i               (merge_ready_nw_2_pe[2][6]),
+    .merge_ready_i               (merge_ready_nw_2_pe[2][6])
 );
 
 
@@ -645,7 +644,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[2][7]),
     .merge_data_o                (merge_data_pe_2_nw[2][7]),
     .merge_valid_o               (merge_valid_pe_2_nw[2][7]),
-    .merge_ready_i               (merge_ready_nw_2_pe[2][7]),
+    .merge_ready_i               (merge_ready_nw_2_pe[2][7])
 );
 
 
@@ -665,7 +664,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[2][8]),
     .merge_data_o                (merge_data_pe_2_nw[2][8]),
     .merge_valid_o               (merge_valid_pe_2_nw[2][8]),
-    .merge_ready_i               (merge_ready_nw_2_pe[2][8]),
+    .merge_ready_i               (merge_ready_nw_2_pe[2][8])
 );
 
 
@@ -685,7 +684,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[2][9]),
     .merge_data_o                (merge_data_pe_2_nw[2][9]),
     .merge_valid_o               (merge_valid_pe_2_nw[2][9]),
-    .merge_ready_i               (merge_ready_nw_2_pe[2][9]),
+    .merge_ready_i               (merge_ready_nw_2_pe[2][9])
 );
 
 
@@ -705,7 +704,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[2][10]),
     .merge_data_o                (merge_data_pe_2_nw[2][10]),
     .merge_valid_o               (merge_valid_pe_2_nw[2][10]),
-    .merge_ready_i               (merge_ready_nw_2_pe[2][10]),
+    .merge_ready_i               (merge_ready_nw_2_pe[2][10])
 );
 
 
@@ -725,7 +724,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[3][0]),
     .merge_data_o                (merge_data_pe_2_nw[3][0]),
     .merge_valid_o               (merge_valid_pe_2_nw[3][0]),
-    .merge_ready_i               (merge_ready_nw_2_pe[3][0]),
+    .merge_ready_i               (merge_ready_nw_2_pe[3][0])
 );
 
 
@@ -745,7 +744,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[3][1]),
     .merge_data_o                (merge_data_pe_2_nw[3][1]),
     .merge_valid_o               (merge_valid_pe_2_nw[3][1]),
-    .merge_ready_i               (merge_ready_nw_2_pe[3][1]),
+    .merge_ready_i               (merge_ready_nw_2_pe[3][1])
 );
 
 
@@ -765,7 +764,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[3][2]),
     .merge_data_o                (merge_data_pe_2_nw[3][2]),
     .merge_valid_o               (merge_valid_pe_2_nw[3][2]),
-    .merge_ready_i               (merge_ready_nw_2_pe[3][2]),
+    .merge_ready_i               (merge_ready_nw_2_pe[3][2])
 );
 
 
@@ -785,7 +784,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[3][3]),
     .merge_data_o                (merge_data_pe_2_nw[3][3]),
     .merge_valid_o               (merge_valid_pe_2_nw[3][3]),
-    .merge_ready_i               (merge_ready_nw_2_pe[3][3]),
+    .merge_ready_i               (merge_ready_nw_2_pe[3][3])
 );
 
 
@@ -805,7 +804,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[3][4]),
     .merge_data_o                (merge_data_pe_2_nw[3][4]),
     .merge_valid_o               (merge_valid_pe_2_nw[3][4]),
-    .merge_ready_i               (merge_ready_nw_2_pe[3][4]),
+    .merge_ready_i               (merge_ready_nw_2_pe[3][4])
 );
 
 
@@ -825,7 +824,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[3][5]),
     .merge_data_o                (merge_data_pe_2_nw[3][5]),
     .merge_valid_o               (merge_valid_pe_2_nw[3][5]),
-    .merge_ready_i               (merge_ready_nw_2_pe[3][5]),
+    .merge_ready_i               (merge_ready_nw_2_pe[3][5])
 );
 
 
@@ -845,7 +844,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[3][6]),
     .merge_data_o                (merge_data_pe_2_nw[3][6]),
     .merge_valid_o               (merge_valid_pe_2_nw[3][6]),
-    .merge_ready_i               (merge_ready_nw_2_pe[3][6]),
+    .merge_ready_i               (merge_ready_nw_2_pe[3][6])
 );
 
 
@@ -865,7 +864,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[3][7]),
     .merge_data_o                (merge_data_pe_2_nw[3][7]),
     .merge_valid_o               (merge_valid_pe_2_nw[3][7]),
-    .merge_ready_i               (merge_ready_nw_2_pe[3][7]),
+    .merge_ready_i               (merge_ready_nw_2_pe[3][7])
 );
 
 
@@ -885,7 +884,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[3][8]),
     .merge_data_o                (merge_data_pe_2_nw[3][8]),
     .merge_valid_o               (merge_valid_pe_2_nw[3][8]),
-    .merge_ready_i               (merge_ready_nw_2_pe[3][8]),
+    .merge_ready_i               (merge_ready_nw_2_pe[3][8])
 );
 
 
@@ -905,7 +904,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[3][9]),
     .merge_data_o                (merge_data_pe_2_nw[3][9]),
     .merge_valid_o               (merge_valid_pe_2_nw[3][9]),
-    .merge_ready_i               (merge_ready_nw_2_pe[3][9]),
+    .merge_ready_i               (merge_ready_nw_2_pe[3][9])
 );
 
 
@@ -925,7 +924,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[3][10]),
     .merge_data_o                (merge_data_pe_2_nw[3][10]),
     .merge_valid_o               (merge_valid_pe_2_nw[3][10]),
-    .merge_ready_i               (merge_ready_nw_2_pe[3][10]),
+    .merge_ready_i               (merge_ready_nw_2_pe[3][10])
 );
 
 
@@ -945,7 +944,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[4][0]),
     .merge_data_o                (merge_data_pe_2_nw[4][0]),
     .merge_valid_o               (merge_valid_pe_2_nw[4][0]),
-    .merge_ready_i               (merge_ready_nw_2_pe[4][0]),
+    .merge_ready_i               (merge_ready_nw_2_pe[4][0])
 );
 
 
@@ -965,7 +964,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[4][1]),
     .merge_data_o                (merge_data_pe_2_nw[4][1]),
     .merge_valid_o               (merge_valid_pe_2_nw[4][1]),
-    .merge_ready_i               (merge_ready_nw_2_pe[4][1]),
+    .merge_ready_i               (merge_ready_nw_2_pe[4][1])
 );
 
 
@@ -985,7 +984,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[4][2]),
     .merge_data_o                (merge_data_pe_2_nw[4][2]),
     .merge_valid_o               (merge_valid_pe_2_nw[4][2]),
-    .merge_ready_i               (merge_ready_nw_2_pe[4][2]),
+    .merge_ready_i               (merge_ready_nw_2_pe[4][2])
 );
 
 
@@ -1005,7 +1004,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[4][3]),
     .merge_data_o                (merge_data_pe_2_nw[4][3]),
     .merge_valid_o               (merge_valid_pe_2_nw[4][3]),
-    .merge_ready_i               (merge_ready_nw_2_pe[4][3]),
+    .merge_ready_i               (merge_ready_nw_2_pe[4][3])
 );
 
 
@@ -1025,7 +1024,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[4][4]),
     .merge_data_o                (merge_data_pe_2_nw[4][4]),
     .merge_valid_o               (merge_valid_pe_2_nw[4][4]),
-    .merge_ready_i               (merge_ready_nw_2_pe[4][4]),
+    .merge_ready_i               (merge_ready_nw_2_pe[4][4])
 );
 
 
@@ -1045,7 +1044,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[4][5]),
     .merge_data_o                (merge_data_pe_2_nw[4][5]),
     .merge_valid_o               (merge_valid_pe_2_nw[4][5]),
-    .merge_ready_i               (merge_ready_nw_2_pe[4][5]),
+    .merge_ready_i               (merge_ready_nw_2_pe[4][5])
 );
 
 
@@ -1065,7 +1064,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[4][6]),
     .merge_data_o                (merge_data_pe_2_nw[4][6]),
     .merge_valid_o               (merge_valid_pe_2_nw[4][6]),
-    .merge_ready_i               (merge_ready_nw_2_pe[4][6]),
+    .merge_ready_i               (merge_ready_nw_2_pe[4][6])
 );
 
 
@@ -1085,7 +1084,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[4][7]),
     .merge_data_o                (merge_data_pe_2_nw[4][7]),
     .merge_valid_o               (merge_valid_pe_2_nw[4][7]),
-    .merge_ready_i               (merge_ready_nw_2_pe[4][7]),
+    .merge_ready_i               (merge_ready_nw_2_pe[4][7])
 );
 
 
@@ -1105,7 +1104,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[4][8]),
     .merge_data_o                (merge_data_pe_2_nw[4][8]),
     .merge_valid_o               (merge_valid_pe_2_nw[4][8]),
-    .merge_ready_i               (merge_ready_nw_2_pe[4][8]),
+    .merge_ready_i               (merge_ready_nw_2_pe[4][8])
 );
 
 
@@ -1125,7 +1124,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[4][9]),
     .merge_data_o                (merge_data_pe_2_nw[4][9]),
     .merge_valid_o               (merge_valid_pe_2_nw[4][9]),
-    .merge_ready_i               (merge_ready_nw_2_pe[4][9]),
+    .merge_ready_i               (merge_ready_nw_2_pe[4][9])
 );
 
 
@@ -1145,7 +1144,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[4][10]),
     .merge_data_o                (merge_data_pe_2_nw[4][10]),
     .merge_valid_o               (merge_valid_pe_2_nw[4][10]),
-    .merge_ready_i               (merge_ready_nw_2_pe[4][10]),
+    .merge_ready_i               (merge_ready_nw_2_pe[4][10])
 );
 
 endmodule

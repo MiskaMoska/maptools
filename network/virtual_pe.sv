@@ -5,7 +5,7 @@
 `include "network_config.svh"
 
 module virtual_pe #(
-    parameter isCaster = 0, //indicate whether the current node is a caster
+    parameter isCaster = 0 //indicate whether the current node is a caster
 )(
     input       wire                            clk,
     input       wire                            rstn, 

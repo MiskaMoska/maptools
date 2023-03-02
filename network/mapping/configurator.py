@@ -18,7 +18,7 @@ from typing import List, Dict, Tuple
 class Configurator(object):
 
     def __init__(self,w,h,cast_paths:Dict,merge_paths:List,merge_nodes:List,
-                    data_width:int=16,e2e_dict:Dict=dict(),ubm_nodes:List=[],
+                    data_width:int=32,e2e_dict:Dict=dict(),ubm_nodes:List=[],
                     root_dir="/mnt/c/git/nvcim-comm/network/srcs/"):
         self.w = w
         self.h = h
@@ -621,8 +621,7 @@ wire valid_o_'''+str(j)+'''_'''+str(i)+'''[5], ready_o_'''+str(j)+'''_'''+str(i)
     def Generate_Network(self):
         file_name = self.root_dir + "network.sv"
         containt = ""
-        containt += '''
-`include "params.svh"
+        containt += '''`include "params.svh"
 `include "network_config.svh"
 
 module network(
@@ -660,7 +659,7 @@ module network(
 
         output      wire        [`DW-1:0]       merge_data_o[`NOC_WIDTH][`NOC_HEIGHT],
         output      wire                        merge_valid_o[`NOC_WIDTH][`NOC_HEIGHT],
-        input       wire                        merge_ready_i[`NOC_WIDTH][`NOC_HEIGHT],
+        input       wire                        merge_ready_i[`NOC_WIDTH][`NOC_HEIGHT]
 );
 
 wire [`DW-1:0] data_stab, data_flee0, data_flee1;
@@ -697,18 +696,18 @@ cast_converter #(
 cast_converter #(
     .isCaster                 (0),
     .stream_id                (1022)
-)converter_stab(
+)converter_flee0(
     .clk                      (clk),
     .rstn                     (rstn),
     .valid_i_pe               (1'b0),
     .data_i_pe                ({(`DW){1'b0}}),
     .ready_o_pe               (),
-    .valid_o_pe               (valid_flee0),
-    .data_o_pe                (data_flee0),
-    .ready_i_pe               (ready_flee0),
-    .valid_i_nw               (valid_o_flee0),
-    .data_i_nw                (data_o_flee0),
-    .ready_o_nw               (ready_i_flee0),
+    .valid_o_pe               (valid_o_flee0),
+    .data_o_pe                (data_o_flee0),
+    .ready_i_pe               (ready_i_flee0),
+    .valid_i_nw               (valid_flee0),
+    .data_i_nw                (data_flee0),
+    .ready_o_nw               (ready_flee0),
     .valid_o_nw               (),
     .data_o_nw                (),
     .ready_i_nw               (1'b0)
@@ -718,18 +717,18 @@ cast_converter #(
 cast_converter #(
     .isCaster                 (0),
     .stream_id                (1022)
-)converter_stab(
+)converter_flee1(
     .clk                      (clk),
     .rstn                     (rstn),
     .valid_i_pe               (1'b0),
     .data_i_pe                ({(`DW){1'b0}}),
     .ready_o_pe               (),
-    .valid_o_pe               (valid_flee1),
-    .data_o_pe                (data_flee1),
-    .ready_i_pe               (ready_flee1),
-    .valid_i_nw               (valid_o_flee1),
-    .data_i_nw                (data_o_flee1),
-    .ready_o_nw               (ready_i_flee1),
+    .valid_o_pe               (valid_o_flee1),
+    .data_o_pe                (data_o_flee1),
+    .ready_i_pe               (ready_i_flee1),
+    .valid_i_nw               (valid_flee1),
+    .data_i_nw                (data_flee1),
+    .ready_o_nw               (ready_flee1),
     .valid_o_nw               (),
     .data_o_nw                (),
     .ready_i_nw               (1'b0)
@@ -738,12 +737,12 @@ cast_converter #(
 cast_network cast_nw(
     .clk                                               (clk),
     .rstn                                              (rstn),
-    .data_i                                            (cast_data_i_nw),
-    .valid_i                                           (cast_valid_i_nw),
-    .ready_o                                           (cast_ready_o_nw),
-    .data_o                                            (cast_data_o_nw),
-    .valid_o                                           (cast_valid_o_nw),
-    .ready_i                                           (cast_ready_i_nw),
+    .data_i                                            (data_i_cast_nw),
+    .valid_i                                           (valid_i_cast_nw),
+    .ready_o                                           (ready_o_cast_nw),
+    .data_o                                            (data_o_cast_nw),
+    .valid_o                                           (valid_o_cast_nw),
+    .ready_i                                           (ready_i_cast_nw),
     .data_i_stab                                       (data_stab),
     .valid_i_stab                                      (valid_stab),
     .ready_o_stab                                      (ready_stab),
@@ -759,13 +758,13 @@ cast_network cast_nw(
 merge_network merge_nw(
     .clk                                            (clk),
     .rstn                                           (rstn),
-    .data_i                                         (merge_data_i_nw),
-    .valid_i                                        (merge_valid_i_nw),
-    .ready_o                                        (merge_ready_o_nw),
-    .data_o                                         (merge_data_o_nw),
-    .valid_o                                        (merge_valid_o_nw),
-    .ready_i                                        (merge_ready_i_nw)
-);
+    .data_i                                         (data_i_merge_nw),
+    .valid_i                                        (valid_i_merge_nw),
+    .ready_o                                        (ready_o_merge_nw),
+    .data_o                                         (data_o_merge_nw),
+    .valid_o                                        (valid_o_merge_nw),
+    .ready_i                                        (ready_i_merge_nw)
+);\n\n
 '''
         for i in range(self.w):
             for j in range(self.h):
@@ -840,6 +839,12 @@ network_interface #(
         self.Generate_Cast_Config_Info()
         self.Generate_Merge_Config_Info()
         self.Generate_System_Config_Info()
+        self.nw_config_info = '''
+`ifndef __NETWORK_CONFIG_SVH_
+`define __NETWORK_CONFIG_SVH_
+        ''' + self.nw_config_info + '''
+`endif
+        '''
         file_name = self.root_dir + "network_config.svh"
         with open(file_name,"w") as my_file:
             my_file.write("{0}\n".format(self.nw_config_info))
@@ -854,7 +859,7 @@ network_interface #(
 `ifndef         __PARAMS_SVH__
 `define         __PARAMS_SVH__
 
-`define         DW                              32 //data width
+`define         DW                              {self.data_width} //data width
 `define         CN                              5 //channel number 0:local 1:west 2:east 3:verti0 4:verti1
 `define         NOC_WIDTH                       {self.w}
 `define         NOC_HEIGHT                      {self.h}
@@ -893,8 +898,7 @@ network_interface #(
     def Generate_System(self):
         file_name = self.root_dir + "../system.sv"
         containt = ""
-        containt += '''
-`include "params.svh"
+        containt += '''`include "params.svh"
 `include "network_config.svh"
 
 module system (
@@ -933,14 +937,14 @@ network nw(
     .cast_data_i                                          (cast_data_pe_2_nw),
     .cast_valid_i                                         (cast_valid_pe_2_nw),
     .cast_ready_o                                         (cast_ready_nw_2_pe),
-    .cast_data_o                                          (cast_data_nw_2_pw),
-    .cast_valid_o                                         (cast_valid_nw_2_pw),
+    .cast_data_o                                          (cast_data_nw_2_pe),
+    .cast_valid_o                                         (cast_valid_nw_2_pe),
     .cast_ready_i                                         (cast_ready_pe_2_nw),
     .merge_data_i                                         (merge_data_pe_2_nw),
     .merge_valid_i                                        (merge_valid_pe_2_nw),
     .merge_ready_o                                        (merge_ready_nw_2_pe),
-    .merge_data_o                                         (merge_data_nw_2_pw),
-    .merge_valid_o                                        (merge_valid_nw_2_pw),
+    .merge_data_o                                         (merge_data_nw_2_pe),
+    .merge_valid_o                                        (merge_valid_nw_2_pe),
     .merge_ready_i                                        (merge_ready_pe_2_nw)
 );
 '''
@@ -963,7 +967,7 @@ virtual_pe #(
     .merge_ready_o               (merge_ready_pe_2_nw[{i}][{j}]),
     .merge_data_o                (merge_data_pe_2_nw[{i}][{j}]),
     .merge_valid_o               (merge_valid_pe_2_nw[{i}][{j}]),
-    .merge_ready_i               (merge_ready_nw_2_pe[{i}][{j}]),
+    .merge_ready_i               (merge_ready_nw_2_pe[{i}][{j}])
 );\n\n'''
         containt += "endmodule"
 

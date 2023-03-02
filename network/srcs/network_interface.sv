@@ -54,7 +54,7 @@ assign valid_o_merge_nw = valid_i_merge_pe;
 assign data_o_merge_nw = data_i_merge_pe;
 assign ready_o_merge_nw = ready_i_merge_pe;
 
-wire valid_o_nw;
+wire valid_o_nw, ready_o_nw;
 wire [`DW-1:0] data_o_nw;
 wire fifo_empty, fifo_full, fifo_read;
 wire [`DW-1:0] fifo_dout;
