@@ -1,7 +1,7 @@
 
 //Merge Network
-//Width: 5
-//Height:11
+//Width: 7
+//Height:8
 `include "params.svh"
 `include "network_config.svh"
 
@@ -58,21 +58,6 @@ reg valid_i_0_7[5], ready_i_0_7[5];
 wire [`DW-1:0] data_o_0_7[5];
 wire valid_o_0_7[5], ready_o_0_7[5];        
 
-reg [`DW-1:0] data_i_0_8[5];
-reg valid_i_0_8[5], ready_i_0_8[5];    
-wire [`DW-1:0] data_o_0_8[5];
-wire valid_o_0_8[5], ready_o_0_8[5];        
-
-reg [`DW-1:0] data_i_0_9[5];
-reg valid_i_0_9[5], ready_i_0_9[5];    
-wire [`DW-1:0] data_o_0_9[5];
-wire valid_o_0_9[5], ready_o_0_9[5];        
-
-reg [`DW-1:0] data_i_0_10[5];
-reg valid_i_0_10[5], ready_i_0_10[5];    
-wire [`DW-1:0] data_o_0_10[5];
-wire valid_o_0_10[5], ready_o_0_10[5];        
-
 reg [`DW-1:0] data_i_1_0[5];
 reg valid_i_1_0[5], ready_i_1_0[5];    
 wire [`DW-1:0] data_o_1_0[5];
@@ -112,21 +97,6 @@ reg [`DW-1:0] data_i_1_7[5];
 reg valid_i_1_7[5], ready_i_1_7[5];    
 wire [`DW-1:0] data_o_1_7[5];
 wire valid_o_1_7[5], ready_o_1_7[5];        
-
-reg [`DW-1:0] data_i_1_8[5];
-reg valid_i_1_8[5], ready_i_1_8[5];    
-wire [`DW-1:0] data_o_1_8[5];
-wire valid_o_1_8[5], ready_o_1_8[5];        
-
-reg [`DW-1:0] data_i_1_9[5];
-reg valid_i_1_9[5], ready_i_1_9[5];    
-wire [`DW-1:0] data_o_1_9[5];
-wire valid_o_1_9[5], ready_o_1_9[5];        
-
-reg [`DW-1:0] data_i_1_10[5];
-reg valid_i_1_10[5], ready_i_1_10[5];    
-wire [`DW-1:0] data_o_1_10[5];
-wire valid_o_1_10[5], ready_o_1_10[5];        
 
 reg [`DW-1:0] data_i_2_0[5];
 reg valid_i_2_0[5], ready_i_2_0[5];    
@@ -168,21 +138,6 @@ reg valid_i_2_7[5], ready_i_2_7[5];
 wire [`DW-1:0] data_o_2_7[5];
 wire valid_o_2_7[5], ready_o_2_7[5];        
 
-reg [`DW-1:0] data_i_2_8[5];
-reg valid_i_2_8[5], ready_i_2_8[5];    
-wire [`DW-1:0] data_o_2_8[5];
-wire valid_o_2_8[5], ready_o_2_8[5];        
-
-reg [`DW-1:0] data_i_2_9[5];
-reg valid_i_2_9[5], ready_i_2_9[5];    
-wire [`DW-1:0] data_o_2_9[5];
-wire valid_o_2_9[5], ready_o_2_9[5];        
-
-reg [`DW-1:0] data_i_2_10[5];
-reg valid_i_2_10[5], ready_i_2_10[5];    
-wire [`DW-1:0] data_o_2_10[5];
-wire valid_o_2_10[5], ready_o_2_10[5];        
-
 reg [`DW-1:0] data_i_3_0[5];
 reg valid_i_3_0[5], ready_i_3_0[5];    
 wire [`DW-1:0] data_o_3_0[5];
@@ -222,21 +177,6 @@ reg [`DW-1:0] data_i_3_7[5];
 reg valid_i_3_7[5], ready_i_3_7[5];    
 wire [`DW-1:0] data_o_3_7[5];
 wire valid_o_3_7[5], ready_o_3_7[5];        
-
-reg [`DW-1:0] data_i_3_8[5];
-reg valid_i_3_8[5], ready_i_3_8[5];    
-wire [`DW-1:0] data_o_3_8[5];
-wire valid_o_3_8[5], ready_o_3_8[5];        
-
-reg [`DW-1:0] data_i_3_9[5];
-reg valid_i_3_9[5], ready_i_3_9[5];    
-wire [`DW-1:0] data_o_3_9[5];
-wire valid_o_3_9[5], ready_o_3_9[5];        
-
-reg [`DW-1:0] data_i_3_10[5];
-reg valid_i_3_10[5], ready_i_3_10[5];    
-wire [`DW-1:0] data_o_3_10[5];
-wire valid_o_3_10[5], ready_o_3_10[5];        
 
 reg [`DW-1:0] data_i_4_0[5];
 reg valid_i_4_0[5], ready_i_4_0[5];    
@@ -278,20 +218,85 @@ reg valid_i_4_7[5], ready_i_4_7[5];
 wire [`DW-1:0] data_o_4_7[5];
 wire valid_o_4_7[5], ready_o_4_7[5];        
 
-reg [`DW-1:0] data_i_4_8[5];
-reg valid_i_4_8[5], ready_i_4_8[5];    
-wire [`DW-1:0] data_o_4_8[5];
-wire valid_o_4_8[5], ready_o_4_8[5];        
+reg [`DW-1:0] data_i_5_0[5];
+reg valid_i_5_0[5], ready_i_5_0[5];    
+wire [`DW-1:0] data_o_5_0[5];
+wire valid_o_5_0[5], ready_o_5_0[5];        
 
-reg [`DW-1:0] data_i_4_9[5];
-reg valid_i_4_9[5], ready_i_4_9[5];    
-wire [`DW-1:0] data_o_4_9[5];
-wire valid_o_4_9[5], ready_o_4_9[5];        
+reg [`DW-1:0] data_i_5_1[5];
+reg valid_i_5_1[5], ready_i_5_1[5];    
+wire [`DW-1:0] data_o_5_1[5];
+wire valid_o_5_1[5], ready_o_5_1[5];        
 
-reg [`DW-1:0] data_i_4_10[5];
-reg valid_i_4_10[5], ready_i_4_10[5];    
-wire [`DW-1:0] data_o_4_10[5];
-wire valid_o_4_10[5], ready_o_4_10[5];        
+reg [`DW-1:0] data_i_5_2[5];
+reg valid_i_5_2[5], ready_i_5_2[5];    
+wire [`DW-1:0] data_o_5_2[5];
+wire valid_o_5_2[5], ready_o_5_2[5];        
+
+reg [`DW-1:0] data_i_5_3[5];
+reg valid_i_5_3[5], ready_i_5_3[5];    
+wire [`DW-1:0] data_o_5_3[5];
+wire valid_o_5_3[5], ready_o_5_3[5];        
+
+reg [`DW-1:0] data_i_5_4[5];
+reg valid_i_5_4[5], ready_i_5_4[5];    
+wire [`DW-1:0] data_o_5_4[5];
+wire valid_o_5_4[5], ready_o_5_4[5];        
+
+reg [`DW-1:0] data_i_5_5[5];
+reg valid_i_5_5[5], ready_i_5_5[5];    
+wire [`DW-1:0] data_o_5_5[5];
+wire valid_o_5_5[5], ready_o_5_5[5];        
+
+reg [`DW-1:0] data_i_5_6[5];
+reg valid_i_5_6[5], ready_i_5_6[5];    
+wire [`DW-1:0] data_o_5_6[5];
+wire valid_o_5_6[5], ready_o_5_6[5];        
+
+reg [`DW-1:0] data_i_5_7[5];
+reg valid_i_5_7[5], ready_i_5_7[5];    
+wire [`DW-1:0] data_o_5_7[5];
+wire valid_o_5_7[5], ready_o_5_7[5];        
+
+reg [`DW-1:0] data_i_6_0[5];
+reg valid_i_6_0[5], ready_i_6_0[5];    
+wire [`DW-1:0] data_o_6_0[5];
+wire valid_o_6_0[5], ready_o_6_0[5];        
+
+reg [`DW-1:0] data_i_6_1[5];
+reg valid_i_6_1[5], ready_i_6_1[5];    
+wire [`DW-1:0] data_o_6_1[5];
+wire valid_o_6_1[5], ready_o_6_1[5];        
+
+reg [`DW-1:0] data_i_6_2[5];
+reg valid_i_6_2[5], ready_i_6_2[5];    
+wire [`DW-1:0] data_o_6_2[5];
+wire valid_o_6_2[5], ready_o_6_2[5];        
+
+reg [`DW-1:0] data_i_6_3[5];
+reg valid_i_6_3[5], ready_i_6_3[5];    
+wire [`DW-1:0] data_o_6_3[5];
+wire valid_o_6_3[5], ready_o_6_3[5];        
+
+reg [`DW-1:0] data_i_6_4[5];
+reg valid_i_6_4[5], ready_i_6_4[5];    
+wire [`DW-1:0] data_o_6_4[5];
+wire valid_o_6_4[5], ready_o_6_4[5];        
+
+reg [`DW-1:0] data_i_6_5[5];
+reg valid_i_6_5[5], ready_i_6_5[5];    
+wire [`DW-1:0] data_o_6_5[5];
+wire valid_o_6_5[5], ready_o_6_5[5];        
+
+reg [`DW-1:0] data_i_6_6[5];
+reg valid_i_6_6[5], ready_i_6_6[5];    
+wire [`DW-1:0] data_o_6_6[5];
+wire valid_o_6_6[5], ready_o_6_6[5];        
+
+reg [`DW-1:0] data_i_6_7[5];
+reg valid_i_6_7[5], ready_i_6_7[5];    
+wire [`DW-1:0] data_o_6_7[5];
+wire valid_o_6_7[5], ready_o_6_7[5];        
 
 always@(*) begin
     data_o[0][0] = data_o_0_0[0];
@@ -318,15 +323,6 @@ always@(*) begin
     data_o[0][7] = data_o_0_7[0];
     valid_o[0][7] = valid_o_0_7[0];
     ready_o[0][7] = ready_o_0_7[0];
-    data_o[0][8] = data_o_0_8[0];
-    valid_o[0][8] = valid_o_0_8[0];
-    ready_o[0][8] = ready_o_0_8[0];
-    data_o[0][9] = data_o_0_9[0];
-    valid_o[0][9] = valid_o_0_9[0];
-    ready_o[0][9] = ready_o_0_9[0];
-    data_o[0][10] = data_o_0_10[0];
-    valid_o[0][10] = valid_o_0_10[0];
-    ready_o[0][10] = ready_o_0_10[0];
     data_o[1][0] = data_o_1_0[0];
     valid_o[1][0] = valid_o_1_0[0];
     ready_o[1][0] = ready_o_1_0[0];
@@ -351,15 +347,6 @@ always@(*) begin
     data_o[1][7] = data_o_1_7[0];
     valid_o[1][7] = valid_o_1_7[0];
     ready_o[1][7] = ready_o_1_7[0];
-    data_o[1][8] = data_o_1_8[0];
-    valid_o[1][8] = valid_o_1_8[0];
-    ready_o[1][8] = ready_o_1_8[0];
-    data_o[1][9] = data_o_1_9[0];
-    valid_o[1][9] = valid_o_1_9[0];
-    ready_o[1][9] = ready_o_1_9[0];
-    data_o[1][10] = data_o_1_10[0];
-    valid_o[1][10] = valid_o_1_10[0];
-    ready_o[1][10] = ready_o_1_10[0];
     data_o[2][0] = data_o_2_0[0];
     valid_o[2][0] = valid_o_2_0[0];
     ready_o[2][0] = ready_o_2_0[0];
@@ -384,15 +371,6 @@ always@(*) begin
     data_o[2][7] = data_o_2_7[0];
     valid_o[2][7] = valid_o_2_7[0];
     ready_o[2][7] = ready_o_2_7[0];
-    data_o[2][8] = data_o_2_8[0];
-    valid_o[2][8] = valid_o_2_8[0];
-    ready_o[2][8] = ready_o_2_8[0];
-    data_o[2][9] = data_o_2_9[0];
-    valid_o[2][9] = valid_o_2_9[0];
-    ready_o[2][9] = ready_o_2_9[0];
-    data_o[2][10] = data_o_2_10[0];
-    valid_o[2][10] = valid_o_2_10[0];
-    ready_o[2][10] = ready_o_2_10[0];
     data_o[3][0] = data_o_3_0[0];
     valid_o[3][0] = valid_o_3_0[0];
     ready_o[3][0] = ready_o_3_0[0];
@@ -417,15 +395,6 @@ always@(*) begin
     data_o[3][7] = data_o_3_7[0];
     valid_o[3][7] = valid_o_3_7[0];
     ready_o[3][7] = ready_o_3_7[0];
-    data_o[3][8] = data_o_3_8[0];
-    valid_o[3][8] = valid_o_3_8[0];
-    ready_o[3][8] = ready_o_3_8[0];
-    data_o[3][9] = data_o_3_9[0];
-    valid_o[3][9] = valid_o_3_9[0];
-    ready_o[3][9] = ready_o_3_9[0];
-    data_o[3][10] = data_o_3_10[0];
-    valid_o[3][10] = valid_o_3_10[0];
-    ready_o[3][10] = ready_o_3_10[0];
     data_o[4][0] = data_o_4_0[0];
     valid_o[4][0] = valid_o_4_0[0];
     ready_o[4][0] = ready_o_4_0[0];
@@ -450,15 +419,54 @@ always@(*) begin
     data_o[4][7] = data_o_4_7[0];
     valid_o[4][7] = valid_o_4_7[0];
     ready_o[4][7] = ready_o_4_7[0];
-    data_o[4][8] = data_o_4_8[0];
-    valid_o[4][8] = valid_o_4_8[0];
-    ready_o[4][8] = ready_o_4_8[0];
-    data_o[4][9] = data_o_4_9[0];
-    valid_o[4][9] = valid_o_4_9[0];
-    ready_o[4][9] = ready_o_4_9[0];
-    data_o[4][10] = data_o_4_10[0];
-    valid_o[4][10] = valid_o_4_10[0];
-    ready_o[4][10] = ready_o_4_10[0];
+    data_o[5][0] = data_o_5_0[0];
+    valid_o[5][0] = valid_o_5_0[0];
+    ready_o[5][0] = ready_o_5_0[0];
+    data_o[5][1] = data_o_5_1[0];
+    valid_o[5][1] = valid_o_5_1[0];
+    ready_o[5][1] = ready_o_5_1[0];
+    data_o[5][2] = data_o_5_2[0];
+    valid_o[5][2] = valid_o_5_2[0];
+    ready_o[5][2] = ready_o_5_2[0];
+    data_o[5][3] = data_o_5_3[0];
+    valid_o[5][3] = valid_o_5_3[0];
+    ready_o[5][3] = ready_o_5_3[0];
+    data_o[5][4] = data_o_5_4[0];
+    valid_o[5][4] = valid_o_5_4[0];
+    ready_o[5][4] = ready_o_5_4[0];
+    data_o[5][5] = data_o_5_5[0];
+    valid_o[5][5] = valid_o_5_5[0];
+    ready_o[5][5] = ready_o_5_5[0];
+    data_o[5][6] = data_o_5_6[0];
+    valid_o[5][6] = valid_o_5_6[0];
+    ready_o[5][6] = ready_o_5_6[0];
+    data_o[5][7] = data_o_5_7[0];
+    valid_o[5][7] = valid_o_5_7[0];
+    ready_o[5][7] = ready_o_5_7[0];
+    data_o[6][0] = data_o_6_0[0];
+    valid_o[6][0] = valid_o_6_0[0];
+    ready_o[6][0] = ready_o_6_0[0];
+    data_o[6][1] = data_o_6_1[0];
+    valid_o[6][1] = valid_o_6_1[0];
+    ready_o[6][1] = ready_o_6_1[0];
+    data_o[6][2] = data_o_6_2[0];
+    valid_o[6][2] = valid_o_6_2[0];
+    ready_o[6][2] = ready_o_6_2[0];
+    data_o[6][3] = data_o_6_3[0];
+    valid_o[6][3] = valid_o_6_3[0];
+    ready_o[6][3] = ready_o_6_3[0];
+    data_o[6][4] = data_o_6_4[0];
+    valid_o[6][4] = valid_o_6_4[0];
+    ready_o[6][4] = ready_o_6_4[0];
+    data_o[6][5] = data_o_6_5[0];
+    valid_o[6][5] = valid_o_6_5[0];
+    ready_o[6][5] = ready_o_6_5[0];
+    data_o[6][6] = data_o_6_6[0];
+    valid_o[6][6] = valid_o_6_6[0];
+    ready_o[6][6] = ready_o_6_6[0];
+    data_o[6][7] = data_o_6_7[0];
+    valid_o[6][7] = valid_o_6_7[0];
+    ready_o[6][7] = ready_o_6_7[0];
 end
 
 /*Router 0,0*/    
@@ -494,7 +502,7 @@ end
 merge_router #(
     .input_mask                     (input_mask_0_1),
     .output_sel                     (output_sel_0_1)
-)router5(
+)router7(
     .clk                            (clk),
     .rstn                           (rstn),
     .data_i                         (data_i_0_1),
@@ -526,7 +534,7 @@ end
 merge_router #(
     .input_mask                     (input_mask_0_2),
     .output_sel                     (output_sel_0_2)
-)router10(
+)router14(
     .clk                            (clk),
     .rstn                           (rstn),
     .data_i                         (data_i_0_2),
@@ -558,7 +566,7 @@ end
 merge_router #(
     .input_mask                     (input_mask_0_3),
     .output_sel                     (output_sel_0_3)
-)router15(
+)router21(
     .clk                            (clk),
     .rstn                           (rstn),
     .data_i                         (data_i_0_3),
@@ -590,7 +598,7 @@ end
 merge_router #(
     .input_mask                     (input_mask_0_4),
     .output_sel                     (output_sel_0_4)
-)router20(
+)router28(
     .clk                            (clk),
     .rstn                           (rstn),
     .data_i                         (data_i_0_4),
@@ -622,7 +630,7 @@ end
 merge_router #(
     .input_mask                     (input_mask_0_5),
     .output_sel                     (output_sel_0_5)
-)router25(
+)router35(
     .clk                            (clk),
     .rstn                           (rstn),
     .data_i                         (data_i_0_5),
@@ -654,7 +662,7 @@ end
 merge_router #(
     .input_mask                     (input_mask_0_6),
     .output_sel                     (output_sel_0_6)
-)router30(
+)router42(
     .clk                            (clk),
     .rstn                           (rstn),
     .data_i                         (data_i_0_6),
@@ -686,7 +694,7 @@ end
 merge_router #(
     .input_mask                     (input_mask_0_7),
     .output_sel                     (output_sel_0_7)
-)router35(
+)router49(
     .clk                            (clk),
     .rstn                           (rstn),
     .data_i                         (data_i_0_7),
@@ -702,108 +710,12 @@ always@(*) begin
             data_i_0_7[3] = data_o_0_6[4];
     valid_i_0_7[3] = valid_o_0_6[4];
     ready_i_0_7[3] = ready_o_0_6[4];
-    data_i_0_7[4] = data_o_0_8[3];
-    valid_i_0_7[4] = valid_o_0_8[3];
-    ready_i_0_7[4] = ready_o_0_8[3];
     data_i_0_7[2] = data_o_1_7[1];
     valid_i_0_7[2] = valid_o_1_7[1];
     ready_i_0_7[2] = ready_o_1_7[1];
     data_i_0_7[0] = data_i[0][7];
     valid_i_0_7[0] = valid_i[0][7];
     ready_i_0_7[0] = ready_i[0][7];
-end
-
-
-/*Router 0,8*/    
-merge_router #(
-    .input_mask                     (input_mask_0_8),
-    .output_sel                     (output_sel_0_8)
-)router40(
-    .clk                            (clk),
-    .rstn                           (rstn),
-    .data_i                         (data_i_0_8),
-    .valid_i                        (valid_i_0_8),
-    .ready_o                        (ready_o_0_8),
-    .data_o                         (data_o_0_8),
-    .valid_o                        (valid_o_0_8),
-    .ready_i                        (ready_i_0_8)
-);
-
-
-always@(*) begin
-            data_i_0_8[3] = data_o_0_7[4];
-    valid_i_0_8[3] = valid_o_0_7[4];
-    ready_i_0_8[3] = ready_o_0_7[4];
-    data_i_0_8[4] = data_o_0_9[3];
-    valid_i_0_8[4] = valid_o_0_9[3];
-    ready_i_0_8[4] = ready_o_0_9[3];
-    data_i_0_8[2] = data_o_1_8[1];
-    valid_i_0_8[2] = valid_o_1_8[1];
-    ready_i_0_8[2] = ready_o_1_8[1];
-    data_i_0_8[0] = data_i[0][8];
-    valid_i_0_8[0] = valid_i[0][8];
-    ready_i_0_8[0] = ready_i[0][8];
-end
-
-
-/*Router 0,9*/    
-merge_router #(
-    .input_mask                     (input_mask_0_9),
-    .output_sel                     (output_sel_0_9)
-)router45(
-    .clk                            (clk),
-    .rstn                           (rstn),
-    .data_i                         (data_i_0_9),
-    .valid_i                        (valid_i_0_9),
-    .ready_o                        (ready_o_0_9),
-    .data_o                         (data_o_0_9),
-    .valid_o                        (valid_o_0_9),
-    .ready_i                        (ready_i_0_9)
-);
-
-
-always@(*) begin
-            data_i_0_9[3] = data_o_0_8[4];
-    valid_i_0_9[3] = valid_o_0_8[4];
-    ready_i_0_9[3] = ready_o_0_8[4];
-    data_i_0_9[4] = data_o_0_10[3];
-    valid_i_0_9[4] = valid_o_0_10[3];
-    ready_i_0_9[4] = ready_o_0_10[3];
-    data_i_0_9[2] = data_o_1_9[1];
-    valid_i_0_9[2] = valid_o_1_9[1];
-    ready_i_0_9[2] = ready_o_1_9[1];
-    data_i_0_9[0] = data_i[0][9];
-    valid_i_0_9[0] = valid_i[0][9];
-    ready_i_0_9[0] = ready_i[0][9];
-end
-
-
-/*Router 0,10*/    
-merge_router #(
-    .input_mask                     (input_mask_0_10),
-    .output_sel                     (output_sel_0_10)
-)router50(
-    .clk                            (clk),
-    .rstn                           (rstn),
-    .data_i                         (data_i_0_10),
-    .valid_i                        (valid_i_0_10),
-    .ready_o                        (ready_o_0_10),
-    .data_o                         (data_o_0_10),
-    .valid_o                        (valid_o_0_10),
-    .ready_i                        (ready_i_0_10)
-);
-
-
-always@(*) begin
-            data_i_0_10[3] = data_o_0_9[4];
-    valid_i_0_10[3] = valid_o_0_9[4];
-    ready_i_0_10[3] = ready_o_0_9[4];
-    data_i_0_10[2] = data_o_1_10[1];
-    valid_i_0_10[2] = valid_o_1_10[1];
-    ready_i_0_10[2] = ready_o_1_10[1];
-    data_i_0_10[0] = data_i[0][10];
-    valid_i_0_10[0] = valid_i[0][10];
-    ready_i_0_10[0] = ready_i[0][10];
 end
 
 
@@ -843,7 +755,7 @@ end
 merge_router #(
     .input_mask                     (input_mask_1_1),
     .output_sel                     (output_sel_1_1)
-)router6(
+)router8(
     .clk                            (clk),
     .rstn                           (rstn),
     .data_i                         (data_i_1_1),
@@ -878,7 +790,7 @@ end
 merge_router #(
     .input_mask                     (input_mask_1_2),
     .output_sel                     (output_sel_1_2)
-)router11(
+)router15(
     .clk                            (clk),
     .rstn                           (rstn),
     .data_i                         (data_i_1_2),
@@ -913,7 +825,7 @@ end
 merge_router #(
     .input_mask                     (input_mask_1_3),
     .output_sel                     (output_sel_1_3)
-)router16(
+)router22(
     .clk                            (clk),
     .rstn                           (rstn),
     .data_i                         (data_i_1_3),
@@ -948,7 +860,7 @@ end
 merge_router #(
     .input_mask                     (input_mask_1_4),
     .output_sel                     (output_sel_1_4)
-)router21(
+)router29(
     .clk                            (clk),
     .rstn                           (rstn),
     .data_i                         (data_i_1_4),
@@ -983,7 +895,7 @@ end
 merge_router #(
     .input_mask                     (input_mask_1_5),
     .output_sel                     (output_sel_1_5)
-)router26(
+)router36(
     .clk                            (clk),
     .rstn                           (rstn),
     .data_i                         (data_i_1_5),
@@ -1018,7 +930,7 @@ end
 merge_router #(
     .input_mask                     (input_mask_1_6),
     .output_sel                     (output_sel_1_6)
-)router31(
+)router43(
     .clk                            (clk),
     .rstn                           (rstn),
     .data_i                         (data_i_1_6),
@@ -1053,7 +965,7 @@ end
 merge_router #(
     .input_mask                     (input_mask_1_7),
     .output_sel                     (output_sel_1_7)
-)router36(
+)router50(
     .clk                            (clk),
     .rstn                           (rstn),
     .data_i                         (data_i_1_7),
@@ -1069,9 +981,6 @@ always@(*) begin
             data_i_1_7[3] = data_o_1_6[4];
     valid_i_1_7[3] = valid_o_1_6[4];
     ready_i_1_7[3] = ready_o_1_6[4];
-    data_i_1_7[4] = data_o_1_8[3];
-    valid_i_1_7[4] = valid_o_1_8[3];
-    ready_i_1_7[4] = ready_o_1_8[3];
     data_i_1_7[1] = data_o_0_7[2];
     valid_i_1_7[1] = valid_o_0_7[2];
     ready_i_1_7[1] = ready_o_0_7[2];
@@ -1081,108 +990,6 @@ always@(*) begin
     data_i_1_7[0] = data_i[1][7];
     valid_i_1_7[0] = valid_i[1][7];
     ready_i_1_7[0] = ready_i[1][7];
-end
-
-
-/*Router 1,8*/    
-merge_router #(
-    .input_mask                     (input_mask_1_8),
-    .output_sel                     (output_sel_1_8)
-)router41(
-    .clk                            (clk),
-    .rstn                           (rstn),
-    .data_i                         (data_i_1_8),
-    .valid_i                        (valid_i_1_8),
-    .ready_o                        (ready_o_1_8),
-    .data_o                         (data_o_1_8),
-    .valid_o                        (valid_o_1_8),
-    .ready_i                        (ready_i_1_8)
-);
-
-
-always@(*) begin
-            data_i_1_8[3] = data_o_1_7[4];
-    valid_i_1_8[3] = valid_o_1_7[4];
-    ready_i_1_8[3] = ready_o_1_7[4];
-    data_i_1_8[4] = data_o_1_9[3];
-    valid_i_1_8[4] = valid_o_1_9[3];
-    ready_i_1_8[4] = ready_o_1_9[3];
-    data_i_1_8[1] = data_o_0_8[2];
-    valid_i_1_8[1] = valid_o_0_8[2];
-    ready_i_1_8[1] = ready_o_0_8[2];
-    data_i_1_8[2] = data_o_2_8[1];
-    valid_i_1_8[2] = valid_o_2_8[1];
-    ready_i_1_8[2] = ready_o_2_8[1];
-    data_i_1_8[0] = data_i[1][8];
-    valid_i_1_8[0] = valid_i[1][8];
-    ready_i_1_8[0] = ready_i[1][8];
-end
-
-
-/*Router 1,9*/    
-merge_router #(
-    .input_mask                     (input_mask_1_9),
-    .output_sel                     (output_sel_1_9)
-)router46(
-    .clk                            (clk),
-    .rstn                           (rstn),
-    .data_i                         (data_i_1_9),
-    .valid_i                        (valid_i_1_9),
-    .ready_o                        (ready_o_1_9),
-    .data_o                         (data_o_1_9),
-    .valid_o                        (valid_o_1_9),
-    .ready_i                        (ready_i_1_9)
-);
-
-
-always@(*) begin
-            data_i_1_9[3] = data_o_1_8[4];
-    valid_i_1_9[3] = valid_o_1_8[4];
-    ready_i_1_9[3] = ready_o_1_8[4];
-    data_i_1_9[4] = data_o_1_10[3];
-    valid_i_1_9[4] = valid_o_1_10[3];
-    ready_i_1_9[4] = ready_o_1_10[3];
-    data_i_1_9[1] = data_o_0_9[2];
-    valid_i_1_9[1] = valid_o_0_9[2];
-    ready_i_1_9[1] = ready_o_0_9[2];
-    data_i_1_9[2] = data_o_2_9[1];
-    valid_i_1_9[2] = valid_o_2_9[1];
-    ready_i_1_9[2] = ready_o_2_9[1];
-    data_i_1_9[0] = data_i[1][9];
-    valid_i_1_9[0] = valid_i[1][9];
-    ready_i_1_9[0] = ready_i[1][9];
-end
-
-
-/*Router 1,10*/    
-merge_router #(
-    .input_mask                     (input_mask_1_10),
-    .output_sel                     (output_sel_1_10)
-)router51(
-    .clk                            (clk),
-    .rstn                           (rstn),
-    .data_i                         (data_i_1_10),
-    .valid_i                        (valid_i_1_10),
-    .ready_o                        (ready_o_1_10),
-    .data_o                         (data_o_1_10),
-    .valid_o                        (valid_o_1_10),
-    .ready_i                        (ready_i_1_10)
-);
-
-
-always@(*) begin
-            data_i_1_10[3] = data_o_1_9[4];
-    valid_i_1_10[3] = valid_o_1_9[4];
-    ready_i_1_10[3] = ready_o_1_9[4];
-    data_i_1_10[1] = data_o_0_10[2];
-    valid_i_1_10[1] = valid_o_0_10[2];
-    ready_i_1_10[1] = ready_o_0_10[2];
-    data_i_1_10[2] = data_o_2_10[1];
-    valid_i_1_10[2] = valid_o_2_10[1];
-    ready_i_1_10[2] = ready_o_2_10[1];
-    data_i_1_10[0] = data_i[1][10];
-    valid_i_1_10[0] = valid_i[1][10];
-    ready_i_1_10[0] = ready_i[1][10];
 end
 
 
@@ -1222,7 +1029,7 @@ end
 merge_router #(
     .input_mask                     (input_mask_2_1),
     .output_sel                     (output_sel_2_1)
-)router7(
+)router9(
     .clk                            (clk),
     .rstn                           (rstn),
     .data_i                         (data_i_2_1),
@@ -1257,7 +1064,7 @@ end
 merge_router #(
     .input_mask                     (input_mask_2_2),
     .output_sel                     (output_sel_2_2)
-)router12(
+)router16(
     .clk                            (clk),
     .rstn                           (rstn),
     .data_i                         (data_i_2_2),
@@ -1292,7 +1099,7 @@ end
 merge_router #(
     .input_mask                     (input_mask_2_3),
     .output_sel                     (output_sel_2_3)
-)router17(
+)router23(
     .clk                            (clk),
     .rstn                           (rstn),
     .data_i                         (data_i_2_3),
@@ -1327,7 +1134,7 @@ end
 merge_router #(
     .input_mask                     (input_mask_2_4),
     .output_sel                     (output_sel_2_4)
-)router22(
+)router30(
     .clk                            (clk),
     .rstn                           (rstn),
     .data_i                         (data_i_2_4),
@@ -1362,7 +1169,7 @@ end
 merge_router #(
     .input_mask                     (input_mask_2_5),
     .output_sel                     (output_sel_2_5)
-)router27(
+)router37(
     .clk                            (clk),
     .rstn                           (rstn),
     .data_i                         (data_i_2_5),
@@ -1397,7 +1204,7 @@ end
 merge_router #(
     .input_mask                     (input_mask_2_6),
     .output_sel                     (output_sel_2_6)
-)router32(
+)router44(
     .clk                            (clk),
     .rstn                           (rstn),
     .data_i                         (data_i_2_6),
@@ -1432,7 +1239,7 @@ end
 merge_router #(
     .input_mask                     (input_mask_2_7),
     .output_sel                     (output_sel_2_7)
-)router37(
+)router51(
     .clk                            (clk),
     .rstn                           (rstn),
     .data_i                         (data_i_2_7),
@@ -1448,9 +1255,6 @@ always@(*) begin
             data_i_2_7[3] = data_o_2_6[4];
     valid_i_2_7[3] = valid_o_2_6[4];
     ready_i_2_7[3] = ready_o_2_6[4];
-    data_i_2_7[4] = data_o_2_8[3];
-    valid_i_2_7[4] = valid_o_2_8[3];
-    ready_i_2_7[4] = ready_o_2_8[3];
     data_i_2_7[1] = data_o_1_7[2];
     valid_i_2_7[1] = valid_o_1_7[2];
     ready_i_2_7[1] = ready_o_1_7[2];
@@ -1460,108 +1264,6 @@ always@(*) begin
     data_i_2_7[0] = data_i[2][7];
     valid_i_2_7[0] = valid_i[2][7];
     ready_i_2_7[0] = ready_i[2][7];
-end
-
-
-/*Router 2,8*/    
-merge_router #(
-    .input_mask                     (input_mask_2_8),
-    .output_sel                     (output_sel_2_8)
-)router42(
-    .clk                            (clk),
-    .rstn                           (rstn),
-    .data_i                         (data_i_2_8),
-    .valid_i                        (valid_i_2_8),
-    .ready_o                        (ready_o_2_8),
-    .data_o                         (data_o_2_8),
-    .valid_o                        (valid_o_2_8),
-    .ready_i                        (ready_i_2_8)
-);
-
-
-always@(*) begin
-            data_i_2_8[3] = data_o_2_7[4];
-    valid_i_2_8[3] = valid_o_2_7[4];
-    ready_i_2_8[3] = ready_o_2_7[4];
-    data_i_2_8[4] = data_o_2_9[3];
-    valid_i_2_8[4] = valid_o_2_9[3];
-    ready_i_2_8[4] = ready_o_2_9[3];
-    data_i_2_8[1] = data_o_1_8[2];
-    valid_i_2_8[1] = valid_o_1_8[2];
-    ready_i_2_8[1] = ready_o_1_8[2];
-    data_i_2_8[2] = data_o_3_8[1];
-    valid_i_2_8[2] = valid_o_3_8[1];
-    ready_i_2_8[2] = ready_o_3_8[1];
-    data_i_2_8[0] = data_i[2][8];
-    valid_i_2_8[0] = valid_i[2][8];
-    ready_i_2_8[0] = ready_i[2][8];
-end
-
-
-/*Router 2,9*/    
-merge_router #(
-    .input_mask                     (input_mask_2_9),
-    .output_sel                     (output_sel_2_9)
-)router47(
-    .clk                            (clk),
-    .rstn                           (rstn),
-    .data_i                         (data_i_2_9),
-    .valid_i                        (valid_i_2_9),
-    .ready_o                        (ready_o_2_9),
-    .data_o                         (data_o_2_9),
-    .valid_o                        (valid_o_2_9),
-    .ready_i                        (ready_i_2_9)
-);
-
-
-always@(*) begin
-            data_i_2_9[3] = data_o_2_8[4];
-    valid_i_2_9[3] = valid_o_2_8[4];
-    ready_i_2_9[3] = ready_o_2_8[4];
-    data_i_2_9[4] = data_o_2_10[3];
-    valid_i_2_9[4] = valid_o_2_10[3];
-    ready_i_2_9[4] = ready_o_2_10[3];
-    data_i_2_9[1] = data_o_1_9[2];
-    valid_i_2_9[1] = valid_o_1_9[2];
-    ready_i_2_9[1] = ready_o_1_9[2];
-    data_i_2_9[2] = data_o_3_9[1];
-    valid_i_2_9[2] = valid_o_3_9[1];
-    ready_i_2_9[2] = ready_o_3_9[1];
-    data_i_2_9[0] = data_i[2][9];
-    valid_i_2_9[0] = valid_i[2][9];
-    ready_i_2_9[0] = ready_i[2][9];
-end
-
-
-/*Router 2,10*/    
-merge_router #(
-    .input_mask                     (input_mask_2_10),
-    .output_sel                     (output_sel_2_10)
-)router52(
-    .clk                            (clk),
-    .rstn                           (rstn),
-    .data_i                         (data_i_2_10),
-    .valid_i                        (valid_i_2_10),
-    .ready_o                        (ready_o_2_10),
-    .data_o                         (data_o_2_10),
-    .valid_o                        (valid_o_2_10),
-    .ready_i                        (ready_i_2_10)
-);
-
-
-always@(*) begin
-            data_i_2_10[3] = data_o_2_9[4];
-    valid_i_2_10[3] = valid_o_2_9[4];
-    ready_i_2_10[3] = ready_o_2_9[4];
-    data_i_2_10[1] = data_o_1_10[2];
-    valid_i_2_10[1] = valid_o_1_10[2];
-    ready_i_2_10[1] = ready_o_1_10[2];
-    data_i_2_10[2] = data_o_3_10[1];
-    valid_i_2_10[2] = valid_o_3_10[1];
-    ready_i_2_10[2] = ready_o_3_10[1];
-    data_i_2_10[0] = data_i[2][10];
-    valid_i_2_10[0] = valid_i[2][10];
-    ready_i_2_10[0] = ready_i[2][10];
 end
 
 
@@ -1601,7 +1303,7 @@ end
 merge_router #(
     .input_mask                     (input_mask_3_1),
     .output_sel                     (output_sel_3_1)
-)router8(
+)router10(
     .clk                            (clk),
     .rstn                           (rstn),
     .data_i                         (data_i_3_1),
@@ -1636,7 +1338,7 @@ end
 merge_router #(
     .input_mask                     (input_mask_3_2),
     .output_sel                     (output_sel_3_2)
-)router13(
+)router17(
     .clk                            (clk),
     .rstn                           (rstn),
     .data_i                         (data_i_3_2),
@@ -1671,7 +1373,7 @@ end
 merge_router #(
     .input_mask                     (input_mask_3_3),
     .output_sel                     (output_sel_3_3)
-)router18(
+)router24(
     .clk                            (clk),
     .rstn                           (rstn),
     .data_i                         (data_i_3_3),
@@ -1706,7 +1408,7 @@ end
 merge_router #(
     .input_mask                     (input_mask_3_4),
     .output_sel                     (output_sel_3_4)
-)router23(
+)router31(
     .clk                            (clk),
     .rstn                           (rstn),
     .data_i                         (data_i_3_4),
@@ -1741,7 +1443,7 @@ end
 merge_router #(
     .input_mask                     (input_mask_3_5),
     .output_sel                     (output_sel_3_5)
-)router28(
+)router38(
     .clk                            (clk),
     .rstn                           (rstn),
     .data_i                         (data_i_3_5),
@@ -1776,7 +1478,7 @@ end
 merge_router #(
     .input_mask                     (input_mask_3_6),
     .output_sel                     (output_sel_3_6)
-)router33(
+)router45(
     .clk                            (clk),
     .rstn                           (rstn),
     .data_i                         (data_i_3_6),
@@ -1811,7 +1513,7 @@ end
 merge_router #(
     .input_mask                     (input_mask_3_7),
     .output_sel                     (output_sel_3_7)
-)router38(
+)router52(
     .clk                            (clk),
     .rstn                           (rstn),
     .data_i                         (data_i_3_7),
@@ -1827,9 +1529,6 @@ always@(*) begin
             data_i_3_7[3] = data_o_3_6[4];
     valid_i_3_7[3] = valid_o_3_6[4];
     ready_i_3_7[3] = ready_o_3_6[4];
-    data_i_3_7[4] = data_o_3_8[3];
-    valid_i_3_7[4] = valid_o_3_8[3];
-    ready_i_3_7[4] = ready_o_3_8[3];
     data_i_3_7[1] = data_o_2_7[2];
     valid_i_3_7[1] = valid_o_2_7[2];
     ready_i_3_7[1] = ready_o_2_7[2];
@@ -1839,108 +1538,6 @@ always@(*) begin
     data_i_3_7[0] = data_i[3][7];
     valid_i_3_7[0] = valid_i[3][7];
     ready_i_3_7[0] = ready_i[3][7];
-end
-
-
-/*Router 3,8*/    
-merge_router #(
-    .input_mask                     (input_mask_3_8),
-    .output_sel                     (output_sel_3_8)
-)router43(
-    .clk                            (clk),
-    .rstn                           (rstn),
-    .data_i                         (data_i_3_8),
-    .valid_i                        (valid_i_3_8),
-    .ready_o                        (ready_o_3_8),
-    .data_o                         (data_o_3_8),
-    .valid_o                        (valid_o_3_8),
-    .ready_i                        (ready_i_3_8)
-);
-
-
-always@(*) begin
-            data_i_3_8[3] = data_o_3_7[4];
-    valid_i_3_8[3] = valid_o_3_7[4];
-    ready_i_3_8[3] = ready_o_3_7[4];
-    data_i_3_8[4] = data_o_3_9[3];
-    valid_i_3_8[4] = valid_o_3_9[3];
-    ready_i_3_8[4] = ready_o_3_9[3];
-    data_i_3_8[1] = data_o_2_8[2];
-    valid_i_3_8[1] = valid_o_2_8[2];
-    ready_i_3_8[1] = ready_o_2_8[2];
-    data_i_3_8[2] = data_o_4_8[1];
-    valid_i_3_8[2] = valid_o_4_8[1];
-    ready_i_3_8[2] = ready_o_4_8[1];
-    data_i_3_8[0] = data_i[3][8];
-    valid_i_3_8[0] = valid_i[3][8];
-    ready_i_3_8[0] = ready_i[3][8];
-end
-
-
-/*Router 3,9*/    
-merge_router #(
-    .input_mask                     (input_mask_3_9),
-    .output_sel                     (output_sel_3_9)
-)router48(
-    .clk                            (clk),
-    .rstn                           (rstn),
-    .data_i                         (data_i_3_9),
-    .valid_i                        (valid_i_3_9),
-    .ready_o                        (ready_o_3_9),
-    .data_o                         (data_o_3_9),
-    .valid_o                        (valid_o_3_9),
-    .ready_i                        (ready_i_3_9)
-);
-
-
-always@(*) begin
-            data_i_3_9[3] = data_o_3_8[4];
-    valid_i_3_9[3] = valid_o_3_8[4];
-    ready_i_3_9[3] = ready_o_3_8[4];
-    data_i_3_9[4] = data_o_3_10[3];
-    valid_i_3_9[4] = valid_o_3_10[3];
-    ready_i_3_9[4] = ready_o_3_10[3];
-    data_i_3_9[1] = data_o_2_9[2];
-    valid_i_3_9[1] = valid_o_2_9[2];
-    ready_i_3_9[1] = ready_o_2_9[2];
-    data_i_3_9[2] = data_o_4_9[1];
-    valid_i_3_9[2] = valid_o_4_9[1];
-    ready_i_3_9[2] = ready_o_4_9[1];
-    data_i_3_9[0] = data_i[3][9];
-    valid_i_3_9[0] = valid_i[3][9];
-    ready_i_3_9[0] = ready_i[3][9];
-end
-
-
-/*Router 3,10*/    
-merge_router #(
-    .input_mask                     (input_mask_3_10),
-    .output_sel                     (output_sel_3_10)
-)router53(
-    .clk                            (clk),
-    .rstn                           (rstn),
-    .data_i                         (data_i_3_10),
-    .valid_i                        (valid_i_3_10),
-    .ready_o                        (ready_o_3_10),
-    .data_o                         (data_o_3_10),
-    .valid_o                        (valid_o_3_10),
-    .ready_i                        (ready_i_3_10)
-);
-
-
-always@(*) begin
-            data_i_3_10[3] = data_o_3_9[4];
-    valid_i_3_10[3] = valid_o_3_9[4];
-    ready_i_3_10[3] = ready_o_3_9[4];
-    data_i_3_10[1] = data_o_2_10[2];
-    valid_i_3_10[1] = valid_o_2_10[2];
-    ready_i_3_10[1] = ready_o_2_10[2];
-    data_i_3_10[2] = data_o_4_10[1];
-    valid_i_3_10[2] = valid_o_4_10[1];
-    ready_i_3_10[2] = ready_o_4_10[1];
-    data_i_3_10[0] = data_i[3][10];
-    valid_i_3_10[0] = valid_i[3][10];
-    ready_i_3_10[0] = ready_i[3][10];
 end
 
 
@@ -1967,6 +1564,9 @@ always@(*) begin
     data_i_4_0[1] = data_o_3_0[2];
     valid_i_4_0[1] = valid_o_3_0[2];
     ready_i_4_0[1] = ready_o_3_0[2];
+    data_i_4_0[2] = data_o_5_0[1];
+    valid_i_4_0[2] = valid_o_5_0[1];
+    ready_i_4_0[2] = ready_o_5_0[1];
     data_i_4_0[0] = data_i[4][0];
     valid_i_4_0[0] = valid_i[4][0];
     ready_i_4_0[0] = ready_i[4][0];
@@ -1977,7 +1577,7 @@ end
 merge_router #(
     .input_mask                     (input_mask_4_1),
     .output_sel                     (output_sel_4_1)
-)router9(
+)router11(
     .clk                            (clk),
     .rstn                           (rstn),
     .data_i                         (data_i_4_1),
@@ -1999,6 +1599,9 @@ always@(*) begin
     data_i_4_1[1] = data_o_3_1[2];
     valid_i_4_1[1] = valid_o_3_1[2];
     ready_i_4_1[1] = ready_o_3_1[2];
+    data_i_4_1[2] = data_o_5_1[1];
+    valid_i_4_1[2] = valid_o_5_1[1];
+    ready_i_4_1[2] = ready_o_5_1[1];
     data_i_4_1[0] = data_i[4][1];
     valid_i_4_1[0] = valid_i[4][1];
     ready_i_4_1[0] = ready_i[4][1];
@@ -2009,7 +1612,7 @@ end
 merge_router #(
     .input_mask                     (input_mask_4_2),
     .output_sel                     (output_sel_4_2)
-)router14(
+)router18(
     .clk                            (clk),
     .rstn                           (rstn),
     .data_i                         (data_i_4_2),
@@ -2031,6 +1634,9 @@ always@(*) begin
     data_i_4_2[1] = data_o_3_2[2];
     valid_i_4_2[1] = valid_o_3_2[2];
     ready_i_4_2[1] = ready_o_3_2[2];
+    data_i_4_2[2] = data_o_5_2[1];
+    valid_i_4_2[2] = valid_o_5_2[1];
+    ready_i_4_2[2] = ready_o_5_2[1];
     data_i_4_2[0] = data_i[4][2];
     valid_i_4_2[0] = valid_i[4][2];
     ready_i_4_2[0] = ready_i[4][2];
@@ -2041,7 +1647,7 @@ end
 merge_router #(
     .input_mask                     (input_mask_4_3),
     .output_sel                     (output_sel_4_3)
-)router19(
+)router25(
     .clk                            (clk),
     .rstn                           (rstn),
     .data_i                         (data_i_4_3),
@@ -2063,6 +1669,9 @@ always@(*) begin
     data_i_4_3[1] = data_o_3_3[2];
     valid_i_4_3[1] = valid_o_3_3[2];
     ready_i_4_3[1] = ready_o_3_3[2];
+    data_i_4_3[2] = data_o_5_3[1];
+    valid_i_4_3[2] = valid_o_5_3[1];
+    ready_i_4_3[2] = ready_o_5_3[1];
     data_i_4_3[0] = data_i[4][3];
     valid_i_4_3[0] = valid_i[4][3];
     ready_i_4_3[0] = ready_i[4][3];
@@ -2073,7 +1682,7 @@ end
 merge_router #(
     .input_mask                     (input_mask_4_4),
     .output_sel                     (output_sel_4_4)
-)router24(
+)router32(
     .clk                            (clk),
     .rstn                           (rstn),
     .data_i                         (data_i_4_4),
@@ -2095,6 +1704,9 @@ always@(*) begin
     data_i_4_4[1] = data_o_3_4[2];
     valid_i_4_4[1] = valid_o_3_4[2];
     ready_i_4_4[1] = ready_o_3_4[2];
+    data_i_4_4[2] = data_o_5_4[1];
+    valid_i_4_4[2] = valid_o_5_4[1];
+    ready_i_4_4[2] = ready_o_5_4[1];
     data_i_4_4[0] = data_i[4][4];
     valid_i_4_4[0] = valid_i[4][4];
     ready_i_4_4[0] = ready_i[4][4];
@@ -2105,7 +1717,7 @@ end
 merge_router #(
     .input_mask                     (input_mask_4_5),
     .output_sel                     (output_sel_4_5)
-)router29(
+)router39(
     .clk                            (clk),
     .rstn                           (rstn),
     .data_i                         (data_i_4_5),
@@ -2127,6 +1739,9 @@ always@(*) begin
     data_i_4_5[1] = data_o_3_5[2];
     valid_i_4_5[1] = valid_o_3_5[2];
     ready_i_4_5[1] = ready_o_3_5[2];
+    data_i_4_5[2] = data_o_5_5[1];
+    valid_i_4_5[2] = valid_o_5_5[1];
+    ready_i_4_5[2] = ready_o_5_5[1];
     data_i_4_5[0] = data_i[4][5];
     valid_i_4_5[0] = valid_i[4][5];
     ready_i_4_5[0] = ready_i[4][5];
@@ -2137,7 +1752,7 @@ end
 merge_router #(
     .input_mask                     (input_mask_4_6),
     .output_sel                     (output_sel_4_6)
-)router34(
+)router46(
     .clk                            (clk),
     .rstn                           (rstn),
     .data_i                         (data_i_4_6),
@@ -2159,6 +1774,9 @@ always@(*) begin
     data_i_4_6[1] = data_o_3_6[2];
     valid_i_4_6[1] = valid_o_3_6[2];
     ready_i_4_6[1] = ready_o_3_6[2];
+    data_i_4_6[2] = data_o_5_6[1];
+    valid_i_4_6[2] = valid_o_5_6[1];
+    ready_i_4_6[2] = ready_o_5_6[1];
     data_i_4_6[0] = data_i[4][6];
     valid_i_4_6[0] = valid_i[4][6];
     ready_i_4_6[0] = ready_i[4][6];
@@ -2169,7 +1787,7 @@ end
 merge_router #(
     .input_mask                     (input_mask_4_7),
     .output_sel                     (output_sel_4_7)
-)router39(
+)router53(
     .clk                            (clk),
     .rstn                           (rstn),
     .data_i                         (data_i_4_7),
@@ -2185,108 +1803,539 @@ always@(*) begin
             data_i_4_7[3] = data_o_4_6[4];
     valid_i_4_7[3] = valid_o_4_6[4];
     ready_i_4_7[3] = ready_o_4_6[4];
-    data_i_4_7[4] = data_o_4_8[3];
-    valid_i_4_7[4] = valid_o_4_8[3];
-    ready_i_4_7[4] = ready_o_4_8[3];
     data_i_4_7[1] = data_o_3_7[2];
     valid_i_4_7[1] = valid_o_3_7[2];
     ready_i_4_7[1] = ready_o_3_7[2];
+    data_i_4_7[2] = data_o_5_7[1];
+    valid_i_4_7[2] = valid_o_5_7[1];
+    ready_i_4_7[2] = ready_o_5_7[1];
     data_i_4_7[0] = data_i[4][7];
     valid_i_4_7[0] = valid_i[4][7];
     ready_i_4_7[0] = ready_i[4][7];
 end
 
 
-/*Router 4,8*/    
+/*Router 5,0*/    
 merge_router #(
-    .input_mask                     (input_mask_4_8),
-    .output_sel                     (output_sel_4_8)
-)router44(
+    .input_mask                     (input_mask_5_0),
+    .output_sel                     (output_sel_5_0)
+)router5(
     .clk                            (clk),
     .rstn                           (rstn),
-    .data_i                         (data_i_4_8),
-    .valid_i                        (valid_i_4_8),
-    .ready_o                        (ready_o_4_8),
-    .data_o                         (data_o_4_8),
-    .valid_o                        (valid_o_4_8),
-    .ready_i                        (ready_i_4_8)
+    .data_i                         (data_i_5_0),
+    .valid_i                        (valid_i_5_0),
+    .ready_o                        (ready_o_5_0),
+    .data_o                         (data_o_5_0),
+    .valid_o                        (valid_o_5_0),
+    .ready_i                        (ready_i_5_0)
 );
 
 
 always@(*) begin
-            data_i_4_8[3] = data_o_4_7[4];
-    valid_i_4_8[3] = valid_o_4_7[4];
-    ready_i_4_8[3] = ready_o_4_7[4];
-    data_i_4_8[4] = data_o_4_9[3];
-    valid_i_4_8[4] = valid_o_4_9[3];
-    ready_i_4_8[4] = ready_o_4_9[3];
-    data_i_4_8[1] = data_o_3_8[2];
-    valid_i_4_8[1] = valid_o_3_8[2];
-    ready_i_4_8[1] = ready_o_3_8[2];
-    data_i_4_8[0] = data_i[4][8];
-    valid_i_4_8[0] = valid_i[4][8];
-    ready_i_4_8[0] = ready_i[4][8];
+            data_i_5_0[4] = data_o_5_1[3];
+    valid_i_5_0[4] = valid_o_5_1[3];
+    ready_i_5_0[4] = ready_o_5_1[3];
+    data_i_5_0[1] = data_o_4_0[2];
+    valid_i_5_0[1] = valid_o_4_0[2];
+    ready_i_5_0[1] = ready_o_4_0[2];
+    data_i_5_0[2] = data_o_6_0[1];
+    valid_i_5_0[2] = valid_o_6_0[1];
+    ready_i_5_0[2] = ready_o_6_0[1];
+    data_i_5_0[0] = data_i[5][0];
+    valid_i_5_0[0] = valid_i[5][0];
+    ready_i_5_0[0] = ready_i[5][0];
 end
 
 
-/*Router 4,9*/    
+/*Router 5,1*/    
 merge_router #(
-    .input_mask                     (input_mask_4_9),
-    .output_sel                     (output_sel_4_9)
-)router49(
+    .input_mask                     (input_mask_5_1),
+    .output_sel                     (output_sel_5_1)
+)router12(
     .clk                            (clk),
     .rstn                           (rstn),
-    .data_i                         (data_i_4_9),
-    .valid_i                        (valid_i_4_9),
-    .ready_o                        (ready_o_4_9),
-    .data_o                         (data_o_4_9),
-    .valid_o                        (valid_o_4_9),
-    .ready_i                        (ready_i_4_9)
+    .data_i                         (data_i_5_1),
+    .valid_i                        (valid_i_5_1),
+    .ready_o                        (ready_o_5_1),
+    .data_o                         (data_o_5_1),
+    .valid_o                        (valid_o_5_1),
+    .ready_i                        (ready_i_5_1)
 );
 
 
 always@(*) begin
-            data_i_4_9[3] = data_o_4_8[4];
-    valid_i_4_9[3] = valid_o_4_8[4];
-    ready_i_4_9[3] = ready_o_4_8[4];
-    data_i_4_9[4] = data_o_4_10[3];
-    valid_i_4_9[4] = valid_o_4_10[3];
-    ready_i_4_9[4] = ready_o_4_10[3];
-    data_i_4_9[1] = data_o_3_9[2];
-    valid_i_4_9[1] = valid_o_3_9[2];
-    ready_i_4_9[1] = ready_o_3_9[2];
-    data_i_4_9[0] = data_i[4][9];
-    valid_i_4_9[0] = valid_i[4][9];
-    ready_i_4_9[0] = ready_i[4][9];
+            data_i_5_1[3] = data_o_5_0[4];
+    valid_i_5_1[3] = valid_o_5_0[4];
+    ready_i_5_1[3] = ready_o_5_0[4];
+    data_i_5_1[4] = data_o_5_2[3];
+    valid_i_5_1[4] = valid_o_5_2[3];
+    ready_i_5_1[4] = ready_o_5_2[3];
+    data_i_5_1[1] = data_o_4_1[2];
+    valid_i_5_1[1] = valid_o_4_1[2];
+    ready_i_5_1[1] = ready_o_4_1[2];
+    data_i_5_1[2] = data_o_6_1[1];
+    valid_i_5_1[2] = valid_o_6_1[1];
+    ready_i_5_1[2] = ready_o_6_1[1];
+    data_i_5_1[0] = data_i[5][1];
+    valid_i_5_1[0] = valid_i[5][1];
+    ready_i_5_1[0] = ready_i[5][1];
 end
 
 
-/*Router 4,10*/    
+/*Router 5,2*/    
 merge_router #(
-    .input_mask                     (input_mask_4_10),
-    .output_sel                     (output_sel_4_10)
+    .input_mask                     (input_mask_5_2),
+    .output_sel                     (output_sel_5_2)
+)router19(
+    .clk                            (clk),
+    .rstn                           (rstn),
+    .data_i                         (data_i_5_2),
+    .valid_i                        (valid_i_5_2),
+    .ready_o                        (ready_o_5_2),
+    .data_o                         (data_o_5_2),
+    .valid_o                        (valid_o_5_2),
+    .ready_i                        (ready_i_5_2)
+);
+
+
+always@(*) begin
+            data_i_5_2[3] = data_o_5_1[4];
+    valid_i_5_2[3] = valid_o_5_1[4];
+    ready_i_5_2[3] = ready_o_5_1[4];
+    data_i_5_2[4] = data_o_5_3[3];
+    valid_i_5_2[4] = valid_o_5_3[3];
+    ready_i_5_2[4] = ready_o_5_3[3];
+    data_i_5_2[1] = data_o_4_2[2];
+    valid_i_5_2[1] = valid_o_4_2[2];
+    ready_i_5_2[1] = ready_o_4_2[2];
+    data_i_5_2[2] = data_o_6_2[1];
+    valid_i_5_2[2] = valid_o_6_2[1];
+    ready_i_5_2[2] = ready_o_6_2[1];
+    data_i_5_2[0] = data_i[5][2];
+    valid_i_5_2[0] = valid_i[5][2];
+    ready_i_5_2[0] = ready_i[5][2];
+end
+
+
+/*Router 5,3*/    
+merge_router #(
+    .input_mask                     (input_mask_5_3),
+    .output_sel                     (output_sel_5_3)
+)router26(
+    .clk                            (clk),
+    .rstn                           (rstn),
+    .data_i                         (data_i_5_3),
+    .valid_i                        (valid_i_5_3),
+    .ready_o                        (ready_o_5_3),
+    .data_o                         (data_o_5_3),
+    .valid_o                        (valid_o_5_3),
+    .ready_i                        (ready_i_5_3)
+);
+
+
+always@(*) begin
+            data_i_5_3[3] = data_o_5_2[4];
+    valid_i_5_3[3] = valid_o_5_2[4];
+    ready_i_5_3[3] = ready_o_5_2[4];
+    data_i_5_3[4] = data_o_5_4[3];
+    valid_i_5_3[4] = valid_o_5_4[3];
+    ready_i_5_3[4] = ready_o_5_4[3];
+    data_i_5_3[1] = data_o_4_3[2];
+    valid_i_5_3[1] = valid_o_4_3[2];
+    ready_i_5_3[1] = ready_o_4_3[2];
+    data_i_5_3[2] = data_o_6_3[1];
+    valid_i_5_3[2] = valid_o_6_3[1];
+    ready_i_5_3[2] = ready_o_6_3[1];
+    data_i_5_3[0] = data_i[5][3];
+    valid_i_5_3[0] = valid_i[5][3];
+    ready_i_5_3[0] = ready_i[5][3];
+end
+
+
+/*Router 5,4*/    
+merge_router #(
+    .input_mask                     (input_mask_5_4),
+    .output_sel                     (output_sel_5_4)
+)router33(
+    .clk                            (clk),
+    .rstn                           (rstn),
+    .data_i                         (data_i_5_4),
+    .valid_i                        (valid_i_5_4),
+    .ready_o                        (ready_o_5_4),
+    .data_o                         (data_o_5_4),
+    .valid_o                        (valid_o_5_4),
+    .ready_i                        (ready_i_5_4)
+);
+
+
+always@(*) begin
+            data_i_5_4[3] = data_o_5_3[4];
+    valid_i_5_4[3] = valid_o_5_3[4];
+    ready_i_5_4[3] = ready_o_5_3[4];
+    data_i_5_4[4] = data_o_5_5[3];
+    valid_i_5_4[4] = valid_o_5_5[3];
+    ready_i_5_4[4] = ready_o_5_5[3];
+    data_i_5_4[1] = data_o_4_4[2];
+    valid_i_5_4[1] = valid_o_4_4[2];
+    ready_i_5_4[1] = ready_o_4_4[2];
+    data_i_5_4[2] = data_o_6_4[1];
+    valid_i_5_4[2] = valid_o_6_4[1];
+    ready_i_5_4[2] = ready_o_6_4[1];
+    data_i_5_4[0] = data_i[5][4];
+    valid_i_5_4[0] = valid_i[5][4];
+    ready_i_5_4[0] = ready_i[5][4];
+end
+
+
+/*Router 5,5*/    
+merge_router #(
+    .input_mask                     (input_mask_5_5),
+    .output_sel                     (output_sel_5_5)
+)router40(
+    .clk                            (clk),
+    .rstn                           (rstn),
+    .data_i                         (data_i_5_5),
+    .valid_i                        (valid_i_5_5),
+    .ready_o                        (ready_o_5_5),
+    .data_o                         (data_o_5_5),
+    .valid_o                        (valid_o_5_5),
+    .ready_i                        (ready_i_5_5)
+);
+
+
+always@(*) begin
+            data_i_5_5[3] = data_o_5_4[4];
+    valid_i_5_5[3] = valid_o_5_4[4];
+    ready_i_5_5[3] = ready_o_5_4[4];
+    data_i_5_5[4] = data_o_5_6[3];
+    valid_i_5_5[4] = valid_o_5_6[3];
+    ready_i_5_5[4] = ready_o_5_6[3];
+    data_i_5_5[1] = data_o_4_5[2];
+    valid_i_5_5[1] = valid_o_4_5[2];
+    ready_i_5_5[1] = ready_o_4_5[2];
+    data_i_5_5[2] = data_o_6_5[1];
+    valid_i_5_5[2] = valid_o_6_5[1];
+    ready_i_5_5[2] = ready_o_6_5[1];
+    data_i_5_5[0] = data_i[5][5];
+    valid_i_5_5[0] = valid_i[5][5];
+    ready_i_5_5[0] = ready_i[5][5];
+end
+
+
+/*Router 5,6*/    
+merge_router #(
+    .input_mask                     (input_mask_5_6),
+    .output_sel                     (output_sel_5_6)
+)router47(
+    .clk                            (clk),
+    .rstn                           (rstn),
+    .data_i                         (data_i_5_6),
+    .valid_i                        (valid_i_5_6),
+    .ready_o                        (ready_o_5_6),
+    .data_o                         (data_o_5_6),
+    .valid_o                        (valid_o_5_6),
+    .ready_i                        (ready_i_5_6)
+);
+
+
+always@(*) begin
+            data_i_5_6[3] = data_o_5_5[4];
+    valid_i_5_6[3] = valid_o_5_5[4];
+    ready_i_5_6[3] = ready_o_5_5[4];
+    data_i_5_6[4] = data_o_5_7[3];
+    valid_i_5_6[4] = valid_o_5_7[3];
+    ready_i_5_6[4] = ready_o_5_7[3];
+    data_i_5_6[1] = data_o_4_6[2];
+    valid_i_5_6[1] = valid_o_4_6[2];
+    ready_i_5_6[1] = ready_o_4_6[2];
+    data_i_5_6[2] = data_o_6_6[1];
+    valid_i_5_6[2] = valid_o_6_6[1];
+    ready_i_5_6[2] = ready_o_6_6[1];
+    data_i_5_6[0] = data_i[5][6];
+    valid_i_5_6[0] = valid_i[5][6];
+    ready_i_5_6[0] = ready_i[5][6];
+end
+
+
+/*Router 5,7*/    
+merge_router #(
+    .input_mask                     (input_mask_5_7),
+    .output_sel                     (output_sel_5_7)
 )router54(
     .clk                            (clk),
     .rstn                           (rstn),
-    .data_i                         (data_i_4_10),
-    .valid_i                        (valid_i_4_10),
-    .ready_o                        (ready_o_4_10),
-    .data_o                         (data_o_4_10),
-    .valid_o                        (valid_o_4_10),
-    .ready_i                        (ready_i_4_10)
+    .data_i                         (data_i_5_7),
+    .valid_i                        (valid_i_5_7),
+    .ready_o                        (ready_o_5_7),
+    .data_o                         (data_o_5_7),
+    .valid_o                        (valid_o_5_7),
+    .ready_i                        (ready_i_5_7)
 );
 
 
 always@(*) begin
-            data_i_4_10[3] = data_o_4_9[4];
-    valid_i_4_10[3] = valid_o_4_9[4];
-    ready_i_4_10[3] = ready_o_4_9[4];
-    data_i_4_10[1] = data_o_3_10[2];
-    valid_i_4_10[1] = valid_o_3_10[2];
-    ready_i_4_10[1] = ready_o_3_10[2];
-    data_i_4_10[0] = data_i[4][10];
-    valid_i_4_10[0] = valid_i[4][10];
-    ready_i_4_10[0] = ready_i[4][10];
+            data_i_5_7[3] = data_o_5_6[4];
+    valid_i_5_7[3] = valid_o_5_6[4];
+    ready_i_5_7[3] = ready_o_5_6[4];
+    data_i_5_7[1] = data_o_4_7[2];
+    valid_i_5_7[1] = valid_o_4_7[2];
+    ready_i_5_7[1] = ready_o_4_7[2];
+    data_i_5_7[2] = data_o_6_7[1];
+    valid_i_5_7[2] = valid_o_6_7[1];
+    ready_i_5_7[2] = ready_o_6_7[1];
+    data_i_5_7[0] = data_i[5][7];
+    valid_i_5_7[0] = valid_i[5][7];
+    ready_i_5_7[0] = ready_i[5][7];
+end
+
+
+/*Router 6,0*/    
+merge_router #(
+    .input_mask                     (input_mask_6_0),
+    .output_sel                     (output_sel_6_0)
+)router6(
+    .clk                            (clk),
+    .rstn                           (rstn),
+    .data_i                         (data_i_6_0),
+    .valid_i                        (valid_i_6_0),
+    .ready_o                        (ready_o_6_0),
+    .data_o                         (data_o_6_0),
+    .valid_o                        (valid_o_6_0),
+    .ready_i                        (ready_i_6_0)
+);
+
+
+always@(*) begin
+            data_i_6_0[4] = data_o_6_1[3];
+    valid_i_6_0[4] = valid_o_6_1[3];
+    ready_i_6_0[4] = ready_o_6_1[3];
+    data_i_6_0[1] = data_o_5_0[2];
+    valid_i_6_0[1] = valid_o_5_0[2];
+    ready_i_6_0[1] = ready_o_5_0[2];
+    data_i_6_0[0] = data_i[6][0];
+    valid_i_6_0[0] = valid_i[6][0];
+    ready_i_6_0[0] = ready_i[6][0];
+end
+
+
+/*Router 6,1*/    
+merge_router #(
+    .input_mask                     (input_mask_6_1),
+    .output_sel                     (output_sel_6_1)
+)router13(
+    .clk                            (clk),
+    .rstn                           (rstn),
+    .data_i                         (data_i_6_1),
+    .valid_i                        (valid_i_6_1),
+    .ready_o                        (ready_o_6_1),
+    .data_o                         (data_o_6_1),
+    .valid_o                        (valid_o_6_1),
+    .ready_i                        (ready_i_6_1)
+);
+
+
+always@(*) begin
+            data_i_6_1[3] = data_o_6_0[4];
+    valid_i_6_1[3] = valid_o_6_0[4];
+    ready_i_6_1[3] = ready_o_6_0[4];
+    data_i_6_1[4] = data_o_6_2[3];
+    valid_i_6_1[4] = valid_o_6_2[3];
+    ready_i_6_1[4] = ready_o_6_2[3];
+    data_i_6_1[1] = data_o_5_1[2];
+    valid_i_6_1[1] = valid_o_5_1[2];
+    ready_i_6_1[1] = ready_o_5_1[2];
+    data_i_6_1[0] = data_i[6][1];
+    valid_i_6_1[0] = valid_i[6][1];
+    ready_i_6_1[0] = ready_i[6][1];
+end
+
+
+/*Router 6,2*/    
+merge_router #(
+    .input_mask                     (input_mask_6_2),
+    .output_sel                     (output_sel_6_2)
+)router20(
+    .clk                            (clk),
+    .rstn                           (rstn),
+    .data_i                         (data_i_6_2),
+    .valid_i                        (valid_i_6_2),
+    .ready_o                        (ready_o_6_2),
+    .data_o                         (data_o_6_2),
+    .valid_o                        (valid_o_6_2),
+    .ready_i                        (ready_i_6_2)
+);
+
+
+always@(*) begin
+            data_i_6_2[3] = data_o_6_1[4];
+    valid_i_6_2[3] = valid_o_6_1[4];
+    ready_i_6_2[3] = ready_o_6_1[4];
+    data_i_6_2[4] = data_o_6_3[3];
+    valid_i_6_2[4] = valid_o_6_3[3];
+    ready_i_6_2[4] = ready_o_6_3[3];
+    data_i_6_2[1] = data_o_5_2[2];
+    valid_i_6_2[1] = valid_o_5_2[2];
+    ready_i_6_2[1] = ready_o_5_2[2];
+    data_i_6_2[0] = data_i[6][2];
+    valid_i_6_2[0] = valid_i[6][2];
+    ready_i_6_2[0] = ready_i[6][2];
+end
+
+
+/*Router 6,3*/    
+merge_router #(
+    .input_mask                     (input_mask_6_3),
+    .output_sel                     (output_sel_6_3)
+)router27(
+    .clk                            (clk),
+    .rstn                           (rstn),
+    .data_i                         (data_i_6_3),
+    .valid_i                        (valid_i_6_3),
+    .ready_o                        (ready_o_6_3),
+    .data_o                         (data_o_6_3),
+    .valid_o                        (valid_o_6_3),
+    .ready_i                        (ready_i_6_3)
+);
+
+
+always@(*) begin
+            data_i_6_3[3] = data_o_6_2[4];
+    valid_i_6_3[3] = valid_o_6_2[4];
+    ready_i_6_3[3] = ready_o_6_2[4];
+    data_i_6_3[4] = data_o_6_4[3];
+    valid_i_6_3[4] = valid_o_6_4[3];
+    ready_i_6_3[4] = ready_o_6_4[3];
+    data_i_6_3[1] = data_o_5_3[2];
+    valid_i_6_3[1] = valid_o_5_3[2];
+    ready_i_6_3[1] = ready_o_5_3[2];
+    data_i_6_3[0] = data_i[6][3];
+    valid_i_6_3[0] = valid_i[6][3];
+    ready_i_6_3[0] = ready_i[6][3];
+end
+
+
+/*Router 6,4*/    
+merge_router #(
+    .input_mask                     (input_mask_6_4),
+    .output_sel                     (output_sel_6_4)
+)router34(
+    .clk                            (clk),
+    .rstn                           (rstn),
+    .data_i                         (data_i_6_4),
+    .valid_i                        (valid_i_6_4),
+    .ready_o                        (ready_o_6_4),
+    .data_o                         (data_o_6_4),
+    .valid_o                        (valid_o_6_4),
+    .ready_i                        (ready_i_6_4)
+);
+
+
+always@(*) begin
+            data_i_6_4[3] = data_o_6_3[4];
+    valid_i_6_4[3] = valid_o_6_3[4];
+    ready_i_6_4[3] = ready_o_6_3[4];
+    data_i_6_4[4] = data_o_6_5[3];
+    valid_i_6_4[4] = valid_o_6_5[3];
+    ready_i_6_4[4] = ready_o_6_5[3];
+    data_i_6_4[1] = data_o_5_4[2];
+    valid_i_6_4[1] = valid_o_5_4[2];
+    ready_i_6_4[1] = ready_o_5_4[2];
+    data_i_6_4[0] = data_i[6][4];
+    valid_i_6_4[0] = valid_i[6][4];
+    ready_i_6_4[0] = ready_i[6][4];
+end
+
+
+/*Router 6,5*/    
+merge_router #(
+    .input_mask                     (input_mask_6_5),
+    .output_sel                     (output_sel_6_5)
+)router41(
+    .clk                            (clk),
+    .rstn                           (rstn),
+    .data_i                         (data_i_6_5),
+    .valid_i                        (valid_i_6_5),
+    .ready_o                        (ready_o_6_5),
+    .data_o                         (data_o_6_5),
+    .valid_o                        (valid_o_6_5),
+    .ready_i                        (ready_i_6_5)
+);
+
+
+always@(*) begin
+            data_i_6_5[3] = data_o_6_4[4];
+    valid_i_6_5[3] = valid_o_6_4[4];
+    ready_i_6_5[3] = ready_o_6_4[4];
+    data_i_6_5[4] = data_o_6_6[3];
+    valid_i_6_5[4] = valid_o_6_6[3];
+    ready_i_6_5[4] = ready_o_6_6[3];
+    data_i_6_5[1] = data_o_5_5[2];
+    valid_i_6_5[1] = valid_o_5_5[2];
+    ready_i_6_5[1] = ready_o_5_5[2];
+    data_i_6_5[0] = data_i[6][5];
+    valid_i_6_5[0] = valid_i[6][5];
+    ready_i_6_5[0] = ready_i[6][5];
+end
+
+
+/*Router 6,6*/    
+merge_router #(
+    .input_mask                     (input_mask_6_6),
+    .output_sel                     (output_sel_6_6)
+)router48(
+    .clk                            (clk),
+    .rstn                           (rstn),
+    .data_i                         (data_i_6_6),
+    .valid_i                        (valid_i_6_6),
+    .ready_o                        (ready_o_6_6),
+    .data_o                         (data_o_6_6),
+    .valid_o                        (valid_o_6_6),
+    .ready_i                        (ready_i_6_6)
+);
+
+
+always@(*) begin
+            data_i_6_6[3] = data_o_6_5[4];
+    valid_i_6_6[3] = valid_o_6_5[4];
+    ready_i_6_6[3] = ready_o_6_5[4];
+    data_i_6_6[4] = data_o_6_7[3];
+    valid_i_6_6[4] = valid_o_6_7[3];
+    ready_i_6_6[4] = ready_o_6_7[3];
+    data_i_6_6[1] = data_o_5_6[2];
+    valid_i_6_6[1] = valid_o_5_6[2];
+    ready_i_6_6[1] = ready_o_5_6[2];
+    data_i_6_6[0] = data_i[6][6];
+    valid_i_6_6[0] = valid_i[6][6];
+    ready_i_6_6[0] = ready_i[6][6];
+end
+
+
+/*Router 6,7*/    
+merge_router #(
+    .input_mask                     (input_mask_6_7),
+    .output_sel                     (output_sel_6_7)
+)router55(
+    .clk                            (clk),
+    .rstn                           (rstn),
+    .data_i                         (data_i_6_7),
+    .valid_i                        (valid_i_6_7),
+    .ready_o                        (ready_o_6_7),
+    .data_o                         (data_o_6_7),
+    .valid_o                        (valid_o_6_7),
+    .ready_i                        (ready_i_6_7)
+);
+
+
+always@(*) begin
+            data_i_6_7[3] = data_o_6_6[4];
+    valid_i_6_7[3] = valid_o_6_6[4];
+    ready_i_6_7[3] = ready_o_6_6[4];
+    data_i_6_7[1] = data_o_5_7[2];
+    valid_i_6_7[1] = valid_o_5_7[2];
+    ready_i_6_7[1] = ready_o_5_7[2];
+    data_i_6_7[0] = data_i[6][7];
+    valid_i_6_7[0] = valid_i[6][7];
+    ready_i_6_7[0] = ready_i[6][7];
 end
 
 

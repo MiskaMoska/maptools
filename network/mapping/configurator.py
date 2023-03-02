@@ -18,7 +18,7 @@ from typing import List, Dict, Tuple
 class Configurator(object):
 
     def __init__(self,w,h,cast_paths:Dict,merge_paths:List,merge_nodes:List,
-                    data_width:int=32,e2e_dict:Dict=dict(),ubm_nodes:List=[],
+                    data_width:int=34,e2e_dict:Dict=dict(),ubm_nodes:List=[],
                     root_dir="/mnt/c/git/nvcim-comm/network/srcs/"):
         self.w = w
         self.h = h
@@ -868,10 +868,10 @@ network_interface #(
 `define         BUFFER_ALLOC_LOG                8
 
 `define         ROUTE_TABLE_DEPTH               16
-`define         CAST_ROUTER_BUFFER_DEPTH_LOG    4
+`define         CAST_ROUTER_BUFFER_DEPTH_LOG    5
 
 `define         PKT_LEN                         18
-`define         PKT_LEN_LOG                     4
+`define         PKT_LEN_LOG                     5
 
 //packet contents begin
 

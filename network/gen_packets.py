@@ -1,7 +1,9 @@
 import os 
+import struct
+import random
 os.chdir('.')
 
-DW = 32
+DW = 34
 
 def dec2bin(dec_num, bit_wide=16):    
     _, bin_num_abs = bin(dec_num).split('b')    
@@ -14,6 +16,7 @@ def dec2bin(dec_num, bit_wide=16):
             _, bin_num = bin(2**bit_wide + dec_num).split('b')    
     return bin_num 
 
-with open('send_pool.txt','w') as f:
+with open('send_pool.bin','w') as f:
     for i in range(10000):
-        f.write('01'+str(dec2bin(i,bit_wide=DW-2)+'\n'))
+        a = int.from_bytes(struct.pack("f",random.random()),'little')
+        f.write('01'+str(dec2bin(a,bit_wide=32))+'\n')

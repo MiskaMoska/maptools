@@ -26,9 +26,9 @@ MODEL_VGG16[11] = {'ci':512, 'co':512, 'ks':3}
 MODEL_VGG16[12] = {'ci':512, 'co':512, 'ks':3}
 
 if __name__ == "__main__":
-    W = 5
-    H = 11
-    CONTENT_LEVEL = 10
+    W = 7
+    H = 8
+    CONTENT_LEVEL = 13
     os.chdir('.')
     try:
         os.mkdir('cases')

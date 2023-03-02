@@ -15,54 +15,54 @@ module merge_router #(
     input       wire                            valid_i[5],
     output      reg                             ready_o[5],
 
-    output      reg         [`DW-1:0]           data_o[5],
+    output      bit         [`DW-1:0]           data_o[5],
     output      reg                             valid_o[5],
     input       wire                            ready_i[5]
 );
 
 /** float_point adder begin**/
-// shortreal data_i_sr[5];
-// shortreal sum;
+shortreal data_i_sr[5];
+shortreal sum;
 
-// always@(data_i) begin
-//     for(int i=0; i<5; i++) begin
-//         if(input_mask[i]) data_i_sr[i] = $bitstoshortreal(data_i[i]);
-//         else data_i_sr[i] = 0;
-//     end
-// end
-
-// always@(data_i_sr) begin
-//     sum = 0;
-//     for(int i=0; i<5; i++) begin
-//         if(input_mask[i]) sum = sum + data_i_sr[i];
-//     end
-// end
-
-// always@(sum) begin
-//     for(int i=0; i<5; i++) begin
-//         if(output_sel[i]) data_o[i] = $shortrealtobits(sum);
-//         else data_o[i] = 0;
-//     end
-// end
-/** float_point adder end**/
-
-/** fixed_point adder begin**/
-wire sum_flit;
-reg [`DW-3:0] sum;
-assign sum_flit = {`BODY,sum};
 always@(data_i) begin
-    sum = 0;
     for(int i=0; i<5; i++) begin
-        if(input_mask[i]) sum = sum + data_i[i][`DW-3:0];
+        if(input_mask[i]) data_i_sr[i] = $bitstoshortreal(data_i[i]);
+        else data_i_sr[i] = 0;
     end
 end
 
-always@(sum_flit) begin
+always@(data_i_sr) begin
+    sum = 0;
     for(int i=0; i<5; i++) begin
-        if(output_sel[i]) data_o[i] = sum_flit;
+        if(input_mask[i]) sum = sum + data_i_sr[i];
+    end
+end
+
+always@(sum) begin
+    for(int i=0; i<5; i++) begin
+        if(output_sel[i]) data_o[i] = $shortrealtobits(sum);
         else data_o[i] = 0;
     end
 end
+/** float_point adder end**/
+
+/** fixed_point adder begin**/
+// wire sum_flit;
+// reg [`DW-3:0] sum;
+// assign sum_flit = {`BODY,sum};
+// always@(data_i) begin
+//     sum = 0;
+//     for(int i=0; i<5; i++) begin
+//         if(input_mask[i]) sum = sum + data_i[i][`DW-3:0];
+//     end
+// end
+
+// always@(sum_flit) begin
+//     for(int i=0; i<5; i++) begin
+//         if(output_sel[i]) data_o[i] = sum_flit;
+//         else data_o[i] = 0;
+//     end
+// end
 /** fixed_point adder end**/
 
 wire valid;

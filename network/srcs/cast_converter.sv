@@ -64,7 +64,7 @@ assign valid_o_nw = (pack_state == HEAD) ? 1'b1 : (
                     (pack_state == TAIL) ? 1'b1 : 1'b0 ));
 
 assign data_o_nw =  (pack_state == HEAD) ? {`HEAD,{(`DW-12){1'b0}},stream_id} : (
-                    (pack_state == BODY) ? data_i_pe : (
+                    (pack_state == BODY) ? {`BODY,data_i_pe[`DW-3:0]} : (
                     (pack_state == TAIL) ? {`TAIL,{(`DW-2){1'b1}}} : 0 ));
 
 assign ready_o_pe = (pack_state == BODY) ? ready_i_nw : 1'b0;

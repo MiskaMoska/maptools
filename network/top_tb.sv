@@ -45,9 +45,14 @@ initial begin
     # 33 rstn = 0;
     # 71 rstn = 1;
     valid_i_stab = 1;
-    wait((addr == 9999) & valid_i_stab & ready_o_stab);
-    valid_i_stab <= 1'b0;
-    # 100000
+    while(1) begin
+        @(posedge clk);
+        if((addr == 9999) & valid_i_stab & ready_o_stab) begin
+            valid_i_stab <= 1'b0;
+            break;
+        end
+    end
+    # 1000000
     $fwrite(state_file,"%s","normal");
     $fclose(file0);
     $fclose(file1);
@@ -75,7 +80,7 @@ initial begin
             if(win == 9999) win <= 0;
             else win <= win + 1;
             if(win == 0) start_addr <= addr;
-            else if(win == 9999 && addr == start_addr) begin // deadlock occurs
+            else if(addr != 9999 & addr != 0 & win == 9999 && addr == start_addr) begin // deadlock occurs
                 $fwrite(state_file,"%s","deadlock");
                 $fclose(file0);
                 $fclose(file1);
@@ -91,7 +96,7 @@ always #5 clk = ~clk;
 
 initial begin
     addr = 0;
-    $readmemb("/mnt/c/git/NVCIM-COMM/network/send_pool.txt",packets);
+    $readmemb("/mnt/c/git/NVCIM-COMM/network/send_pool.bin",packets);
 end
 
 always@(posedge clk or negedge rstn)

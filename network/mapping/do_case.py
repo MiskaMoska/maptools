@@ -9,9 +9,9 @@ from noc_mapper import NocMapper
 from deadlock_analyzer import DeadlockAnalyzer
 from deadlock_killer import DeadlockKiller
 
-W = 5
-H = 11
-CONTENT_LEVEL = 10
+W = 7
+H = 8
+CONTENT_LEVEL = 13
 
 save_file = f"/mnt/c/git/nvcim-comm/network/cases/w{W}_h{H}_cl{CONTENT_LEVEL}.pkl"
 
