@@ -44,6 +44,14 @@ print(g.edges)
 #             rs_path.append((idx % w, idx // w))
 #     return rs_path
 
+a = np.array([
+[1,2,3,4],
+[2,3,4,5],
+[5,67,34,2]
+])
+a[1:3,0:2] *= 0
+print(a)
+
 
 
 

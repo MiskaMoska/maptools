@@ -168,7 +168,7 @@ class OnnxConverter(object):
         d['op_type'] = node.op_type
         name = node.input[0]
         dims = self._get_data_dims(name,self.model.graph)
-        d['input_dims'] = dims
+        d['input_size'] = dims[-2:]
 
         if self._is_conv(node.op_type):
             self._complete_conv_info(node,d)

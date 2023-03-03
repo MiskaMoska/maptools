@@ -1,3 +1,8 @@
+'''
+TODO fuse pool to conv-add, now only support fusing pool to conv
+but actually there are rarely this kind of structure in resnet
+'''
+
 import networkx as nx
 from typing import Any, List, Dict, Tuple, Optional, Generator
 from copy import deepcopy 
@@ -6,7 +11,7 @@ __all__ = ['OperatorGraph']
 
 class OperatorGraph(object):
 
-    valid_ops = ['Conv','Conv-Pool','Pool','Conv-Add','Conv-Pool-Add','Pool-Add','GlobalPool','Add','Mul','Concat']
+    valid_ops = ['Conv','Conv-Pool','Pool','Conv-Add','Pool-Add','GlobalPool','Add','Mul','Concat']
 
     def __init__(self, graph: nx.MultiDiGraph, dicts: Dict[str, Dict], arch: str) -> None:
         '''
@@ -73,7 +78,7 @@ class OperatorGraph(object):
         # Fuse dict to another's
         tmp = deepcopy(self.dicts[snode])
         tmp.pop('op_type')
-        tmp.pop('input_dims')
+        tmp.pop('input_size')
         self.dicts[dnode].update(tmp)
 
     def _fuse_relu(self) -> None:

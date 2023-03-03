@@ -286,36 +286,36 @@ class NocMapper(object):
                     break
             self.merge_paths.extend(paths)
 
-    def _collect_plan(self) -> None:
+    def _gather_plan(self) -> None:
         '''
-        Planning collect routing paths
+        Planning gather routing paths
         Make sure to call this method after `self.map_xbars()`
         '''
-        # prepare collect path list
-        self.collect_paths = []
+        # prepare gather path list
+        self.gather_paths = []
 
-        # collect pair  number
-        collect_num = self.ctg.collect_num
+        # gather pair  number
+        gather_num = self.ctg.gather_num
         
-        for sid, (src_node, dst_node) in enumerate(self.ctg.collect_pairs,1):
+        for sid, (src_node, dst_node) in enumerate(self.ctg.gather_pairs,1):
             src_node = self.map_dict[src_node]
             dst_node = self.map_dict[dst_node]
-            print(f"starting collect plan {sid}/{collect_num} ....")
-            # keep generating the collect path until it is valid
+            print(f"starting gather plan {sid}/{gather_num} ....")
+            # keep generating the gather path until it is valid
             # valid means it has no conflit with existing paths
             while True:
                 path = []
                 self._route_dyxy(self.w, self.h, 
                                     src_node[0], src_node[1],
-                                    dst_node[0], dst_node[1], path, greedy_path=self.collect_paths)
+                                    dst_node[0], dst_node[1], path, greedy_path=self.gather_paths)
                 
-                if set(path).isdisjoint(set(self.collect_paths)):... # no conflit
-                self.collect_paths.extend(path)
+                if set(path).isdisjoint(set(self.gather_paths)):... # no conflit
+                self.gather_paths.extend(path)
                 break
 
         max_cnt = 0
-        for item in set(self.collect_paths):
-            cnt = self.collect_paths.count(item)
+        for item in set(self.gather_paths):
+            cnt = self.gather_paths.count(item)
             if cnt > max_cnt:
                 max_cnt = cnt
         print(f"max_cnt: {max_cnt}")

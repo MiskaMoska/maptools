@@ -65,10 +65,47 @@ class CTG(object):
         self.xbar_nodes: List[Tuple[int, int, int, int]] = []
         self.cast_comms: List[str] = []
         self.merge_comms: List[str] = []
-        self.collect_comms: List[str] = []
+        self.gather_comms: List[str] = []
 
         if arch == 'resnet':
             self._build_ctg_resnet()
+
+    @cached_property
+    def node_names(self) -> Generator[str, None, None]:
+        for n in nx.topological_sort(self.graph):
+            yield n
+
+    @cached_property
+    def comms(self) -> List[str]:
+        return self.cast_comms + self.merge_comms + self.gather_comms
+
+    def is_cast_comm(self, node: Any) -> bool:
+        return node in self.cast_comms
+
+    def is_merge_comm(self, node: Any) -> bool:
+        return node in self.merge_comms
+    
+    def is_gather_comm(self, node: Any) -> bool:
+        return node in self.gather_comms
+    
+    def is_comm(self, node: Any) -> bool:
+        return node in self.comms
+
+    def is_xbar(self, node: Any) -> bool:
+        return node in self.xbar_nodes
+    
+    def preds(self, node: Any) -> Generator:
+        return self.graph.predecessors(node)
+
+    def succs(self, node: Any) -> Generator:
+        return self.graph.successors(node)
+
+    def get_xbar_config(self, node: Any) -> Dict:
+        assert self.is_xbar(node), "not a xbar node, cannot get config"
+        return self.dicts[node]
+
+    def is_head_xbar(self, node: Any) -> bool:
+        return self.graph.in_degree(node) == 0
 
     @cached_property
     def regions(self) -> Generator:
@@ -96,7 +133,7 @@ class CTG(object):
         self._add_comms_resnet()
 
     def _add_comms_resnet(self) -> None: 
-        # add cast and collect comms
+        # add cast and gather comms
         for e in self.opgraph.egdes: # for ResNet, every edge in opgraph corresponds to a communication
             p_lid = self.match_dict[e[0]]
             s_lid = self.match_dict[e[1]]
@@ -104,14 +141,14 @@ class CTG(object):
             s_mtx = self.map_list[s_lid] # dst node map info matrix
 
             if self.opgraph.in_degree(e[1]) > 1 \
-                and not is_subseq([e[0],e[1]],self.opgraph.trunk): # collect
-                assert p_mtx.shape[0] == s_mtx.shape[0], "#regions not match for collect communication"
+                and not is_subseq([e[0],e[1]],self.opgraph.trunk): # gather
+                assert p_mtx.shape[0] == s_mtx.shape[0], "#regions not match for gather communication"
                 for i in range(p_mtx.shape[0]): # for each region in the last layer
-                    src_xbar = (p_lid, i, 0, 0) # source node of the collect path
-                    dst_xbar = (s_lid, i, 0, 0) # dst node of the collect path
+                    src_xbar = (p_lid, i, 0, 0) # source node of the gather path
+                    dst_xbar = (s_lid, i, 0, 0) # dst node of the gather path
                     comm_name = 'colelct_from_'+str(src_xbar)
                     self.graph.add_node(comm_name)
-                    self.collect_comms.append(comm_name)
+                    self.gather_comms.append(comm_name)
                     self.graph.add_edge(src_xbar, comm_name)
                     self.graph.add_edge(comm_name, dst_xbar)
 
@@ -151,8 +188,8 @@ class CTG(object):
         return len(self.merge_comms)
 
     @cached_property
-    def collect_num(self) -> int:
-        return len(self.collect_comms)
+    def gather_num(self) -> int:
+        return len(self.gather_comms)
 
     @cached_property
     @overload
@@ -187,8 +224,8 @@ class CTG(object):
             yield (src, dst)
 
     @cached_property
-    def collect_pairs(self) -> Generator[Tuple, None, None]:
-        for p in self.collect_comms:
+    def gather_pairs(self) -> Generator[Tuple, None, None]:
+        for p in self.gather_comms:
             src = self.graph.predecessors(p)
             src = list(src)[0]
             dst = self.graph.successors(p)
@@ -203,7 +240,7 @@ class CTG(object):
         for n in self.graph.nodes:
             if n in self.cast_comms \
                 or n in self.merge_comms \
-                or n in self.collect_comms:
+                or n in self.gather_comms:
                 shape = 'point'
             else:
                 shape = 'rectangle'
@@ -213,7 +250,7 @@ class CTG(object):
                 color = 'red'
             elif e[0] in self.merge_comms or e[1] in self.merge_comms:
                 color = 'blue'
-            elif e[0] in self.collect_comms or e[1] in self.collect_comms:
+            elif e[0] in self.gather_comms or e[1] in self.gather_comms:
                 color = 'purple'
             dot.edge(str(e[0]),str(e[1]),color=color)
         dot.view()
