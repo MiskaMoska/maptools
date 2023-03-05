@@ -11,7 +11,7 @@ __all__ = ['OperatorGraph']
 
 class OperatorGraph(object):
 
-    valid_ops = ['Conv','Conv-Pool','Pool','Conv-Add','Pool-Add','GlobalPool','Add','Mul','Concat']
+    valid_ops = ['Conv','Conv-Pool','Pool','Conv-Add','GlobalPool','Add','Mul','Concat']
 
     def __init__(self, graph: nx.MultiDiGraph, dicts: Dict[str, Dict], arch: str) -> None:
         '''

@@ -120,7 +120,7 @@ class OnnxConverter(object):
         i_dims = self._get_data_dims(name,self.model.graph)
         name = node.output[0]
         o_dims = self._get_data_dims(name,self.model.graph)
-        return i_dims[-2:], o_dims[-2:]
+        return list(i_dims[-2:]), list(o_dims[-2:])
 
     def _complete_conv_info(self, node: onnx.NodeProto, d: Dict) -> None:
         size_i, size_o = self._get_io_size(node)

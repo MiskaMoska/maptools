@@ -124,16 +124,21 @@ class _WindowBuf(object):
         if self.done:
             return 0
         # the window block in the buffer
-        window = self.buf[self.win_pos[0]:self.win_pos[2],self.win_pos[1]:self.win_pos[3]]
-        if np.sum(window) == max([self.ks[0] * self.ks[1], self.strides[0] * self.strides[1]]): # all data in window is available
-            self._release_data()
-            self.rptr += 1 # slide window
-            self._update_max_buf()
-            if self.rptr == self.size_o[0] * self.size_o[1]:
-                self.done = True
-            return 1 # return a token
-        else: # needed data is not prepared well
-            return 0 # return no token
+        token = 0
+        while True:
+            window = self.buf[self.win_pos[0]:self.win_pos[2],self.win_pos[1]:self.win_pos[3]]
+            need_token = max([self.ks[0] * self.ks[1], self.strides[0] * self.strides[1]])
+            if np.sum(window) == need_token: # all data in window is available
+                self._release_data()
+                self.rptr += 1 # slide window
+                self._update_max_buf()
+                if self.rptr == self.size_o[0] * self.size_o[1]:
+                    self.done = True
+                token += 1 # return a token
+            else: # data not prepared
+                break
+        return token
+
 
 
 class _Xbar(object):
@@ -177,8 +182,9 @@ class _Xbar(object):
 
     def _update_max_buf(self, buf_name: str) -> None:
         max_buf_name = 'max_' + buf_name
-        if self.__dict__[buf_name] > self.__dict__[max_buf_name]:
-            self.__dict__[max_buf_name] = self.__dict__[buf_name]
+        now_buf = self.__dict__[buf_name] * self.conv_num_outchan
+        if  now_buf > self.__dict__[max_buf_name]:
+            self.__dict__[max_buf_name] = now_buf
 
     def _consume_tokens_cast(self, token: int) -> None:
         if token > 0:
@@ -386,15 +392,18 @@ class Inferator(object):
         cnt = 0
         for node in self.ctg.node_names:
             if self.ctg.is_xbar(node):
-                conv_buf = self.obj_dict[node].conv_buf.max_buf
-                if 'Pool' in self.obj_dict[node].op_type:
-                    pool_buf = self.obj_dict[node].pool_buf.max_buf
+                xbar = self.obj_dict[node]
+                conv_size = xbar.conv_input_size
+                conv_buf = xbar.conv_buf.max_buf
+                if 'Pool' in xbar.op_type:
+                    pool_buf = xbar.pool_buf.max_buf
                 else:
                     pool_buf = '--'
-                inter_buf = self.obj_dict[node].max_inter_buf
-                merge_buf = self.obj_dict[node].max_merge_buf
-                gather_buf = self.obj_dict[node].max_gather_buf
+                inter_buf = xbar.max_inter_buf
+                merge_buf = xbar.max_merge_buf
+                gather_buf = xbar.max_gather_buf
                 print("xbar:",node,
+                        "\tconv_size",conv_size,
                         "\tconv_buf",conv_buf,
                         "\tpool_buf",pool_buf,
                         "\tinter_buf",inter_buf,

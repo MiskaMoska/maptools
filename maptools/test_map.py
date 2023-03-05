@@ -10,20 +10,20 @@ from noc_mapper import *
 from inferator import *
 
 if __name__ == "__main__":
-    model = onnx.load("../onnx_models/simp-resnet50.onnx")
+    model = onnx.load("../onnx_models/simp-resnet18.onnx")
     oc = OnnxConverter(model,arch='resnet')
     oc.run_conversion()
     og = oc.og
     xm = XbarMapper(og, 256, 256*5)
     xm._xbar_map_resnet()
     xm.print_config()
-    for v in xm.map_dict.values():
-        if 'Pool' in v['op_type']:
-            print('\nXbar')
-            print(v.keys())
+    # for v in xm.map_dict.values():
+    #     if 'Pool' in v['op_type'] or True:
+    #         print('\nXbar')
+    #         print(v['conv_input_size'])
 
     ctg = xm.ctg
-    # ctg.plot_ctg()
+    ctg.plot_ctg()
     inf = Inferator(ctg)
     inf.run()
     inf.echo_xbar()
