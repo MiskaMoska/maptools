@@ -3,6 +3,7 @@
 # // TODO need to support multi-style paddings in inception (there is no Pads any more in onnx-simplified model)
 TODO need to support reduce mean in mnasnet
 TODO need to support sigmoid in efficientnet
+TODO need to support global average pool and fc layer
 '''
 
 import sys
@@ -77,13 +78,13 @@ class OnnxConverter(object):
                 return at
 
     @staticmethod
-    def _get_data_dims(name: str, graph: onnx.GraphProto) -> Tuple[int]:
+    def _get_data_dims(name: str, graph: onnx.GraphProto) -> List[int]:
         for tensor in graph.value_info:
             if tensor.name == name:
                 dim = tensor.type.tensor_type.shape.dim
                 return tuple([d.dim_value for d in dim])
         dim = graph.input[0].type.tensor_type.shape.dim # not found in value_info, then it must be input
-        return tuple([d.dim_value for d in dim])
+        return [d.dim_value for d in dim]
     
     @staticmethod
     def _is_conv(type: str) -> bool:
@@ -113,7 +114,18 @@ class OnnxConverter(object):
         if node.op_type in ['Concat, Flatten']:
             assert self._get_node_attr(node,'axis') == 1, f"axis must be 1 at op type: {node.op_type}" 
 
+    def _get_io_size(self, node: onnx.NodeProto) -> Tuple[List[int], List[int]]:
+        # get input and output size
+        name = node.input[0]
+        i_dims = self._get_data_dims(name,self.model.graph)
+        name = node.output[0]
+        o_dims = self._get_data_dims(name,self.model.graph)
+        return i_dims[-2:], o_dims[-2:]
+
     def _complete_conv_info(self, node: onnx.NodeProto, d: Dict) -> None:
+        size_i, size_o = self._get_io_size(node)
+        d['conv_input_size'] = size_i
+        d['conv_output_size'] = size_o
         for at in node.attribute:
             if at.name == 'dilations':
                 d['conv_dilations'] = at.ints
@@ -136,6 +148,9 @@ class OnnxConverter(object):
         d['conv_num_outchan'] = weight.dims[0] # output channel number
 
     def _complete_pool_info(self, node: onnx.NodeProto, d: Dict) -> None:
+        size_i, size_o = self._get_io_size(node)
+        d['pool_input_size'] = size_i
+        d['pool_output_size'] = size_o
         d['pool_mode'] = node.op_type
         for at in node.attribute:
             if at.name == 'ceil_mode':
@@ -166,9 +181,6 @@ class OnnxConverter(object):
     def _construct_raw_dict(self, node: onnx.NodeProto) -> Dict:
         d = dict()
         d['op_type'] = node.op_type
-        name = node.input[0]
-        dims = self._get_data_dims(name,self.model.graph)
-        d['input_size'] = dims[-2:]
 
         if self._is_conv(node.op_type):
             self._complete_conv_info(node,d)
@@ -250,6 +262,7 @@ class OnnxConverter(object):
             self.__resnet(self.og)
         elif self.arch == 'googlenet':
             self.__googlenet(self.og)
+        self.og._check_size()
         self.op_graph = self.og.graph
         self.op_dicts = self.og.dicts
 

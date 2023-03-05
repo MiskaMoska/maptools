@@ -1,0 +1,89 @@
+xbar: (0, 0, 0, 0)      conv_buf 4044   pool_buf 14336  inter_buf 0     merge_buf 0     gather_buf 0
+xbar: (1, 0, 0, 0)      conv_buf 7296   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 0
+xbar: (2, 0, 0, 0)      conv_buf 7296   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 114
+xbar: (3, 0, 0, 0)      conv_buf 7296   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 0
+xbar: (4, 0, 0, 0)      conv_buf 7296   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 114
+xbar: (5, 0, 0, 0)      conv_buf 3456   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 0
+xbar: (6, 0, 0, 0)      conv_buf 7168   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 0
+xbar: (7, 0, 0, 0)      conv_buf 7424   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 56
+xbar: (8, 0, 0, 0)      conv_buf 7424   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 0
+xbar: (9, 0, 0, 0)      conv_buf 7424   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 58
+xbar: (10, 0, 0, 0)     conv_buf 3328   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 0
+xbar: (11, 0, 0, 0)     conv_buf 7168   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 0
+xbar: (12, 0, 0, 1)     conv_buf 7680   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 0
+xbar: (12, 0, 0, 0)     conv_buf 7680   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 28
+xbar: (13, 0, 0, 1)     conv_buf 7680   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 0
+xbar: (13, 0, 0, 0)     conv_buf 7680   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 0
+xbar: (14, 0, 0, 1)     conv_buf 7680   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 0
+xbar: (14, 0, 0, 0)     conv_buf 7680   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 30
+xbar: (15, 0, 0, 0)     conv_buf 3072   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 0
+xbar: (15, 1, 0, 0)     conv_buf 3072   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 0
+xbar: (16, 0, 0, 1)     conv_buf 7168   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 0
+xbar: (16, 1, 0, 1)     conv_buf 7168   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 0
+xbar: (16, 0, 0, 0)     conv_buf 7168   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 0
+xbar: (16, 1, 0, 0)     conv_buf 7168   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 0
+xbar: (17, 0, 0, 1)     conv_buf 4096   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 0
+xbar: (17, 1, 0, 1)     conv_buf 4096   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 0
+xbar: (17, 0, 1, 0)     conv_buf 4096   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 0
+xbar: (17, 0, 1, 1)     conv_buf 4096   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 0
+xbar: (17, 1, 1, 0)     conv_buf 4096   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 0
+xbar: (17, 1, 1, 1)     conv_buf 4096   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 0
+xbar: (17, 0, 0, 0)     conv_buf 4096   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 14
+xbar: (17, 1, 0, 0)     conv_buf 4096   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 14
+xbar: (18, 0, 0, 1)     conv_buf 4096   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 0
+xbar: (18, 1, 0, 1)     conv_buf 4096   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 0
+xbar: (18, 0, 1, 0)     conv_buf 4096   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 0
+xbar: (18, 0, 1, 1)     conv_buf 4096   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 0
+xbar: (18, 1, 1, 0)     conv_buf 4096   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 0
+xbar: (18, 1, 1, 1)     conv_buf 4096   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 0
+xbar: (18, 0, 0, 0)     conv_buf 4096   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 0
+xbar: (18, 1, 0, 0)     conv_buf 4096   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 0
+xbar: (19, 0, 0, 1)     conv_buf 4096   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 0
+xbar: (19, 1, 0, 1)     conv_buf 4096   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 0
+xbar: (19, 0, 1, 0)     conv_buf 4096   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 0
+xbar: (19, 0, 1, 1)     conv_buf 4096   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 0
+xbar: (19, 1, 1, 0)     conv_buf 4096   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 0
+xbar: (19, 1, 1, 1)     conv_buf 4096   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 0
+xbar: (19, 0, 0, 0)     conv_buf 4096   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 16
+xbar: (19, 1, 0, 0)     conv_buf 4096   pool_buf --     inter_buf 0     merge_buf 0     gather_buf 16
+
+connection: cast_from_(0, 0, 0, 0)      load: 200704    #channel 64
+connection: gather_from_(0, 0, 0, 0)    load: 200704    #channel 64
+connection: cast_from_(1, 0, 0, 0)      load: 200704    #channel 64
+connection: cast_from_(2, 0, 0, 0)      load: 200704    #channel 64
+connection: gather_from_(2, 0, 0, 0)    load: 200704    #channel 64
+connection: cast_from_(3, 0, 0, 0)      load: 200704    #channel 64
+connection: cast_from_(4, 0, 0, 0)      load: 200704    #channel 64
+connection: gather_from_(5, 0, 0, 0)    load: 100352    #channel 128
+connection: cast_from_(6, 0, 0, 0)      load: 100352    #channel 128
+connection: cast_from_(7, 0, 0, 0)      load: 100352    #channel 128
+connection: gather_from_(7, 0, 0, 0)    load: 100352    #channel 128
+connection: cast_from_(8, 0, 0, 0)      load: 100352    #channel 128
+connection: cast_from_(9, 0, 0, 0)      load: 100352    #channel 128
+connection: gather_from_(10, 0, 0, 0)   load: 50176     #channel 256
+connection: cast_from_(11, 0, 0, 0)     load: 50176     #channel 256
+connection: merge_to_(12, 0, 0, 0)      load: 50176     #channel 256
+connection: cast_from_(12, 0, 0, 0)     load: 50176     #channel 256
+connection: gather_from_(12, 0, 0, 0)   load: 50176     #channel 256
+connection: merge_to_(13, 0, 0, 0)      load: 50176     #channel 256
+connection: cast_from_(13, 0, 0, 0)     load: 50176     #channel 256
+connection: merge_to_(14, 0, 0, 0)      load: 50176     #channel 256
+connection: cast_from_(14, 0, 0, 0)     load: 50176     #channel 256
+connection: gather_from_(15, 0, 0, 0)   load: 12544     #channel 256
+connection: gather_from_(15, 1, 0, 0)   load: 12544     #channel 256
+connection: merge_to_(16, 0, 0, 0)      load: 12544     #channel 256
+connection: merge_to_(16, 1, 0, 0)      load: 12544     #channel 256
+connection: cast_from_(16, 0, 0, 0)     load: 12544     #channel 256
+connection: cast_from_(16, 1, 0, 0)     load: 12544     #channel 256
+connection: merge_to_(17, 0, 0, 0)      load: 12544     #channel 256
+connection: merge_to_(17, 1, 0, 0)      load: 12544     #channel 256
+connection: cast_from_(17, 0, 0, 0)     load: 12544     #channel 256
+connection: gather_from_(17, 0, 0, 0)   load: 12544     #channel 256
+connection: cast_from_(17, 1, 0, 0)     load: 12544     #channel 256
+connection: gather_from_(17, 1, 0, 0)   load: 12544     #channel 256
+connection: merge_to_(18, 0, 0, 0)      load: 12544     #channel 256
+connection: merge_to_(18, 1, 0, 0)      load: 12544     #channel 256
+connection: cast_from_(18, 0, 0, 0)     load: 12544     #channel 256
+connection: cast_from_(18, 1, 0, 0)     load: 12544     #channel 256
+connection: merge_to_(19, 0, 0, 0)      load: 12544     #channel 256
+connection: merge_to_(19, 1, 0, 0)      load: 12544     #channel 256

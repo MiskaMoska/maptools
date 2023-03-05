@@ -20,14 +20,16 @@ if __name__ == "__main__":
     for v in xm.map_dict.values():
         if 'Pool' in v['op_type']:
             print('\nXbar')
-            print(v['conv_kernel_size'])
+            print(v.keys())
 
     ctg = xm.ctg
+    # ctg.plot_ctg()
     inf = Inferator(ctg)
     inf.run()
-
-
-    # ctg.plot_ctg()
+    inf.echo_xbar()
+    inf.echo_comm()
+    # for n in inf.ctg.node_names:
+    #     print(n)
 
     # nm = NocMapper(ctg,10,25)
     # nm.map_xbars()

@@ -10,6 +10,7 @@ from functools import cached_property
 from typing import List, Dict, Tuple, Any, Generator
 from operator_graph import *
 from ctg import *
+from utils import *
 
 __all__ = ['XbarMapper']
 
@@ -118,8 +119,12 @@ class XbarMapper(object):
                             it = slc_pt
                         for k in range(it):
                             icfg.append((t*slc_pt+k,start_ci,end_ci))
-                        xbar_dict = {'icfg': icfg, 'ocfg': (start_co,end_co)}
+                        xbar_dict = {'xbar_icfg': icfg, 'xbar_ocfg': (start_co,end_co), \
+                                        'xbar_num_ichan': end_ci-start_ci, 'xbar_num_ochan': end_co-start_co}
                         xbar_dict.update(layer)
+                        if j != 0 or t != 0: # not merge xbar
+                            # only merge xbar has pool or add
+                            xbar_dict['op_type'] = xbar_dict['op_type'].rstrip('-Add').rstrip('-Pool') 
                         self.map_dict[(l, i, j, t)] = xbar_dict
                         map_info[i][j] += 1
         

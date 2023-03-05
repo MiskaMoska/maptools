@@ -78,7 +78,6 @@ class OperatorGraph(object):
         # Fuse dict to another's
         tmp = deepcopy(self.dicts[snode])
         tmp.pop('op_type')
-        tmp.pop('input_size')
         self.dicts[dnode].update(tmp)
 
     def _fuse_relu(self) -> None:
@@ -191,3 +190,67 @@ class OperatorGraph(object):
                     break
             if nf:
                 break
+    
+    def _check_size(self) -> None:
+        '''
+        Some onnx models have incorrect convolution or pooling pads information.
+        This method checks these incorrections and regularizes them.
+
+        However, some incorrections cannot be regularized, for example: 
+        1. the `conv_output_size` does not match `pool_input_size` in the same operator.
+        2. the calculated `output_size` does not match onnx recorded `output_size`.
+        3. the `conv_input size` still does not match `conv_output_size` though pads are corrected.
+        Encountering these incorrections will trigger assertion failure.
+
+        Always make sure to call this method after finishing opterator-graph-converting.
+        '''
+        for node in self.nodes:
+            info = self.info(node)
+            if 'Conv' in info['op_type']:
+                cks = info['conv_kernel_size']
+                cpads = info['conv_pads']
+                cstrs = info['conv_strides']
+                cifs = info['conv_input_size']
+                cofs = info['conv_output_size']
+                self.__regu_size(cifs, cofs, cks, cpads, cstrs)
+                self.dicts[node]['conv_pads'] = cpads
+                
+                if 'Pool' in info['op_type']:
+                    pks = info['pool_kernel_size']
+                    ppads = info['pool_pads']
+                    pstrs = info['pool_strides']
+                    pifs = info['pool_input_size']
+                    pofs = info['pool_output_size']
+                    assert cofs == pifs, \
+                        f"conv_output_size {cofs} not match pool_input_size {pifs}"
+                    self.__regu_size(pifs, pofs, pks, ppads, pstrs)
+                    self.dicts[node]['pool_pads'] = ppads
+
+    def __regu_size(self, ifs: List[int], ofs: List[int], 
+                    ks: List[int], pads: List[int], strs: List[int]) -> None:
+        '''
+        pads : List[int]
+            `pads` is referenced, after performing this method, 
+            `pads` can be modified to accomodate the feature map size
+        '''
+        def __regu_one_dim(dim: int) -> None:
+            remain = ifs[dim] + pads[0+dim] + pads[2+dim]
+            remain -= max([ks[dim], strs[dim]])
+            size_o = remain // strs[dim] + 1
+            assert size_o == ofs[dim], \
+                f"calcuelated output size {size_o} not match onnx output size {ofs[dim]}"
+            extra = remain % strs[dim]
+            if extra != 0:
+                print('starting correcting one size ....')
+                assert extra <= pads[0+dim] + pads[2+dim], \
+                    "extra pixels larger than onnx pads, cannot perform correction"
+                for i in range(extra):
+                    if pads[0+dim] > 0:
+                        pads[0+dim] -= 1
+                    else:
+                        pads[2+dim] -= 1    
+
+        for i in range(2):
+            __regu_one_dim(i)
+
+

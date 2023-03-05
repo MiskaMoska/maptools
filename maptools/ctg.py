@@ -71,11 +71,10 @@ class CTG(object):
             self._build_ctg_resnet()
 
     @cached_property
-    def node_names(self) -> Generator[str, None, None]:
-        for n in nx.topological_sort(self.graph):
-            yield n
+    def node_names(self) -> List:
+        return list(nx.topological_sort(self.graph))
 
-    @cached_property
+    @property
     def comms(self) -> List[str]:
         return self.cast_comms + self.merge_comms + self.gather_comms
 
@@ -107,7 +106,7 @@ class CTG(object):
     def is_head_xbar(self, node: Any) -> bool:
         return self.graph.in_degree(node) == 0
 
-    @cached_property
+    @property
     def regions(self) -> Generator:
         '''
         Returns all regions in turn
@@ -146,7 +145,7 @@ class CTG(object):
                 for i in range(p_mtx.shape[0]): # for each region in the last layer
                     src_xbar = (p_lid, i, 0, 0) # source node of the gather path
                     dst_xbar = (s_lid, i, 0, 0) # dst node of the gather path
-                    comm_name = 'colelct_from_'+str(src_xbar)
+                    comm_name = 'gather_from_'+str(src_xbar)
                     self.graph.add_node(comm_name)
                     self.gather_comms.append(comm_name)
                     self.graph.add_edge(src_xbar, comm_name)
@@ -179,6 +178,11 @@ class CTG(object):
                             node = (lid, i, j, k)
                             if node != dst_xbar:
                                 self.graph.add_edge(node, comm_name)
+
+    @cached_property
+    def xbar_num(self) -> int:
+        return len(self.xbar_nodes)
+
     @cached_property
     def cast_num(self) -> int:
         return len(self.cast_comms)
@@ -191,7 +195,7 @@ class CTG(object):
     def gather_num(self) -> int:
         return len(self.gather_comms)
 
-    @cached_property
+    @property
     @overload
     def cast_trees(self) -> Generator[Tuple, None, None]:
         for c in self.cast_comms:
@@ -201,7 +205,7 @@ class CTG(object):
             dst = list(dst)
             yield (src, dst)
 
-    @cached_property
+    @property
     def cast_trees(self) -> Generator[Tuple, None, None]:
         '''
         for test 
@@ -214,7 +218,7 @@ class CTG(object):
                 dst = list(dst)
                 yield (src, dst)
 
-    @cached_property
+    @property
     def merge_trees(self) -> Generator[Tuple, None, None]:
         for m in self.merge_comms:
             src = self.graph.predecessors(m)
@@ -223,7 +227,7 @@ class CTG(object):
             dst = list(dst)[0]
             yield (src, dst)
 
-    @cached_property
+    @property
     def gather_pairs(self) -> Generator[Tuple, None, None]:
         for p in self.gather_comms:
             src = self.graph.predecessors(p)
