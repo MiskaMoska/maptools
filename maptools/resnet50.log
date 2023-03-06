@@ -240,6 +240,7 @@ xbar: (52, 4, 0, 0)     conv_size (7, 7)        conv_buf 12288  pool_buf --     
 xbar: (52, 5, 0, 0)     conv_size (7, 7)        conv_buf 12288  pool_buf --     inter_buf 0     merge_buf 0     gather_buf 14336
 xbar: (52, 6, 0, 0)     conv_size (7, 7)        conv_buf 12288  pool_buf --     inter_buf 0     merge_buf 0     gather_buf 14336
 xbar: (52, 7, 0, 0)     conv_size (7, 7)        conv_buf 12288  pool_buf --     inter_buf 0     merge_buf 0     gather_buf 14336
+
 connection: cast_from_(0, 0, 0, 0)      load: 200704    #channel 64
 connection: cast_from_(1, 0, 0, 0)      load: 200704    #channel 64
 connection: gather_from_(2, 0, 0, 0)    load: 802816    #channel 256

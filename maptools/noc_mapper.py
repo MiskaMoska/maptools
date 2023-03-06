@@ -38,7 +38,7 @@ class NocMapper(object):
                     'steiner'   : minimum steiner-tree-based algorithm to run cast routing path plan, deterministic.
         
             Key Members:
-            --------------
+            ------------
             self.map_dict : Dict[Tuple[int, int, int, int], Tuple[int, int]]
                 Map the logical xbar (marked as a 4-element tuple) to the physical xbar (marked as a 2-element tuple)
 

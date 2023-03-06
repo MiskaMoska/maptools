@@ -38,9 +38,9 @@ if __name__ == "__main__":
     tm = TileMapper(MODEL_VGG16,w=256,h=256*5)
     tm.Run_Mapping()
     tm.Print_Config()
-    nm = NocMapper(tm.tile_config,W,H)
     case_dict = dict()
     while True:
+        nm = NocMapper(tm.tile_config,W,H)
         nm.Run_Mapping()
         con = nm.Get_Contention_Level()
         if con == CONTENT_LEVEL:
@@ -51,3 +51,6 @@ if __name__ == "__main__":
             with open(save_file,'wb') as f_save:
                 pickle.dump(case_dict, f_save)
             break
+    print("merge_path:")
+    for i in nm.merge_paths:
+        print(i)

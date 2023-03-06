@@ -317,6 +317,12 @@ class Inferator(object):
         ctg : CTG
             the communication trace graph that contains the xbars and communication relationship
             run xbar mapping to get the CTG
+
+        Key Members:
+        ------------
+        obj_dict : Dict
+            A dictionary with key = [CTG.graph.nodes] and value = [_Xbar, _Comm, _MergeComm]
+            Stores all the objects in the inference engine.
         '''
         self.ctg = ctg
         self._build_obj_dict()
@@ -375,7 +381,7 @@ class Inferator(object):
                 for succ in self.ctg.succs(node): # comm successors must be xbar
                     self.obj_dict[succ].consume_tokens(token, pred_type)
 
-        print(f'{done_cnt}/{self.ctg.xbar_num}')
+        print(f'process: {done_cnt}/{self.ctg.xbar_num} xbars')
         if done_cnt == self.ctg.xbar_num:
             return True
         return False
@@ -386,8 +392,33 @@ class Inferator(object):
         while not done:
             cnt += 1
             done = self.iter()
-            print(f"\niteration:{cnt}")
-    
+            print(f"iteration: {cnt}", end='  ')
+        # write the buffer and communication info to `self.ctg`
+        self._write_back()
+
+    def _write_back(self) -> None:
+        '''
+        Write back the information about the buffer size and communication load
+        Xbar : {conv_buf, pool_buf, gather_buf}
+        Comm : {load, ratio}
+        '''
+        # maximum communication load
+        self.max_comm_load = max([self.obj_dict[n].accum_tokens\
+                                    for n in self.ctg.comms])
+        for n in self.ctg.node_names:
+            local = dict()
+            node = self.obj_dict[n]
+            if self.ctg.is_xbar(n): # xbar node
+                local['conv_buf'] = node.conv_buf.max_buf
+                local['pool_buf'] = 0
+                if 'Pool' in node.op_type:
+                    local['pool_buf'] = node.pool_buf.max_buf
+                local['gather_buf'] = node.max_gather_buf
+            else: # comm node
+                local['load'] = node.accum_tokens
+                local['ratio'] = '{:.3f}'.format(local['load'] / self.max_comm_load)
+            self.ctg.update_dict(n, local)
+
     def echo_xbar(self):
         cnt = 0
         for node in self.ctg.node_names:
@@ -395,10 +426,9 @@ class Inferator(object):
                 xbar = self.obj_dict[node]
                 conv_size = xbar.conv_input_size
                 conv_buf = xbar.conv_buf.max_buf
+                pool_buf = '--'
                 if 'Pool' in xbar.op_type:
                     pool_buf = xbar.pool_buf.max_buf
-                else:
-                    pool_buf = '--'
                 inter_buf = xbar.max_inter_buf
                 merge_buf = xbar.max_merge_buf
                 gather_buf = xbar.max_gather_buf
@@ -414,9 +444,10 @@ class Inferator(object):
     def echo_comm(self):
         for node in self.ctg.node_names:
             if self.ctg.is_comm(node):
+                comm = self.obj_dict[node]
                 print("connection:",node,
-                        "\tload:",self.obj_dict[node].accum_tokens,
-                        "\t#channel", self.obj_dict[node].nc
+                        "\tload:",comm.accum_tokens,
+                        "\t#channel", comm.nc
                         )
 
 def test_window_slide():
@@ -426,7 +457,7 @@ def test_window_slide():
         buf.try_slide()
         print(buf.buf,end='\n\n')
         # print(buf.wptr,buf.rptr, buf.close, buf.done)
-        time.sleep(0.1)
+        time.sleep(0.5)
         if buf.done:
             break
 

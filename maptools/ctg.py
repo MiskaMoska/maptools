@@ -106,6 +106,33 @@ class CTG(object):
     def is_head_xbar(self, node: Any) -> bool:
         return self.graph.in_degree(node) == 0
 
+    @cached_property
+    def xbar_num(self) -> int:
+        return len(self.xbar_nodes)
+
+    @cached_property
+    def cast_num(self) -> int:
+        return len(self.cast_comms)
+
+    @cached_property
+    def merge_num(self) -> int:
+        return len(self.merge_comms)
+
+    @cached_property
+    def gather_num(self) -> int:
+        return len(self.gather_comms)
+
+    def update_dict(self, key: Any, value: Dict) -> None:
+        '''
+        This method updates {key : value} to `self.dicts`,
+        if key in `self.dicts`, merge value to `self.dicts[key]`,
+        if key not in `self.dicts`, create the key and set `self.dicts[key] = value`
+        '''
+        if key in self.dicts:
+            self.dicts[key].update(value)
+        else:
+            self.dicts[key] = value
+
     @property
     def regions(self) -> Generator:
         '''
@@ -179,22 +206,6 @@ class CTG(object):
                             if node != dst_xbar:
                                 self.graph.add_edge(node, comm_name)
 
-    @cached_property
-    def xbar_num(self) -> int:
-        return len(self.xbar_nodes)
-
-    @cached_property
-    def cast_num(self) -> int:
-        return len(self.cast_comms)
-
-    @cached_property
-    def merge_num(self) -> int:
-        return len(self.merge_comms)
-
-    @cached_property
-    def gather_num(self) -> int:
-        return len(self.gather_comms)
-
     @property
     @overload
     def cast_trees(self) -> Generator[Tuple, None, None]:
@@ -239,16 +250,26 @@ class CTG(object):
     def plot_ctg(self) -> None:
         dot = Digraph('graph')
         dot.attr(rankdir='LR')
-        # for n in self.graph.nodes:
-        #     print(n)
+
+        # plot nodes
         for n in self.graph.nodes:
-            if n in self.cast_comms \
-                or n in self.merge_comms \
-                or n in self.gather_comms:
-                shape = 'point'
-            else:
+            local = self.dicts[n] if n in self.dicts else dict()
+            _label = ''
+            for key in ['conv_buf', 'pool_buf', 'gather_buf', 'load', 'ratio']:
+                if key in local:
+                    _label += f'\n{key} : {local[key]}'
+            if self.is_xbar(n): # xbar
                 shape = 'rectangle'
-            dot.node(str(n),str(n), fontname='Arial',shape=shape)
+                label = str(n) + _label
+                xlabel = None
+            else: # comm
+                shape = 'point'
+                label = None
+                xlabel = _label.lstrip('\n')
+            dot.node(str(n), label=label, fontname='Arial',shape=shape, 
+                        xlabel=xlabel)
+
+        # plot edges
         for e in self.graph.edges:
             if e[0] in self.cast_comms or e[1] in self.cast_comms:
                 color = 'red'
