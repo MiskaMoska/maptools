@@ -400,7 +400,7 @@ class Inferator(object):
         '''
         Write back the information about the buffer size and communication load
         Xbar : {conv_buf, pool_buf, gather_buf}
-        Comm : {load, ratio}
+        Comm : {load, load_ratio}
         '''
         # maximum communication load
         self.max_comm_load = max([self.obj_dict[n].accum_tokens\
@@ -416,7 +416,7 @@ class Inferator(object):
                 local['gather_buf'] = node.max_gather_buf
             else: # comm node
                 local['load'] = node.accum_tokens
-                local['ratio'] = '{:.3f}'.format(local['load'] / self.max_comm_load)
+                local['load_ratio'] = local['load'] / self.max_comm_load
             self.ctg.update_dict(n, local)
 
     def echo_xbar(self):

@@ -642,26 +642,32 @@ module network(
         output      wire        [`DW-1:0]       data_o_flee1,
         output      wire                        valid_o_flee1,
         input       wire                        ready_i_flee1,
+'''     
+        for i in range(self.w):
+            for j in range(self.h):
+                containt += f'''
+        input       wire        [`DW-1:0]       cast_data_i_{i}_{j},
+        input       wire                        cast_valid_i_{i}_{j},
+        output      wire                        cast_ready_o_{i}_{j},
 
-        //cast local ports
-        input       wire        [`DW-1:0]       cast_data_i[`NOC_WIDTH][`NOC_HEIGHT],
-        input       wire                        cast_valid_i[`NOC_WIDTH][`NOC_HEIGHT],
-        output      wire                        cast_ready_o[`NOC_WIDTH][`NOC_HEIGHT],
+        output      wire        [`DW-1:0]       cast_data_o_{i}_{j},
+        output      wire                        cast_valid_o_{i}_{j},
+        input       wire                        cast_ready_i_{i}_{j},
+'''
+        for i in range(self.w):
+            for j in range(self.h):
+                containt += f'''
+        input       wire        [`DW-1:0]       merge_data_i_{i}_{j},
+        input       wire                        merge_valid_i_{i}_{j},
+        output      wire                        merge_ready_o_{i}_{j},
 
-        output      wire        [`DW-1:0]       cast_data_o[`NOC_WIDTH][`NOC_HEIGHT],
-        output      wire                        cast_valid_o[`NOC_WIDTH][`NOC_HEIGHT],
-        input       wire                        cast_ready_i[`NOC_WIDTH][`NOC_HEIGHT],
-
-        //merge local ports
-        input       wire        [`DW-1:0]       merge_data_i[`NOC_WIDTH][`NOC_HEIGHT],
-        input       wire                        merge_valid_i[`NOC_WIDTH][`NOC_HEIGHT],
-        output      wire                        merge_ready_o[`NOC_WIDTH][`NOC_HEIGHT],
-
-        output      wire        [`DW-1:0]       merge_data_o[`NOC_WIDTH][`NOC_HEIGHT],
-        output      wire                        merge_valid_o[`NOC_WIDTH][`NOC_HEIGHT],
-        input       wire                        merge_ready_i[`NOC_WIDTH][`NOC_HEIGHT]
-);
-
+        output      wire        [`DW-1:0]       merge_data_o_{i}_{j},
+        output      wire                        merge_valid_o_{i}_{j},
+        input       wire                        merge_ready_i_{i}_{j},'''
+    
+        containt = containt.rstrip(',')
+        containt += '\n);'
+        containt += '''
 wire [`DW-1:0] data_stab, data_flee0, data_flee1;
 wire valid_stab, ready_stab, valid_flee0, valid_flee1, ready_flee0, ready_flee1;
 
@@ -670,7 +676,27 @@ wire valid_i_cast_nw[`NOC_WIDTH][`NOC_HEIGHT], valid_o_cast_nw[`NOC_WIDTH][`NOC_
 wire ready_i_cast_nw[`NOC_WIDTH][`NOC_HEIGHT], ready_o_cast_nw[`NOC_WIDTH][`NOC_HEIGHT], ready_i_merge_nw[`NOC_WIDTH][`NOC_HEIGHT], ready_o_merge_nw[`NOC_WIDTH][`NOC_HEIGHT];
 
 wire credit_upd[`NOC_WIDTH][`NOC_HEIGHT];
+'''
+#         for i in range(self.w):
+#             for j in range(self.h):
+#                 containt += f'''
+# assign data_i_cast_pe[{i}][{j}] = cast_data_i_{i}_{j};
+# assign valid_i_cast_pe[{i}][{j}] = cast_valid_i_{i}_{j};
+# assign cast_ready_o_{i}_{j} = ready_o_cast_pe[{i}][{j}];
 
+# assign cast_data_o_{i}_{j} = data_o_cast_pe[{i}][{j}];
+# assign cast_valid_o_{i}_{j} = valid_o_cast_pe[{i}][{j}];
+# assign ready_i_cast_pe[{i}][{j}] = cast_ready_i_{i}_{j};
+
+# assign data_i_merge_pe[{i}][{j}] = merge_data_i_{i}_{j};
+# assign valid_i_merge_pe[{i}][{j}] = merge_valid_i_{i}_{j};
+# assign merge_ready_o_{i}_{j} = ready_o_merge_pe[{i}][{j}];
+
+# assign merge_data_o_{i}_{j} = data_o_merge_pe[{i}][{j}];
+# assign merge_valid_o_{i}_{j} = valid_o_merge_pe[{i}][{j}];
+# assign ready_i_merge_pe[{i}][{j}] = merge_ready_i_{i}_{j};
+# '''
+        containt += '''
 // from stab port to network, must enable packeting
 cast_converter #(
     .isCaster                 (1),
@@ -787,18 +813,18 @@ network_interface #(
     .valid_o_merge_nw               (valid_i_merge_nw[{i}][{j}]),
     .data_o_merge_nw                (data_i_merge_nw[{i}][{j}]),
     .ready_i_merge_nw               (ready_o_merge_nw[{i}][{j}]),
-    .valid_i_cast_pe                (cast_valid_i[{i}][{j}]),
-    .data_i_cast_pe                 (cast_data_i[{i}][{j}]),
-    .ready_o_cast_pe                (cast_ready_o[{i}][{j}]),
-    .valid_o_cast_pe                (cast_valid_o[{i}][{j}]),
-    .data_o_cast_pe                 (cast_data_o[{i}][{j}]),
-    .ready_i_cast_pe                (cast_ready_i[{i}][{j}]),
-    .valid_i_merge_pe               (merge_valid_i[{i}][{j}]),
-    .data_i_merge_pe                (merge_data_i[{i}][{j}]),
-    .ready_o_merge_pe               (merge_ready_o[{i}][{j}]),
-    .valid_o_merge_pe               (merge_valid_o[{i}][{j}]),
-    .data_o_merge_pe                (merge_data_o[{i}][{j}]),
-    .ready_i_merge_pe               (merge_ready_i[{i}][{j}]),
+    .valid_i_cast_pe                (cast_valid_i_{i}_{j}),
+    .data_i_cast_pe                 (cast_data_i_{i}_{j}),
+    .ready_o_cast_pe                (cast_ready_o_{i}_{j}),
+    .valid_o_cast_pe                (cast_valid_o_{i}_{j}),
+    .data_o_cast_pe                 (cast_data_o_{i}_{j}),
+    .ready_i_cast_pe                (cast_ready_i_{i}_{j}),
+    .valid_i_merge_pe               (merge_valid_i_{i}_{j}),
+    .data_i_merge_pe                (merge_data_i_{i}_{j}),
+    .ready_o_merge_pe               (merge_ready_o_{i}_{j}),
+    .valid_o_merge_pe               (merge_valid_o_{i}_{j}),
+    .data_o_merge_pe                (merge_data_o_{i}_{j}),
+    .ready_i_merge_pe               (merge_ready_i_{i}_{j}),
     .credit_upd                     (credit_upd[{i}][{j}])
 );\n\n'''
         containt += "endmodule"
@@ -811,7 +837,6 @@ network_interface #(
         print("network has been written into:",file_name)
 
     def Generate_System_Config_Info(self):
-        isPooler = []
         isCaster = []
         stream_id = []
         keys = list(self.cast_paths.keys())

@@ -8,40 +8,119 @@ from xbar_mapper import *
 from ctg import *
 from noc_mapper import *
 from inferator import *
+from map_plotter import *
 
-if __name__ == "__main__":
+def opgraph_vgg16():
+    model = onnx.load("../onnx_models/simp-vgg16.onnx")
+    oc = OnnxConverter(model,arch='resnet')
+    oc.run_conversion()
+    oc.plot_op_graph()
+
+def opgraph_resnet18():
+    model = onnx.load("../onnx_models/simp-resnet18.onnx")
+    oc = OnnxConverter(model,arch='resnet')
+    oc.run_conversion()
+    oc.plot_op_graph()
+
+def opgraph_resnet50():
+    model = onnx.load("../onnx_models/simp-resnet50.onnx")
+    oc = OnnxConverter(model,arch='resnet')
+    oc.run_conversion()
+    oc.plot_op_graph()
+
+def opgraph_googlenet():
+    model = onnx.load("../onnx_models/simp-googlenet.onnx")
+    oc = OnnxConverter(model,arch='googlenet')
+    oc.run_conversion()
+    oc.plot_op_graph()
+
+def ctg_vgg16():
+    model = onnx.load("../onnx_models/simp-vgg16.onnx")
+    oc = OnnxConverter(model,arch='resnet')
+    oc.run_conversion()
+    og = oc.og
+    xm = XbarMapper(og, 256, 256*5)
+    xm._xbar_map_resnet()
+    xm.print_config()
+    ctg = xm.ctg
+    ctg.plot_ctg()
+
+def ctg_resnet18():
+    model = onnx.load("../onnx_models/simp-resnet18.onnx")
+    oc = OnnxConverter(model,arch='resnet')
+    oc.run_conversion()
+    oc.plot_op_graph()
+    og = oc.og
+    xm = XbarMapper(og, 256, 256*5)
+    xm._xbar_map_resnet()
+    xm.print_config()
+    ctg = xm.ctg
+    ctg.plot_ctg()
+
+def ctg_resnet50():
     model = onnx.load("../onnx_models/simp-resnet50.onnx")
     oc = OnnxConverter(model,arch='resnet')
     oc.run_conversion()
     og = oc.og
-    xm = XbarMapper(og, 512, 512*5)
+    xm = XbarMapper(og, 256, 256*5)
     xm._xbar_map_resnet()
     xm.print_config()
-    # for v in xm.map_dict.values():
-    #     if 'Pool' in v['op_type'] or True:
-    #         print('\nXbar')
-    #         print(v['conv_input_size'])
-
     ctg = xm.ctg
-    # ctg.plot_ctg()
+    ctg.plot_ctg()
+
+def network_vgg16():
+    model = onnx.load("../onnx_models/simp-vgg16.onnx")
+    oc = OnnxConverter(model,arch='resnet')
+    oc.run_conversion()
+    og = oc.og
+    xm = XbarMapper(og, 256, 256*5)
+    xm._xbar_map_resnet()
+    xm.print_config()
+    ctg = xm.ctg
+    ctg.comm_load_analysis()
+    nm = NocMapper(ctg,5,11)
+    nm.map_xbars()
+    nm._cast_plan()
+    nm._merge_plan()
+    nm._gather_plan()
+    mp = MapPlotter(5,11, nm.cast_paths, nm.merge_paths, nm.gather_paths, show_path=True)
+    mp.plot_cast_map()
+
+def network_resnet50():
+    model = onnx.load("../onnx_models/simp-resnet50.onnx")
+    oc = OnnxConverter(model,arch='resnet')
+    oc.run_conversion()
+    og = oc.og
+    xm = XbarMapper(og, 256, 256*5)
+    xm._xbar_map_resnet()
+    xm.print_config()
+    ctg = xm.ctg
+    ctg.comm_load_analysis()
+    nm = NocMapper(ctg,10,25)
+    nm.map_xbars()
+    nm._cast_plan()
+    nm._merge_plan()
+    nm._gather_plan()
+    mp = MapPlotter(10,25, nm.cast_paths, nm.merge_paths, nm.gather_paths, show_path=True)
+    mp.plot_cast_map()
+
+def analysis_resnet18():
+    model = onnx.load("../onnx_models/simp-resnet18.onnx")
+    oc = OnnxConverter(model,arch='resnet')
+    oc.run_conversion()
+    og = oc.og
+    xm = XbarMapper(og, 256, 256*5)
+    xm._xbar_map_resnet()
+    xm.print_config()
+    ctg = xm.ctg
     inf = Inferator(ctg)
     inf.run()
-    # inf.echo_xbar()
-    # inf.echo_comm()
-    # for n in inf.ctg.node_names:
-    #     print(n)
+    inf.echo_xbar()
+    inf.echo_comm()
     ctg = inf.ctg
     ctg.plot_ctg()
 
-    # nm = NocMapper(ctg,10,25)
-    # nm.map_xbars()
-    # nm._cast_plan()
-    # # nm._merge_plan()
-    # # nm._gather_plan()
-    # # nm.plot_map()
-    # print('contention_coefficient:',nm.contention_coefficient)
-    # for i in nm.merge_paths:
-    #     print(i)
-    # # for k,v in nm.cast_paths.items():
-    # #     print(k,v)
+if __name__ == "__main__":
+    'please input [opgraph, ctg, network, analysis]'
+    analysis_resnet18()
     

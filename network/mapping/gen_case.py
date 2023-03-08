@@ -52,5 +52,5 @@ if __name__ == "__main__":
                 pickle.dump(case_dict, f_save)
             break
     print("merge_path:")
-    for i in nm.merge_paths:
-        print(i)
+    for k,v in nm.cast_paths.items():
+        print(k,v)

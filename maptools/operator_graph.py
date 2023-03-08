@@ -2,7 +2,7 @@
 TODO fuse pool to conv-add, now only support fusing pool to conv
 but actually there are rarely this kind of structure in resnet
 '''
-
+import sys
 import networkx as nx
 from typing import Any, List, Dict, Tuple, Optional, Generator
 from copy import deepcopy 
@@ -234,11 +234,27 @@ class OperatorGraph(object):
             `pads` can be modified to accomodate the feature map size
         '''
         def __regu_one_dim(dim: int) -> None:
-            remain = ifs[dim] + pads[0+dim] + pads[2+dim]
-            remain -= max([ks[dim], strs[dim]])
-            size_o = remain // strs[dim] + 1
-            assert size_o == ofs[dim], \
-                f"calcuelated output size {size_o} not match onnx output size {ofs[dim]}"
+            while True:
+                remain = ifs[dim] + pads[0+dim] + pads[2+dim]
+                remain -= max([ks[dim], strs[dim]])
+                size_o = remain // strs[dim] + 1
+                if size_o < ofs[dim]:
+                    pads[0+dim] += 1
+                elif size_o == ofs[dim]:
+                    break
+                else:
+                    print(f'''
+                            calcuelated output size {size_o} larger than onnx output size {ofs[dim]}
+                            input_size: {ifs[dim]}, kernel_size: {ks[dim]},
+                            strides: {strs[dim]}, pads: {[pads[0+dim], pads[2+dim]]}
+                            need to decrease pads
+                    ''')
+                # assert size_o == ofs[dim], \
+                #     f'''
+                #         calcuelated output size {size_o} not match onnx output size {ofs[dim]}
+                #         input_size: {ifs[dim]}, kernel_size: {ks[dim]},
+                #         strides: {strs[dim]}, pads: {[pads[0+dim], pads[2+dim]]}
+                #     '''
             extra = remain % strs[dim]
             if extra != 0:
                 print('starting correcting one size ....')

@@ -6,7 +6,7 @@ import numpy as np
 import networkx as nx
 from graphviz import Digraph
 from functools import cached_property
-from typing import List, Dict, Tuple, Any, Generator
+from typing import List, Dict, Tuple, Any, Generator, Optional
 from typing import overload
 from operator_graph import *
 from utils import *
@@ -105,6 +105,12 @@ class CTG(object):
 
     def is_head_xbar(self, node: Any) -> bool:
         return self.graph.in_degree(node) == 0
+    
+    def get_attr(self, node: Any, attr: str) -> Any:
+        if node in self.dicts:
+            if attr in self.dicts[node]:
+                return self.dicts[node][attr]
+        return None
 
     @cached_property
     def xbar_num(self) -> int:
@@ -227,7 +233,7 @@ class CTG(object):
                 src = list(src)[0]
                 dst = self.graph.successors(c)
                 dst = list(dst)
-                yield (src, dst)
+                yield (c, src, dst)
 
     @property
     def merge_trees(self) -> Generator[Tuple, None, None]:
@@ -236,16 +242,40 @@ class CTG(object):
             src = list(src)
             dst = self.graph.successors(m)
             dst = list(dst)[0]
-            yield (src, dst)
+            yield (m, src, dst)
 
     @property
     def gather_pairs(self) -> Generator[Tuple, None, None]:
-        for p in self.gather_comms:
-            src = self.graph.predecessors(p)
+        for g in self.gather_comms:
+            src = self.graph.predecessors(g)
             src = list(src)[0]
-            dst = self.graph.successors(p)
+            dst = self.graph.successors(g)
             dst = list(dst)[0]
-            yield (src, dst)
+            yield (g, src, dst)
+
+    def comm_load_analysis(self) -> None:
+        '''
+        This method provides fast communication load analysis to replace the function of 
+        `Inferator`, if only communication load analysis is needed and buffer size analysis
+        is not needed, use this method rather than `Inferator.run()`.
+        This method will update `self.dicts` by adding communication load information.
+        '''
+        dict1 = dict()
+        max_load = 0
+        for n in self.node_names:
+            if self.is_comm(n):
+                succs = self.succs(n)
+                succ = list(succs)[0]
+                ifs = self.dicts[succ]['conv_input_size']
+                ni = self.dicts[succ]['xbar_num_ichan']
+                load = ifs[0] * ifs[1] * ni
+                if load > max_load:
+                    max_load = load
+                dict1[n] = load # absolute load
+        for n in self.node_names:
+            if self.is_comm(n):
+                load = dict1[n]
+                self.update_dict(n, {'load': load, 'load_ratio': load / max_load})
 
     def plot_ctg(self) -> None:
         dot = Digraph('graph')
@@ -255,7 +285,7 @@ class CTG(object):
         for n in self.graph.nodes:
             local = self.dicts[n] if n in self.dicts else dict()
             _label = ''
-            for key in ['conv_buf', 'pool_buf', 'gather_buf', 'load', 'ratio']:
+            for key in ['conv_buf', 'pool_buf', 'gather_buf', 'load', 'load_ratio']:
                 if key in local:
                     _label += f'\n{key} : {local[key]}'
             if self.is_xbar(n): # xbar

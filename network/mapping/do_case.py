@@ -29,3 +29,5 @@ dlk.Plot_Remain_Loops()
 cfg = Configurator(W,H,cast_paths,merge_paths,merge_nodes,
                     e2e_dict=dlk.e2e_dict,ubm_nodes=dlk.ubm_nodes)
 cfg.Run_Configuring()
+for k,v in cfg.cast_paths.items():
+    print(k,v)
