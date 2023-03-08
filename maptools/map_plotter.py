@@ -1,4 +1,5 @@
 import networkx as nx
+from copy import deepcopy
 from matplotlib import pyplot as plt
 from matplotlib.transforms import Bbox
 from typing import Dict, List, Any, Optional, Tuple
@@ -25,6 +26,16 @@ class MapPlotter(object):
         self.cast_graph = nx.MultiDiGraph()
         self.merge_graph = nx.MultiDiGraph()
         self.gather_graph = nx.MultiDiGraph()
+
+        ###########################################
+        for i, k in enumerate(self.gather_paths.keys()):
+            if i == 0:
+                self.gather_paths[k]['path'] = [((0,0),(0,1)),((0,1),(1,1)),((1,1),(2,1)),((2,1),(2,0))]
+            if i == 1:
+                self.gather_paths[k]['path'] = [((2,0),(2,1)),((2,1),(3,1)),((3,1),(4,1)),((4,1),(4,0))]
+            if i == 2:
+                self.gather_paths[k]['path'] = [((4,1),(4,2)),((4,2),(3,2)),((3,2),(3,1)),((3,1),(2,1))]
+        ###########################################
 
         self.cast_links = dict()
         self.merge_links = dict()
@@ -233,6 +244,48 @@ class MapPlotter(object):
             nx.draw_networkx_edge_labels(self.gather_graph, 
                                             pos, 
                                             edge_labels=self.gather_links, 
+                                            font_size=self.label_size, 
+                                            label_pos=0.5
+                                            )
+        plt.savefig(self.dir_name + f'/img_map',
+                        dpi=self.dpi, 
+                        bbox_inches='tight'
+                        )
+        print(f"Finished saving map image")
+
+    def plot_cast_gather_map(self):
+        plt.figure(figsize=(self.w,self.h))
+        self._plot_routers()
+        self.cast_graph, pos = self._build_graph()
+        self._cast_plan()
+        self.gather_graph, pos = self._build_graph()
+        self._gather_plan()
+
+        new_graph = deepcopy(self.cast_graph)
+        new_graph.add_edges_from(self.gather_graph.edges)
+
+        new_links = deepcopy(self.cast_links)
+        for link in self.gather_links:
+            if link not in new_links:
+                new_links[link] = 0
+            new_links[link] += self.gather_links[link]
+
+        for k, v in new_links.items():
+            new_links[k] = round(v, 2)
+
+        nx.draw(new_graph, 
+                    pos, 
+                    node_size=self.node_size, 
+                    width=1, 
+                    arrowsize=self.arrow_size, 
+                    node_color='black',
+                    edge_color='blue',
+                    arrowstyle='-|>'
+                    )
+        if not self.show_path:
+            nx.draw_networkx_edge_labels(new_graph, 
+                                            pos, 
+                                            edge_labels=new_links, 
                                             font_size=self.label_size, 
                                             label_pos=0.5
                                             )

@@ -1,4 +1,12 @@
+'''
+To use Inferator to perform evaluation, the precondition is that the bottlenck does not happen at communication.
+In other words, the rate the communication link transports data matches the rate the Xbar produces data.  
+TODO support finite bandwidth
+TODO support linear layer
+'''
+
 import time
+import pickle
 from ctg import *
 from utils import *
 import numpy as np
@@ -11,7 +19,7 @@ class _WindowBuf(object):
 
     def __init__(self, input_size: List[int], output_size: List[int],
                     kernel_size: List[int], strides: List[int], pads: List[int], 
-                    ni: int) -> None:
+                    ni: int, slide_once: bool = True) -> None:
         '''
         Window buffer
 
@@ -31,6 +39,10 @@ class _WindowBuf(object):
         
         ni : int
             number of conv input channel
+        
+        slide_once : bool
+            when True, the window slides only once in each iteration,
+            when False, the window slides as much as possible in each iteration
         '''
         self.size_i_np = input_size
         self.size_i = [input_size[0] + pads[0] + pads[2],\
@@ -40,6 +52,7 @@ class _WindowBuf(object):
         self.strides = strides
         self.pads = pads
         self.ni = ni
+        self.slide_once = slide_once
 
         self.buf = np.zeros(self.size_i, dtype=int)
         self._init_pads()
@@ -123,9 +136,10 @@ class _WindowBuf(object):
     def try_slide(self) -> int:
         if self.done:
             return 0
-        # the window block in the buffer
         token = 0
-        while True:
+        
+        if self.slide_once:
+            # the window block in the buffer
             window = self.buf[self.win_pos[0]:self.win_pos[2],self.win_pos[1]:self.win_pos[3]]
             need_token = max([self.ks[0] * self.ks[1], self.strides[0] * self.strides[1]])
             if np.sum(window) == need_token: # all data in window is available
@@ -134,16 +148,32 @@ class _WindowBuf(object):
                 self._update_max_buf()
                 if self.rptr == self.size_o[0] * self.size_o[1]:
                     self.done = True
-                token += 1 # return a token
-            else: # data not prepared
-                break
-        return token
+                token = 1 # return a token
 
+        else:
+            while True:
+                # the window block in the buffer
+                window = self.buf[self.win_pos[0]:self.win_pos[2],self.win_pos[1]:self.win_pos[3]]
+                need_token = max([self.ks[0] * self.ks[1], self.strides[0] * self.strides[1]])
+                if np.sum(window) == need_token: # all data in window is available
+                    self._release_data()
+                    self.rptr += 1 # slide window
+                    self._update_max_buf()
+                    if self.rptr == self.size_o[0] * self.size_o[1]:
+                        self.done = True
+                    token += 1 # return a token
+                else: # data not prepared
+                    break
+        return token
 
 
 class _Xbar(object):
 
-    def __init__(self, config: Dict, is_merge: bool, is_gather: bool) -> None:
+    def __init__(self, config: Dict, 
+                        is_merge: bool, 
+                        is_gather: bool, 
+                        slide_once: bool = True
+                        ) -> None:
         '''
         Xbar abstract model designed for inferator
         
@@ -157,17 +187,25 @@ class _Xbar(object):
 
         is_gather : bool
             whether is a gather destination node
+        
+        slide_once : bool
+            when True, the window slides only once in each iteration,
+            when False, the window slides as much as possible in each iteration.
         '''
         self.__dict__.update(config)
+        assert 'Conv' in self.__dict__['op_type'], \
+            f"Xbar must perform convolution, now op_type: {self.__dict__['op_type']}"
         self.is_merge = is_merge
         self.is_gather = is_gather
         self.conv_buf = _WindowBuf(self.conv_input_size, self.conv_output_size,
                                     self.conv_kernel_size, self.conv_strides, 
-                                    self.conv_pads, self.xbar_num_ichan)
+                                    self.conv_pads, self.xbar_num_ichan,
+                                    slide_once = slide_once)
         if 'Pool' in self.op_type: # has pooling
             self.pool_buf = _WindowBuf(self.pool_input_size, self.pool_output_size,
                                     self.pool_kernel_size, self.pool_strides, 
-                                    self.pool_pads, self.xbar_num_ochan) # pooling input channel is conv output channel
+                                    self.pool_pads, self.xbar_num_ochan,
+                                    slide_once = slide_once) # pooling input channel is conv output channel
         
         # buffers for results merging
         self.inter_buf = 0
@@ -242,15 +280,40 @@ class _Xbar(object):
         return token
 
 
+class _ShiftReg(object):
+
+    def __init__(self, depth: int = 8) -> None:
+        '''
+        Shift register to simulate communication latency.
+        '''
+        self.depth = depth
+        self.buf = [0] * depth
+        self.valid = [False] * depth
+    
+    def step(self, token: int) -> int:
+        data = self.buf[-1]
+        valid = self.valid[-1]
+        for i in range(1, self.depth):
+            self.buf[-i] = self.buf[-(i+1)]
+            self.valid[-i] = self.valid[-(i+1)]
+        self.buf[0] = token
+        self.valid[0] = True
+        return data if valid else 0
+
+
 class _Comm(object):
     
-    def __init__(self, nc: int) -> None:
+    def __init__(self, nc: int, 
+                    latency: Optional[int] = None) -> None:
         '''
         nc : number of channels
         '''
         self.accum_tokens = 0
         self.token = 0
         self.nc = nc
+        self.latency = latency
+        if self.latency is not None:
+            self.shiftreg = _ShiftReg(depth=latency)
 
     def consume_tokens(self, token: int, pred: Any) -> None:
         self.token = token
@@ -259,16 +322,20 @@ class _Comm(object):
         self.accum_tokens += self.token * self.nc
         token = self.token
         self.token = 0
-        return token
+        if self.latency is None:
+            return token
+        else:
+            return self.shiftreg.step(token)
 
 
 class _MergeComm(_Comm):
 
-    def __init__(self, nc: int, preds: List[Any]) -> None:
+    def __init__(self, nc: int, preds: List[Any], 
+                    latency: Optional[int] = None) -> None:
         '''
         nc : number of channels
         '''
-        super().__init__(nc)
+        super().__init__(nc, latency=latency)
         self.buf = {k: 0 for k in preds}
 
     def consume_tokens(self, token: int, pred: Any) -> None:
@@ -279,12 +346,19 @@ class _MergeComm(_Comm):
         self.accum_tokens += token * self.nc
         for k in self.buf.keys():
             self.buf[k] -= token
-        return token
+        if self.latency is None:
+            return token
+        else:
+            return self.shiftreg.step(token)
 
 
 class Inferator(object):
 
-    def __init__(self, ctg: CTG) -> None:
+    def __init__(self, ctg: CTG, 
+                    slide_once: bool = True, 
+                    latency: Optional[int] = None,
+                    dir_name: str = './'
+                    ) -> None:
         '''
         Inference machine designed for buffer size and communication load analysis.
         Buffer allocation is important in AI accelerators, especially NVCIM systems, because in
@@ -318,13 +392,32 @@ class Inferator(object):
             the communication trace graph that contains the xbars and communication relationship
             run xbar mapping to get the CTG
 
+        slide_once : bool
+            when True, the window slides only once in each iteration,
+            when False, the window slides as much as possible in each iteration. 
+
+        latency : Optional[int]
+            communication latency for each connection in CTG.
+            when None, indicate no communication latency,
+            when int, indicate communication latency is `latency`, `latency` must > 0
+
+        dir_name : str
+            directory name to store files
+
         Key Members:
         ------------
         obj_dict : Dict
             A dictionary with key = [CTG.graph.nodes] and value = [_Xbar, _Comm, _MergeComm]
             Stores all the objects in the inference engine.
+
+        execu_dict : Dict
+            A dictionary with key = [CTG.graph.nodes] and value = execu list
         '''
         self.ctg = ctg
+        self.slide_once = slide_once
+        self.latency = latency
+        self.dir_name = dir_name
+        self.execu_dict = dict()
         self._build_obj_dict()
 
     def _build_obj_dict(self) -> None:
@@ -336,9 +429,11 @@ class Inferator(object):
                 pred = preds[0]
                 cfg = self.ctg.get_xbar_config(pred)
                 if self.ctg.is_merge_comm(node): # merge comm
-                    self.obj_dict[node] = _MergeComm(cfg['xbar_num_ochan'], preds)
+                    self.obj_dict[node] = _MergeComm(cfg['xbar_num_ochan'], 
+                                                        preds, latency=self.latency)
                 else: # normal comm
-                    self.obj_dict[node] = _Comm(cfg['xbar_num_ochan'])
+                    self.obj_dict[node] = _Comm(cfg['xbar_num_ochan'],
+                                                    latency=self.latency)
             elif self.ctg.is_xbar(node): # xbar
                 config = self.ctg.get_xbar_config(node)
                 is_merge = False
@@ -348,7 +443,9 @@ class Inferator(object):
                         is_merge = True
                     if self.ctg.is_gather_comm(pred):
                         is_gather = True
-                self.obj_dict[node] = _Xbar(config, is_merge, is_gather)
+                self.obj_dict[node] = _Xbar(config, is_merge, is_gather, 
+                                                slide_once=self.slide_once)
+                self.execu_dict[node] = []
 
     def iter(self) -> bool:
         done_cnt = 0
@@ -357,6 +454,8 @@ class Inferator(object):
                 if self.ctg.is_head_xbar(node): # head xbar
                     self.obj_dict[node].consume_tokens(1, 'Cast')
                 token = self.obj_dict[node].produce_tokens()
+                self.execu_dict[node].append(token) # record executed or not
+                
                 if self.obj_dict[node].done:
                     done_cnt += 1
 
@@ -420,7 +519,6 @@ class Inferator(object):
             self.ctg.update_dict(n, local)
 
     def echo_xbar(self):
-        cnt = 0
         for node in self.ctg.node_names:
             if self.ctg.is_xbar(node):
                 xbar = self.obj_dict[node]
@@ -449,6 +547,12 @@ class Inferator(object):
                         "\tload:",comm.accum_tokens,
                         "\t#channel", comm.nc
                         )
+
+    def save_execu(self):
+        file = self.dir_name + 'execu.pkl'
+        with open(file,'wb') as f:
+            pickle.dump(self.execu_dict, f)
+
 
 def test_window_slide():
     buf = _WindowBuf([11,10], [7,7], [3,3], [2,2], [1,3,3,2], 64)

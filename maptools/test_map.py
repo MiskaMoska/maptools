@@ -121,6 +121,27 @@ def analysis_resnet18():
     ctg.plot_ctg()
 
 if __name__ == "__main__":
-    'please input [opgraph, ctg, network, analysis]'
-    analysis_resnet18()
+    model = onnx.load("../onnx_models/simp-resnet18.onnx")
+    oc = OnnxConverter(model,arch='resnet')
+    oc.run_conversion()
+    og = oc.og
+    xm = XbarMapper(og, 256, 256*5)
+    xm._xbar_map_resnet()
+    xm.print_config()
+    ctg = xm.ctg
+
+    inf = Inferator(ctg, slide_once=False, latency=16)
+    inf.run()
+    inf.echo_xbar()
+    inf.echo_comm()
+    inf.save_execu()
+
+    # ctg.comm_load_analysis()
+    # nm = NocMapper(ctg,5,10)
+    # nm.map_xbars()
+    # nm._cast_plan()
+    # nm._merge_plan()
+    # nm._gather_plan()
+    # mp = MapPlotter(5,10, nm.cast_paths, nm.merge_paths, nm.gather_paths)
+    # mp.plot_gather_map()
     
