@@ -15,18 +15,18 @@ module merge_router #(
     input       wire                            valid_i[5],
     output      reg                             ready_o[5],
 
-    output      reg         [`DW-1:0]           data_o[5],
+    output      bit         [`DW-1:0]           data_o[5],
     output      reg                             valid_o[5],
     input       wire                            ready_i[5]
 );
 
-// /** float_point adder begin**/
+/** float_point adder begin**/
 shortreal data_i_sr[5];
 shortreal sum;
 
 always@(data_i) begin
     for(int i=0; i<5; i++) begin
-        if(input_mask[i]) data_i_sr[i] = $bitstoshortreal(data_i[i]);
+        if(input_mask[i]) data_i_sr[i] = $bitstoshortreal(data_i[i][`DW-3:0]);
         else data_i_sr[i] = 0;
     end
 end
@@ -40,11 +40,11 @@ end
 
 always@(sum) begin
     for(int i=0; i<5; i++) begin
-        if(output_sel[i]) data_o[i] = $shortrealtobits(sum);
-        else data_o[i] = 0;
+        if(output_sel[i]) data_o[i] = {`BODY, $shortrealtobits(sum)};
+        else data_o[i] = {`BODY,{(`DW-3){1'b0}}};
     end
 end
-// /** float_point adder end**/
+/** float_point adder end**/
 
 /** fixed_point adder begin**/
 // wire sum_flit;

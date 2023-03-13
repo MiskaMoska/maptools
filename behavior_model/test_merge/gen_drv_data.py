@@ -1,6 +1,9 @@
-DATA_WIDTH = 16
-RAM_DEPTH = 32
-ram_file = "/mnt/c/git/nvcim-comm/behavior_model/test_merge/send_pool"
+import os 
+import struct
+import random
+os.chdir('.')
+
+DW = 34
 
 def dec2bin(dec_num, bit_wide=16):    
     _, bin_num_abs = bin(dec_num).split('b')    
@@ -13,7 +16,7 @@ def dec2bin(dec_num, bit_wide=16):
             _, bin_num = bin(2**bit_wide + dec_num).split('b')    
     return bin_num 
 
-with open(ram_file,"w") as f:
-    for i in range(RAM_DEPTH):
-        f.write(dec2bin(i,bit_wide=DATA_WIDTH)+"\n")
-    f.flush()
+with open('send_pool','w') as f:
+    for i in range(32):
+        a = int.from_bytes(struct.pack("f",random.random()),'little')
+        f.write('01'+str(dec2bin(a,bit_wide=DW-2))+'\n')

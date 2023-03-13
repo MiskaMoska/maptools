@@ -130,7 +130,7 @@ if __name__ == "__main__":
     xm.print_config()
     ctg = xm.ctg
 
-    inf = Inferator(ctg, slide_once=False, latency=16)
+    inf = Inferator(ctg, slide_once=True, latency=16)
     inf.run()
     inf.echo_xbar()
     inf.echo_comm()

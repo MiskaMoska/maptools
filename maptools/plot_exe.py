@@ -2,7 +2,7 @@ import pickle
 from matplotlib import pyplot as plt
 
 def plot_exe(range=None):
-    file = './execu.pkl'
+    file = './resnet18_lat16.pkl'
     with open(file, 'rb') as f_read:
         exe_dict = pickle.load(f_read)
 
@@ -26,4 +26,4 @@ def plot_exe(range=None):
     plt.show()
 
 if __name__ == "__main__":
-    plot_exe(range=(49900,100000))
+    plot_exe(range=(50000,100000))

@@ -1,7 +1,7 @@
 `ifndef         __PARAMS_SVH__
 `define         __PARAMS_SVH__
 
-`define         DW                              16 //data width
+`define         DW                              34 //data width
 `define         CN                              5 //channel number 0:local 1:west 2:east 3:verti0 4:verti1
 `define         NOC_WIDTH                       3
 `define         NOC_HEIGHT                      3
