@@ -1,6 +1,5 @@
 '''
-TODO fuse pool to conv-add, now only support fusing pool to conv
-but actually there are rarely this kind of structure in resnet
+TODO support more model structures
 '''
 import sys
 import networkx as nx
@@ -11,7 +10,7 @@ __all__ = ['OperatorGraph']
 
 class OperatorGraph(object):
 
-    valid_ops = ['Conv','Conv-Pool','Pool','Conv-Add','GlobalPool','Add','Mul','Concat']
+    valid_ops = ['Conv','Act','Add','Pool']
 
     def __init__(self, graph: nx.MultiDiGraph, dicts: Dict[str, Dict], arch: str) -> None:
         '''
@@ -59,9 +58,9 @@ class OperatorGraph(object):
         # Get node's op_type
         return self.dicts[node]['op_type']
 
-    def set_op_type(self, node: str, type: str) -> None:
-        # Set node's op_type
-        self.dicts[node]['op_type'] = type
+    def exten_op_type(self, node: str, suffix: str) -> None:
+        # Extend node's op_type
+        self.dicts[node]['op_type'] += suffix
 
     def _cut_graph(self) -> None:
         # Remove all layers after the last AveragePool
@@ -80,7 +79,7 @@ class OperatorGraph(object):
         tmp.pop('op_type')
         self.dicts[dnode].update(tmp)
 
-    def _fuse_relu(self) -> None:
+    def _fuse_act(self) -> None:
         # Fuse act to its predecessor
         ns2rmv = []
         es2add = []
@@ -90,7 +89,8 @@ class OperatorGraph(object):
                 pred_type = self.op_type(self.pred(n))
                 assert pred_type in ['Conv','Add'], \
                     f"the predecessor of an activation node must be Conv or Add rather than {pred_type}"
-                self._fuse_dict(n,self.pred(n))
+                self.exten_op_type(self.pred(n), '-Act') # fuse relu will change the op-type of the predecessor
+                self._fuse_dict(n, self.pred(n))
                 ks2rmv.append(n)
                 succs = list(self.graph.successors(n)) # successors of act
                 es = [(self.pred(n), node) for node in succs] # edges to be added 
@@ -110,12 +110,12 @@ class OperatorGraph(object):
             if self.op_type(n) in ['MaxPool','AveragePool']: # current node is pool
                 pred_type = self.op_type(self.pred(n))
                 if self.arch in ['resnet']:
-                    assert pred_type in ['Conv'], \
-                        f"the predecessor of an window pool node must be Conv rather than {pred_type}"
-                if pred_type not in ['Conv']: # for non-resnet archs
+                    assert pred_type in ['Conv','Conv-Act'], \
+                        f"the predecessor of an window pool node must conrtains Conv rather than {pred_type}"
+                if pred_type not in ['Conv','Conv-Act']: # for non-resnet archs
                     continue
-                self.set_op_type(self.pred(n),'Conv-Pool') # fuse pool will change the op-type of the predecessor
-                self._fuse_dict(n,self.pred(n))
+                self.exten_op_type(self.pred(n), '-Pool') # fuse pool will change the op-type of the predecessor
+                self._fuse_dict(n, self.pred(n))
                 succs = list(self.graph.successors(n)) # successors of pool
                 es = [(self.pred(n), node) for node in succs] # edges to be added 
                 ns2rmv.append(n)
@@ -156,19 +156,13 @@ class OperatorGraph(object):
         self.graph.remove_edges_from(es2rmv)
         self.graph.add_edges_from(es2add)
 
-    def _regu_pool(self) -> None:
-        # Regularize remain pools
-        for n in self.graph.nodes:
-            if self.op_type(n) in ['MaxPool','AveragePool','GlobalAveragePool']:
-                self.set_op_type(n,'Pool')
-
     def _fuse_add(self) -> None:
         # Fuse add to its trunk predecessor
         trunk = self.trunk
         while True:
             nf = True
             for n in self.graph.nodes:
-                if self.op_type(n) == 'Add':
+                if self.op_type(n) in ['Add','Add-Act']:
                     nf = False
                     preds = list(self.graph.predecessors(n))
                     assert len(preds) == 2, "more than 2 branches to add"
@@ -185,12 +179,20 @@ class OperatorGraph(object):
                     self.graph.add_edge(s_pred,d_pred)
                     for succ in succs:
                         self.graph.add_edge(d_pred,succ)
-                    self.set_op_type(d_pred,self.op_type(d_pred)+'-Add')
+                    self.exten_op_type(d_pred, '-'+self.op_type(n))
+                    self._fuse_dict(n, d_pred)
                     self.dicts.pop(n)
                     break
             if nf:
                 break
-    
+
+    def _regu_pool(self) -> None:
+        # Regularize remain pools
+        for n in self.graph.nodes:
+            if self.op_type(n) in ['MaxPool','AveragePool','GlobalAveragePool']:
+                print("existing remain pools")
+                sys.exit()
+
     def _check_size(self) -> None:
         '''
         Some onnx models have incorrect convolution or pooling pads information.
@@ -202,7 +204,7 @@ class OperatorGraph(object):
         3. the `conv_input size` still does not match `conv_output_size` though pads are corrected.
         Encountering these incorrections will trigger assertion failure.
 
-        Always make sure to call this method after finishing opterator-graph-converting.
+        Make sure to call this method after finishing opterator-graph-converting.
         '''
         for node in self.nodes:
             info = self.info(node)

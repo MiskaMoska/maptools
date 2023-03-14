@@ -5,7 +5,7 @@ import random
 from random import shuffle
 import networkx as nx
 from matplotlib import pyplot as plt
-from typing import List, Dict, Tuple, Any, Optional
+from typing import List, Dict, Tuple, Any, Optional, Generator
 from functools import cached_property
 from xbar_mapper import *
 from copy import deepcopy
@@ -80,7 +80,7 @@ class NocMapper(object):
                 rs_path.append((idx % w, idx // w))
         return rs_path
     
-    def map_xbars(self) -> None:
+    def _map_xbars(self) -> None:
         '''
         Map the xbars to the xbar array following reverse-s path
         '''
@@ -163,7 +163,7 @@ class NocMapper(object):
     def _cast_plan(self) -> None:
         '''
         Planning cast routing paths
-        Make sure to call this method after `self.map_xbars()`
+        Make sure to call this method after `self._map_xbars()`
         '''
         # cast tree number
         cast_num = self.ctg.cast_num
@@ -213,14 +213,14 @@ class NocMapper(object):
     def _merge_plan(self) -> None:
         '''
         Planning merge routing paths
-        Make sure to call this method after `self.map_xbars()`
+        Make sure to call this method after `self._map_xbars()`
         '''
         # merge tree number
         merge_num = self.ctg.merge_num  
 
-        for sid, (name, srcs, root_node) in enumerate(self.ctg.merge_trees, 1):
+        for sid, (name, src_nodes, root_node) in enumerate(self.ctg.merge_trees, 1):
             root_node = self.map_dict[root_node] # get the mapped node pos
-            src_nodes = [self.map_dict[src] for src in srcs ] # get the mapped node pos
+            src_nodes = [self.map_dict[src] for src in src_nodes ] # get the mapped node pos
             region_nodes = deepcopy(src_nodes)
             region_nodes.append(root_node)
             print(f"starting merge plan {sid}/{merge_num} ....")
@@ -259,7 +259,7 @@ class NocMapper(object):
     def _gather_plan(self) -> None:
         '''
         Planning gather routing paths
-        Make sure to call this method after `self.map_xbars()`
+        Make sure to call this method after calling `self._map_xbars`
         '''
         # gather pair  number
         gather_num = self.ctg.gather_num
@@ -278,4 +278,45 @@ class NocMapper(object):
             self.gather_paths[name]['sid'] = sid
             self.gather_paths[name]['path'] = path
             self.gather_paths[name]['load_ratio'] = self.ctg.get_attr(name, 'load_ratio')
-            
+
+    def run_map(self) -> None:
+        self._map_xbars()
+        self._cast_plan()
+        self._merge_plan()
+        self._gather_plan()
+
+    @property
+    def xbar_config_info(self) -> Generator:
+        '''
+        Xbar configuration information for system simulation.
+        Always call this method after calling `self.run_map`.
+        '''
+        for k, v in self.ctg.dicts.items():
+            yield (self.map_dict[k], v)
+
+    @property
+    def p2p_casts(self) -> Generator:
+        '''
+        cast information for P2P simulation.
+        Make sure to call this method after calling `self.run_map`.
+        '''
+        for _, root_node, dst_nodes in self.ctg.cast_trees:
+            yield (self.map_dict[root_node], [self.map_dict[d] for d in dst_nodes])
+    
+    @property
+    def p2p_merges(self) -> Generator:
+        '''
+        merge information for P2P simulation.
+        Make sure to call this method after calling `self.run_map`.
+        '''
+        for _, src_nodes, root_node in self.ctg.merge_trees:
+            yield ([self.map_dict[s] for s in src_nodes], self.map_dict[root_node])
+
+    @property
+    def p2p_gathers(self) -> Generator:
+        '''
+        gather information for P2P simulation.
+        Make sure to call this method after calling `self.run_map`.
+        '''
+        for _, src_node, dst_node in self.ctg.gather_pairs:
+            yield (self.map_dict[src_node], self.map_dict[dst_node])

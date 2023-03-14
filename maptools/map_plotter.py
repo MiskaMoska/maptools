@@ -14,7 +14,7 @@ class MapPlotter(object):
                     gather_paths: Dict[str, Dict[str, Any]],
                     show_path : Optional[bool] = False) -> None:
         '''
-        
+        Plot the NoC-Mapped results
         '''
         self.w = w
         self.h = h
@@ -26,16 +26,6 @@ class MapPlotter(object):
         self.cast_graph = nx.MultiDiGraph()
         self.merge_graph = nx.MultiDiGraph()
         self.gather_graph = nx.MultiDiGraph()
-
-        ###########################################
-        for i, k in enumerate(self.gather_paths.keys()):
-            if i == 0:
-                self.gather_paths[k]['path'] = [((0,0),(0,1)),((0,1),(1,1)),((1,1),(2,1)),((2,1),(2,0))]
-            if i == 1:
-                self.gather_paths[k]['path'] = [((2,0),(2,1)),((2,1),(3,1)),((3,1),(4,1)),((4,1),(4,0))]
-            if i == 2:
-                self.gather_paths[k]['path'] = [((4,1),(4,2)),((4,2),(3,2)),((3,2),(3,1)),((3,1),(2,1))]
-        ###########################################
 
         self.cast_links = dict()
         self.merge_links = dict()

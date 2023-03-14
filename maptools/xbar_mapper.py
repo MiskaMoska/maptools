@@ -76,15 +76,14 @@ class XbarMapper(object):
         for l, layer in enumerate(self.opgraph.node_dicts):
             map_info = []
             self.match_dict[layer['name']] = l
-            assert layer['op_type'] in ['Conv','Conv-Pool','Conv-Add','Conv-Pool-Add','Pool','Pool-Add'], \
-                f"unexpected operation in resnet operation graph: {layer['op_type']}"
+
             if "Conv" not in layer['op_type']: # this layer contains no Conv
                 n_inchan = layer['input_dims'][1]
                 n_outchan = n_inchan
                 k_size = (1,1)
             else: # this layer contains Conv
-                n_inchan = layer['conv_num_inchan']
-                n_outchan = layer['conv_num_outchan']
+                n_inchan = layer['conv_num_ichan']
+                n_outchan = layer['conv_num_ochan']
                 k_size = layer['conv_kernel_size']
 
             pes_o = math.ceil(n_outchan / self.w) 
@@ -134,12 +133,13 @@ class XbarMapper(object):
     def ctg(self) -> CTG:
         return CTG(self.opgraph,self.match_dict,self.map_list,self.map_dict,arch=self.arch)
 
-    def xbar_map(self) -> None: 
+    def run_map(self) -> None: 
         '''
         Map the operator graph to xbars
         Note that any xbar supports all ops
         '''
-        pass
+        if self.arch == 'resnet':
+            self._xbar_map_resnet()
 
     def print_config(self) -> None:
         '''

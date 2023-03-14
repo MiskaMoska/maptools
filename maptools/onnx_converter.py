@@ -144,8 +144,8 @@ class OnnxConverter(object):
             bias = self._get_tensor(node.input[2]) # input[2] should be weight
         d['conv_weight'] = onh.to_array(weight)
         d['conv_bias'] = onh.to_array(bias)
-        d['conv_num_inchan'] = weight.dims[1] # input channel number
-        d['conv_num_outchan'] = weight.dims[0] # output channel number
+        d['conv_num_ichan'] = weight.dims[1] # input channel number
+        d['conv_num_ochan'] = weight.dims[0] # output channel number
 
     def _complete_pool_info(self, node: onnx.NodeProto, d: Dict) -> None:
         size_i, size_o = self._get_io_size(node)
@@ -241,14 +241,14 @@ class OnnxConverter(object):
 
     def __resnet(self, og: OperatorGraph) -> None:
         og._cut_graph()
-        og._fuse_relu() 
+        og._fuse_act() 
         og._fuse_pool()
         og._regu_pool()
         og._fuse_add()
 
     def __googlenet(self, og: OperatorGraph) -> None:
         og._cut_graph()
-        og._fuse_relu()
+        og._fuse_act()
         og._head_pool('Concat')
         og._fuse_pool()
         og._regu_pool()
