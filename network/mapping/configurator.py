@@ -959,20 +959,25 @@ network nw(
     .data_o_flee1                                         (data_o_flee1),
     .valid_o_flee1                                        (valid_o_flee1),
     .ready_i_flee1                                        (ready_i_flee1),
-    .cast_data_i                                          (cast_data_pe_2_nw),
-    .cast_valid_i                                         (cast_valid_pe_2_nw),
-    .cast_ready_o                                         (cast_ready_nw_2_pe),
-    .cast_data_o                                          (cast_data_nw_2_pe),
-    .cast_valid_o                                         (cast_valid_nw_2_pe),
-    .cast_ready_i                                         (cast_ready_pe_2_nw),
-    .merge_data_i                                         (merge_data_pe_2_nw),
-    .merge_valid_i                                        (merge_valid_pe_2_nw),
-    .merge_ready_o                                        (merge_ready_nw_2_pe),
-    .merge_data_o                                         (merge_data_nw_2_pe),
-    .merge_valid_o                                        (merge_valid_nw_2_pe),
-    .merge_ready_i                                        (merge_ready_pe_2_nw)
-);
 '''
+        for i in range(self.w):
+            for j in range(self.h): 
+                containt += f'''
+    .cast_data_i_{i}_{j}                                      (cast_data_pe_2_nw[{i}][{j}]),
+    .cast_valid_i_{i}_{j}                                     (cast_valid_pe_2_nw[{i}][{j}]),
+    .cast_ready_o_{i}_{j}                                     (cast_ready_nw_2_pe[{i}][{j}]),
+    .merge_data_i_{i}_{j}                                     (merge_data_pe_2_nw[{i}][{j}]),
+    .merge_valid_i_{i}_{j}                                    (merge_valid_pe_2_nw[{i}][{j}]),
+    .merge_ready_o_{i}_{j}                                    (merge_ready_nw_2_pe[{i}][{j}]),
+
+    .cast_data_o_{i}_{j}                                      (cast_data_nw_2_pe[{i}][{j}]),
+    .cast_valid_o_{i}_{j}                                     (cast_valid_nw_2_pe[{i}][{j}]),
+    .cast_ready_i_{i}_{j}                                     (cast_ready_pe_2_nw[{i}][{j}]),
+    .merge_data_o_{i}_{j}                                     (merge_data_nw_2_pe[{i}][{j}]),
+    .merge_valid_o_{i}_{j}                                    (merge_valid_nw_2_pe[{i}][{j}]),
+    .merge_ready_i_{i}_{j}                                    (merge_ready_pe_2_nw[{i}][{j}]),'''     
+        containt = containt.rstrip(',')
+        containt += '\n);\n'
         for i in range(self.w):
             for j in range(self.h):
                 containt += f'''
