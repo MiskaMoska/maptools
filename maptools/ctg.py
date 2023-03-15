@@ -290,7 +290,7 @@ class CTG(object):
                     _label += f'\n{key} : {local[key]}'
             if self.is_xbar(n): # xbar
                 shape = 'rectangle'
-                label = str(n) + _label
+                label = str(n) + "\n" + self.dicts[n]['op_type'] + _label
                 xlabel = None
             else: # comm
                 shape = 'point'

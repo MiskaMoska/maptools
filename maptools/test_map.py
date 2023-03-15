@@ -56,11 +56,10 @@ if __name__ == "__main__":
     # 获得映射得到的CTG
     ctg = xm.ctg
 
+    ctg.plot_ctg()
+
     # 创建NoC映射器
     nm = NocMapper(ctg,5,10)
 
     # 执行映射
     nm.run_map()
-    
-    for xbar, cfg in nm.xbar_config_info:
-        print(xbar, cfg['op_type'])

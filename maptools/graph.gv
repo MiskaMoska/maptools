@@ -1,277 +1,141 @@
 digraph "graph" {
 	rankdir=LR
 	"(0, 0, 0, 0)" [label="(0, 0, 0, 0)
-conv_buf : 4044
-pool_buf : 14336
-gather_buf : 0" fontname=Arial shape=rectangle]
+Conv-Act-Pool" fontname=Arial shape=rectangle]
 	"(1, 0, 0, 0)" [label="(1, 0, 0, 0)
-conv_buf : 10880
-pool_buf : 0
-gather_buf : 0" fontname=Arial shape=rectangle]
+Conv-Act" fontname=Arial shape=rectangle]
 	"(2, 0, 0, 0)" [label="(2, 0, 0, 0)
-conv_buf : 14528
-pool_buf : 0
-gather_buf : 7296" fontname=Arial shape=rectangle]
+Conv-Add-Act" fontname=Arial shape=rectangle]
 	"(3, 0, 0, 0)" [label="(3, 0, 0, 0)
-conv_buf : 18176
-pool_buf : 0
-gather_buf : 0" fontname=Arial shape=rectangle]
+Conv-Act" fontname=Arial shape=rectangle]
 	"(4, 0, 0, 0)" [label="(4, 0, 0, 0)
-conv_buf : 21824
-pool_buf : 0
-gather_buf : 7296" fontname=Arial shape=rectangle]
+Conv-Add-Act" fontname=Arial shape=rectangle]
 	"(5, 0, 0, 0)" [label="(5, 0, 0, 0)
-conv_buf : 21248
-pool_buf : 0
-gather_buf : 0" fontname=Arial shape=rectangle]
+Conv" fontname=Arial shape=rectangle]
 	"(6, 0, 0, 0)" [label="(6, 0, 0, 0)
-conv_buf : 22144
-pool_buf : 0
-gather_buf : 0" fontname=Arial shape=rectangle]
+Conv-Act" fontname=Arial shape=rectangle]
 	"(7, 0, 0, 0)" [label="(7, 0, 0, 0)
-conv_buf : 18432
-pool_buf : 0
-gather_buf : 7168" fontname=Arial shape=rectangle]
+Conv-Add-Act" fontname=Arial shape=rectangle]
 	"(8, 0, 0, 0)" [label="(8, 0, 0, 0)
-conv_buf : 22144
-pool_buf : 0
-gather_buf : 0" fontname=Arial shape=rectangle]
+Conv-Act" fontname=Arial shape=rectangle]
 	"(9, 0, 0, 0)" [label="(9, 0, 0, 0)
-conv_buf : 25856
-pool_buf : 0
-gather_buf : 7424" fontname=Arial shape=rectangle]
+Conv-Add-Act" fontname=Arial shape=rectangle]
 	"(10, 0, 0, 0)" [label="(10, 0, 0, 0)
-conv_buf : 22528
-pool_buf : 0
-gather_buf : 0" fontname=Arial shape=rectangle]
+Conv" fontname=Arial shape=rectangle]
 	"(11, 0, 0, 0)" [label="(11, 0, 0, 0)
-conv_buf : 28416
-pool_buf : 0
-gather_buf : 0" fontname=Arial shape=rectangle]
+Conv-Act" fontname=Arial shape=rectangle]
 	"(12, 0, 0, 0)" [label="(12, 0, 0, 0)
-conv_buf : 21504
-pool_buf : 0
-gather_buf : 7168" fontname=Arial shape=rectangle]
+Conv-Add-Act" fontname=Arial shape=rectangle]
 	"(12, 0, 0, 1)" [label="(12, 0, 0, 1)
-conv_buf : 21504
-pool_buf : 0
-gather_buf : 0" fontname=Arial shape=rectangle]
+Conv" fontname=Arial shape=rectangle]
 	"(13, 0, 0, 0)" [label="(13, 0, 0, 0)
-conv_buf : 25088
-pool_buf : 0
-gather_buf : 0" fontname=Arial shape=rectangle]
+Conv-Act" fontname=Arial shape=rectangle]
 	"(13, 0, 0, 1)" [label="(13, 0, 0, 1)
-conv_buf : 25088
-pool_buf : 0
-gather_buf : 0" fontname=Arial shape=rectangle]
+Conv" fontname=Arial shape=rectangle]
 	"(14, 0, 0, 0)" [label="(14, 0, 0, 0)
-conv_buf : 28672
-pool_buf : 0
-gather_buf : 7680" fontname=Arial shape=rectangle]
+Conv-Add-Act" fontname=Arial shape=rectangle]
 	"(14, 0, 0, 1)" [label="(14, 0, 0, 1)
-conv_buf : 28672
-pool_buf : 0
-gather_buf : 0" fontname=Arial shape=rectangle]
+Conv" fontname=Arial shape=rectangle]
 	"(15, 0, 0, 0)" [label="(15, 0, 0, 0)
-conv_buf : 27648
-pool_buf : 0
-gather_buf : 0" fontname=Arial shape=rectangle]
+Conv" fontname=Arial shape=rectangle]
 	"(15, 1, 0, 0)" [label="(15, 1, 0, 0)
-conv_buf : 27648
-pool_buf : 0
-gather_buf : 0" fontname=Arial shape=rectangle]
+Conv" fontname=Arial shape=rectangle]
 	"(16, 0, 0, 0)" [label="(16, 0, 0, 0)
-conv_buf : 28160
-pool_buf : 0
-gather_buf : 0" fontname=Arial shape=rectangle]
+Conv-Act" fontname=Arial shape=rectangle]
 	"(16, 0, 0, 1)" [label="(16, 0, 0, 1)
-conv_buf : 28160
-pool_buf : 0
-gather_buf : 0" fontname=Arial shape=rectangle]
+Conv" fontname=Arial shape=rectangle]
 	"(16, 1, 0, 0)" [label="(16, 1, 0, 0)
-conv_buf : 28160
-pool_buf : 0
-gather_buf : 0" fontname=Arial shape=rectangle]
+Conv-Act" fontname=Arial shape=rectangle]
 	"(16, 1, 0, 1)" [label="(16, 1, 0, 1)
-conv_buf : 28160
-pool_buf : 0
-gather_buf : 0" fontname=Arial shape=rectangle]
+Conv" fontname=Arial shape=rectangle]
 	"(17, 0, 0, 0)" [label="(17, 0, 0, 0)
-conv_buf : 10752
-pool_buf : 0
-gather_buf : 7168" fontname=Arial shape=rectangle]
+Conv-Add-Act" fontname=Arial shape=rectangle]
 	"(17, 0, 0, 1)" [label="(17, 0, 0, 1)
-conv_buf : 10752
-pool_buf : 0
-gather_buf : 0" fontname=Arial shape=rectangle]
+Conv" fontname=Arial shape=rectangle]
 	"(17, 0, 1, 0)" [label="(17, 0, 1, 0)
-conv_buf : 10752
-pool_buf : 0
-gather_buf : 0" fontname=Arial shape=rectangle]
+Conv" fontname=Arial shape=rectangle]
 	"(17, 0, 1, 1)" [label="(17, 0, 1, 1)
-conv_buf : 10752
-pool_buf : 0
-gather_buf : 0" fontname=Arial shape=rectangle]
+Conv" fontname=Arial shape=rectangle]
 	"(17, 1, 0, 0)" [label="(17, 1, 0, 0)
-conv_buf : 10752
-pool_buf : 0
-gather_buf : 7168" fontname=Arial shape=rectangle]
+Conv-Add-Act" fontname=Arial shape=rectangle]
 	"(17, 1, 0, 1)" [label="(17, 1, 0, 1)
-conv_buf : 10752
-pool_buf : 0
-gather_buf : 0" fontname=Arial shape=rectangle]
+Conv" fontname=Arial shape=rectangle]
 	"(17, 1, 1, 0)" [label="(17, 1, 1, 0)
-conv_buf : 10752
-pool_buf : 0
-gather_buf : 0" fontname=Arial shape=rectangle]
+Conv" fontname=Arial shape=rectangle]
 	"(17, 1, 1, 1)" [label="(17, 1, 1, 1)
-conv_buf : 10752
-pool_buf : 0
-gather_buf : 0" fontname=Arial shape=rectangle]
+Conv" fontname=Arial shape=rectangle]
 	"(18, 0, 0, 0)" [label="(18, 0, 0, 0)
-conv_buf : 12544
-pool_buf : 0
-gather_buf : 0" fontname=Arial shape=rectangle]
+Conv-Act" fontname=Arial shape=rectangle]
 	"(18, 0, 0, 1)" [label="(18, 0, 0, 1)
-conv_buf : 12544
-pool_buf : 0
-gather_buf : 0" fontname=Arial shape=rectangle]
+Conv" fontname=Arial shape=rectangle]
 	"(18, 0, 1, 0)" [label="(18, 0, 1, 0)
-conv_buf : 12544
-pool_buf : 0
-gather_buf : 0" fontname=Arial shape=rectangle]
+Conv" fontname=Arial shape=rectangle]
 	"(18, 0, 1, 1)" [label="(18, 0, 1, 1)
-conv_buf : 12544
-pool_buf : 0
-gather_buf : 0" fontname=Arial shape=rectangle]
+Conv" fontname=Arial shape=rectangle]
 	"(18, 1, 0, 0)" [label="(18, 1, 0, 0)
-conv_buf : 12544
-pool_buf : 0
-gather_buf : 0" fontname=Arial shape=rectangle]
+Conv-Act" fontname=Arial shape=rectangle]
 	"(18, 1, 0, 1)" [label="(18, 1, 0, 1)
-conv_buf : 12544
-pool_buf : 0
-gather_buf : 0" fontname=Arial shape=rectangle]
+Conv" fontname=Arial shape=rectangle]
 	"(18, 1, 1, 0)" [label="(18, 1, 1, 0)
-conv_buf : 12544
-pool_buf : 0
-gather_buf : 0" fontname=Arial shape=rectangle]
+Conv" fontname=Arial shape=rectangle]
 	"(18, 1, 1, 1)" [label="(18, 1, 1, 1)
-conv_buf : 12544
-pool_buf : 0
-gather_buf : 0" fontname=Arial shape=rectangle]
+Conv" fontname=Arial shape=rectangle]
 	"(19, 0, 0, 0)" [label="(19, 0, 0, 0)
-conv_buf : 12544
-pool_buf : 0
-gather_buf : 7168" fontname=Arial shape=rectangle]
+Conv-Add-Act" fontname=Arial shape=rectangle]
 	"(19, 0, 0, 1)" [label="(19, 0, 0, 1)
-conv_buf : 12544
-pool_buf : 0
-gather_buf : 0" fontname=Arial shape=rectangle]
+Conv" fontname=Arial shape=rectangle]
 	"(19, 0, 1, 0)" [label="(19, 0, 1, 0)
-conv_buf : 12544
-pool_buf : 0
-gather_buf : 0" fontname=Arial shape=rectangle]
+Conv" fontname=Arial shape=rectangle]
 	"(19, 0, 1, 1)" [label="(19, 0, 1, 1)
-conv_buf : 12544
-pool_buf : 0
-gather_buf : 0" fontname=Arial shape=rectangle]
+Conv" fontname=Arial shape=rectangle]
 	"(19, 1, 0, 0)" [label="(19, 1, 0, 0)
-conv_buf : 12544
-pool_buf : 0
-gather_buf : 7168" fontname=Arial shape=rectangle]
+Conv-Add-Act" fontname=Arial shape=rectangle]
 	"(19, 1, 0, 1)" [label="(19, 1, 0, 1)
-conv_buf : 12544
-pool_buf : 0
-gather_buf : 0" fontname=Arial shape=rectangle]
+Conv" fontname=Arial shape=rectangle]
 	"(19, 1, 1, 0)" [label="(19, 1, 1, 0)
-conv_buf : 12544
-pool_buf : 0
-gather_buf : 0" fontname=Arial shape=rectangle]
+Conv" fontname=Arial shape=rectangle]
 	"(19, 1, 1, 1)" [label="(19, 1, 1, 1)
-conv_buf : 12544
-pool_buf : 0
-gather_buf : 0" fontname=Arial shape=rectangle]
-	"cast_from_(0, 0, 0, 0)" [fontname=Arial shape=point xlabel="load : 200704
-load_ratio : 1.0"]
-	"gather_from_(0, 0, 0, 0)" [fontname=Arial shape=point xlabel="load : 200704
-load_ratio : 1.0"]
-	"cast_from_(1, 0, 0, 0)" [fontname=Arial shape=point xlabel="load : 200704
-load_ratio : 1.0"]
-	"cast_from_(2, 0, 0, 0)" [fontname=Arial shape=point xlabel="load : 200704
-load_ratio : 1.0"]
-	"gather_from_(2, 0, 0, 0)" [fontname=Arial shape=point xlabel="load : 200704
-load_ratio : 1.0"]
-	"cast_from_(3, 0, 0, 0)" [fontname=Arial shape=point xlabel="load : 200704
-load_ratio : 1.0"]
-	"cast_from_(4, 0, 0, 0)" [fontname=Arial shape=point xlabel="load : 200704
-load_ratio : 1.0"]
-	"gather_from_(5, 0, 0, 0)" [fontname=Arial shape=point xlabel="load : 100352
-load_ratio : 0.5"]
-	"cast_from_(6, 0, 0, 0)" [fontname=Arial shape=point xlabel="load : 100352
-load_ratio : 0.5"]
-	"cast_from_(7, 0, 0, 0)" [fontname=Arial shape=point xlabel="load : 100352
-load_ratio : 0.5"]
-	"gather_from_(7, 0, 0, 0)" [fontname=Arial shape=point xlabel="load : 100352
-load_ratio : 0.5"]
-	"cast_from_(8, 0, 0, 0)" [fontname=Arial shape=point xlabel="load : 100352
-load_ratio : 0.5"]
-	"cast_from_(9, 0, 0, 0)" [fontname=Arial shape=point xlabel="load : 100352
-load_ratio : 0.5"]
-	"gather_from_(10, 0, 0, 0)" [fontname=Arial shape=point xlabel="load : 50176
-load_ratio : 0.25"]
-	"cast_from_(11, 0, 0, 0)" [fontname=Arial shape=point xlabel="load : 50176
-load_ratio : 0.25"]
-	"cast_from_(12, 0, 0, 0)" [fontname=Arial shape=point xlabel="load : 50176
-load_ratio : 0.25"]
-	"gather_from_(12, 0, 0, 0)" [fontname=Arial shape=point xlabel="load : 50176
-load_ratio : 0.25"]
-	"cast_from_(13, 0, 0, 0)" [fontname=Arial shape=point xlabel="load : 50176
-load_ratio : 0.25"]
-	"cast_from_(14, 0, 0, 0)" [fontname=Arial shape=point xlabel="load : 50176
-load_ratio : 0.25"]
-	"gather_from_(15, 0, 0, 0)" [fontname=Arial shape=point xlabel="load : 12544
-load_ratio : 0.0625"]
-	"gather_from_(15, 1, 0, 0)" [fontname=Arial shape=point xlabel="load : 12544
-load_ratio : 0.0625"]
-	"cast_from_(16, 0, 0, 0)" [fontname=Arial shape=point xlabel="load : 12544
-load_ratio : 0.0625"]
-	"cast_from_(16, 1, 0, 0)" [fontname=Arial shape=point xlabel="load : 12544
-load_ratio : 0.0625"]
-	"cast_from_(17, 0, 0, 0)" [fontname=Arial shape=point xlabel="load : 12544
-load_ratio : 0.0625"]
-	"cast_from_(17, 1, 0, 0)" [fontname=Arial shape=point xlabel="load : 12544
-load_ratio : 0.0625"]
-	"gather_from_(17, 0, 0, 0)" [fontname=Arial shape=point xlabel="load : 12544
-load_ratio : 0.0625"]
-	"gather_from_(17, 1, 0, 0)" [fontname=Arial shape=point xlabel="load : 12544
-load_ratio : 0.0625"]
-	"cast_from_(18, 0, 0, 0)" [fontname=Arial shape=point xlabel="load : 12544
-load_ratio : 0.0625"]
-	"cast_from_(18, 1, 0, 0)" [fontname=Arial shape=point xlabel="load : 12544
-load_ratio : 0.0625"]
-	"merge_to_(12, 0, 0, 0)" [fontname=Arial shape=point xlabel="load : 50176
-load_ratio : 0.25"]
-	"merge_to_(13, 0, 0, 0)" [fontname=Arial shape=point xlabel="load : 50176
-load_ratio : 0.25"]
-	"merge_to_(14, 0, 0, 0)" [fontname=Arial shape=point xlabel="load : 50176
-load_ratio : 0.25"]
-	"merge_to_(16, 0, 0, 0)" [fontname=Arial shape=point xlabel="load : 12544
-load_ratio : 0.0625"]
-	"merge_to_(16, 1, 0, 0)" [fontname=Arial shape=point xlabel="load : 12544
-load_ratio : 0.0625"]
-	"merge_to_(17, 0, 0, 0)" [fontname=Arial shape=point xlabel="load : 12544
-load_ratio : 0.0625"]
-	"merge_to_(17, 1, 0, 0)" [fontname=Arial shape=point xlabel="load : 12544
-load_ratio : 0.0625"]
-	"merge_to_(18, 0, 0, 0)" [fontname=Arial shape=point xlabel="load : 12544
-load_ratio : 0.0625"]
-	"merge_to_(18, 1, 0, 0)" [fontname=Arial shape=point xlabel="load : 12544
-load_ratio : 0.0625"]
-	"merge_to_(19, 0, 0, 0)" [fontname=Arial shape=point xlabel="load : 12544
-load_ratio : 0.0625"]
-	"merge_to_(19, 1, 0, 0)" [fontname=Arial shape=point xlabel="load : 12544
-load_ratio : 0.0625"]
+Conv" fontname=Arial shape=rectangle]
+	"cast_from_(0, 0, 0, 0)" [fontname=Arial shape=point xlabel=""]
+	"gather_from_(0, 0, 0, 0)" [fontname=Arial shape=point xlabel=""]
+	"cast_from_(1, 0, 0, 0)" [fontname=Arial shape=point xlabel=""]
+	"cast_from_(2, 0, 0, 0)" [fontname=Arial shape=point xlabel=""]
+	"gather_from_(2, 0, 0, 0)" [fontname=Arial shape=point xlabel=""]
+	"cast_from_(3, 0, 0, 0)" [fontname=Arial shape=point xlabel=""]
+	"cast_from_(4, 0, 0, 0)" [fontname=Arial shape=point xlabel=""]
+	"gather_from_(5, 0, 0, 0)" [fontname=Arial shape=point xlabel=""]
+	"cast_from_(6, 0, 0, 0)" [fontname=Arial shape=point xlabel=""]
+	"cast_from_(7, 0, 0, 0)" [fontname=Arial shape=point xlabel=""]
+	"gather_from_(7, 0, 0, 0)" [fontname=Arial shape=point xlabel=""]
+	"cast_from_(8, 0, 0, 0)" [fontname=Arial shape=point xlabel=""]
+	"cast_from_(9, 0, 0, 0)" [fontname=Arial shape=point xlabel=""]
+	"gather_from_(10, 0, 0, 0)" [fontname=Arial shape=point xlabel=""]
+	"cast_from_(11, 0, 0, 0)" [fontname=Arial shape=point xlabel=""]
+	"cast_from_(12, 0, 0, 0)" [fontname=Arial shape=point xlabel=""]
+	"gather_from_(12, 0, 0, 0)" [fontname=Arial shape=point xlabel=""]
+	"cast_from_(13, 0, 0, 0)" [fontname=Arial shape=point xlabel=""]
+	"cast_from_(14, 0, 0, 0)" [fontname=Arial shape=point xlabel=""]
+	"gather_from_(15, 0, 0, 0)" [fontname=Arial shape=point xlabel=""]
+	"gather_from_(15, 1, 0, 0)" [fontname=Arial shape=point xlabel=""]
+	"cast_from_(16, 0, 0, 0)" [fontname=Arial shape=point xlabel=""]
+	"cast_from_(16, 1, 0, 0)" [fontname=Arial shape=point xlabel=""]
+	"cast_from_(17, 0, 0, 0)" [fontname=Arial shape=point xlabel=""]
+	"cast_from_(17, 1, 0, 0)" [fontname=Arial shape=point xlabel=""]
+	"gather_from_(17, 0, 0, 0)" [fontname=Arial shape=point xlabel=""]
+	"gather_from_(17, 1, 0, 0)" [fontname=Arial shape=point xlabel=""]
+	"cast_from_(18, 0, 0, 0)" [fontname=Arial shape=point xlabel=""]
+	"cast_from_(18, 1, 0, 0)" [fontname=Arial shape=point xlabel=""]
+	"merge_to_(12, 0, 0, 0)" [fontname=Arial shape=point xlabel=""]
+	"merge_to_(13, 0, 0, 0)" [fontname=Arial shape=point xlabel=""]
+	"merge_to_(14, 0, 0, 0)" [fontname=Arial shape=point xlabel=""]
+	"merge_to_(16, 0, 0, 0)" [fontname=Arial shape=point xlabel=""]
+	"merge_to_(16, 1, 0, 0)" [fontname=Arial shape=point xlabel=""]
+	"merge_to_(17, 0, 0, 0)" [fontname=Arial shape=point xlabel=""]
+	"merge_to_(17, 1, 0, 0)" [fontname=Arial shape=point xlabel=""]
+	"merge_to_(18, 0, 0, 0)" [fontname=Arial shape=point xlabel=""]
+	"merge_to_(18, 1, 0, 0)" [fontname=Arial shape=point xlabel=""]
+	"merge_to_(19, 0, 0, 0)" [fontname=Arial shape=point xlabel=""]
+	"merge_to_(19, 1, 0, 0)" [fontname=Arial shape=point xlabel=""]
 	"(0, 0, 0, 0)" -> "cast_from_(0, 0, 0, 0)" [color=red]
 	"(0, 0, 0, 0)" -> "gather_from_(0, 0, 0, 0)" [color=purple]
 	"(1, 0, 0, 0)" -> "cast_from_(1, 0, 0, 0)" [color=red]
