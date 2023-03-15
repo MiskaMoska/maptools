@@ -68,7 +68,7 @@ assign credit_upd = fifo_read;
 assign ready_o_cast_nw = ~fifo_full;
 
 // cast network end receive buffer
-SyncFIFO_RTL #(
+fifo #(
     .width                   (`DW),
     .depth                   (`BUFFER_ALLOC),
     .depth_LOG               (`BUFFER_ALLOC_LOG),
@@ -85,7 +85,7 @@ SyncFIFO_RTL #(
 );
 
 // cast network end send buffer
-SyncFIFO_RTL_CNT #(
+fifo_cnt #(
     .width                   (`DW),
     .depth                   (128),
     .depth_LOG               (7),

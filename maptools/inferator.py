@@ -4,7 +4,7 @@ In other words, the rate the communication link transports data matches the rate
 TODO support finite bandwidth
 TODO support linear layer
 '''
-
+import os
 import time
 import pickle
 from ctg import *
@@ -357,7 +357,7 @@ class Inferator(object):
     def __init__(self, ctg: CTG, 
                     slide_once: bool = True, 
                     latency: Optional[int] = None,
-                    dir_name: str = './'
+                    *args, **kwargs
                     ) -> None:
         '''
         Inference machine designed for buffer size and communication load analysis.
@@ -401,8 +401,9 @@ class Inferator(object):
             when None, indicate no communication latency,
             when int, indicate communication latency is `latency`, `latency` must > 0
 
-        dir_name : str
-            directory name to store files
+        kwargs : Dict
+            root_dir : str = r'c:\git\nvcim-comm'
+                The root directory of the project.
 
         Key Members:
         ------------
@@ -416,7 +417,8 @@ class Inferator(object):
         self.ctg = ctg
         self.slide_once = slide_once
         self.latency = latency
-        self.dir_name = dir_name
+        self.root_dir = r'c:\git\nvcim-comm'
+        self.__dict__.update(kwargs)
         self.execu_dict = dict()
         self._build_obj_dict()
 
@@ -548,10 +550,14 @@ class Inferator(object):
                         "\t#channel", comm.nc
                         )
 
-    def save_execu(self):
-        file = self.dir_name + 'execu.pkl'
-        with open(file,'wb') as f:
+    def save_execu(self, file_name: str = 'execu'):
+        save_dir = os.path.join(self.root_dir, 'mapsave', 'execu')
+        if not os.path.exists(save_dir):
+            os.mkdir(save_dir)
+        file_dir = os.path.join(save_dir, file_name+'.pkl')
+        with open(file_dir,'wb') as f:
             pickle.dump(self.execu_dict, f)
+        print(f"execution info written to {file_dir}")
 
 
 def test_window_slide():

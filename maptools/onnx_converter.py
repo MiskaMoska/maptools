@@ -5,7 +5,7 @@ TODO need to support reduce mean in mnasnet
 TODO need to support sigmoid in efficientnet
 TODO need to support global average pool and fc layer
 '''
-
+import os
 import sys
 import onnx
 import onnx.numpy_helper as onh
@@ -42,14 +42,14 @@ class OnnxConverter(object):
         -------------
         >>> model = onnx.load("googlenet.onnx")
         >>> oc = OnnxConverter(model,arch='googlenet)
-        >>> oc.Run_Conversion()
+        >>> oc.run_conversion()
 
         The conversion results are located in OnnxConverter.og
         >>> og: OperationGraph = oc.og
 
         Or you can get the seperate results from OnnxConverter.op_graph and OnnxConverter.op_dicts:
         >>> op_graph: nx.MultiDiGraph = oc.op_graph
-        >>> op_dicts: Dict[str,Dict] = oc.op_dicts
+        >>> op_dicts: Dict[str, Dict] = oc.op_dicts
 
         Parameters
         -------------
@@ -61,9 +61,13 @@ class OnnxConverter(object):
             arch : str = 'resnet'
                 The architecture of the model (or backbone).
                 The arch must be one of OnnxConverter.valid_archs.
+
+            root_dir : str = r'c:\git\nvcim-comm'
+                The root directory of the project.
         '''
         self.model = model
         self.arch = 'resnet'
+        self.root_dir = r'c:\git\nvcim-comm'
         self.__dict__.update(kwargs)
         assert self.arch in OnnxConverter.valid_archs, f"unsupported model arch: {self.arch}"
 
@@ -272,7 +276,7 @@ class OnnxConverter(object):
 
     def _print_dict(self, dicts: Dict[str, Dict]) -> None:
         for v in dicts.values():
-            print("\n"+"-"*20)
+            print('\n'+'-'*20)
             print(f"op_type:{v['op_type']}")
             for k1 in v.keys():
                 if k1 != 'op_type':
@@ -285,6 +289,9 @@ class OnnxConverter(object):
         self._print_dict(self.op_dicts)
 
     def _plot_graph(self, graph: nx.MultiDiGraph, dicts: Dict) -> None:
+        save_dir = os.path.join(self.root_dir, 'mapsave', 'opgraph')
+        if not os.path.exists(save_dir):
+            os.mkdir(save_dir)
         dot = Digraph('graph')
         shape = 'box3d'
         labelloc = None
@@ -292,21 +299,14 @@ class OnnxConverter(object):
             dot.node(n,dicts[n]['op_type'],shape=shape,labelloc=labelloc,fontname='Arial')
         for e in graph.edges:
             dot.edge(e[0],e[1])
-        dot.view()
+        dot.view(cleanup=True, directory=save_dir, )
+        print(f"graph saved to {save_dir}")
 
     def plot_raw_graph(self) -> None:
         self._plot_graph(self.raw_graph, self.raw_dicts)
 
     def plot_op_graph(self) -> None:
         self._plot_graph(self.op_graph, self.op_dicts)
-
-if __name__ == "__main__":
-    model = onnx.load("../models/simp-resnet50.onnx")
-    oc = OnnxConverter(model,arch='resnet')
-    oc.run_conversion()
-    oc.plot_op_graph()
-    # oc.print_op_dict()
-    # print(type(oc.og.nodes))
 
 
 

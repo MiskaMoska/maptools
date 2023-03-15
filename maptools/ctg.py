@@ -1,7 +1,7 @@
 '''
 TODO support for STMX
 '''
-
+import os
 import numpy as np
 import networkx as nx
 from graphviz import Digraph
@@ -19,7 +19,7 @@ class CTG(object):
                     match_dict: Dict[str, int],
                     map_list: List[np.array],
                     map_dict: Dict[Tuple[int, int, int, int], Dict[str, Any]],
-                    arch: str = 'resnet') -> None:
+                    *args, **kwargs) -> None:
         '''
         Communication Trace Graph
         TODO support first layer cast comm
@@ -56,18 +56,25 @@ class CTG(object):
             arch : str = 'resnet'
                 The architecture of the model (or backbone).
                 The arch must be one of OnnxConverter.valid_archs.
+
+            root_dir : str = r'c:\git\nvcim-comm'
+                The root directory of the project.
         '''
         self.opgraph = opgraph
         self.match_dict = match_dict
         self.map_list = map_list
         self.dicts = map_dict
 
+        self.arch = 'resnet'
+        self.root_dir = r'c:\git\nvcim-comm'
+        self.__dict__.update(kwargs)
+
         self.xbar_nodes: List[Tuple[int, int, int, int]] = []
         self.cast_comms: List[str] = []
         self.merge_comms: List[str] = []
         self.gather_comms: List[str] = []
 
-        if arch == 'resnet':
+        if self.arch == 'resnet':
             self._build_ctg_resnet()
 
     @cached_property
@@ -278,6 +285,10 @@ class CTG(object):
                 self.update_dict(n, {'load': load, 'load_ratio': load / max_load})
 
     def plot_ctg(self) -> None:
+        save_dir = os.path.join(self.root_dir, 'mapsave', 'ctg')
+        if not os.path.exists(save_dir):
+            os.mkdir(save_dir)
+
         dot = Digraph('graph')
         dot.attr(rankdir='LR')
 
@@ -308,4 +319,5 @@ class CTG(object):
             elif e[0] in self.gather_comms or e[1] in self.gather_comms:
                 color = 'purple'
             dot.edge(str(e[0]),str(e[1]),color=color)
-        dot.view()
+        dot.view(cleanup=True, directory=save_dir)
+        print(f"ctg save to {save_dir}")

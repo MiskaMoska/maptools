@@ -4,7 +4,7 @@
     FIFO depth configurable
     Can be configured as FWFT mode or standard mode  
 */
-module SyncFIFO_RTL #(
+module fifo #(
     parameter   width =                 32,
     parameter   depth =                 16,
     parameter   depth_LOG =             4,

@@ -109,31 +109,41 @@ mux_data_valid_5to1 mux_data_valid_to_output_vc4(
 );
 
 
-mux_ready_5to1 mux_ready_to_input_vc0(
+mux_ready_5to1 #(
+    .multi_ready             (1)
+)mux_ready_to_input_vc0(
     .mux_sel                 (selVCfromVC0),
     .ready_in                (ready_in),
     .ready_out               (ready_out[0])
 );
 
-mux_ready_5to1 mux_ready_to_input_vc1(
+mux_ready_5to1 #(
+    .multi_ready             (1)
+)mux_ready_to_input_vc1(
     .mux_sel                 (selVCfromVC1),
     .ready_in                (ready_in),
     .ready_out               (ready_out[1])
 );
 
-mux_ready_5to1 mux_ready_to_input_vc2(
+mux_ready_5to1 #(
+    .multi_ready             (1)
+)mux_ready_to_input_vc2(
     .mux_sel                 (selVCfromVC2),
     .ready_in                (ready_in),
     .ready_out               (ready_out[2])
 );
 
-mux_ready_5to1 mux_ready_to_input_vc3(
+mux_ready_5to1 #(
+    .multi_ready             (1)
+)mux_ready_to_input_vc3(
     .mux_sel                 (selVCfromVC3),
     .ready_in                (ready_in),
     .ready_out               (ready_out[3])
 );
 
-mux_ready_5to1 mux_ready_to_input_vc4(
+mux_ready_5to1 #(
+    .multi_ready             (1)
+)mux_ready_to_input_vc4(
     .mux_sel                 (selVCfromVC4),
     .ready_in                (ready_in),
     .ready_out               (ready_out[4])      

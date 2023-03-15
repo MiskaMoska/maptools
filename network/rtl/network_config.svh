@@ -1,7 +1,7 @@
 
 `ifndef __NETWORK_CONFIG_SVH_
 `define __NETWORK_CONFIG_SVH_
-        localparam isUBM_list_0_0[`CN] = '{0,0,0,0,0};
+localparam isUBM_list_0_0[`CN] = '{0,0,0,0,0};
 localparam isUBM_list_0_1[`CN] = '{0,0,0,0,0};
 localparam isUBM_list_0_2[`CN] = '{0,0,0,0,0};
 localparam isUBM_list_0_3[`CN] = '{0,0,0,0,0};

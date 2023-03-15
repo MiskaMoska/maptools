@@ -6,6 +6,7 @@ from graphviz import Digraph
 import json
 
 G = nx.Graph()
+import os 
 
 edges = [
     ((2,0),(1,0)),
@@ -74,8 +75,6 @@ dot.node('4',label='graph')
 
 a = ''
 a.strip('...')
-
-
 
 
 

@@ -1,9 +1,9 @@
 //packing and unpacking
 `include "params.svh"
 
-module cast_converter #(
-    parameter isCaster = 0, //indicate whether the current node is a caster
-    parameter [9:0] stream_id = 0 //the stream id generated from the current node, fixed at 10-bit
+module gather_converter #(
+    parameter isGather = 0, //indicate whether the current node is the source of gather communication
+    parameter [9:0] stream_id = 0 //the stream-id of the stream generated from the current node, fixed at 10-bit
 )(
     input       wire                            clk,
     input       wire                            rstn, 
@@ -44,7 +44,7 @@ always@(posedge clk or negedge rstn) begin
     else pack_state <= nxt_pack_state;
 end
 
-assign nxt_pack_state = (pack_state == IDLE) & (isCaster == 1) ? HEAD : ( //to enable packing, the node must be a caster
+assign nxt_pack_state = (pack_state == IDLE) & (isGather == 1) ? HEAD : ( //to enable packing, the node must be a gather
                         (pack_state == HEAD) & valid_o_nw & ready_i_nw ? BODY : (
                         (pack_state == BODY) & (pack_cnt == `PKT_LEN - 3) & valid_o_nw & ready_i_nw ? TAIL : (
                         (pack_state == TAIL) & valid_o_nw & ready_i_nw ? HEAD : pack_state )));

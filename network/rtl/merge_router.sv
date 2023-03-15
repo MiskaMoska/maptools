@@ -46,10 +46,13 @@ assign valid_i_fifo[2] = ~fifo_empty[2];
 assign valid_i_fifo[3] = ~fifo_empty[3];
 assign valid_i_fifo[4] = ~fifo_empty[4];
 
-SyncFIFO_RTL #(
+localpram fifo_depth_log = `MERGE_ROUTER_BUFFER_DEPTH_LOG
+localparam fifo_depth = 2**`MERGE_ROUTER_BUFFER_DEPTH_LOG
+
+fifo #(
     .width                   (`DW),
-    .depth                   (4),
-    .depth_LOG               (2),
+    .depth                   (fifo_depth),
+    .depth_LOG               (fifo_depth_log),
     .FWFT                    (1)
 )fifo0(
     .clk_i                   (clk),
@@ -62,10 +65,10 @@ SyncFIFO_RTL #(
     .data_o                  (data_i_fifo[0])
 );
 
-SyncFIFO_RTL #(
+fifo #(
     .width                   (`DW),
-    .depth                   (4),
-    .depth_LOG               (2),
+    .depth                   (fifo_depth),
+    .depth_LOG               (fifo_depth_log),
     .FWFT                    (1)
 )fifo1(
     .clk_i                   (clk),
@@ -78,10 +81,10 @@ SyncFIFO_RTL #(
     .data_o                  (data_i_fifo[1])
 );
 
-SyncFIFO_RTL #(
+fifo #(
     .width                   (`DW),
-    .depth                   (4),
-    .depth_LOG               (2),
+    .depth                   (fifo_depth),
+    .depth_LOG               (fifo_depth_log),
     .FWFT                    (1)
 )fifo2(
     .clk_i                   (clk),
@@ -94,10 +97,10 @@ SyncFIFO_RTL #(
     .data_o                  (data_i_fifo[2])
 );
 
-SyncFIFO_RTL #(
+fifo #(
     .width                   (`DW),
-    .depth                   (4),
-    .depth_LOG               (2),
+    .depth                   (fifo_depth),
+    .depth_LOG               (fifo_depth_log),
     .FWFT                    (1)
 )fifo3(
     .clk_i                   (clk),
@@ -110,10 +113,10 @@ SyncFIFO_RTL #(
     .data_o                  (data_i_fifo[3])
 );
 
-SyncFIFO_RTL #(
+fifo #(
     .width                   (`DW),
-    .depth                   (4),
-    .depth_LOG               (2),
+    .depth                   (fifo_depth),
+    .depth_LOG               (fifo_depth_log),
     .FWFT                    (1)
 )fifo4(
     .clk_i                   (clk),

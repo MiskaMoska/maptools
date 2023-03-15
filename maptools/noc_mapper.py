@@ -1,8 +1,10 @@
 '''
 TODO need to provide support for random region division
 '''
+import os
 import random
 from random import shuffle
+import pickle
 import networkx as nx
 from matplotlib import pyplot as plt
 from typing import List, Dict, Tuple, Any, Optional, Generator
@@ -30,8 +32,8 @@ class NocMapper(object):
                 xbar array height
 
             kwargs : Dict
-                dir_name : str = './'
-                    root path to save the map figure.
+                root_dir : str = r'c:\git\nvcim-comm'
+                    The root directory of the project.
             
                 cast_method : bool = 'steiner'
                     'dyxy'      : DyXY-routing-based algorithm to run cast routing path plan, random.
@@ -50,18 +52,18 @@ class NocMapper(object):
         self.ctg = ctg
         self.w = w
         self.h = h
-        self.dir_name = './'
+        self.root_dir = r'c:\git\nvcim-comm'
         self.cast_method = 'steiner'
         self.__dict__.update(kwargs)
 
         # mapping from logical xbars to physical xbars
         self.map_dict: Dict[Tuple[int, int, int, int], Tuple[int, int]] = dict()
 
-        # intermediate representations
-        self.projected_model = []
-        self.model_regions = []
-        self.merge_nodes = []
-        self.cast_targets = []
+        # # intermediate representations
+        # self.projected_model = []
+        # self.model_regions = []
+        # self.merge_nodes = []
+        # self.cast_targets = []
 
         # network routing paths
         self.cast_paths: Dict[str, Dict[str, Any]] = dict()
@@ -320,3 +322,20 @@ class NocMapper(object):
         '''
         for _, src_node, dst_node in self.ctg.gather_pairs:
             yield (self.map_dict[src_node], self.map_dict[dst_node])
+
+    def save_map(self, file_name: str = 'newmap') -> None:
+        '''
+        save the mapping results as pkl sequence
+        '''
+        save_dir = os.path.join(self.root_dir, 'mapsave', 'nocmap')
+        if not os.path.exists(save_dir):
+            os.mkdir(save_dir)
+        file_dir = os.path.join(save_dir, file_name+'.pkl')
+        map_dict = dict()
+        map_dict['cast_paths'] = self.cast_paths
+        map_dict['merge_paths'] = self.merge_paths
+        map_dict['gather_paths'] = self.gather_paths
+        with open(file_dir,'wb') as f:
+            pickle.dump(map_dict, f)
+        print(f"noc mapping info written to {file_dir}")
+

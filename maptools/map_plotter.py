@@ -1,3 +1,4 @@
+import os
 import networkx as nx
 from copy import deepcopy
 from matplotlib import pyplot as plt
@@ -12,16 +13,39 @@ class MapPlotter(object):
                     cast_paths: Dict[str, Dict[str, Any]],
                     merge_paths: Dict[str, Dict[str, Any]],
                     gather_paths: Dict[str, Dict[str, Any]],
-                    show_path : Optional[bool] = False) -> None:
+                    show_path : Optional[bool] = False,
+                    *args, **kwargs) -> None:
         '''
         Plot the NoC-Mapped results
+
+        Parameters
+        ----------
+        w : int
+            network width
+        
+        h : int
+            network height
+        
+        cast_paths : Dict[str, Dict[str, Any]]
+            cast paths generated from `NocMapper`
+
+        merge_paths : Dict[str, Dict[str, Any]]
+            merge paths generated from `NocMapper`
+
+        gather_paths : Dict[str, Dict[str, Any]]
+            gather paths generated from `NocMapper`
+
+        kwargs : Dict
+            root_dir : str = r'c:\git\nvcim-comm'
+                The root directory of the project.
         '''
         self.w = w
         self.h = h
         self.cast_paths = cast_paths
         self.merge_paths = merge_paths
         self.gather_paths = gather_paths
-        self.dir_name = './'
+        self.root_dir = r'c:\git\nvcim-comm'
+        self.__dict__.update(kwargs)
 
         self.cast_graph = nx.MultiDiGraph()
         self.merge_graph = nx.MultiDiGraph()
@@ -188,8 +212,14 @@ class MapPlotter(object):
                             -(legal_ypos[k]+self.link_len*j)
                         )
         return graph, pos
-    
-    def plot_cast_map(self):
+
+    def _get_dir(self, file_name: str) -> None:
+        save_dir = os.path.join(self.root_dir, 'mapsave', 'nocmap')
+        if not os.path.exists(save_dir):
+            os.mkdir(save_dir)
+        return os.path.join(save_dir, file_name+'.png')
+
+    def plot_cast_map(self, file_name: str = 'img_map'):
         plt.figure(figsize=(self.w,self.h))
         self._plot_routers()
         self.cast_graph, pos = self._build_graph()
@@ -210,13 +240,14 @@ class MapPlotter(object):
                                             font_size=self.label_size, 
                                             label_pos=0.5
                                             )
-        plt.savefig(self.dir_name + f'/img_map',
-                        dpi=self.dpi, 
-                        bbox_inches='tight'
-                        )
-        print(f"Finished saving map image")
+        file_dir = self._get_dir(file_name)
+        plt.savefig(file_dir,
+                    dpi=self.dpi, 
+                    bbox_inches='tight'
+                    )
+        print(f"image saved to {file_dir}")
 
-    def plot_gather_map(self):
+    def plot_gather_map(self, file_name: str = 'img_map'):
         plt.figure(figsize=(self.w,self.h))
         self._plot_routers()
         self.gather_graph, pos = self._build_graph()
@@ -237,13 +268,14 @@ class MapPlotter(object):
                                             font_size=self.label_size, 
                                             label_pos=0.5
                                             )
-        plt.savefig(self.dir_name + f'/img_map',
-                        dpi=self.dpi, 
-                        bbox_inches='tight'
-                        )
-        print(f"Finished saving map image")
+        file_dir = self._get_dir(file_name)
+        plt.savefig(file_dir,
+                    dpi=self.dpi, 
+                    bbox_inches='tight'
+                    )
+        print(f"image saved to {file_dir}")
 
-    def plot_cast_gather_map(self):
+    def plot_cast_gather_map(self, file_name: str = 'img_map'):
         plt.figure(figsize=(self.w,self.h))
         self._plot_routers()
         self.cast_graph, pos = self._build_graph()
@@ -279,9 +311,10 @@ class MapPlotter(object):
                                             font_size=self.label_size, 
                                             label_pos=0.5
                                             )
-        plt.savefig(self.dir_name + f'/img_map',
-                        dpi=self.dpi, 
-                        bbox_inches='tight'
-                        )
-        print(f"Finished saving map image")
+        file_dir = self._get_dir(file_name)
+        plt.savefig(file_dir,
+                    dpi=self.dpi, 
+                    bbox_inches='tight'
+                    )
+        print(f"image saved to {file_dir}")
 

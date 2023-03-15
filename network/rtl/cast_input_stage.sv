@@ -44,7 +44,7 @@ assign fifo_write = valid_i & ready_o;
 assign valid_o = ~fifo_empty & ready_i;
 assign ready_o = ~fifo_full;
 
-SyncFIFO_RTL_UBM #(
+fifo_ubm #(
     .width                   (`DW),
     .depth                   (2**`CAST_ROUTER_BUFFER_DEPTH_LOG),
     .depth_LOG               (`CAST_ROUTER_BUFFER_DEPTH_LOG),
