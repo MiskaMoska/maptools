@@ -6,7 +6,7 @@ from copy import deepcopy
 class DeadlockKiller(object):
 
     def __init__(self,w,h,merge_nodes,cast_targets,cast_paths,
-                    sloops,cloops,dir_name="/mnt/c/git/nvcim-comm/behavior_model/test_auto"):
+                    sloops,cloops,dir_name="/mnt/c/git/nvcim-comm/network/mapping"):
         self.w = w
         self.h = h
         self.merge_nodes = merge_nodes

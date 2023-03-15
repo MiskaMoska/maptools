@@ -23,7 +23,7 @@ from typing import List, Dict, Tuple
 class NocMapper(object):
 
     def __init__(self,model:List[List[List[List[Dict]]]],w,h,
-                    dir_name="/mnt/c/git/nvcim-comm/behavior_model/test_auto"):
+                    dir_name="/mnt/c/git/nvcim-comm/network/mapping"):
         '''
             Parameters
             ----------
