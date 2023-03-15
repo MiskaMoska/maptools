@@ -10,8 +10,6 @@ __all__ = ['OperatorGraph']
 
 class OperatorGraph(object):
 
-    valid_ops = ['Conv','Act','Add','Pool']
-
     def __init__(self, graph: nx.MultiDiGraph, dicts: Dict[str, Dict], arch: str) -> None:
         '''
         Operater graph for graph division, fusion, and optimization

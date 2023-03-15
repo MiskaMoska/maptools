@@ -63,4 +63,4 @@ if __name__ == "__main__":
     nm.run_map()
     
     for xbar, cfg in nm.xbar_config_info:
-        print(cfg['op_type'],'\t',list(cfg.keys()))
+        print(xbar, cfg['op_type'])

@@ -121,9 +121,12 @@ class XbarMapper(object):
                         xbar_dict = {'xbar_icfg': icfg, 'xbar_ocfg': (start_co,end_co), \
                                         'xbar_num_ichan': end_ci-start_ci, 'xbar_num_ochan': end_co-start_co}
                         xbar_dict.update(layer)
+
+                        # regularize xbar op_type,
+                        # cause only merge xbar has [add, act, pool]
                         if j != 0 or t != 0: # not merge xbar
-                            # only merge xbar has pool or add
-                            xbar_dict['op_type'] = xbar_dict['op_type'].rstrip('-Add').rstrip('-Pool') 
+                            xbar_dict['op_type'] = xbar_dict['op_type']\
+                                .rstrip('-Pool').rstrip('-Act').rstrip('-Add')
                         self.map_dict[(l, i, j, t)] = xbar_dict
                         map_info[i][j] += 1
         
@@ -140,6 +143,11 @@ class XbarMapper(object):
         '''
         if self.arch == 'resnet':
             self._xbar_map_resnet()
+
+    @property
+    def xbar_config_info(self) -> Generator:
+        for k, v in self.map_dict.items():
+            yield (k, v)
 
     def print_config(self) -> None:
         '''
