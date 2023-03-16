@@ -36,20 +36,21 @@ if __name__ == "__main__":
     # 获得映射得到的CTG
     ctg = xm.ctg
 
-    inf = Inferator(ctg)
-    # inf.run()
-    # inf.save_execu(file_name='this')
-    inf.plot_execu(load_file='this')
-    sys.exit()
+    # inf = Inferator(ctg)
+    # # inf.run()
+    # # inf.save_execu(file_name='this')
+    # inf.plot_execu(load_file='this')
 
-    ctg.plot_ctg()
-    ctg.comm_load_analysis()
+    # ctg.plot_ctg()
+    # ctg.comm_load_analysis()
 
     # 创建NoC映射器
     nm = NocMapper(ctg,5,10)
 
     # 执行映射
     nm.run_map()
-    nm.save_map(file_name='this.pkl')
-    plt = MapPlotter(5,10,nm.cast_paths, nm.merge_paths, nm.gather_paths)
-    plt.plot_cast_map()
+    for k,v in nm.xbar_config_info:
+        print(k,v['op_type'])
+    # nm.save_map(file_name='this.pkl')
+    # plt = MapPlotter(5,10,nm.cast_paths, nm.merge_paths, nm.gather_paths)
+    # plt.plot_cast_map()
