@@ -138,7 +138,7 @@ class MapPlotter(object):
 
             for edge in g.edges: # add inter-router paths
                 link = self._get_link(edge)
-                self._update_cast_links(link, round(ratio, 2))
+                self._update_cast_links(link, 0 if self.show_path else round(ratio, 2))
 
     def _gather_plan(self):
         for connect in self.gather_paths.values():
@@ -173,7 +173,7 @@ class MapPlotter(object):
 
             for edge in g.edges: # add inter-router paths
                 link = self._get_link(edge)
-                self._update_gather_links(link, round(ratio, 2))
+                self._update_gather_links(link, 0 if self.show_path else round(ratio, 2))
 
     def _plot_routers(self) -> None:
         if self.show_path:

@@ -239,7 +239,7 @@ class OperatorGraph(object):
                 remain -= max([ks[dim], strs[dim]])
                 size_o = remain // strs[dim] + 1
                 if size_o < ofs[dim]:
-                    pads[0+dim] += 1
+                    pads[2-dim] += 1
                 elif size_o == ofs[dim]:
                     break
                 else:
@@ -249,22 +249,13 @@ class OperatorGraph(object):
                             strides: {strs[dim]}, pads: {[pads[0+dim], pads[2+dim]]}
                             need to decrease pads
                     ''')
-                # assert size_o == ofs[dim], \
-                #     f'''
-                #         calcuelated output size {size_o} not match onnx output size {ofs[dim]}
-                #         input_size: {ifs[dim]}, kernel_size: {ks[dim]},
-                #         strides: {strs[dim]}, pads: {[pads[0+dim], pads[2+dim]]}
-                #     '''
             extra = remain % strs[dim]
             if extra != 0:
                 print('starting correcting one size ....')
-                assert extra <= pads[0+dim] + pads[2+dim], \
-                    "extra pixels larger than onnx pads, cannot perform correction"
+                assert extra <= pads[2-dim], \
+                    "extra pixels larger than onnx outside (right and down) pads, cannot perform correction"
                 for i in range(extra):
-                    if pads[0+dim] > 0:
-                        pads[0+dim] -= 1
-                    else:
-                        pads[2+dim] -= 1    
+                    pads[2-dim] -= 1
 
         for i in range(2):
             __regu_one_dim(i)

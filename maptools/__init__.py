@@ -5,6 +5,4 @@ from noc_mapper import *
 from onnx_converter import *
 from operator_graph import *
 from xbar_mapper import *
-
-
 from utils import *
