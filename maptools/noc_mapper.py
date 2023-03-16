@@ -32,7 +32,7 @@ class NocMapper(object):
                 xbar array height
 
             kwargs : Dict
-                root_dir : str = r'c:\git\nvcim-comm'
+                root_dir : str = 'c:/git/nvcim-comm'
                     The root directory of the project.
             
                 cast_method : bool = 'steiner'
@@ -52,7 +52,7 @@ class NocMapper(object):
         self.ctg = ctg
         self.w = w
         self.h = h
-        self.root_dir = r'c:\git\nvcim-comm'
+        self.root_dir = 'c:/git/nvcim-comm'
         self.cast_method = 'steiner'
         self.__dict__.update(kwargs)
 

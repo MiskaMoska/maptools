@@ -36,6 +36,12 @@ if __name__ == "__main__":
     # 获得映射得到的CTG
     ctg = xm.ctg
 
+    inf = Inferator(ctg)
+    # inf.run()
+    # inf.save_execu(file_name='this')
+    inf.plot_execu(load_file='this')
+    sys.exit()
+
     ctg.plot_ctg()
     ctg.comm_load_analysis()
 

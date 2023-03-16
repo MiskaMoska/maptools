@@ -35,6 +35,7 @@ def build_mesh(eager_nodes: List[Tuple[int, int]]) -> nx.Graph:
             g.add_edge((x,y),(x+1,y))
     return g
 
+
 if __name__ == "__main__":
     g=build_mesh([(3,0),(2,1),(3,2),(1,2),(0,2)])
     print(g.edges)

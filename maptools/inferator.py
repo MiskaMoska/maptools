@@ -10,6 +10,7 @@ import pickle
 from ctg import *
 from utils import *
 import numpy as np
+from matplotlib import pyplot as plt
 from typing import Tuple, List, Any, Optional, Dict
 from functools import cached_property
 
@@ -220,7 +221,7 @@ class _Xbar(object):
 
     def _update_max_buf(self, buf_name: str) -> None:
         max_buf_name = 'max_' + buf_name
-        now_buf = self.__dict__[buf_name] * self.conv_num_outchan
+        now_buf = self.__dict__[buf_name] * self.conv_num_ochan
         if  now_buf > self.__dict__[max_buf_name]:
             self.__dict__[max_buf_name] = now_buf
 
@@ -402,7 +403,7 @@ class Inferator(object):
             when int, indicate communication latency is `latency`, `latency` must > 0
 
         kwargs : Dict
-            root_dir : str = r'c:\git\nvcim-comm'
+            root_dir : str = 'c:/git/nvcim-comm'
                 The root directory of the project.
 
         Key Members:
@@ -417,7 +418,7 @@ class Inferator(object):
         self.ctg = ctg
         self.slide_once = slide_once
         self.latency = latency
-        self.root_dir = r'c:\git\nvcim-comm'
+        self.root_dir = 'c:/git/nvcim-comm'
         self.__dict__.update(kwargs)
         self.execu_dict = dict()
         self._build_obj_dict()
@@ -558,6 +559,46 @@ class Inferator(object):
         with open(file_dir,'wb') as f:
             pickle.dump(self.execu_dict, f)
         print(f"execution info written to {file_dir}")
+
+    def plot_execu(self, load_file: Optional[str] = None, 
+                        start: int = 0, end: int = 1e6) -> None:
+        '''
+        plot the execution procedure of inferator.
+
+        Parameters
+        ----------
+        load_file : Optional[str] = None
+            if None, use self-generated execution info,
+            if not None, give the name of the file containing the execution info to load.
+
+        start : int = 0
+            starting iteration index.
+
+        end : int = 0
+            ending iteration index.
+        '''
+        if load_file is None:
+            info_dict = self.execu_dict
+        else:
+            file_dir = os.path.join(self.root_dir, 'mapsave', 'execu', load_file+'.pkl')
+            assert os.path.exists(file_dir), f"No such file: {file_dir}"
+            with open(file_dir, 'rb') as f_read:
+                info_dict = pickle.load(f_read)
+
+        total = []
+        for i, exe_list in enumerate(info_dict.values()):
+            total.append([])
+            for j, d in enumerate(exe_list):
+                if d != 0:
+                    if j > start and j < end:
+                        total[i].append((j, i))
+
+        for list in total:
+            if len(list) == 0:
+                continue
+            x, y = zip(*list)
+            plt.scatter(x, y, marker='|') 
+        plt.show()
 
 
 def test_window_slide():

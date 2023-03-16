@@ -5,29 +5,6 @@ from random import shuffle
 from graphviz import Digraph
 import json
 
-G = nx.Graph()
-import os 
-
-edges = [
-    ((2,0),(1,0)),
-    ((1,0),(0,0)),
-    ((2,0),(3,0)),
-    ((2,1),(1,1)),
-    ((1,1),(0,1)),
-    ((2,1),(3,1)),
-    ((2,2),(1,2)),
-    ((1,2),(0,2)),
-    ((2,2),(3,2)),
-    ((0,0),(0,1)),
-    ((0,1),(0,2)),
-    ((1,0),(1,1)),
-    ((1,1),(1,2)),
-    ((2,0),(2,1)),
-    ((2,1),(2,2)),
-    ((3,0),(3,1)),
-    ((3,1),(3,2))
-]
-
 # G.add_edges_from(edges)
 
 # g = nx.algorithms.approximation.steiner_tree(G,[(3,0),(2,1),(3,2),(1,2),(0,2)],method='kou')

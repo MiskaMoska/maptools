@@ -1,7 +1,7 @@
 '''
 TODO support for STMX
 '''
-
+import sys
 import math
 import numpy as np
 import networkx as nx
@@ -124,9 +124,16 @@ class XbarMapper(object):
 
                         # regularize xbar op_type,
                         # cause only merge xbar has [add, act, pool]
+                        # and merge xbar may have [bias] 
                         if j != 0 or t != 0: # not merge xbar
-                            xbar_dict['op_type'] = xbar_dict['op_type']\
-                                .rstrip('-Pool').rstrip('-Act').rstrip('-Add')
+                            if self.arch == 'resnet':
+                                xbar_dict['op_type'] = xbar_dict['op_type']\
+                                    .rstrip('-Pool').rstrip('-Act').rstrip('-Add') 
+                                if 'conv_bias' in xbar_dict.keys():
+                                    xbar_dict['op_type'] += '-Bias'
+                            else:
+                                print('XbarMapper only supports resenet yet')
+                                sys.exit()
                         self.map_dict[(l, i, j, t)] = xbar_dict
                         map_info[i][j] += 1
         

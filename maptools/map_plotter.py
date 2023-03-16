@@ -36,7 +36,7 @@ class MapPlotter(object):
             gather paths generated from `NocMapper`
 
         kwargs : Dict
-            root_dir : str = r'c:\git\nvcim-comm'
+            root_dir : str = 'c:/git/nvcim-comm'
                 The root directory of the project.
         '''
         self.w = w
@@ -44,7 +44,7 @@ class MapPlotter(object):
         self.cast_paths = cast_paths
         self.merge_paths = merge_paths
         self.gather_paths = gather_paths
-        self.root_dir = r'c:\git\nvcim-comm'
+        self.root_dir = 'c:/git/nvcim-comm'
         self.__dict__.update(kwargs)
 
         self.cast_graph = nx.MultiDiGraph()

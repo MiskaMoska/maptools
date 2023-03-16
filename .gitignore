@@ -1,2 +1,3 @@
-./behavior_model
-./onnx_models
+behavior_model/*
+onnx_models/*
+mapsave/*

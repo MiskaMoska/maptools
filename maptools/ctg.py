@@ -57,7 +57,7 @@ class CTG(object):
                 The architecture of the model (or backbone).
                 The arch must be one of OnnxConverter.valid_archs.
 
-            root_dir : str = r'c:\git\nvcim-comm'
+            root_dir : str = 'c:/git/nvcim-comm'
                 The root directory of the project.
         '''
         self.opgraph = opgraph
@@ -66,7 +66,7 @@ class CTG(object):
         self.dicts = map_dict
 
         self.arch = 'resnet'
-        self.root_dir = r'c:\git\nvcim-comm'
+        self.root_dir = 'c:/git/nvcim-comm'
         self.__dict__.update(kwargs)
 
         self.xbar_nodes: List[Tuple[int, int, int, int]] = []
