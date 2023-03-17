@@ -19,36 +19,36 @@ def gen_ports(w, h, flees):
 `include "cast_config.svh"
 
 module cast_network(
-input       wire                            clk,
-input       wire                            rstn,
+    input       wire                            clk,
+    input       wire                            rstn,
 '''
 
     port_str += '''
-//router local ports
-input       wire        [`DW-1:0]           data_i[`NOC_WIDTH][`NOC_HEIGHT],
-input       wire                            valid_i[`NOC_WIDTH][`NOC_HEIGHT],
-output      wire                            ready_o[`NOC_WIDTH][`NOC_HEIGHT],
+    //router local ports
+    input       wire        [`DW-1:0]           data_i[`NOC_WIDTH][`NOC_HEIGHT],
+    input       wire                            valid_i[`NOC_WIDTH][`NOC_HEIGHT],
+    output      wire                            ready_o[`NOC_WIDTH][`NOC_HEIGHT],
 
-output      wire        [`DW-1:0]           data_o[`NOC_WIDTH][`NOC_HEIGHT],
-output      wire                            valid_o[`NOC_WIDTH][`NOC_HEIGHT],
-input       wire                            ready_i[`NOC_WIDTH][`NOC_HEIGHT],'''
+    output      wire        [`DW-1:0]           data_o[`NOC_WIDTH][`NOC_HEIGHT],
+    output      wire                            valid_o[`NOC_WIDTH][`NOC_HEIGHT],
+    input       wire                            ready_i[`NOC_WIDTH][`NOC_HEIGHT],'''
 
     port_str += "\n"
     port_str += '''
-input       wire        [`DW-1:0]           data_i_stab,
-input       wire                            valid_i_stab,
-output      wire                            ready_o_stab,
+    input       wire        [`DW-1:0]           data_i_stab,
+    input       wire                            valid_i_stab,
+    output      wire                            ready_o_stab,
 '''
     for idx in range(len(flees)):
         port_str += f'''
-output      wire        [`DW-1:0]           data_o_flee{idx},
-output      wire                            valid_o_flee{idx},
-input       wire                            ready_i_flee{idx},
+    output      wire        [`DW-1:0]           data_o_flee{idx},
+    output      wire                            valid_o_flee{idx},
+    input       wire                            ready_i_flee{idx},
 '''
     port_str += '''
-//credit update signal input
-input       wire                            credit_upd[`NOC_WIDTH][`NOC_HEIGHT]\n'''
-    port_str += ");\n"
+    //credit update signal input
+    input       wire                            credit_upd[`NOC_WIDTH][`NOC_HEIGHT]\n'''
+    port_str += "\n);\n"
     return port_str
 
 def gen_instances(data_width, w, h, flees):
@@ -170,45 +170,45 @@ def gen_instances(data_width, w, h, flees):
             router_txt = '''
 /*Router '''+str(j)+''','''+str(i)+'''*/    
 cast_router #(
-.isUBM_list              (isUBM_list_'''+str(j)+'''_'''+str(i)+'''),
-.isFC_list               (isFC_list_'''+str(j)+'''_'''+str(i)+'''),
-.FCdn_list               (FCdn_list_'''+str(j)+'''_'''+str(i)+'''),
-.FCpl_list               (FCpl_list_'''+str(j)+'''_'''+str(i)+'''),
-.rt_file_list            (rt_file_list_'''+str(j)+'''_'''+str(i)+''')
+    .isUBM_list            (isUBM_list_'''+str(j)+'''_'''+str(i)+'''),
+    .isFC_list             (isFC_list_'''+str(j)+'''_'''+str(i)+'''),
+    .FCdn_list             (FCdn_list_'''+str(j)+'''_'''+str(i)+'''),
+    .FCpl_list             (FCpl_list_'''+str(j)+'''_'''+str(i)+'''),
+    .rt_file_list          (rt_file_list_'''+str(j)+'''_'''+str(i)+''')
 )router_'''+str(j)+'''_'''+str(i)+'''(
-.clk                   (clk),
-.rstn                  (rstn),
-.west_data_i           ('''+west_in_data+'''),
-.west_valid_i          ('''+west_in_valid+'''),
-.west_ready_o          ('''+west_in_ready+'''),
-.west_data_o           ('''+west_out_data+'''),
-.west_valid_o          ('''+west_out_valid+'''),
-.west_ready_i          ('''+west_out_ready+'''),
-.east_data_i           ('''+east_in_data+'''),
-.east_valid_i          ('''+east_in_valid+'''),
-.east_ready_o          ('''+east_in_ready+'''),
-.east_data_o           ('''+east_out_data+'''),
-.east_valid_o          ('''+east_out_valid+'''),
-.east_ready_i          ('''+east_out_ready+'''),
-.vert0_data_i          ('''+vert0_in_data+'''),
-.vert0_valid_i         ('''+vert0_in_valid+'''),
-.vert0_ready_o         ('''+vert0_in_ready+'''),
-.vert0_data_o          ('''+vert0_out_data+'''),
-.vert0_valid_o         ('''+vert0_out_valid+'''),
-.vert0_ready_i         ('''+vert0_out_ready+'''),
-.vert1_data_i          ('''+vert1_in_data+'''),
-.vert1_valid_i         ('''+vert1_in_valid+'''),
-.vert1_ready_o         ('''+vert1_in_ready+'''),
-.vert1_data_o          ('''+vert1_out_data+'''),
-.vert1_valid_o         ('''+vert1_out_valid+'''),
-.vert1_ready_i         ('''+vert1_out_ready+'''),
-.local_data_i          (data_i['''+str(j)+''']['''+str(i)+''']),
-.local_valid_i         (valid_i['''+str(j)+''']['''+str(i)+''']),
-.local_ready_o         (ready_o['''+str(j)+''']['''+str(i)+''']),
-.local_data_o          (data_o['''+str(j)+''']['''+str(i)+''']),
-.local_valid_o         (valid_o['''+str(j)+''']['''+str(i)+''']),
-.local_ready_i         (ready_i['''+str(j)+''']['''+str(i)+''']),
-.credit_upd            (credit_upd)
+    .clk                   (clk),
+    .rstn                  (rstn),
+    .west_data_i           ('''+west_in_data+'''),
+    .west_valid_i          ('''+west_in_valid+'''),
+    .west_ready_o          ('''+west_in_ready+'''),
+    .west_data_o           ('''+west_out_data+'''),
+    .west_valid_o          ('''+west_out_valid+'''),
+    .west_ready_i          ('''+west_out_ready+'''),
+    .east_data_i           ('''+east_in_data+'''),
+    .east_valid_i          ('''+east_in_valid+'''),
+    .east_ready_o          ('''+east_in_ready+'''),
+    .east_data_o           ('''+east_out_data+'''),
+    .east_valid_o          ('''+east_out_valid+'''),
+    .east_ready_i          ('''+east_out_ready+'''),
+    .vert0_data_i          ('''+vert0_in_data+'''),
+    .vert0_valid_i         ('''+vert0_in_valid+'''),
+    .vert0_ready_o         ('''+vert0_in_ready+'''),
+    .vert0_data_o          ('''+vert0_out_data+'''),
+    .vert0_valid_o         ('''+vert0_out_valid+'''),
+    .vert0_ready_i         ('''+vert0_out_ready+'''),
+    .vert1_data_i          ('''+vert1_in_data+'''),
+    .vert1_valid_i         ('''+vert1_in_valid+'''),
+    .vert1_ready_o         ('''+vert1_in_ready+'''),
+    .vert1_data_o          ('''+vert1_out_data+'''),
+    .vert1_valid_o         ('''+vert1_out_valid+'''),
+    .vert1_ready_i         ('''+vert1_out_ready+'''),
+    .local_data_i          (data_i['''+str(j)+''']['''+str(i)+''']),
+    .local_valid_i         (valid_i['''+str(j)+''']['''+str(i)+''']),
+    .local_ready_o         (ready_o['''+str(j)+''']['''+str(i)+''']),
+    .local_data_o          (data_o['''+str(j)+''']['''+str(i)+''']),
+    .local_valid_o         (valid_o['''+str(j)+''']['''+str(i)+''']),
+    .local_ready_i         (ready_i['''+str(j)+''']['''+str(i)+''']),
+    .credit_upd            (credit_upd)
 );\n'''
             inst_str += router_txt
     return inst_str

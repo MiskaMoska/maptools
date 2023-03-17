@@ -2,13 +2,7 @@
 Test the function of mapper
 '''
 import onnx
-from onnx_converter import *
-from operator_graph import *
-from xbar_mapper import *
-from ctg import *
-from noc_mapper import *
-from inferator import *
-from map_plotter import *
+from maptools import *
 import sys
 
 if __name__ == "__main__":
@@ -55,11 +49,13 @@ if __name__ == "__main__":
     # 执行映射
     nm.run_map()
 
-    for k,v in nm.xbar_config_info:
-        print(k,'\t\t',v['op_type'])
+    # nm.save_map()
+
+    # for k,v in nm.xbar_config_info:
+    #     print(k,'\t\t',v['op_type'])
     # # for k,v in nm.xbar_config_info:
     # #     print(k,v['op_type'])
     # # nm.save_map(file_name='this.pkl')
-    # plt = MapPlotter(10,25,nm.cast_paths, nm.merge_paths, nm.gather_paths, show_path=True)
-    # plt.plot_cast_map()
+    plt = MapPlotter(5,10,nm.cast_paths, nm.merge_paths, nm.gather_paths, show_path=True)
+    plt.plot_gather_map()
 

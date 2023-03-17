@@ -108,7 +108,7 @@ class MapPlotter(object):
         for connect in self.cast_paths.values():
             g = nx.MultiDiGraph()
             g.add_edges_from(connect['path'])
-            dst_nodes =connect['dst_nodes']
+            dst_nodes = connect['dst']
             ratio = connect['load_ratio']
             if self.show_path:
                 for node in g.nodes: # add intra-router paths

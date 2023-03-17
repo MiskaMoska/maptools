@@ -20,34 +20,38 @@ class NocMapper(object):
 
     def __init__(self, ctg: CTG, w: int, h: int, *args, **kwargs) -> None:
         '''
-            Parameters
-            ----------
-            ctg : CTG
-                communication trace graph
+        Map the communication trace graph (CTG) onto network-on-chip (NoC)
 
-            w : int
-                xbar array width
+        Parameters
+        ----------
+        ctg : CTG
+            communication trace graph
 
-            h : int
-                xbar array height
+        w : int
+            xbar array width
 
-            kwargs : Dict
-                root_dir : str = 'c:/git/nvcim-comm'
-                    The root directory of the project.
-            
-                cast_method : bool = 'steiner'
-                    'dyxy'      : DyXY-routing-based algorithm to run cast routing path plan, random.
-                    'steiner'   : minimum steiner-tree-based algorithm to run cast routing path plan, deterministic.
+        h : int
+            xbar array height
+
+        kwargs : Dict
+            root_dir : str = 'c:/git/nvcim-comm'
+                The root directory of the project.
         
-            Key Members:
-            ------------
-            self.map_dict : Dict[Tuple[int, int, int, int], Tuple[int, int]]
-                Map the logical xbar (4-element tuple) to the physical xbar (2-element tuple).
+            cast_method : bool = 'steiner'
+                'dyxy'      : DyXY-routing-based algorithm to run cast routing path plan, random.
+                'steiner'   : minimum steiner-tree-based algorithm to run cast routing path plan, deterministic.
+    
+        Key Members:
+        ------------
+        self.map_dict : Dict[Tuple[int, int, int, int], Tuple[int, int]]
+            Map the logical xbar (4-element tuple) to the physical xbar (2-element tuple).
 
-            self.xxx_paths : Dict[str, Dict[str, Any]]
-                xxx can be any of [cast, merge, gather].
-                Stores the mapped paths and corresponding attributes for each connection type.
-                {'connection_name' : {'sid' : int, 'path' : List[Tuple], 'load_ratio' : float, ....}}
+        self.xxx_paths : Dict[str, Dict[str, Any]]
+            xxx can be any of [cast, merge, gather].
+            Stores the mapped paths and corresponding attributes for each connection type.
+            `self.xxx_paths` = {'connection_name' : `path_dict`}
+            where `path_dict` = {'sid' : int, 'src' : List[Tuple], 'dst' : List[Tuple], 
+                                'path' : List[Tuple[Tuple]], 'load_ratio' : float, ....}}
         '''
         self.ctg = ctg
         self.w = w
@@ -207,8 +211,8 @@ class NocMapper(object):
                         break
             self.cast_paths[name] = dict()
             self.cast_paths[name]['sid'] = sid
-            self.cast_paths[name]['root_node'] = root_node
-            self.cast_paths[name]['dst_nodes'] = dst_nodes
+            self.cast_paths[name]['src'] = [root_node]
+            self.cast_paths[name]['dst'] = dst_nodes
             self.cast_paths[name]['path'] = list(g.edges) # add to cast_paths
             self.cast_paths[name]['load_ratio'] = self.ctg.get_attr(name, 'load_ratio')
 
@@ -255,6 +259,8 @@ class NocMapper(object):
                     break
             self.merge_paths[name] = dict()
             self.merge_paths[name]['sid'] = sid
+            self.merge_paths[name]['src'] = src_nodes
+            self.merge_paths[name]['dst'] = [root_node]
             self.merge_paths[name]['path'] = paths # add to merge_paths
             self.merge_paths[name]['load_ratio'] = self.ctg.get_attr(name, 'load_ratio')
 
@@ -278,6 +284,8 @@ class NocMapper(object):
                                 dst_node[0], dst_node[1], path)
             self.gather_paths[name] = dict()
             self.gather_paths[name]['sid'] = sid
+            self.gather_paths[name]['src'] = [src_node]
+            self.gather_paths[name]['dst'] = [dst_node]
             self.gather_paths[name]['path'] = path
             self.gather_paths[name]['load_ratio'] = self.ctg.get_attr(name, 'load_ratio')
 
@@ -332,9 +340,24 @@ class NocMapper(object):
             os.mkdir(save_dir)
         file_dir = os.path.join(save_dir, file_name+'.pkl')
         map_dict = dict()
+
+        # write network size info
+        map_dict['network_width'] = self.w
+        map_dict['network_height'] = self.h
+
+        # write noc mapping info
+        map_dict['map_dict'] = self.map_dict
+
+        # write network config info
         map_dict['cast_paths'] = self.cast_paths
         map_dict['merge_paths'] = self.merge_paths
         map_dict['gather_paths'] = self.gather_paths
+
+        # write p2p communication info
+        map_dict['p2p_casts'] = list(self.p2p_casts)
+        map_dict['p2p_merges'] = list(self.p2p_merges)
+        map_dict['p2p_gathers'] = list(self.p2p_gathers)
+
         with open(file_dir,'wb') as f:
             pickle.dump(map_dict, f)
         print(f"noc mapping info written to {file_dir}")

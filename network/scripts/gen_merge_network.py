@@ -11,20 +11,20 @@ def gen_ports(w, h):
 `include "merge_config.svh"
 
 module merge_network(
-input       wire                            clk,
-input       wire                            rstn,
+    input       wire                            clk,
+    input       wire                            rstn,
 '''
 
     port_str += '''
-//router local ports
-input       wire        [`DW-1:0]           data_i[`NOC_WIDTH][`NOC_HEIGHT],
-input       wire                            valid_i[`NOC_WIDTH][`NOC_HEIGHT],
-output      reg                             ready_o[`NOC_WIDTH][`NOC_HEIGHT],
+    //router local ports
+    input       wire        [`DW-1:0]           data_i[`NOC_WIDTH][`NOC_HEIGHT],
+    input       wire                            valid_i[`NOC_WIDTH][`NOC_HEIGHT],
+    output      reg                             ready_o[`NOC_WIDTH][`NOC_HEIGHT],
 
-output      reg         [`DW-1:0]           data_o[`NOC_WIDTH][`NOC_HEIGHT],
-output      reg                             valid_o[`NOC_WIDTH][`NOC_HEIGHT],
-input       wire                            ready_i[`NOC_WIDTH][`NOC_HEIGHT]
-);'''
+    output      reg         [`DW-1:0]           data_o[`NOC_WIDTH][`NOC_HEIGHT],
+    output      reg                             valid_o[`NOC_WIDTH][`NOC_HEIGHT],
+    input       wire                            ready_i[`NOC_WIDTH][`NOC_HEIGHT]
+);\n'''
     return port_str
 
 def gen_instances(data_width, w, h):
@@ -98,17 +98,17 @@ def gen_instances(data_width, w, h):
             router_txt = '''
 /*Router '''+str(j)+''','''+str(i)+'''*/    
 merge_router #(
-.input_mask                     (input_mask_'''+str(j)+'''_'''+str(i)+'''),
-.output_sel                     (output_sel_'''+str(j)+'''_'''+str(i)+''')
+    .input_mask                     (input_mask_'''+str(j)+'''_'''+str(i)+'''),
+    .output_sel                     (output_sel_'''+str(j)+'''_'''+str(i)+''')
 )router'''+str(id)+'''(
-.clk                            (clk),
-.rstn                           (rstn),
-.data_i                         (data_i_'''+str(j)+'''_'''+str(i)+'''),
-.valid_i                        (valid_i_'''+str(j)+'''_'''+str(i)+'''),
-.ready_o                        (ready_o_'''+str(j)+'''_'''+str(i)+'''),
-.data_o                         (data_o_'''+str(j)+'''_'''+str(i)+'''),
-.valid_o                        (valid_o_'''+str(j)+'''_'''+str(i)+'''),
-.ready_i                        (ready_i_'''+str(j)+'''_'''+str(i)+''')
+    .clk                            (clk),
+    .rstn                           (rstn),
+    .data_i                         (data_i_'''+str(j)+'''_'''+str(i)+'''),
+    .valid_i                        (valid_i_'''+str(j)+'''_'''+str(i)+'''),
+    .ready_o                        (ready_o_'''+str(j)+'''_'''+str(i)+'''),
+    .data_o                         (data_o_'''+str(j)+'''_'''+str(i)+'''),
+    .valid_o                        (valid_o_'''+str(j)+'''_'''+str(i)+'''),
+    .ready_i                        (ready_i_'''+str(j)+'''_'''+str(i)+''')
 );\n'''     
             router_txt += '''
 \nalways@(*) begin
@@ -138,7 +138,7 @@ def gen_outputs(w,h):
     out_str += "end\n"
     return out_str
 
-def gen_merge_network(root_dir, data_width, w, h, flees):
+def gen_merge_network(root_dir, data_width, w, h):
     file_name = os.path.join(root_dir, 'network', 'rtl', 'generated', 'merge_network.sv')
 
     containt = ""
