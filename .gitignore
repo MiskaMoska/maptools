@@ -2,3 +2,4 @@ behavior_model/*
 onnx_models/*
 mapsave/*
 inference/*
+build/*
