@@ -403,8 +403,11 @@ class Inferator(object):
             when int, indicate communication latency is `latency`, `latency` must > 0
 
         kwargs : Dict
-            root_dir : str = 'c:/git/nvcim-comm'
+            root_dir : str = os.environ['NVCIM_HOME']
                 The root directory of the project.
+
+            mapname : str = 'newmap'
+                Map name
 
         Key Members:
         ------------
@@ -418,7 +421,8 @@ class Inferator(object):
         self.ctg = ctg
         self.slide_once = slide_once
         self.latency = latency
-        self.root_dir = 'c:/git/nvcim-comm'
+        self.root_dir = os.environ['NVCIM_HOME']
+        self.mapname = 'newmap'
         self.__dict__.update(kwargs)
         self.execu_dict = dict()
         self._build_obj_dict()
@@ -552,13 +556,13 @@ class Inferator(object):
                         )
 
     def save_execu(self, file_name: str = 'execu'):
-        save_dir = os.path.join(self.root_dir, 'mapsave', 'execu')
+        save_dir = os.path.join(self.root_dir, 'mapsave', self.mapname, 'execu')
         if not os.path.exists(save_dir):
-            os.mkdir(save_dir)
+            os.makedirs(save_dir)
         file_dir = os.path.join(save_dir, file_name+'.pkl')
         with open(file_dir,'wb') as f:
             pickle.dump(self.execu_dict, f)
-        print(f"execution info written to {file_dir}")
+        print(f"\nexecution info written to {file_dir}")
 
     def plot_execu(self, load_file: Optional[str] = None, 
                         start: int = 0, end: int = 1e6) -> None:
@@ -580,7 +584,7 @@ class Inferator(object):
         if load_file is None:
             info_dict = self.execu_dict
         else:
-            file_dir = os.path.join(self.root_dir, 'mapsave', 'execu', load_file+'.pkl')
+            file_dir = os.path.join(self.root_dir, 'mapsave', self.mapname, 'execu', load_file+'.pkl')
             assert os.path.exists(file_dir), f"No such file: {file_dir}"
             with open(file_dir, 'rb') as f_read:
                 info_dict = pickle.load(f_read)

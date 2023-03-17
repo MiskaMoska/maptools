@@ -64,6 +64,7 @@ class XbarMapper(object):
         self.w = w
         self.h = h
         self.arch = 'resnet'
+        self.mapname = 'newmap'
         self.__dict__.update(kwargs)
         self.match_dict: Dict[str, int] = dict() 
         self.map_list: List[np.array[2]] = []
@@ -142,7 +143,13 @@ class XbarMapper(object):
 
     @property
     def ctg(self) -> CTG:
-        return CTG(self.opgraph,self.match_dict,self.map_list,self.map_dict,arch=self.arch)
+        return CTG(self.opgraph,
+                    self.match_dict,
+                    self.map_list,
+                    self.map_dict,
+                    arch = self.arch,
+                    mapname = self.mapname
+                    )
 
     def run_map(self) -> None: 
         '''
@@ -168,4 +175,5 @@ class XbarMapper(object):
             print(f"layer{i}: #region-{mtx.shape[0]}, #block-{mtx.shape[1]}, #xbar-{sum}")
         print("-"*70)
         print(f"total #xbar-{total}")
+        self.total_xbar = total
 

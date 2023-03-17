@@ -8,8 +8,9 @@ if os.path.exists('now_root'):
         old_root = f.read()
 else:
     old_root = input("Please input the current project root directory: ")
+
 new_root = input("Please input the new project root directory: ")
-new_root = "'"+new_root+"'"
+new_root = new_root
 file_list = [
     'maptools/ctg.py',
     'maptools/inferator.py',
@@ -18,6 +19,7 @@ file_list = [
     'maptools/onnx_converter.py',
     'maptools/operator_graph.py',
     'maptools/xbar_mapper.py',
+    'maptools/map_routine.py'
 ]
 
 def replace(old_str, new_str):

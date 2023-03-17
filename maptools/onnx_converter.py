@@ -62,12 +62,16 @@ class OnnxConverter(object):
                 The architecture of the model (or backbone).
                 The arch must be one of OnnxConverter.valid_archs.
 
-            root_dir : str = 'c:/git/nvcim-comm'
+            root_dir : str = os.environ['NVCIM_HOME']
                 The root directory of the project.
+
+            mapname : str = 'newmap'
+                Map name
         '''
         self.model = model
         self.arch = 'resnet'
-        self.root_dir = 'c:/git/nvcim-comm'
+        self.root_dir = os.environ['NVCIM_HOME']
+        self.mapname = 'newmap'
         self.__dict__.update(kwargs)
         assert self.arch in OnnxConverter.valid_archs, f"unsupported model arch: {self.arch}"
 
@@ -289,9 +293,10 @@ class OnnxConverter(object):
         self._print_dict(self.op_dicts)
 
     def _plot_graph(self, graph: nx.MultiDiGraph, dicts: Dict) -> None:
-        save_dir = os.path.join(self.root_dir, 'mapsave', 'opgraph')
+        name = 'raw_graph' if dicts is self.raw_dicts else 'op_graph'
+        save_dir = os.path.join(self.root_dir, 'mapsave', self.mapname, name)
         if not os.path.exists(save_dir):
-            os.mkdir(save_dir)
+            os.makedirs(save_dir)
         dot = Digraph('graph')
         shape = 'box3d'
         labelloc = None

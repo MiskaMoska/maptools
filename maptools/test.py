@@ -1,11 +1,19 @@
-'''
-Test the function of mapper
-'''
-import onnx
-from maptools import *
+import os
 import sys
+import onnx
+from ctg import *
+from inferator import *
+from map_plotter import *
+from noc_mapper import *
+from onnx_converter import *
+from operator import *
+from operator_graph import *
+from xbar_mapper import *
 
 if __name__ == "__main__":
+    print(os.environ['NVCIM_HOME'])
+    # sys.exit()
+
     # 获得onnx原生模型
     model = onnx.load("../onnx_models/simp-resnet18.onnx")
 
@@ -48,7 +56,7 @@ if __name__ == "__main__":
 
     # 执行映射
     nm.run_map()
-    nm.save_map()
+    # nm.save_map()
 
     # nm.save_map()
 

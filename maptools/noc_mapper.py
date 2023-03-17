@@ -34,13 +34,16 @@ class NocMapper(object):
             xbar array height
 
         kwargs : Dict
-            root_dir : str = 'c:/git/nvcim-comm'
+            root_dir : str = os.environ['NVCIM_HOME']
                 The root directory of the project.
         
             cast_method : bool = 'steiner'
                 'dyxy'      : DyXY-routing-based algorithm to run cast routing path plan, random.
                 'steiner'   : minimum steiner-tree-based algorithm to run cast routing path plan, deterministic.
-    
+
+            mapname : str = 'newmap'
+                Map name
+
         Key Members:
         ------------
         self.map_dict : Dict[Tuple[int, int, int, int], Tuple[int, int]]
@@ -56,8 +59,9 @@ class NocMapper(object):
         self.ctg = ctg
         self.w = w
         self.h = h
-        self.root_dir = 'c:/git/nvcim-comm'
+        self.root_dir = os.environ['NVCIM_HOME']
         self.cast_method = 'steiner'
+        self.mapname = 'newmap'
         self.__dict__.update(kwargs)
 
         # mapping from logical xbars to physical xbars
@@ -331,34 +335,35 @@ class NocMapper(object):
         for _, src_node, dst_node in self.ctg.gather_pairs:
             yield (self.map_dict[src_node], self.map_dict[dst_node])
 
-    def save_map(self, file_name: str = 'newmap') -> None:
+    def save_map(self, file_name: str = 'mapinfo') -> None:
         '''
         save the mapping results as pkl sequence
         '''
-        save_dir = os.path.join(self.root_dir, 'mapsave', 'nocmap')
+        save_dir = os.path.join(self.root_dir, 'mapsave', self.mapname, 'nocmap')
         if not os.path.exists(save_dir):
-            os.mkdir(save_dir)
+            os.makedirs(save_dir)
         file_dir = os.path.join(save_dir, file_name+'.pkl')
-        map_dict = dict()
+        info_dict = dict()
 
         # write network size info
-        map_dict['network_width'] = self.w
-        map_dict['network_height'] = self.h
+        info_dict['network_width'] = self.w
+        info_dict['network_height'] = self.h
 
         # write noc mapping info
-        map_dict['map_dict'] = self.map_dict
+        info_dict['map_dict'] = self.map_dict
+        # info_dict['xbar_config_info'] = list(self.xbar_config_info)
 
         # write network config info
-        map_dict['cast_paths'] = self.cast_paths
-        map_dict['merge_paths'] = self.merge_paths
-        map_dict['gather_paths'] = self.gather_paths
+        info_dict['cast_paths'] = self.cast_paths
+        info_dict['merge_paths'] = self.merge_paths
+        info_dict['gather_paths'] = self.gather_paths
 
         # write p2p communication info
-        map_dict['p2p_casts'] = list(self.p2p_casts)
-        map_dict['p2p_merges'] = list(self.p2p_merges)
-        map_dict['p2p_gathers'] = list(self.p2p_gathers)
+        info_dict['p2p_casts'] = list(self.p2p_casts)
+        info_dict['p2p_merges'] = list(self.p2p_merges)
+        info_dict['p2p_gathers'] = list(self.p2p_gathers)
 
         with open(file_dir,'wb') as f:
-            pickle.dump(map_dict, f)
-        print(f"noc mapping info written to {file_dir}")
+            pickle.dump(info_dict, f)
+        print(f"noc mapping info has been written to {file_dir}")
 

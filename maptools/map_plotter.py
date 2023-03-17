@@ -36,15 +36,19 @@ class MapPlotter(object):
             gather paths generated from `NocMapper`
 
         kwargs : Dict
-            root_dir : str = 'c:/git/nvcim-comm'
+            root_dir : str = os.environ['NVCIM_HOME']
                 The root directory of the project.
+        
+            mapname : str = 'newmap'
+                Map name
         '''
         self.w = w
         self.h = h
         self.cast_paths = cast_paths
         self.merge_paths = merge_paths
         self.gather_paths = gather_paths
-        self.root_dir = 'c:/git/nvcim-comm'
+        self.root_dir = os.environ['NVCIM_HOME']
+        self.mapname = 'newmap'
         self.__dict__.update(kwargs)
 
         self.cast_graph = nx.MultiDiGraph()
@@ -214,12 +218,12 @@ class MapPlotter(object):
         return graph, pos
 
     def _get_dir(self, file_name: str) -> None:
-        save_dir = os.path.join(self.root_dir, 'mapsave', 'nocmap')
+        save_dir = os.path.join(self.root_dir, 'mapsave', self.mapname, 'nocpath')
         if not os.path.exists(save_dir):
-            os.mkdir(save_dir)
+            os.makedirs(save_dir)
         return os.path.join(save_dir, file_name+'.png')
 
-    def plot_cast_map(self, file_name: str = 'img_map'):
+    def plot_cast_map(self, file_name: str = 'cast_path'):
         plt.figure(figsize=(self.w,self.h))
         self._plot_routers()
         self.cast_graph, pos = self._build_graph()
@@ -247,7 +251,7 @@ class MapPlotter(object):
                     )
         print(f"image saved to {file_dir}")
 
-    def plot_gather_map(self, file_name: str = 'img_map'):
+    def plot_gather_map(self, file_name: str = 'gather_path'):
         plt.figure(figsize=(self.w,self.h))
         self._plot_routers()
         self.gather_graph, pos = self._build_graph()
@@ -275,7 +279,7 @@ class MapPlotter(object):
                     )
         print(f"image saved to {file_dir}")
 
-    def plot_cast_gather_map(self, file_name: str = 'img_map'):
+    def plot_cast_gather_map(self, file_name: str = 'cast_gather_map'):
         plt.figure(figsize=(self.w,self.h))
         self._plot_routers()
         self.cast_graph, pos = self._build_graph()

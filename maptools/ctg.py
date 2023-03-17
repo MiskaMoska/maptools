@@ -57,8 +57,11 @@ class CTG(object):
                 The architecture of the model (or backbone).
                 The arch must be one of OnnxConverter.valid_archs.
 
-            root_dir : str = 'c:/git/nvcim-comm'
+            root_dir : str = os.environ['NVCIM_HOME']
                 The root directory of the project.
+
+            mapname : str = 'newmap'
+                Map name
         '''
         self.opgraph = opgraph
         self.match_dict = match_dict
@@ -66,7 +69,8 @@ class CTG(object):
         self.dicts = map_dict
 
         self.arch = 'resnet'
-        self.root_dir = 'c:/git/nvcim-comm'
+        self.root_dir = os.environ['NVCIM_HOME']
+        self.mapname = 'newmap'
         self.__dict__.update(kwargs)
 
         self.xbar_nodes: List[Tuple[int, int, int, int]] = []
@@ -285,9 +289,9 @@ class CTG(object):
                 self.update_dict(n, {'load': load, 'load_ratio': load / max_load})
 
     def plot_ctg(self) -> None:
-        save_dir = os.path.join(self.root_dir, 'mapsave', 'ctg')
+        save_dir = os.path.join(self.root_dir, 'mapsave', self.mapname, 'ctg')
         if not os.path.exists(save_dir):
-            os.mkdir(save_dir)
+            os.makedirs(save_dir)
 
         dot = Digraph('graph')
         dot.attr(rankdir='LR')
