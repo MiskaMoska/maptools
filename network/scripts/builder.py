@@ -1,6 +1,5 @@
 from gen_cast_network import *
 from gen_merge_network import *
-
 w = 5
 h = 10
 data_width = 34

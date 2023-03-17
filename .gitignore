@@ -1,4 +1,4 @@
 behavior_model/*
 onnx_models/*
 mapsave/*
-maptools/resnet18.onnx
+inference/*

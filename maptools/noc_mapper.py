@@ -9,10 +9,10 @@ import networkx as nx
 from matplotlib import pyplot as plt
 from typing import List, Dict, Tuple, Any, Optional, Generator
 from functools import cached_property
-from xbar_mapper import *
+from maptools.xbar_mapper import *
+from maptools.ctg import *
+from maptools.utils import *
 from copy import deepcopy
-from ctg import *
-from utils import *
 
 __all__ = ['NocMapper']
 

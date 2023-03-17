@@ -7,8 +7,8 @@ TODO support linear layer
 import os
 import time
 import pickle
-from ctg import *
-from utils import *
+from maptools.ctg import *
+from maptools.utils import *
 import numpy as np
 from matplotlib import pyplot as plt
 from typing import Tuple, List, Any, Optional, Dict

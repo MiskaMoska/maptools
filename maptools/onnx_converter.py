@@ -13,7 +13,7 @@ import networkx as nx
 from typing import Any, List, Dict, Tuple, Optional, Generator
 from graphviz import Digraph
 from copy import deepcopy 
-from operator_graph import *
+from maptools.operator_graph import *
 
 __all__ = ['OnnxConverter']
 

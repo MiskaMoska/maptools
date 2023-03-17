@@ -8,8 +8,8 @@ from graphviz import Digraph
 from functools import cached_property
 from typing import List, Dict, Tuple, Any, Generator, Optional
 from typing import overload
-from operator_graph import *
-from utils import *
+from maptools.operator_graph import *
+from maptools.utils import *
 
 __all__ = ['CTG']
 
