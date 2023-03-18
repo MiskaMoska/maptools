@@ -1,9 +1,12 @@
+import os
+import pickle
 from typing import List, Tuple
 import networkx as nx
 
 __all__ = [
     'is_subseq',
-    'build_mesh'
+    'build_mesh',
+    'get_map'
 ]
 
 def is_subseq(a: List, b: List) -> bool:
@@ -35,7 +38,12 @@ def build_mesh(eager_nodes: List[Tuple[int, int]]) -> nx.Graph:
             g.add_edge((x,y),(x+1,y))
     return g
 
-
-if __name__ == "__main__":
-    g=build_mesh([(3,0),(2,1),(3,2),(1,2),(0,2)])
-    print(g.edges)
+def get_map(mapname: str = 'newmap') -> None:
+    root_dir = os.environ['NVCIM_HOME']
+    file_dir = os.path.join(root_dir, 'mapsave', mapname, 'params.pkl')
+    with open(file_dir, 'rb') as f:
+        params = pickle.load(f)
+    file_dir = os.path.join(root_dir, 'mapsave', mapname, 'mapinfo.pkl')
+    with open(file_dir, 'rb') as f:
+        mapinfo = pickle.load(f)
+    return params, mapinfo

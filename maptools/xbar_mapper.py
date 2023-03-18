@@ -34,8 +34,8 @@ class XbarMapper(object):
             arch : str = 'resnet'
                 model architecture
 
-        Key Members:
-        --------------
+        Key Members
+        -----------
         self.match_dict : Dict[str, int]
             Matches each compute node in the operator graph to each layer in self.map_list
             For example, to find the corresponding mapping information of node "n1" of the operator graph, use:
@@ -160,9 +160,11 @@ class XbarMapper(object):
             self._xbar_map_resnet()
 
     @property
-    def xbar_config_info(self) -> Generator:
-        for k, v in self.map_dict.items():
-            yield (k, v)
+    def xbar_config(self) -> Dict:
+        '''
+        A dictionary with logical xbar as keys and configuration info as values.
+        '''
+        return self.map_dict
 
     def print_config(self) -> None:
         '''

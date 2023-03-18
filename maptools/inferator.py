@@ -409,13 +409,13 @@ class Inferator(object):
             mapname : str = 'newmap'
                 Map name
 
-        Key Members:
-        ------------
-        obj_dict : Dict
+        Key Members
+        -----------
+        self.obj_dict : Dict
             A dictionary with key = [CTG.graph.nodes] and value = [_Xbar, _Comm, _MergeComm]
             Stores all the objects in the inference engine.
 
-        execu_dict : Dict
+        self.execu_dict : Dict
             A dictionary with key = [CTG.graph.nodes] and value = execu list
         '''
         self.ctg = ctg
@@ -586,8 +586,8 @@ class Inferator(object):
         else:
             file_dir = os.path.join(self.root_dir, 'mapsave', self.mapname, 'execu', load_file+'.pkl')
             assert os.path.exists(file_dir), f"No such file: {file_dir}"
-            with open(file_dir, 'rb') as f_read:
-                info_dict = pickle.load(f_read)
+            with open(file_dir, 'rb') as f:
+                info_dict = pickle.load(f)
 
         total = []
         for i, exe_list in enumerate(info_dict.values()):

@@ -22,9 +22,11 @@ class MapRoutine(object):
         self.noc_map = True
         self.show_raw_graph = False
         self.show_op_graph = False
+        self.save_param = True
         self.simulate = False
         self.show_execu = False
         self.show_ctg = False
+        self.save_mapinfo = True
         self.show_cast_path = False
         self.show_gather_path = False
 
@@ -40,6 +42,8 @@ class MapRoutine(object):
             oc.plot_raw_graph()
         if self.show_op_graph:
             oc.plot_op_graph()
+        if self.save_param:
+            oc.save_params()
         xm = XbarMapper(oc.og, 
                         self.xbar_size[0], 
                         self.xbar_size[1], 
@@ -54,8 +58,7 @@ class MapRoutine(object):
             inf.save_execu()
             if self.show_execu:
                 inf.plot_execu()
-        if self.show_ctg:
-            ctg.plot_ctg()
+            ctg = inf.ctg
         if self.noc_map:
             assert xm.total_xbar <= self.noc_size[0] * self.noc_size[1],\
                 f"Need larger networks, number of total xbars: {xm.total_xbar}"
@@ -65,7 +68,8 @@ class MapRoutine(object):
                             **self.config
                             )
             nm.run_map()
-            nm.save_map()
+            if self.save_mapinfo:
+                nm.save_map()
             if self.show_cast_path or self.show_gather_path:
                 plt = MapPlotter(self.noc_size[0], 
                                     self.noc_size[1], 
@@ -79,3 +83,9 @@ class MapRoutine(object):
                     plt.plot_cast_map()
                 if self.show_gather_path:
                     plt.plot_gather_map()
+                
+        if self.show_ctg:
+            if self.noc_map:
+                nm.plot_ctg()
+            else:
+                ctg.plot_ctg()

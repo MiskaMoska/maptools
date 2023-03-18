@@ -44,9 +44,10 @@ class NocMapper(object):
             mapname : str = 'newmap'
                 Map name
 
-        Key Members:
-        ------------
-        self.map_dict : Dict[Tuple[int, int, int, int], Tuple[int, int]]
+        Key Members
+        -----------
+        self.match_dict : Dict[Tuple[int, int, int, int], Tuple[int, int]]
+            A dictionary with logical xbar as keys and physical xbar as values
             Map the logical xbar (4-element tuple) to the physical xbar (2-element tuple).
 
         self.xxx_paths : Dict[str, Dict[str, Any]]
@@ -65,7 +66,7 @@ class NocMapper(object):
         self.__dict__.update(kwargs)
 
         # mapping from logical xbars to physical xbars
-        self.map_dict: Dict[Tuple[int, int, int, int], Tuple[int, int]] = dict()
+        self.match_dict: Dict[Tuple[int, int, int, int], Tuple[int, int]] = dict()
 
         # # intermediate representations
         # self.projected_model = []
@@ -110,7 +111,7 @@ class NocMapper(object):
                     continue
 
                 for i, xbar in enumerate(region):
-                    self.map_dict[xbar] = rs_path[idx+i] # record map
+                    self.match_dict[xbar] = rs_path[idx+i] # record map
                 break
 
     @staticmethod
@@ -179,12 +180,12 @@ class NocMapper(object):
         cast_num = self.ctg.cast_num
 
         for sid, (name, root_node, dst_nodes) in enumerate(self.ctg.cast_trees,1):
-            root_node = self.map_dict[root_node] # get the mapped node pos
+            root_node = self.match_dict[root_node] # get the mapped node pos
             print(f"starting cast plan {sid}/{cast_num} ....")
             # keep generating the multicast tree until it is valid
             # valid means every node in the multicast tree has no more than 1 in_edge
             if self.cast_method == 'steiner':
-                dst_nodes = [self.map_dict[n] for n in dst_nodes]
+                dst_nodes = [self.match_dict[n] for n in dst_nodes]
                 base_g = build_mesh(dst_nodes + [root_node])
                 g = nx.algorithms.approximation.steiner_tree(base_g, dst_nodes + [root_node])
                 g = nx.dfs_tree(g, source=root_node)
@@ -229,8 +230,8 @@ class NocMapper(object):
         merge_num = self.ctg.merge_num  
 
         for sid, (name, src_nodes, root_node) in enumerate(self.ctg.merge_trees, 1):
-            root_node = self.map_dict[root_node] # get the mapped node pos
-            src_nodes = [self.map_dict[src] for src in src_nodes ] # get the mapped node pos
+            root_node = self.match_dict[root_node] # get the mapped node pos
+            src_nodes = [self.match_dict[src] for src in src_nodes ] # get the mapped node pos
             region_nodes = deepcopy(src_nodes)
             region_nodes.append(root_node)
             print(f"starting merge plan {sid}/{merge_num} ....")
@@ -277,8 +278,8 @@ class NocMapper(object):
         gather_num = self.ctg.gather_num
         
         for sid, (name, src_node, dst_node) in enumerate(self.ctg.gather_pairs,1):
-            src_node = self.map_dict[src_node]
-            dst_node = self.map_dict[dst_node]
+            src_node = self.match_dict[src_node]
+            dst_node = self.match_dict[dst_node]
             print(f"starting gather plan {sid}/{gather_num} ....")
             # keep generating the gather path until it is valid
             # valid means it has no conflit with existing paths
@@ -299,23 +300,23 @@ class NocMapper(object):
         self._merge_plan()
         self._gather_plan()
 
-    @property
-    def xbar_config_info(self) -> Generator:
+    @cached_property
+    def xbar_config(self) -> Dict:
         '''
+        A dictionary with physical xbar as keys and configuration info as values.
         Xbar configuration information for system simulation.
         Always call this method after calling `self.run_map`.
         '''
-        for k, v in self.ctg.dicts.items():
-            yield (self.map_dict[k], v)
+        return {self.match_dict[k] : self.ctg.dicts[k] for k in self.ctg.xbar_nodes}
 
-    @property
+    @property 
     def p2p_casts(self) -> Generator:
         '''
         cast information for P2P simulation.
         Make sure to call this method after calling `self.run_map`.
         '''
         for _, root_node, dst_nodes in self.ctg.cast_trees:
-            yield (self.map_dict[root_node], [self.map_dict[d] for d in dst_nodes])
+            yield (self.match_dict[root_node], [self.match_dict[d] for d in dst_nodes])
     
     @property
     def p2p_merges(self) -> Generator:
@@ -324,7 +325,7 @@ class NocMapper(object):
         Make sure to call this method after calling `self.run_map`.
         '''
         for _, src_nodes, root_node in self.ctg.merge_trees:
-            yield ([self.map_dict[s] for s in src_nodes], self.map_dict[root_node])
+            yield ([self.match_dict[s] for s in src_nodes], self.match_dict[root_node])
 
     @property
     def p2p_gathers(self) -> Generator:
@@ -333,13 +334,13 @@ class NocMapper(object):
         Make sure to call this method after calling `self.run_map`.
         '''
         for _, src_node, dst_node in self.ctg.gather_pairs:
-            yield (self.map_dict[src_node], self.map_dict[dst_node])
+            yield (self.match_dict[src_node], self.match_dict[dst_node])
 
     def save_map(self, file_name: str = 'mapinfo') -> None:
         '''
         save the mapping results as pkl sequence
         '''
-        save_dir = os.path.join(self.root_dir, 'mapsave', self.mapname, 'nocmap')
+        save_dir = os.path.join(self.root_dir, 'mapsave', self.mapname)
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
         file_dir = os.path.join(save_dir, file_name+'.pkl')
@@ -350,8 +351,8 @@ class NocMapper(object):
         info_dict['network_height'] = self.h
 
         # write noc mapping info
-        info_dict['map_dict'] = self.map_dict
-        # info_dict['xbar_config_info'] = list(self.xbar_config_info)
+        info_dict['match_dict'] = self.match_dict
+        info_dict['xbar_config'] = self.xbar_config
 
         # write network config info
         info_dict['cast_paths'] = self.cast_paths
@@ -363,7 +364,13 @@ class NocMapper(object):
         info_dict['p2p_merges'] = list(self.p2p_merges)
         info_dict['p2p_gathers'] = list(self.p2p_gathers)
 
-        with open(file_dir,'wb') as f:
+        with open(file_dir, 'wb') as f:
             pickle.dump(info_dict, f)
         print(f"noc mapping info has been written to {file_dir}")
+
+    def plot_ctg(self) -> None:
+        '''
+        Added physical xbar information than `CTG.plot_ctg()`
+        '''
+        self.ctg.plot_ctg(match_dict=self.match_dict)
 

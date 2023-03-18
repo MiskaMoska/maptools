@@ -18,7 +18,7 @@ class Configurator(object):
 
         Parameters
         ----------
-        self.xxx_paths : Dict[str, Dict[str, Any]]
+        xxx_paths : Dict[str, Dict[str, Any]]
             generated from `NocMapper` or read from mapsave files.
             xxx can be any of [cast, merge, gather].
             Stores the mapped paths and corresponding attributes for each connection type.

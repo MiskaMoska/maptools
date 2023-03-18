@@ -288,7 +288,7 @@ class CTG(object):
                 load = dict1[n]
                 self.update_dict(n, {'load': load, 'load_ratio': load / max_load})
 
-    def plot_ctg(self) -> None:
+    def plot_ctg(self, match_dict: Optional[Dict] = None) -> None:
         save_dir = os.path.join(self.root_dir, 'mapsave', self.mapname, 'ctg')
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
@@ -305,7 +305,11 @@ class CTG(object):
                     _label += f'\n{key} : {local[key]}'
             if self.is_xbar(n): # xbar
                 shape = 'rectangle'
-                label = str(n) + "\n" + self.dicts[n]['op_type'] + _label
+                label = 'log: ' + str(n) 
+                if match_dict is not None:
+                    label += '\nphy: ' + str(match_dict[n])
+                label += '\n' + self.dicts[n]['op_type']
+                label += _label
                 xlabel = None
             else: # comm
                 shape = 'point'

@@ -7,12 +7,14 @@ TODO need to support global average pool and fc layer
 '''
 import os
 import sys
+import pickle
 import onnx
 import onnx.numpy_helper as onh
 import networkx as nx
 from typing import Any, List, Dict, Tuple, Optional, Generator
 from graphviz import Digraph
 from copy import deepcopy 
+import numpy as np
 from maptools.operator_graph import *
 
 __all__ = ['OnnxConverter']
@@ -67,13 +69,21 @@ class OnnxConverter(object):
 
             mapname : str = 'newmap'
                 Map name
+
+        Key Members
+        -----------
+        self.param_dict : Dict[str, np.array]
+            A dictionary with tensor name as keys and numpy array as values.
+            Stores the parameters of the model.
         '''
         self.model = model
         self.arch = 'resnet'
         self.root_dir = os.environ['NVCIM_HOME']
         self.mapname = 'newmap'
         self.__dict__.update(kwargs)
-        assert self.arch in OnnxConverter.valid_archs, f"unsupported model arch: {self.arch}"
+        self.param_dict: Dict[str, np.array] = dict() 
+        assert self.arch in OnnxConverter.valid_archs,\
+                    f"unsupported model arch: {self.arch}"
 
     @staticmethod
     def _is_merge_node(node: onnx.NodeProto) -> bool:
@@ -136,22 +146,33 @@ class OnnxConverter(object):
         d['conv_output_size'] = size_o
         for at in node.attribute:
             if at.name == 'dilations':
-                d['conv_dilations'] = at.ints
+                assert list(at.ints) == [1, 1],\
+                        f"conv_dilations must be [1, 1], received {at.ints}"
             elif at.name == 'group':
-                d['conv_group'] = at.i
+                assert at.i == 1,\
+                        f"conv_group must be 1, received {at.i}"
             elif at.name == 'kernel_shape':
-                d['conv_kernel_size'] = at.ints
+                d['conv_kernel_size'] = list(at.ints)
             elif at.name == 'pads':
-                d['conv_pads'] = at.ints
+                d['conv_pads'] = list(at.ints)
             elif at.name == 'strides':
-                d['conv_strides'] = at.ints
+                d['conv_strides'] = list(at.ints)
 
         weight = self._get_tensor(node.input[1]) # input[1] should be weight
         bias = None
         if len(node.input[2]): # if has bias
             bias = self._get_tensor(node.input[2]) # input[2] should be weight
-        d['conv_weight'] = onh.to_array(weight)
-        d['conv_bias'] = onh.to_array(bias)
+
+        # save convolution weights
+        name = node.name + '_conv_weight'
+        d['conv_weight'] = name
+        self.param_dict[name] = onh.to_array(weight)
+
+        # save convolution bias
+        name = node.name + '_conv_bias'
+        d['conv_bias'] = name
+        self.param_dict[name] = onh.to_array(bias)
+
         d['conv_num_ichan'] = weight.dims[1] # input channel number
         d['conv_num_ochan'] = weight.dims[0] # output channel number
 
@@ -164,11 +185,11 @@ class OnnxConverter(object):
             if at.name == 'ceil_mode':
                 d['pool_ceil_mode'] = at.i
             elif at.name == 'kernel_shape':
-                d['pool_kernel_size'] = at.ints
+                d['pool_kernel_size'] = list(at.ints)
             elif at.name == 'pads':
-                d['pool_pads'] = at.ints
+                d['pool_pads'] = list(at.ints)
             elif at.name == 'strides':
-                d['pool_strides'] = at.ints
+                d['pool_strides'] = list(at.ints)
 
     def _complete_gemm_info(self, node: onnx.NodeProto, d: Dict) -> None:
         weight = self._get_tensor(node.input[1]) # input[1] should be weight
@@ -191,13 +212,13 @@ class OnnxConverter(object):
         d['op_type'] = node.op_type
 
         if self._is_conv(node.op_type):
-            self._complete_conv_info(node,d)
+            self._complete_conv_info(node, d)
         elif self._is_pool(node.op_type): 
-            self._complete_pool_info(node,d)
+            self._complete_pool_info(node, d)
         elif self._is_gemm(node.op_type):
-            self._complete_gemm_info(node,d)
+            self._complete_gemm_info(node, d)
         elif self._is_act(node.op_type):
-            self._complete_act_info(node,d)
+            self._complete_act_info(node, d)
         return d
 
     def _remove_data_nodes(self) -> None:
@@ -277,6 +298,15 @@ class OnnxConverter(object):
     def run_conversion(self) -> None:
         self.construct_raw_graph()
         self.construct_op_graph()
+
+    def save_params(self) -> None:
+        save_dir = os.path.join(self.root_dir, 'mapsave', self.mapname)
+        file_dir = os.path.join(save_dir, 'params.pkl')
+        if not os.path.exists(save_dir):
+            os.makedirs(save_dir)
+        with open(file_dir, 'wb') as f:
+            pickle.dump(self.param_dict, f)
+        print(f"parameters of the model has been written to: {file_dir}")
 
     def _print_dict(self, dicts: Dict[str, Dict]) -> None:
         for v in dicts.values():
