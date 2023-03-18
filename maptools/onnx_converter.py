@@ -147,10 +147,10 @@ class OnnxConverter(object):
         for at in node.attribute:
             if at.name == 'dilations':
                 assert list(at.ints) == [1, 1],\
-                        f"conv_dilations must be [1, 1], received {at.ints}"
+                        f"conv_dilations must be [1, 1], but got {at.ints}"
             elif at.name == 'group':
                 assert at.i == 1,\
-                        f"conv_group must be 1, received {at.i}"
+                        f"conv_group must be 1, but got {at.i}"
             elif at.name == 'kernel_shape':
                 d['conv_kernel_size'] = list(at.ints)
             elif at.name == 'pads':

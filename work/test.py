@@ -10,5 +10,9 @@ routine.run()
 
 params, mapinfo = get_map(mapname)
 
-for item in mapinfo['p2p_gathers']:
-    print(item[0],item[1])
+for xbar, cfg in mapinfo['xbar_config'].items():
+    if 'Bias' in cfg['op_type']:
+        bias = params[cfg['conv_bias']]
+        break
+
+print(bias.shape)

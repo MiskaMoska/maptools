@@ -32,7 +32,7 @@ class MapRoutine(object):
 
         self.__dict__.update(kwargs)
         assert isinstance(self.mapname, str),\
-            f"mapname should be <class 'str'>, but received {type(self.mapname)}"
+            f"mapname should be <class 'str'>, but got {type(self.mapname)}"
 
     def run(self) -> None:
         model = onnx.load(self.model_dir)
@@ -53,12 +53,12 @@ class MapRoutine(object):
         xm.print_config()
         ctg = xm.ctg
         if self.simulate:
-            inf = Inferator(ctg, **self.config)
-            inf.run()
-            inf.save_execu()
+            tsim = TokSim(ctg, **self.config)
+            tsim.run()
+            tsim.save_execu()
             if self.show_execu:
-                inf.plot_execu()
-            ctg = inf.ctg
+                tsim.plot_execu()
+            ctg = tsim.ctg
         if self.noc_map:
             assert xm.total_xbar <= self.noc_size[0] * self.noc_size[1],\
                 f"Need larger networks, number of total xbars: {xm.total_xbar}"

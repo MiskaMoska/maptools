@@ -82,8 +82,12 @@ class CTG(object):
             self._build_ctg_resnet()
 
     @cached_property
-    def node_names(self) -> List:
+    def node_names(self) -> List[Any]:
         return list(nx.topological_sort(self.graph))
+    
+    @cached_property
+    def xbars(self) -> List[Tuple]:
+        return [n for n in self.node_names if self.is_xbar(n)]
 
     @property
     def comms(self) -> List[str]:
@@ -267,8 +271,8 @@ class CTG(object):
     def comm_load_analysis(self) -> None:
         '''
         This method provides fast communication load analysis to replace the function of 
-        `Inferator`, if only communication load analysis is needed and buffer size analysis
-        is not needed, use this method rather than `Inferator.run()`.
+        `TokSim`, if only communication load analysis is needed and buffer size analysis
+        is not needed, use this method rather than `TokSim.run()`.
         This method will update `self.dicts` by adding communication load information.
         '''
         dict1 = dict()
