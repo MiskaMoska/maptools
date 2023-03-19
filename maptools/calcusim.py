@@ -1,7 +1,9 @@
 
+import os
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import pickle
 from copy import deepcopy
 from typing import List, Dict, Optional, Tuple, Any
 from maptools import CTG
@@ -147,6 +149,7 @@ class _Comm(object):
         assert self.data is not None, f"data_in is None"
         return self.data
 
+
 class _MergeComm(object):
 
     def __init__(self, preds: List[Any]) -> None:
@@ -163,7 +166,7 @@ class _MergeComm(object):
 
 class CalcuSim(nn.Module):
 
-    def __init__(self, ctg: CTG, params: Dict) -> None:
+    def __init__(self, ctg: CTG, params: Dict, *args, **kwargs) -> None:
         '''
         Parameters
         ----------
@@ -172,12 +175,31 @@ class CalcuSim(nn.Module):
         
         params : Dict
             from `OnnxConverter.param_dict`
+
+        kwargs : Dict
+            root_dir : str = os.environ['NVCIM_HOME']
+                The root directory of the project.
+
+            mapname : str = 'newmap'
+                Map name
+
+        Key Members
+        -----------
+        self.res_dict : Dict[Tuple, Dict[str, Optional[torch.Tensor]]]
+            Stores the intermediate results of each xbar
+            A dictionary with logical xbar as keys and result dictionary as values
+            Where the result dictionary = 
+            {'cast_in': tensor, 'merge_in': tensor, 'gather_in': tensor, 'data_out': tensor}
         '''
         super().__init__()
         self.ctg = ctg
         self.params = params
+        self.root_dir = os.environ['NVCIM_HOME']
+        self.mapname = 'newmap'
+        self.__dict__.update(kwargs)
         self.obj_dict: Dict = dict()
         self._build_obj_dict()
+        self.res_dict: Dict[Tuple, Dict[str, Optional[torch.Tensor]]] = dict()
 
     def _build_obj_dict(self) -> None:
         for node in self.ctg.node_names:
@@ -206,6 +228,7 @@ class CalcuSim(nn.Module):
     def forward(self, x: torch.Tensor):
         assert isinstance(x, torch.Tensor), f"input should be torch.Tensor, but got {type(x)}"
         assert len(x.shape) == 4, f"input dimension should be 4 [N, C, H, W], but got {len(x.shape)}"
+        print('Launching CalcuSim ....')
         y = []
         for node in self.ctg.node_names:
             if self.ctg.is_xbar(node): # xbar
@@ -213,8 +236,12 @@ class CalcuSim(nn.Module):
                     self.obj_dict[node].absorb(x, 'Cast')
                 result = self.obj_dict[node].forward()
 
-                if node == (0,0,0,0):
-                    self.tp = result
+                # collect intermediate results
+                res = dict()
+                for name in ['cast_in', 'merge_in', 'gather_in']:
+                    res[name] = self.obj_dict[node].__dict__[name]
+                res['data_out'] = result 
+                self.res_dict[node] = res
 
                 # xbar may have multiple successors typed "comm"
                 # it may be any one of cast, merge, and gather
@@ -224,7 +251,7 @@ class CalcuSim(nn.Module):
                     continue
                 for succ in succs:
                     self.obj_dict[succ].absorb(result, node)
-                
+
             elif self.ctg.is_comm(node): # comm
                 result = self.obj_dict[node].forward()
                 if self.ctg.is_cast_comm(node):
@@ -235,7 +262,20 @@ class CalcuSim(nn.Module):
                     pred_type = 'Gather'
                 for succ in self.ctg.succs(node): # comm successors must be xbar
                     self.obj_dict[succ].absorb(result, pred_type)
-        return self._arrage_output(y)
+        y_ = self._arrage_output(y)
+        self.res_dict['output'] = y_
+        print('Finished CalcuSim')
+        return y_
+    
+    def save_results(self, file_name: str = 'results'):
+        save_dir = os.path.join(self.root_dir, 'mapsave', self.mapname, 'calcusim')
+        if not os.path.exists(save_dir):
+            os.makedirs(save_dir)
+        file_dir = os.path.join(save_dir, file_name+'.pkl')
+        with open(file_dir,'wb') as f:
+            pickle.dump(self.res_dict, f)
+        print(f"\nintermediate results written to {file_dir}")
+
 
 
 

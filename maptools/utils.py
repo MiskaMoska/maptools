@@ -1,12 +1,18 @@
 import os
 import pickle
-from typing import List, Tuple
+import torch
+from torchvision import transforms
+from typing import List, Tuple, Dict
+from PIL import Image
 import networkx as nx
 
 __all__ = [
     'is_subseq',
     'build_mesh',
-    'get_map'
+    'read_params',
+    'read_mapinfo',
+    'read_results',
+    'get_input'
 ]
 
 def is_subseq(a: List, b: List) -> bool:
@@ -38,12 +44,34 @@ def build_mesh(eager_nodes: List[Tuple[int, int]]) -> nx.Graph:
             g.add_edge((x,y),(x+1,y))
     return g
 
-def get_map(mapname: str = 'newmap') -> None:
+def read_params(mapname) -> Dict:
     root_dir = os.environ['NVCIM_HOME']
     file_dir = os.path.join(root_dir, 'mapsave', mapname, 'params.pkl')
     with open(file_dir, 'rb') as f:
         params = pickle.load(f)
+    return params
+
+def read_mapinfo(mapname) -> None:
+    root_dir = os.environ['NVCIM_HOME']
     file_dir = os.path.join(root_dir, 'mapsave', mapname, 'mapinfo.pkl')
     with open(file_dir, 'rb') as f:
         mapinfo = pickle.load(f)
-    return params, mapinfo
+    return mapinfo
+
+def read_results(mapname) -> None:
+    root_dir = os.environ['NVCIM_HOME']
+    file_dir = os.path.join(root_dir, 'mapsave', mapname, 'calcusim', 'results.pkl')
+    with open(file_dir, 'rb') as f:
+        results = pickle.load(f)
+    return results
+
+def get_input(img_path: str, resize: Tuple = (224, 224)) -> torch:
+    assert len(resize) == 2, f"resize must be a 2-element tuple, but got {len(resize)}"
+    trans = transforms.Compose([
+        transforms.ToTensor()
+    ])
+    image_file = img_path
+    img = Image.open(image_file)
+    img = img.resize(resize)
+    img = trans(img)
+    return torch.unsqueeze(img, dim=0)

@@ -556,7 +556,7 @@ class TokSim(object):
                         )
 
     def save_execu(self, file_name: str = 'execu'):
-        save_dir = os.path.join(self.root_dir, 'mapsave', self.mapname, 'execu')
+        save_dir = os.path.join(self.root_dir, 'mapsave', self.mapname, 'toksim')
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
         file_dir = os.path.join(save_dir, file_name+'.pkl')
@@ -584,7 +584,7 @@ class TokSim(object):
         if load_file is None:
             info_dict = self.execu_dict
         else:
-            file_dir = os.path.join(self.root_dir, 'mapsave', self.mapname, 'execu', load_file+'.pkl')
+            file_dir = os.path.join(self.root_dir, 'mapsave', self.mapname, 'toksim', load_file+'.pkl')
             assert os.path.exists(file_dir), f"No such file: {file_dir}"
             with open(file_dir, 'rb') as f:
                 info_dict = pickle.load(f)

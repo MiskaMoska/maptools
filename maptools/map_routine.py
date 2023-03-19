@@ -1,5 +1,7 @@
 import os
 import onnx
+import torch
+from typing import Optional, List, Dict, Tuple, Any
 from maptools import *
 
 __all__ = ['MapRoutine']
@@ -15,20 +17,24 @@ class MapRoutine(object):
         self.config = kwargs
 
         # hardware configuration
-        self.xbar_size = (256, 256*5)
-        self.noc_size = (5, 10)
+        self.xbar_size: Tuple[2] = (256, 256*5)
+        self.noc_size: Tuple[2] = (5, 10)
+
+        # data input    
+        self.input: Optional[torch.Tensor] = None
 
         # procedure control
-        self.noc_map = True
-        self.show_raw_graph = False
-        self.show_op_graph = False
-        self.save_param = True
-        self.simulate = False
-        self.show_execu = False
-        self.show_ctg = False
-        self.save_mapinfo = True
-        self.show_cast_path = False
-        self.show_gather_path = False
+        self.noc_map: bool = True
+        self.show_raw_graph: bool = False
+        self.show_op_graph: bool = False
+        self.save_param: bool = True
+        self.toksim: bool = False
+        self.calcusim: bool = True
+        self.show_execu: bool = False
+        self.show_ctg: bool = False
+        self.save_mapinfo: bool = True
+        self.show_cast_path: bool = False
+        self.show_gather_path: bool = False
 
         self.__dict__.update(kwargs)
         assert isinstance(self.mapname, str),\
@@ -52,13 +58,20 @@ class MapRoutine(object):
         xm.run_map()
         xm.print_config()
         ctg = xm.ctg
-        if self.simulate:
+        if self.toksim:
             tsim = TokSim(ctg, **self.config)
             tsim.run()
             tsim.save_execu()
             if self.show_execu:
                 tsim.plot_execu()
             ctg = tsim.ctg
+        if self.calcusim:
+            assert self.input is not None, "calcusim enabled but got input is None"
+            assert isinstance(self.input, torch.Tensor), f"input must be torch.Tensor. but got {type(self.input)}"
+            assert len(self.input.shape) == 4, f"input dimension must be 4 [N, C, H, W]. but got {len(self.input.shape)}"
+            csim = CalcuSim(ctg, oc.param_dict, **self.config)
+            _ = csim(self.input)
+            csim.save_results()
         if self.noc_map:
             assert xm.total_xbar <= self.noc_size[0] * self.noc_size[1],\
                 f"Need larger networks, number of total xbars: {xm.total_xbar}"
