@@ -3,3 +3,4 @@ onnx_models/*
 mapsave/*
 inference/*
 build/*
+make.sh
