@@ -7,7 +7,7 @@ import os
 mapname = 'xxx'
 
 img = get_input('work/test.jpg')
-routine = MapRoutine(mapname=mapname,calcusim=True,show_ctg=True,input=img)
+routine = MapRoutine(mapname=mapname,calcusim=True,show_ctg=False,input=img)
 routine.run()
 
 mapinfo = read_mapinfo(mapname)

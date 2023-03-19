@@ -1,9 +1,8 @@
-from distutils.core import setup
+from setuptools import setup
 
 setup(
     name='maptools',
     version='1.0',
-packages = [
-    "maptools"
-]
+    packages = ["maptools"],
+    python_requires=">=3.8"
 )

@@ -1,14 +1,44 @@
 # NVCIM
 
-## build environment
-1. Run the following command to modify the project root directory.
-```shell
-python reroot.py
-```
-Once project root directory is modified, the directory shouldn't be moved or renamed.
-If moved or renamed, step1 and step2 should be repeated.
+## Set Up Environments
 
-2. Run the following command to install python module `maptools`.
+#### For Linux or WSL
+1. Set up environment variable.
+
 ```shell
-python setup.py install
+export NVCIM_HOME=/root/directory/of/this/project
+```
+
+2. Run the following command to install required packages.
+
+```makefile
+make requires
+```
+
+3. Run the following command to install python module `maptools`.
+
+```makefile
+make maptools
+```
+
+#### For Windows
+
+1. Set up environment variable.
+
+```powershell
+$env:NVCIM_HOME=/root/directory/of/this/project
+```
+
+2. Run the following commands to install required pip packages.
+
+```
+pip install -U -r requirements
+```
+
+Then, install `graphviz` on the client side.
+
+3. Run the following command to install python module `maptools`.
+
+```powershell
+.\make.sh
 ```
