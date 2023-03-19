@@ -40,5 +40,5 @@ Then, install `graphviz` on the client side.
 3. Run the following command to install python module `maptools`.
 
 ```powershell
-.\make.sh
+python setup.py install
 ```
