@@ -95,6 +95,9 @@ class _Xbar(object):
         self.merge_in: Optional[torch.Tensor] = None
         self.gather_in: Optional[torch.Tensor] = None
 
+        # results before pool
+        self.before_pool = None
+
     def absorb(self, data: torch.Tensor, pred_type: str) -> None:
         if pred_type == 'Cast':
             self.cast_in = data
@@ -125,6 +128,7 @@ class _Xbar(object):
             x = F.relu(x)
 
         if self.is_pool:
+            self.before_pool = x
             assert self.pool_mode in ['MaxPool', 'AveragePool'], f"got invalid pool mode: {self.pool_mode}"
             x = F.pad(x, self.pool_pads)
             if self.pool_mode == 'MaxPool':
@@ -240,6 +244,7 @@ class CalcuSim(nn.Module):
                 res = dict()
                 for name in ['cast_in', 'merge_in', 'gather_in']:
                     res[name] = self.obj_dict[node].__dict__[name]
+                res['before_pool'] = self.obj_dict[node].before_pool
                 res['data_out'] = result 
                 self.res_dict[node] = res
 
