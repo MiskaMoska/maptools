@@ -51,21 +51,21 @@ def read_params(mapname) -> Dict:
         params = pickle.load(f)
     return params
 
-def read_mapinfo(mapname) -> None:
+def read_mapinfo(mapname) -> Dict:
     root_dir = os.environ['NVCIM_HOME']
     file_dir = os.path.join(root_dir, 'mapsave', mapname, 'mapinfo.pkl')
     with open(file_dir, 'rb') as f:
         mapinfo = pickle.load(f)
     return mapinfo
 
-def read_results(mapname) -> None:
+def read_results(mapname) -> Dict:
     root_dir = os.environ['NVCIM_HOME']
     file_dir = os.path.join(root_dir, 'mapsave', mapname, 'calcusim', 'results.pkl')
     with open(file_dir, 'rb') as f:
         results = pickle.load(f)
     return results
 
-def get_input(img_path: str, resize: Tuple = (224, 224)) -> torch:
+def get_input(img_path: str, resize: Tuple = (224, 224)) -> torch.Tensor:
     assert len(resize) == 2, f"resize must be a 2-element tuple, but got {len(resize)}"
     trans = transforms.Compose([
         transforms.ToTensor()

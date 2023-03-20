@@ -7,16 +7,15 @@ import os
 mapname = 'xxx'
 
 img = get_input('work/test.jpg')
-routine = MapRoutine(mapname=mapname,calcusim=True,show_ctg=False,input=img)
+routine = MapRoutine(mapname='xxx',input=img,show_ctg=False)
 routine.run()
 
 mapinfo = read_mapinfo(mapname)
 params = read_params(mapname)
 results = read_results(mapname)
 
-print(results['output'].shape)
+# print(results['output'].shape)'
 
-# for xbar, cfg in mapinfo['xbar_config'].items():
-#     if 'Bias' in cfg['op_type']:
-#         bias = params[cfg['conv_bias']]
-#         break
+for (i,j), cfg in mapinfo['xbar_config'].items():
+    if (i,j) == (0,0):
+        print(cfg['conv_pads'],cfg['pool_pads'])

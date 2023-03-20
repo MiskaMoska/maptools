@@ -10,13 +10,13 @@ from maptools import CTG
 
 __all__ = ['CalcuSim']
 
-def _rebuild_pads(pads: List):
+def _rebuild_pads(pads: List) -> None:
     if pads is not None:
         _pads = deepcopy(pads)
-        pads[0] = _pads[3]
-        pads[1] = _pads[1]
-        pads[2] = _pads[0]
-        pads[3] = _pads[2]
+        pads[0] = pads[3]
+        pads[1] = pads[1]
+        pads[2] = pads[0]
+        pads[3] = pads[2]
 
 def _rebuild_conv_weight(icfg: List[Tuple], 
                         ocfg: Tuple, 
@@ -30,7 +30,7 @@ def _rebuild_conv_weight(icfg: List[Tuple],
     ichan_d = icfg[0][2]
     ochan_s = ocfg[0]
     ochan_d = ocfg[1]
-    _weight = weight[ochan_s:ochan_d, ichan_s:ichan_d, :, :]
+    _weight = deepcopy(weight[ochan_s:ochan_d, ichan_s:ichan_d, :, :])
     _weight_ = torch.zeros_like(_weight)
     kw = weight.shape[3]
     for i in [m[0] for m in icfg]:
@@ -44,11 +44,11 @@ def _rebuild_conv_bias(ocfg: Tuple, bias: torch.Tensor) -> torch.Tensor:
     Rebuild convolution bias according to vector slicing information
     '''
     assert len(bias.shape) == 1, f"dimension of weight should be 1, but got {len(bias.shape)}"
-    return bias[ocfg[0]:ocfg[1]]
+    return deepcopy(bias[ocfg[0]:ocfg[1]])
 
 def _get_xbar_kwargs(cfg: Dict, params: Dict) -> Dict:
     kwargs = dict()
-    kwargs['conv_pads'] = cfg['conv_pads']
+    kwargs['conv_pads'] = deepcopy(cfg['conv_pads'])
     weight_ptr = cfg['conv_weight']
     weight = _rebuild_conv_weight(cfg['xbar_icfg'], cfg['xbar_ocfg'], 
                                     torch.tensor(params[weight_ptr]))
@@ -57,16 +57,16 @@ def _get_xbar_kwargs(cfg: Dict, params: Dict) -> Dict:
         bias_ptr = cfg['conv_bias']
         bias = _rebuild_conv_bias(cfg['xbar_ocfg'],torch.tensor(params[bias_ptr]))
         kwargs['conv_bias'] = bias
-    kwargs['conv_strides'] = cfg['conv_strides']
+    kwargs['conv_strides'] = deepcopy(cfg['conv_strides'])
     if 'Pool' in cfg['op_type']:
         kwargs['is_pool'] = True
-        kwargs['pool_mode'] = cfg['pool_mode']
-        kwargs['pool_pads'] = cfg['pool_pads']
-        kwargs['pool_kernel_size'] = cfg['pool_kernel_size']
-        kwargs['pool_strides'] = cfg['pool_strides']
+        kwargs['pool_mode'] = deepcopy(cfg['pool_mode'])
+        kwargs['pool_pads'] = deepcopy(cfg['pool_pads'])
+        kwargs['pool_kernel_size'] = deepcopy(cfg['pool_kernel_size'])
+        kwargs['pool_strides'] = deepcopy(cfg['pool_strides'])
     if 'Act' in cfg['op_type']:
         kwargs['is_act'] = True
-        kwargs['act_mode'] = cfg['act_mode']
+        kwargs['act_mode'] = deepcopy(cfg['act_mode'])
     return kwargs
 
 class _Xbar(object):

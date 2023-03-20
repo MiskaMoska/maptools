@@ -29,7 +29,7 @@ make maptools
 $env:NVCIM_HOME=/root/directory/of/this/project
 ```
 
-2. Run the following commands to install required pip packages.
+2. Run the following command to install required pip packages.
 
 ```
 pip install -U -r requirements.txt
