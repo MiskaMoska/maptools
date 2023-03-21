@@ -179,18 +179,19 @@ wire                ready_'''+str(i+(j+1)*w)+'''_to_'''+str(i+j*w)+''';\tready_'
     return wires_str
 
 def gen_gather_network(root_dir, data_width, w, h):
-    file_name = os.path.join(root_dir, 'network', 'rtl', 'generated', 'gather_network.sv')
+    save_dir = os.path.join(root_dir, 'network', 'rtl', 'generated')
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
+    file_dir = os.path.join(save_dir, 'gather_network.sv')
     containt = ""
     containt += gen_ports(w, h)
     containt += gen_wires(w, h)
     containt += gen_instances(data_width, w, h)
     containt += "\nendmodule"
 
-    with open(file_name,"w") as my_file:
+    with open(file_dir,"w") as my_file:
         my_file.write("{0}\n".format(containt))
         my_file.flush()
         my_file.close()
     
-    print(f"gather_network has been written to: {file_name}")
-
-    return containt
+    print(f"gather network has been written to: {file_dir}")

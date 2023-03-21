@@ -39,7 +39,7 @@ module cast_network(
     input       wire                            valid_i_stab,
     output      wire                            ready_o_stab,
 '''
-    for idx in range(len(flees)):
+    for idx in range(len(flees[0])):
         port_str += f'''
     output      wire        [`DW-1:0]           data_o_flee{idx},
     output      wire                            valid_o_flee{idx},
@@ -236,18 +236,19 @@ wire                ready_'''+str(i+(j+1)*w)+'''_to_'''+str(i+j*w)+'''_v0,\tread
     return wires_str
 
 def gen_cast_network(root_dir, data_width, w, h, flees):
-    file_name = os.path.join(root_dir, 'network', 'rtl', 'generated', 'cast_network.sv')
+    save_dir = os.path.join(root_dir, 'network', 'rtl', 'generated')
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
+    file_dir = os.path.join(save_dir, 'cast_network.sv')
     containt = ""
     containt += gen_ports(w, h, flees)
     containt += gen_wires(w, h)
     containt += gen_instances(data_width, w, h, flees)
     containt += "\nendmodule"
 
-    with open(file_name,"w") as my_file:
+    with open(file_dir,"w") as my_file:
         my_file.write("{0}\n".format(containt))
         my_file.flush()
         my_file.close()
     
-    print(f"cast_network has been written to: {file_name}")
-
-    return containt
+    print(f"cast network has been written to: {file_dir}")

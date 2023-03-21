@@ -78,8 +78,12 @@ class CTG(object):
         self.merge_comms: List[str] = []
         self.gather_comms: List[str] = []
 
+        # build ctg
         if self.arch == 'resnet':
             self._build_ctg_resnet()
+
+        # complete attributes
+        self._complete_attrs()
 
     @cached_property
     def node_names(self) -> List[Any]:
@@ -120,6 +124,9 @@ class CTG(object):
 
     def is_head_xbar(self, node: Any) -> bool:
         return self.graph.in_degree(node) == 0
+    
+    def is_tail_xbar(self, node: Any) -> bool:
+        return self.graph.out_degree(node) == 0
     
     def get_attr(self, node: Any, attr: str) -> Any:
         if node in self.dicts:
@@ -226,6 +233,46 @@ class CTG(object):
                             node = (lid, i, j, k)
                             if node != dst_xbar:
                                 self.graph.add_edge(node, comm_name)
+
+    def _complete_attrs(self) -> None:
+        '''
+        Complete Xbar attributes, for example:
+        cast/merge/gather_in/out
+        is_tail, is_head
+        '''
+        for xbar in self.xbar_nodes:
+            cast_in, merge_in, gather_in = (False, False, False)
+            for pred in self.graph.predecessors(xbar):
+                if pred in self.cast_comms:
+                    cast_in = True
+                if pred in self.merge_comms:
+                    merge_in = True
+                if pred in self.gather_comms:
+                    gather_in = True
+            cast_out, merge_out, gather_out = (False, False, False)
+            for succ in self.graph.successors(xbar):
+                if succ in self.cast_comms:
+                    cast_out = True
+                if succ in self.merge_comms:
+                    merge_out = True
+                if succ in self.gather_comms:
+                    gather_out = True
+            is_head, is_tail = (False, False)
+            if self.is_head_xbar(xbar):
+                is_head = True
+                cast_in = True # head xbar receives cast in but has no cast predecessors
+            if self.is_tail_xbar(xbar):
+                is_tail = True
+                cast_out = True # tail xbar generates cast out but has no cast successors
+            self.dicts[xbar].update({'cast_in': cast_in, 
+                                        'merge_in': merge_in,
+                                        'gather_in': gather_in,
+                                        'cast_out': cast_out,
+                                        'merge_out': merge_out,
+                                        'gather_out': gather_out,
+                                        'is_head': is_head,
+                                        'is_tail': is_tail
+                                        })
 
     @property
     @overload

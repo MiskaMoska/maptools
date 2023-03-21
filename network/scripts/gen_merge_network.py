@@ -139,8 +139,10 @@ def gen_outputs(w,h):
     return out_str
 
 def gen_merge_network(root_dir, data_width, w, h):
-    file_name = os.path.join(root_dir, 'network', 'rtl', 'generated', 'merge_network.sv')
-
+    save_dir = os.path.join(root_dir, 'network', 'rtl', 'generated')
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
+    file_dir = os.path.join(save_dir, 'merge_network.sv')
     containt = ""
     containt += gen_ports(w, h)
     containt += gen_wires(w, h)
@@ -148,9 +150,9 @@ def gen_merge_network(root_dir, data_width, w, h):
     containt += gen_instances(data_width, w, h)
     containt += "\nendmodule"
 
-    with open(file_name,"w") as my_file:
+    with open(file_dir,"w") as my_file:
         my_file.write("{0}\n".format(containt))
         my_file.flush()
         my_file.close()
 
-    print(f"merge_network has been written into: {file_name}")
+    print(f"merge network has been written to: {file_dir}")

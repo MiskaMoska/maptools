@@ -336,6 +336,20 @@ class NocMapper(object):
         for _, src_node, dst_node in self.ctg.gather_pairs:
             yield (self.match_dict[src_node], self.match_dict[dst_node])
 
+    @cached_property
+    def tail_xbars(self) -> List[Tuple]:
+        '''
+        tail xbars information for concatenating outputs
+        [(x1, y1), (x2, y2), (...), (...), ...]
+        following tensor slice orders
+        '''
+        tails = []
+        for xbar in self.ctg.xbar_nodes:
+            if self.ctg.is_tail_xbar(xbar):
+                tails.append(xbar)
+        tails.sort(key=lambda tup:tup[1])
+        return [self.match_dict[x] for x in tails]
+
     def save_map(self, file_name: str = 'mapinfo') -> None:
         '''
         save the mapping results as pkl sequence
@@ -363,6 +377,8 @@ class NocMapper(object):
         info_dict['p2p_casts'] = list(self.p2p_casts)
         info_dict['p2p_merges'] = list(self.p2p_merges)
         info_dict['p2p_gathers'] = list(self.p2p_gathers)
+
+        info_dict['tail_xbars'] = self.tail_xbars
 
         with open(file_dir, 'wb') as f:
             pickle.dump(info_dict, f)

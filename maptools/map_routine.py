@@ -25,16 +25,21 @@ class MapRoutine(object):
 
         # procedure control
         self.noc_map: bool = True
+
         self.show_raw_graph: bool = False
         self.show_op_graph: bool = False
-        self.save_param: bool = True
+        self.show_ctg: bool = False
+        self.show_execu: bool = False
+
         self.toksim: bool = False
         self.calcusim: bool = True
-        self.show_execu: bool = False
-        self.show_ctg: bool = False
-        self.save_mapinfo: bool = True
+
         self.show_cast_path: bool = False
         self.show_gather_path: bool = False
+
+        self.save_params: bool = True
+        self.save_mapinfo: bool = True
+        self.save_cfginfo: bool = False
 
         self.__dict__.update(kwargs)
         assert isinstance(self.mapname, str),\
@@ -48,7 +53,7 @@ class MapRoutine(object):
             oc.plot_raw_graph()
         if self.show_op_graph:
             oc.plot_op_graph()
-        if self.save_param:
+        if self.save_params:
             oc.save_params()
         xm = XbarMapper(oc.og, 
                         self.xbar_size[0], 
@@ -96,6 +101,16 @@ class MapRoutine(object):
                     plt.plot_cast_map()
                 if self.show_gather_path:
                     plt.plot_gather_map()
+            if self.save_cfginfo:
+                nc = NocConfig(self.noc_size[0], 
+                                self.noc_size[1],
+                                nm.cast_paths,
+                                nm.merge_paths,
+                                nm.gather_paths,
+                                **self.config
+                                )
+                nc.run_config()
+                nc.save_config()
                 
         if self.show_ctg:
             if self.noc_map:

@@ -7,13 +7,26 @@ from PIL import Image
 import networkx as nx
 
 __all__ = [
+    'dec2bin',
     'is_subseq',
     'build_mesh',
     'read_params',
     'read_mapinfo',
+    'read_cfginfo',
     'read_results',
     'get_input'
 ]
+
+def dec2bin(dec_num, bit_wide: int = 16) -> str:    
+    _, bin_num_abs = bin(dec_num).split('b')    
+    if len(bin_num_abs) > bit_wide:        
+        raise ValueError   
+    else:        
+        if dec_num >= 0:            
+            bin_num = bin_num_abs.rjust(bit_wide, '0')        
+        else:            
+            _, bin_num = bin(2**bit_wide + dec_num).split('b')    
+    return bin_num 
 
 def is_subseq(a: List, b: List) -> bool:
     '''
@@ -44,21 +57,28 @@ def build_mesh(eager_nodes: List[Tuple[int, int]]) -> nx.Graph:
             g.add_edge((x,y),(x+1,y))
     return g
 
-def read_params(mapname) -> Dict:
+def read_params(mapname: str) -> Dict:
     root_dir = os.environ['NVCIM_HOME']
     file_dir = os.path.join(root_dir, 'mapsave', mapname, 'params.pkl')
     with open(file_dir, 'rb') as f:
         params = pickle.load(f)
     return params
 
-def read_mapinfo(mapname) -> Dict:
+def read_mapinfo(mapname: str) -> Dict:
     root_dir = os.environ['NVCIM_HOME']
     file_dir = os.path.join(root_dir, 'mapsave', mapname, 'mapinfo.pkl')
     with open(file_dir, 'rb') as f:
         mapinfo = pickle.load(f)
     return mapinfo
 
-def read_results(mapname) -> Dict:
+def read_cfginfo(mapname: str) -> Dict:
+    root_dir = os.environ['NVCIM_HOME']
+    file_dir = os.path.join(root_dir, 'mapsave', mapname, 'cfginfo.pkl')
+    with open(file_dir, 'rb') as f:
+        cfginfo = pickle.load(f)
+    return cfginfo
+
+def read_results(mapname: str) -> Dict:
     root_dir = os.environ['NVCIM_HOME']
     file_dir = os.path.join(root_dir, 'mapsave', mapname, 'calcusim', 'results.pkl')
     with open(file_dir, 'rb') as f:
