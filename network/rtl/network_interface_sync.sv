@@ -1,3 +1,4 @@
+// for synchronous cast gather sending
 `include "params.svh"
 
 module network_interface #(
@@ -37,6 +38,10 @@ module network_interface #(
     input       wire                            ready_i_gather_nw,
 
     //cast pe end
+    input       wire                            valid_i_cast_pe,
+    input       wire        [`DW-1:0]           data_i_cast_pe,
+    output      wire                            ready_o_cast_pe,
+
     output      wire                            valid_o_cast_pe,
     output      wire        [`DW-1:0]           data_o_cast_pe,
     input       wire                            ready_i_cast_pe,
@@ -51,21 +56,17 @@ module network_interface #(
     input       wire                            ready_i_merge_pe,
 
     //gather pe end
+    input       wire                            valid_i_gather_pe,
+    input       wire        [`DW-1:0]           data_i_gather_pe,
+    output      wire                            ready_o_gather_pe,
+
     output      wire                            valid_o_gather_pe,
     output      wire        [`DW-1:0]           data_o_gather_pe,
     input       wire                            ready_i_gather_pe,
 
-    //combined pe end
-    input       wire                            valid_i_cast_gather_pe,
-    input       wire        [`DW-1:0]           data_i_cast_gather_pe,
-    output      wire                            ready_o_cast_gather_pe,
-
     //credit update signal
     output      wire                            credit_upd
 );
-
-wire valid_i_cast_pe, ready_o_cast_pe, valid_i_gather_pe, ready_o_gather_pe;
-wire [`DW-1:0] data_i_cast_pe, data_i_gather_pe;
 
 /*****************************************************
                 Merge interface
@@ -273,66 +274,4 @@ always@(posedge clk or negedge rstn) begin
 end
 
 assign valid_o_gather_nw = gather_state;
-
-// asynchronous sending for cast and gather
-wire fifo_read, fifo_write;
-wire [`DW-1:0] fifo_dout;
-reg resend;
-reg [`PKT_LEN_LOG : 0] slice_cnt;
-
-always@(posedge clk or negedge rstn) begin
-    if(~rstn) begin
-        slice_cnt <= 0;
-        resend <= 1'b0;
-    end
-    else begin
-        if((cast_out == 1) & (gather_out == 1)) begin
-            if((~resend) & valid_i_cast_pe & ready_o_cast_pe) begin
-                if(slice_cnt == `PKT_LEN-3) begin
-                    slice_cnt <= 0;
-                    resend <= 1'b1;
-                end
-                else slice_cnt <= slice_cnt + 1;
-            end
-            else if(resend & valid_i_gather_pe & ready_o_gather_pe) begin
-                if(slice_cnt == `PKT_LEN-3) begin
-                    slice_cnt <= 0;
-                    resend <= 1'b0;
-                end
-                else slice_cnt <= slice_cnt + 1;
-            end
-        end
-    end
-end
-
-assign ready_o_cast_gather_pe = ((cast_out == 1) & (gather_out == 1)) ? (~resend) & ready_o_cast_pe : (
-                                (cast_out == 1)                       ? ready_o_cast_pe             : ready_o_gather_pe);
-
-assign valid_i_cast_pe = ((cast_out == 1) & (gather_out == 1)) ? (~resend) & valid_i_cast_gather_pe : ( // read out data_sum
-                            (cast_out == 1)                    ? valid_i_cast_gather_pe : 1'b0);
-
-assign valid_i_gather_pe = ((cast_out == 1) & (gather_out == 1)) ? 1'b1 : ( // read out fifo
-                            (cast_out == 1)                      ? 1'b0 : valid_i_cast_gather_pe);
-
-assign data_i_cast_pe = data_i_cast_gather_pe;
-assign data_i_gather_pe = ((cast_out == 1) & (gather_out == 1)) ? fifo_dout : data_i_cast_gather_pe;
-
-nfifo #(
-    .width                   (`DW),
-    .depth                   (`PKT_LEN-2),
-    .depth_LOG               (`PKT_LEN_LOG + 1),
-    .FWFT                    (1)
-)slice_fifo(
-    .clk_i                   (clk),
-    .rst_i                   (~rstn),
-    .read_i                  (fifo_read),
-    .write_i                 (fifo_write),
-    .empty_o                 (),
-    .full_o                  (),
-    .data_i                  (data_i_cast_gather_pe),
-    .data_o                  (fifo_dout)
-);
-
-assign fifo_write = ((cast_out == 1) & (gather_out == 1)) & (~resend) & valid_i_cast_pe & ready_o_cast_pe;
-assign fifo_read = ((cast_out == 1) & (gather_out == 1)) & resend & valid_i_gather_pe & ready_o_gather_pe;
 endmodule

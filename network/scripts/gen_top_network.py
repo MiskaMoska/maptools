@@ -27,9 +27,9 @@ module network(
     for i in range(w):
         for j in range(h):
             containt += f'''
-    input       wire        [`DW-1:0]       cast_data_i_{i}_{j},
-    input       wire                        cast_valid_i_{i}_{j},
-    output      wire                        cast_ready_o_{i}_{j},
+    input       wire        [`DW-1:0]       cast_gather_data_i_{i}_{j},
+    input       wire                        cast_gather_valid_i_{i}_{j},
+    output      wire                        cast_gather_ready_o_{i}_{j},
 
     output      wire        [`DW-1:0]       cast_data_o_{i}_{j},
     output      wire                        cast_valid_o_{i}_{j},
@@ -49,10 +49,6 @@ module network(
     for i in range(w):
         for j in range(h):
             containt += f'''
-    input       wire        [`DW-1:0]       gather_data_i_{i}_{j},
-    input       wire                        gather_valid_i_{i}_{j},
-    output      wire                        gather_ready_o_{i}_{j},
-
     output      wire        [`DW-1:0]       gather_data_o_{i}_{j},
     output      wire                        gather_valid_o_{i}_{j},
     input       wire                        gather_ready_i_{i}_{j},'''
@@ -201,9 +197,9 @@ network_interface #(
     .data_o_merge_nw                (data_i_merge_nw[{i}][{j}]),
     .ready_i_merge_nw               (ready_o_merge_nw[{i}][{j}]),
 
-    .valid_i_cast_pe                (cast_valid_i_{i}_{j}),
-    .data_i_cast_pe                 (cast_data_i_{i}_{j}),
-    .ready_o_cast_pe                (cast_ready_o_{i}_{j}),
+    .valid_i_cast_gather_pe         (cast_gather_valid_i_{i}_{j}),
+    .data_i_cast_gather_pe          (cast_gather_data_i_{i}_{j}),
+    .ready_o_cast_gather_pe         (cast_gather_ready_o_{i}_{j}),
     .valid_o_cast_pe                (cast_valid_o_{i}_{j}),
     .data_o_cast_pe                 (cast_data_o_{i}_{j}),
     .ready_i_cast_pe                (cast_ready_i_{i}_{j}),
@@ -215,9 +211,6 @@ network_interface #(
     .data_o_merge_pe                (merge_data_o_{i}_{j}),
     .ready_i_merge_pe               (merge_ready_i_{i}_{j}),
 
-    .valid_i_gather_pe              (gather_valid_i_{i}_{j}),
-    .data_i_gather_pe               (gather_data_i_{i}_{j}),
-    .ready_o_gather_pe              (gather_ready_o_{i}_{j}),
     .valid_o_gather_pe              (gather_valid_o_{i}_{j}),
     .data_o_gather_pe               (gather_data_o_{i}_{j}),
     .ready_i_gather_pe              (gather_ready_i_{i}_{j}),

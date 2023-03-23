@@ -14,7 +14,7 @@ def gen_cast_network_config(root_dir, w, h):
     n = w * h
     for i in range(w):
         for j in range(h):
-            containt += "\nlocalparam isUBM_list_"+str(i)+"_"+str(j)+"[`CN] = '{0,0,0,0,0};\n"
+            containt += "\nlocalparam isUBM_list_"+str(i)+"_"+str(j)+"[`CN] = '{1,1,1,1,1};\n"
             containt += "localparam isFC_list_"+str(i)+"_"+str(j)+"[`CN] = '{0,0,0,0,0};\n"
             containt += "localparam [`NOC_WIDTH*`NOC_HEIGHT-1:0] FCdn_list_"+str(i)+"_"+str(j)+"[`CN] = '{"+str(n)+"'b0,"+str(n)+"'b0,"+str(n)+"'b0,"+str(n)+"'b0,"+str(n)+"'b0};\n"
             containt += "localparam int FCpl_list_"+str(i)+"_"+str(j)+"[`CN] = '{0,0,0,0,0};\n"

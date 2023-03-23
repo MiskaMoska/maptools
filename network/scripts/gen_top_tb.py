@@ -62,12 +62,13 @@ initial begin
 end
 
 initial begin
-    $fsdbDumpfile("wave.fsdb");
-    $fsdbDumpvars(0,top_tb);
-    $fsdbDumpMDA(); //show array values
+    // $fsdbDumpfile("wave.fsdb");
+    // $fsdbDumpvars(0,top_tb);
+    // $fsdbDumpMDA(); //show array values
 '''
     for i in nf:
-        containt += f'file{i} = $fopen("{receive_pool_files[i]}");\n'
+        containt += f'''
+    file{i} = $fopen("{receive_pool_files[i]}");'''
     containt += f'''
     state_file = $fopen("{state_file}");
 end

@@ -5,10 +5,10 @@ from maptools import read_cfginfo, read_mapinfo
 import os
 
 root_dir = os.environ.get('NVCIM_HOME')
-mapname = 'xxx'
+mapname = 'resnet50'
 test = os.path.join(root_dir, 'onnx_models', 'simp-resnet50.onnx')
 # img = get_input('work/test.jpg')
-routine = MapRoutine(mapname='xxx',calcusim=False,save_cfginfo=True,show_ctg=True,noc_size=(10, 25),model_dir=test)
+routine = MapRoutine(mapname=mapname,calcusim=False,save_cfginfo=True,show_ctg=True,noc_size=(16, 16),model_dir=test)
 routine.run()
 
 # cfginfo = read_cfginfo(mapname)

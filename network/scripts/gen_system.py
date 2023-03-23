@@ -26,9 +26,9 @@ module system (
     input       wire                            ready_i_flee{idx},'''
     containt = containt.rstrip(',') + '\n);\n'
     containt += '''
-wire [`DW-1:0] cast_data_pe_2_nw[`NOC_WIDTH][`NOC_HEIGHT], merge_data_pe_2_nw[`NOC_WIDTH][`NOC_HEIGHT], gather_data_pe_2_nw[`NOC_WIDTH][`NOC_HEIGHT], cast_data_nw_2_pe[`NOC_WIDTH][`NOC_HEIGHT], merge_data_nw_2_pe[`NOC_WIDTH][`NOC_HEIGHT], gather_data_nw_2_pe[`NOC_WIDTH][`NOC_HEIGHT];
-wire  cast_valid_pe_2_nw[`NOC_WIDTH][`NOC_HEIGHT], merge_valid_pe_2_nw[`NOC_WIDTH][`NOC_HEIGHT], gather_valid_pe_2_nw[`NOC_WIDTH][`NOC_HEIGHT], cast_valid_nw_2_pe[`NOC_WIDTH][`NOC_HEIGHT], merge_valid_nw_2_pe[`NOC_WIDTH][`NOC_HEIGHT], gather_valid_nw_2_pe[`NOC_WIDTH][`NOC_HEIGHT];
-wire  cast_ready_pe_2_nw[`NOC_WIDTH][`NOC_HEIGHT], merge_ready_pe_2_nw[`NOC_WIDTH][`NOC_HEIGHT], gather_ready_pe_2_nw[`NOC_WIDTH][`NOC_HEIGHT], cast_ready_nw_2_pe[`NOC_WIDTH][`NOC_HEIGHT], merge_ready_nw_2_pe[`NOC_WIDTH][`NOC_HEIGHT], gather_ready_nw_2_pe[`NOC_WIDTH][`NOC_HEIGHT];
+wire [`DW-1:0] cast_gather_data_pe_2_nw[`NOC_WIDTH][`NOC_HEIGHT], merge_data_pe_2_nw[`NOC_WIDTH][`NOC_HEIGHT], cast_data_nw_2_pe[`NOC_WIDTH][`NOC_HEIGHT], merge_data_nw_2_pe[`NOC_WIDTH][`NOC_HEIGHT], gather_data_nw_2_pe[`NOC_WIDTH][`NOC_HEIGHT];
+wire  cast_gather_valid_pe_2_nw[`NOC_WIDTH][`NOC_HEIGHT], merge_valid_pe_2_nw[`NOC_WIDTH][`NOC_HEIGHT], cast_valid_nw_2_pe[`NOC_WIDTH][`NOC_HEIGHT], merge_valid_nw_2_pe[`NOC_WIDTH][`NOC_HEIGHT], gather_valid_nw_2_pe[`NOC_WIDTH][`NOC_HEIGHT];
+wire  cast_ready_pe_2_nw[`NOC_WIDTH][`NOC_HEIGHT], merge_ready_pe_2_nw[`NOC_WIDTH][`NOC_HEIGHT], gather_ready_pe_2_nw[`NOC_WIDTH][`NOC_HEIGHT], merge_ready_nw_2_pe[`NOC_WIDTH][`NOC_HEIGHT], cast_gather_ready_nw_2_pe[`NOC_WIDTH][`NOC_HEIGHT];
 
 network nw(
     .clk                                               (clk),
@@ -46,15 +46,12 @@ network nw(
     for i in range(w):
         for j in range(h): 
             containt += f'''
-    .cast_data_i_{i}_{j}                               (cast_data_pe_2_nw[{i}][{j}]),
-    .cast_valid_i_{i}_{j}                              (cast_valid_pe_2_nw[{i}][{j}]),
-    .cast_ready_o_{i}_{j}                              (cast_ready_nw_2_pe[{i}][{j}]),
+    .cast_gather_data_i_{i}_{j}                        (cast_gather_data_pe_2_nw[{i}][{j}]),
+    .cast_gather_valid_i_{i}_{j}                       (cast_gather_valid_pe_2_nw[{i}][{j}]),
+    .cast_gather_ready_o_{i}_{j}                       (cast_gather_ready_nw_2_pe[{i}][{j}]),
     .merge_data_i_{i}_{j}                              (merge_data_pe_2_nw[{i}][{j}]),
     .merge_valid_i_{i}_{j}                             (merge_valid_pe_2_nw[{i}][{j}]),
     .merge_ready_o_{i}_{j}                             (merge_ready_nw_2_pe[{i}][{j}]),
-    .gather_data_i_{i}_{j}                             (gather_data_pe_2_nw[{i}][{j}]),
-    .gather_valid_i_{i}_{j}                            (gather_valid_pe_2_nw[{i}][{j}]),
-    .gather_ready_o_{i}_{j}                            (gather_ready_nw_2_pe[{i}][{j}]),
 
     .cast_data_o_{i}_{j}                               (cast_data_nw_2_pe[{i}][{j}]),
     .cast_valid_o_{i}_{j}                              (cast_valid_nw_2_pe[{i}][{j}]),
@@ -85,9 +82,9 @@ virtual_pe #(
     .cast_data_i                                       (cast_data_nw_2_pe[{i}][{j}]),
     .cast_valid_i                                      (cast_valid_nw_2_pe[{i}][{j}]),
     .cast_ready_o                                      (cast_ready_pe_2_nw[{i}][{j}]),
-    .cast_data_o                                       (cast_data_pe_2_nw[{i}][{j}]),
-    .cast_valid_o                                      (cast_valid_pe_2_nw[{i}][{j}]),
-    .cast_ready_i                                      (cast_ready_nw_2_pe[{i}][{j}]),
+    .cast_gather_data_o                                (cast_gather_data_pe_2_nw[{i}][{j}]),
+    .cast_gather_valid_o                               (cast_gather_valid_pe_2_nw[{i}][{j}]),
+    .cast_gather_ready_i                               (cast_gather_ready_nw_2_pe[{i}][{j}]),
     .merge_data_i                                      (merge_data_nw_2_pe[{i}][{j}]),
     .merge_valid_i                                     (merge_valid_nw_2_pe[{i}][{j}]),
     .merge_ready_o                                     (merge_ready_pe_2_nw[{i}][{j}]),
@@ -96,10 +93,7 @@ virtual_pe #(
     .merge_ready_i                                     (merge_ready_nw_2_pe[{i}][{j}]),
     .gather_data_i                                     (gather_data_nw_2_pe[{i}][{j}]),
     .gather_valid_i                                    (gather_valid_nw_2_pe[{i}][{j}]),
-    .gather_ready_o                                    (gather_ready_pe_2_nw[{i}][{j}]),
-    .gather_data_o                                     (gather_data_pe_2_nw[{i}][{j}]),
-    .gather_valid_o                                    (gather_valid_pe_2_nw[{i}][{j}]),
-    .gather_ready_i                                    (gather_ready_nw_2_pe[{i}][{j}])
+    .gather_ready_o                                    (gather_ready_pe_2_nw[{i}][{j}])
 );\n\n'''
     containt += "endmodule"
     with open(file_dir,"w") as my_file:

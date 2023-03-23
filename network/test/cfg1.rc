@@ -2,11 +2,11 @@ Magic 271485
 Revision Verdi3_L-2016.06-1
 
 ; Window Layout <x> <y> <width> <height> <signalwidth> <valuewidth>
-viewPort 1536 23 2194 1163 294 65
+viewPort 1536 23 2194 1163 368 65
 
 ; File list:
 ; openDirFile [-d delimiter] [-s time_offset] [-rf auto_bus_rule_file] path_name file_name
-openDirFile -d / -i 0 "" "/mnt/c/git/nvcim-comm/network/test/wave.fsdb"
+openDirFile -d / "" "/mnt/c/git/nvcim-comm/network/test/wave.fsdb"
 
 ; file time scale:
 ; fileTimeScale ### s|ms|us|ns|ps
@@ -16,14 +16,16 @@ signalSpacing 5
 
 ; windowTimeUnit is used for zoom, cursor & marker
 ; waveform viewport range
-zoom 0.000000 5876623514.007139
-cursor 33000.000000
+zoom 19445983.192982 20233269.961928
+cursor 19555000.000000
 marker 0.000000
 
+; user define markers
+; userMarker time_pos marker_name color linestyle
 ; visible top row signal index
-top 0
+top 51
 ; marker line index
-markerPos 33
+markerPos 100
 
 ; event list
 ; addEvent event_name event_expression
@@ -43,68 +45,110 @@ COMPLEX_EVENT_END
 curSTATUS ByChange
 
 
-addGroup "system" -e FALSE
+addGroup "G1"
 activeDirFile "" "/mnt/c/git/nvcim-comm/network/test/wave.fsdb"
-addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/cast_data_nw_2_pe[0:4]
-addSignal -h 15 -UNSIGNED -HEX -holdScope cast_data_pe_2_nw[0:4]
-addSignal -h 15 -UNSIGNED -HEX -holdScope cast_ready_nw_2_pe[0:4]
-addSignal -h 15 -UNSIGNED -HEX -holdScope cast_ready_pe_2_nw[0:4]
-addSignal -h 15 -UNSIGNED -HEX -holdScope cast_valid_nw_2_pe[0:4]
-addSignal -h 15 -UNSIGNED -HEX -holdScope cast_valid_pe_2_nw[0:4]
-addSignal -h 15 -holdScope clk
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_o_flee0[33:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_o_flee1[33:0]
-addSignal -h 15 -UNSIGNED -HEX -holdScope gather_data_nw_2_pe[0:4]
-addSignal -h 15 -UNSIGNED -HEX -holdScope gather_data_pe_2_nw[0:4]
-addSignal -h 15 -UNSIGNED -HEX -holdScope gather_ready_nw_2_pe[0:4]
-addSignal -h 15 -UNSIGNED -HEX -holdScope gather_ready_pe_2_nw[0:4]
-addSignal -h 15 -UNSIGNED -HEX -holdScope gather_valid_nw_2_pe[0:4]
-addSignal -h 15 -UNSIGNED -HEX -holdScope gather_valid_pe_2_nw[0:4]
-addSignal -h 15 -UNSIGNED -HEX -holdScope merge_data_nw_2_pe[0:4]
-addSignal -h 15 -UNSIGNED -HEX -holdScope merge_data_pe_2_nw[0:4]
-addSignal -h 15 -UNSIGNED -HEX -holdScope merge_ready_nw_2_pe[0:4]
-addSignal -h 15 -UNSIGNED -HEX -holdScope merge_ready_pe_2_nw[0:4]
-addSignal -h 15 -UNSIGNED -HEX -holdScope merge_valid_nw_2_pe[0:4]
-addSignal -h 15 -UNSIGNED -HEX -holdScope merge_valid_pe_2_nw[0:4]
-addSignal -h 15 -holdScope ready_i_flee0
-addSignal -h 15 -holdScope ready_i_flee1
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_i_stab[33:0]
-addSignal -h 15 -holdScope ready_o_stab
-addSignal -h 15 -holdScope rstn
-addSignal -h 15 -holdScope valid_i_stab
-addSignal -h 15 -holdScope valid_o_flee0
-addSignal -h 15 -holdScope valid_o_flee1
-addGroup "G5"
-addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/vpe_1_3/cast_data_i[33:0]
+addSignal -h 15 /top_tb/dut/vpe_3_23/valid_all
+addSignal -h 15 -holdScope ready_all
+addGroup "G2"
+addSignal -h 15 /top_tb/dut/vpe_3_23/merge_valid_i
 addSignal -h 15 -holdScope cast_valid_i
-addSignal -h 15 -holdScope cast_ready_o
+addSignal -h 15 -holdScope gather_valid_i
 addGroup "G3"
+addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/vpe_1_22/scnt[31:0]
+addSignal -h 15 -holdScope valid_all
+addSignal -h 15 -holdScope ready_all
+addGroup "G4"
+addSignal -h 15 /top_tb/dut/vpe_1_22/cast_valid_i
+addSignal -h 15 -holdScope merge_valid_i
+addGroup "G5"
+addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/vpe_9_20/scnt[31:0]
+addGroup "G6"
+addSignal -h 15 /top_tb/dut/vpe_9_20/valid_all
+addSignal -h 15 -holdScope ready_all
+addSignal -h 15 -holdScope cast_valid_i
+addSignal -h 15 -holdScope merge_valid_i
+addGroup "G7"
+addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/vpe_7_18/scnt[31:0]
+addSignal -h 15 -holdScope valid_all
+addSignal -h 15 -holdScope ready_all
+addSignal -h 15 -holdScope cast_valid_i
+addSignal -h 15 -holdScope merge_valid_i
+addSignal -h 15 -holdScope gather_valid_i
+addGroup "G8"
+addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/vpe_1_18/scnt[31:0]
+addSignal -h 15 -holdScope merge_valid_i
+addSignal -h 15 -holdScope cast_valid_i
+addGroup "G9"
+addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/vpe_9_16/scnt[31:0]
+addSignal -h 15 -holdScope valid_all
+addSignal -h 15 -holdScope cast_valid_i
+addSignal -h 15 -holdScope merge_valid_i
+addGroup "G10"
+addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/vpe_7_14/scnt[31:0]
+addSignal -h 15 -holdScope merge_valid_i
+addSignal -h 15 -holdScope gather_valid_i
+addSignal -h 15 -holdScope cast_valid_i
+addGroup "G11"
+addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/vpe_1_14/scnt[31:0]
+addSignal -h 15 -holdScope merge_valid_i
+addSignal -h 15 -holdScope cast_valid_i
+addGroup "G12"
+addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/vpe_1_10/scnt[31:0]
+addSignal -h 15 -holdScope cast_valid_i
+addSignal -h 15 -holdScope merge_valid_i
+addGroup "G13"
+addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/vpe_5_9/scnt[31:0]
+addSignal -h 15 -holdScope gather_valid_i
+addSignal -h 15 -holdScope cast_valid_i
+addGroup "G14"
+addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/vpe_4_9/scnt[31:0]
+addSignal -h 15 -holdScope gather_valid_i
+addSignal -h 15 -holdScope cast_valid_i
+addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/vpe_3_9/scnt[31:0]
+addSignal -h 15 -holdScope gather_valid_i
+addSignal -h 15 -holdScope cast_valid_i
+addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/vpe_2_9/scnt[31:0]
+addSignal -h 15 -holdScope cast_valid_i
+addSignal -h 15 -holdScope gather_valid_i
+addGroup "G15"
+addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/vpe_6_9/scnt[31:0]
+addSignal -h 15 -holdScope merge_valid_i
+addSignal -h 15 -holdScope cast_valid_i
+addSignal -h 15 -holdScope ready_all
+addSignal -h 15 -holdScope valid_all
+addSignal -h 15 -holdScope cast_ready_i
+addSignal -h 15 /top_tb/dut/nw/ni_6_9/valid_o_cast_nw
+addGroup "G16"
+addSignal -h 15 /top_tb/dut/nw/ni_6_9/ready_i_cast_nw
+addSignal -h 15 /top_tb/dut/nw/cast_nw/router_6_9/input_stage_local/ready_i
+addGroup "G17"
+addSignal -h 15 /top_tb/dut/nw/cast_nw/router_6_9/west_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_o[33:0]
+addSignal -h 15 -holdScope west_ready_i
+addSignal -h 15 /top_tb/dut/nw/cast_nw/router_6_9/input_stage_local/valid_o
+addSignal -h 15 -holdScope fifo_empty
+addSignal -h 15 -holdScope ready_i
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_o[33:0]
+addSignal -h 15 -holdScope ready_i
+addGroup "G18"
+addSignal -h 15 /top_tb/dut/nw/cast_nw/router_5_9/input_stage_east/valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_o[33:0]
+addSignal -h 15 -holdScope ready_i
+addGroup "G19"
+addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/nw/cast_nw/router_5_9/input_stage_east/ctlr/candidateOutVC[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope reqVC[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope selOutVC[4:0]
+addSignal -h 15 -holdScope in_ubm
+addGroup "G20"
+addSignal -h 15 /top_tb/dut/nw/cast_nw/router_5_9/local_ready_i
+addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_o[33:0]
+addSignal -h 15 -holdScope local_valid_o
+addGroup "G21"
+addSignal -h 15 /top_tb/dut/nw/cast_nw/router_5_9/west_valid_o
+addSignal -h 15 -UNSIGNED -HEX -holdScope west_data_o[33:0]
+addSignal -h 15 -holdScope west_ready_i
+addGroup "G22"
 
 ; getSignalForm Scope Hierarchy Status
 ; active file of getSignalForm
-activeDirFile "" "/mnt/c/git/nvcim-comm/network/test/wave.fsdb"
-
-GETSIGNALFORM_SCOPE_HIERARCHY_BEGIN
-getSignalForm close
-
-"/_$novas_unit__1"
-"/top_tb"
-"/top_tb/dut"
-"/top_tb/dut/nw"
-"/top_tb/dut/nw/cast_nw"
-"/top_tb/dut/nw/cast_nw/router_0_0"
-
-SCOPE_LIST_BEGIN
-"/_$novas_unit__1"
-"/top_tb"
-"/top_tb/dut"
-"/top_tb/dut/nw/ni_0_0"
-"/top_tb/dut/nw"
-"/top_tb/dut/nw/cast_nw/router_0_0/input_stage_west"
-"/top_tb/dut/nw/cast_nw"
-"/top_tb/dut/nw/cast_nw/router_0_0"
-SCOPE_LIST_END
-
-GETSIGNALFORM_SCOPE_HIERARCHY_END
-
 

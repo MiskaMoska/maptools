@@ -16,32 +16,30 @@ module virtual_pe #(
     input       wire                            clk,
     input       wire                            rstn, 
 
-    // cast port
+    // cast in
     input       wire        [`DW-1:0]           cast_data_i,
     input       wire                            cast_valid_i,
     output      wire                            cast_ready_o,
 
-    output      wire        [`DW-1:0]           cast_data_o,
-    output      wire                            cast_valid_o,
-    input       wire                            cast_ready_i,
-
-    // merge port
+    // merge in
     input       wire        [`DW-1:0]           merge_data_i,
     input       wire                            merge_valid_i,
     output      wire                            merge_ready_o,
 
-    output      wire        [`DW-1:0]           merge_data_o,
-    output      wire                            merge_valid_o,
-    input       wire                            merge_ready_i,
-
-    // gather port 
+    // gather in 
     input       wire        [`DW-1:0]           gather_data_i,
     input       wire                            gather_valid_i,
     output      wire                            gather_ready_o,
 
-    output      wire        [`DW-1:0]           gather_data_o,
-    output      wire                            gather_valid_o,
-    input       wire                            gather_ready_i
+    //cast gather out
+    output      wire        [`DW-1:0]           cast_gather_data_o,
+    output      wire                            cast_gather_valid_o,
+    input       wire                            cast_gather_ready_i,
+
+    // merge out
+    output      wire        [`DW-1:0]           merge_data_o,
+    output      wire                            merge_valid_o,
+    input       wire                            merge_ready_i
 );
 
 // All xbars have cast_in
@@ -77,15 +75,78 @@ assign valid_all = cast_valid_i &
                     (merge_in == 1 ? merge_valid_i : 1'b1) &
                     (gather_in == 1 ? gather_valid_i : 1'b1);
 
-assign ready_all = (cast_out == 1 ? cast_ready_i : 1'b1) & (gather_out == 1 ? gather_ready_i : 1'b1); // cast_out and gather_out at least one enabled
+assign ready_all = cast_gather_ready_i; 
 assign data_sum = cast_data_i; // no need to all, only simulate dependency
-assign cast_valid_o = (merge_out == 0) & valid_all;
-assign gather_valid_o = (merge_out == 0) & (gather_out == 1) & valid_all;
+assign cast_gather_valid_o = (merge_out == 0) & valid_all;
 assign cast_ready_o = (merge_out == 0) ? valid_all & ready_all : merge_ready_i;
 assign merge_ready_o = (merge_out == 0) ? (merge_in == 1) & valid_all & ready_all : 1'b0;
 assign gather_ready_o = (merge_out == 0) ? (gather_in == 1) & valid_all & ready_all : 1'b0;
 assign merge_valid_o = (merge_out == 1) & cast_valid_i;
 assign merge_data_o = data_sum;
-assign cast_data_o = data_sum;
-assign gather_data_o = data_sum;
+assign cast_gather_data_o = data_sum;
+
+// // asynchronous sending for cast and gather
+// wire fifo_read, fifo_write;
+// wire [`DW-1:0] fifo_dout;
+// reg resend;
+// reg [`PKT_LEN_LOG : 0] slice_cnt;
+
+// always@(posedge clk or negedge rstn) begin
+//     if(~rstn) begin
+//         slice_cnt <= 0;
+//         resend <= 1'b0;
+//     end
+//     else begin
+//         if((cast_out == 1) & (gather_out == 1)) begin
+//             if((~resend) & cast_valid_o & cast_ready_i) begin
+//                 if(slice_cnt == `PKT_LEN-3) begin
+//                     slice_cnt <= 0;
+//                     resend <= 1'b1;
+//                 end
+//                 else slice_cnt <= slice_cnt + 1;
+//             end
+//             else if(resend & gather_valid_o & gather_ready_i) begin
+//                 if(slice_cnt == `PKT_LEN-3) begin
+//                     slice_cnt <= 0;
+//                     resend <= 1'b0;
+//                 end
+//                 else slice_cnt <= slice_cnt + 1;
+//             end
+//         end
+//     end
+// end
+
+// assign ready_all = ((cast_out == 1) & (gather_out == 1)) ? (~resend) & cast_ready_i : (
+//                     (cast_out == 1)                      ? cast_ready_i             : gather_ready_i);
+
+// assign cast_valid_o = (merge_out == 0) & (
+//                         ((cast_out == 1) & (gather_out == 1)) ? (~resend) & valid_all : ( // read out data_sum
+//                         (cast_out == 1)                       ? valid_all : 1'b0));
+
+// assign gather_valid_o = (merge_out == 0) & (
+//                         ((cast_out == 1) & (gather_out == 1)) ? 1'b1 : ( // read out fifo
+//                         (cast_out == 1)                       ? 1'b0 : valid_all));
+
+// assign cast_data_o = data_sum;
+// assign gather_data_o = ((cast_out == 1) & (gather_out == 1)) ? fifo_dout : data_sum;
+
+// nfifo #(
+//     .width                   (`DW),
+//     .depth                   (`PKT_LEN-2),
+//     .depth_LOG               (`PKT_LEN_LOG + 1),
+//     .FWFT                    (1)
+// )slice_fifo(
+//     .clk_i                   (clk),
+//     .rst_i                   (~rstn),
+//     .read_i                  (fifo_read),
+//     .write_i                 (fifo_write),
+//     .empty_o                 (),
+//     .full_o                  (),
+//     .data_i                  (data_sum),
+//     .data_o                  (fifo_dout)
+// );
+
+// assign fifo_write = ((cast_out == 1) & (gather_out == 1)) & (~resend) & cast_valid_o & cast_ready_i;
+// assign fifo_read = ((cast_out == 1) & (gather_out == 1)) & resend & gather_valid_o & gather_ready_i;
+
 endmodule
