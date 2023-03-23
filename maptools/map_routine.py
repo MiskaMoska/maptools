@@ -1,6 +1,5 @@
 import os
 import onnx
-import torch
 from typing import Optional, List, Dict, Tuple, Any
 from maptools import *
 
@@ -21,7 +20,7 @@ class MapRoutine(object):
         self.noc_size: Tuple[2] = (5, 10)
 
         # data input    
-        self.input: Optional[torch.Tensor] = None
+        self.input: Optional[Any] = None
 
         # procedure control
         self.noc_map: bool = True
@@ -71,6 +70,7 @@ class MapRoutine(object):
                 tsim.plot_execu()
             ctg = tsim.ctg
         if self.calcusim:
+            import torch
             from maptools.calcusim import CalcuSim
             assert self.input is not None, "calcusim enabled but got input is None"
             assert isinstance(self.input, torch.Tensor), f"input must be torch.Tensor. but got {type(self.input)}"

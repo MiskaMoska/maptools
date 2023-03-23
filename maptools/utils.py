@@ -1,7 +1,5 @@
 import os
 import pickle
-import torch
-from torchvision import transforms
 from typing import List, Tuple, Dict
 from PIL import Image
 import networkx as nx
@@ -13,8 +11,7 @@ __all__ = [
     'read_params',
     'read_mapinfo',
     'read_cfginfo',
-    'read_results',
-    'get_input'
+    'read_results'
 ]
 
 def dec2bin(dec_num, bit_wide: int = 16) -> str:    
@@ -84,14 +81,3 @@ def read_results(mapname: str) -> Dict:
     with open(file_dir, 'rb') as f:
         results = pickle.load(f)
     return results
-
-def get_input(img_path: str, resize: Tuple = (224, 224)) -> torch.Tensor:
-    assert len(resize) == 2, f"resize must be a 2-element tuple, but got {len(resize)}"
-    trans = transforms.Compose([
-        transforms.ToTensor()
-    ])
-    image_file = img_path
-    img = Image.open(image_file)
-    img = img.resize(resize)
-    img = trans(img)
-    return torch.unsqueeze(img, dim=0)
