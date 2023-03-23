@@ -7,9 +7,9 @@
 ../rtl/cast_route_table.sv
 ../rtl/cast_vc_allocator.sv
 ../rtl/converter.sv
-../rtl/fifo.sv
-../rtl/fifo_cnt.sv
-../rtl/fifo_ubm.sv
+../rtl/nfifo.sv
+../rtl/nfifo_cnt.sv
+../rtl/nfifo_ubm.sv
 ../rtl/gather_crossbar.sv
 ../rtl/gather_input_controller.sv
 ../rtl/gather_input_stage.sv

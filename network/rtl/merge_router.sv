@@ -49,7 +49,7 @@ assign valid_i_fifo[4] = ~fifo_empty[4];
 localparam fifo_depth_log = `MERGE_ROUTER_BUFFER_DEPTH_LOG;
 localparam fifo_depth = 2**`MERGE_ROUTER_BUFFER_DEPTH_LOG;
 
-fifo #(
+nfifo #(
     .width                   (`DW),
     .depth                   (fifo_depth),
     .depth_LOG               (fifo_depth_log),
@@ -65,7 +65,7 @@ fifo #(
     .data_o                  (data_i_fifo[0])
 );
 
-fifo #(
+nfifo #(
     .width                   (`DW),
     .depth                   (fifo_depth),
     .depth_LOG               (fifo_depth_log),
@@ -81,7 +81,7 @@ fifo #(
     .data_o                  (data_i_fifo[1])
 );
 
-fifo #(
+nfifo #(
     .width                   (`DW),
     .depth                   (fifo_depth),
     .depth_LOG               (fifo_depth_log),
@@ -97,7 +97,7 @@ fifo #(
     .data_o                  (data_i_fifo[2])
 );
 
-fifo #(
+nfifo #(
     .width                   (`DW),
     .depth                   (fifo_depth),
     .depth_LOG               (fifo_depth_log),
@@ -113,7 +113,7 @@ fifo #(
     .data_o                  (data_i_fifo[3])
 );
 
-fifo #(
+nfifo #(
     .width                   (`DW),
     .depth                   (fifo_depth),
     .depth_LOG               (fifo_depth_log),

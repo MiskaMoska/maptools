@@ -7,5 +7,6 @@ merge_paths = mapinfo['merge_paths']
 # for p in gather_paths.values():
 #     print(p)
 
-for p in merge_paths.values():
-    print(p)
+for p in cast_paths.values():
+    if p['src'] == [(4,8)]:
+        print(p)

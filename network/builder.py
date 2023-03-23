@@ -16,12 +16,12 @@ from gen_params_header import *
 from maptools import read_mapinfo, read_cfginfo
 
 parser = argparse.ArgumentParser(description='Network Builder')
-parser.add_argument('--mapname', type=str, default='newmap' , help='name of the mapping case to be loaded')
-parser.add_argument("--datawidth", type=int, default=34, help='network data width')
-parser.add_argument("--packetlen", type=int, default=18, help='packet length for cast and gather network')
-parser.add_argument("--cbufdepth", type=int, default=64, help='buffer depth in cast router')
+parser.add_argument('--mapname', type=str, default='newmap' , help='name of the mapping case to be loaded, default: newmap')
+parser.add_argument("--datawidth", type=int, default=34, help='network data width, default: 34')
+parser.add_argument("--packetlen", type=int, default=18, help='packet length for cast and gather network, default: 18')
+parser.add_argument("--cbufdepth", type=int, default=64, help='buffer depth in cast router, default: 64')
 parser.add_argument("--test", action='store_true', help='generate files for local testing, not needed in system simulation')
-parser.add_argument("--flitnum", type=int, default=10000, help='number of flits to be generated, must be divided by `packetlen-2`')
+parser.add_argument("--flitnum", type=int, default=10000, help='number of flits to be generated, must be divided by `packetlen-2`, default: 10000')
 parser.add_argument("--clean", action='store_true', help='clean all generated files to reset the folder')
 args = parser.parse_args()
 

@@ -36,7 +36,7 @@ assign fifo_write = valid_i & ready_o;
 assign valid_o = ~fifo_empty & ready_i;
 assign ready_o = ~fifo_full;
 
-fifo #(
+nfifo #(
     .width                   (`DW),
     .depth                   (2**`GATHER_ROUTER_BUFFER_DEPTH_LOG),
     .depth_LOG               (`GATHER_ROUTER_BUFFER_DEPTH_LOG),

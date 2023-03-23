@@ -110,7 +110,7 @@ assign ready_o_cast_nw = 1'b1;
 // );
 
 // cast network end receive buffer
-fifo #(
+nfifo #(
     .width                   (`DW),
     .depth                   (429496729),
     .depth_LOG               (32),
@@ -127,7 +127,7 @@ fifo #(
 );
 
 // cast network end send buffer
-fifo_cnt #(
+nfifo_cnt #(
     .width                   (`DW),
     .depth                   (128),
     .depth_LOG               (7),
@@ -207,7 +207,7 @@ assign ready_o_gather_nw = 1'b1;
 // );
 
 // gather network end receive buffer
-fifo #(
+nfifo #(
     .width                   (`DW),
     .depth                   (429496729),
     .depth_LOG               (32),
@@ -224,7 +224,7 @@ fifo #(
 );
 
 // gather network end send buffer
-fifo_cnt #(
+nfifo_cnt #(
     .width                   (`DW),
     .depth                   (128),
     .depth_LOG               (7),
