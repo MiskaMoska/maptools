@@ -44,6 +44,11 @@ module virtual_pe #(
     input       wire                            gather_ready_i
 );
 
+// All xbars have cast_in
+wire valid_all; // cast_in, [merge_in], [gather_in] all valid (only for merge_out == 0)
+wire ready_all; // [cast_out], [gather_out] all valid (only for merge_out == 0)
+wire [`DW-1 : 0] data_sum;
+
 int rcnt = 0;
 always@(posedge clk) begin
     if(cast_valid_i & cast_ready_o) rcnt <= rcnt + 1;
@@ -51,18 +56,23 @@ always@(posedge clk) begin
         $display("node (%d, %d) starting computing ...", x, y);
 end
 
-// int scnt = 0;
-// always@(posedge clk) begin
-//     if(merge_out)
-//         if(merge_valid_o & merge_ready_i) scnt <= scnt + 1;
-//     else
-//         if(cast_valid_o & cast_ready_i) scnt <= scnt + 1;
-// end
+int scnt = 0;
+always@(posedge clk) begin
+    if(merge_out == 1) begin
+        if(merge_valid_o & merge_ready_i) begin
+            scnt <= scnt + 1;
+            if(scnt == 9999) 
+                $display("node (%d, %d) finished computing ...", x, y);
+        end
+    end else begin
+        if(valid_all & ready_all) begin
+            scnt <= scnt + 1;
+            if(scnt == 9999) 
+                $display("node (%d, %d) finished computing ...", x, y);
+        end
+    end
+end
 
-// All xbars have cast_in
-wire valid_all; // cast_in, [merge_in], [gather_in] all valid (only for merge_out == 0)
-wire ready_all; // [cast_out], [gather_out] all valid (only for merge_out == 0)
-wire [`DW-1 : 0] data_sum;
 assign valid_all = cast_valid_i & 
                     (merge_in == 1 ? merge_valid_i : 1'b1) &
                     (gather_in == 1 ? gather_valid_i : 1'b1);

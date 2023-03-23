@@ -134,13 +134,15 @@ cast_network cast_nw(
     .ready_i                        (ready_i_cast_nw),
     .data_i_stab                    (data_stab),
     .valid_i_stab                   (valid_stab),
-    .ready_o_stab                   (ready_stab),
-    .data_o_flee0                   (data_flee0),
-    .valid_o_flee0                  (valid_flee0),
-    .ready_i_flee0                  (ready_flee0),
-    .data_o_flee1                   (data_flee1),
-    .valid_o_flee1                  (valid_flee1),
-    .ready_i_flee1                  (ready_flee1),
+    .ready_o_stab                   (ready_stab),'''
+
+    for i in range(len(flees[0])):
+        containt += f'''
+    .data_o_flee{i}                   (data_flee{i}),
+    .valid_o_flee{i}                  (valid_flee{i}),
+    .ready_i_flee{i}                  (ready_flee{i}),'''
+
+    containt += '''
     .credit_upd                     (credit_upd)
 );                 
 

@@ -163,7 +163,7 @@ def gen_instances(data_width, w, h, flees):
 
             res, idx = is_flee((j, i), 2, flees)
             if res:
-                east_out_data = f"data_o_flee0{idx}"
+                east_out_data = f"data_o_flee{idx}"
                 east_out_valid = f"valid_o_flee{idx}"
                 east_out_ready = f"ready_i_flee{idx}"
 

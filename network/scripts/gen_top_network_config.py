@@ -2,7 +2,7 @@ import os
 
 __all__ = ['gen_top_network_config']
 
-def gen_top_network_config(root_dir, w, h, config):
+def gen_top_network_config(root_dir, w, h, config, flees):
     save_dir = os.path.join(root_dir, 'network', 'config', 'network_config')
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
@@ -20,6 +20,8 @@ def gen_top_network_config(root_dir, w, h, config):
             merge_in = int(cfg['merge_in'])
             gather_in = int(cfg['gather_in'])
             cast_sid = cfg['cast_sid'] if 'cast_sid' in cfg else 0
+            if xbar in flees[0]: # is the flee port
+                cast_sid = 1022
             gather_sid = cfg['gather_sid'] if 'gather_sid' in cfg else 0
         else: # reamin xbars that are notmapped to th NoC
             cast_out = 0

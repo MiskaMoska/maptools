@@ -19,14 +19,16 @@ run:
 verdi:
 	verdi +v2k -sverilog $(INCDIR) -f filelist.f -ssf wave.fsdb -sswr ./cfg1.rc -vcs_assert off
 
-vtest:
-	verdi +v2k -sverilog ../rtl/fifo_inf.sv ../rtl/test_fifo_inf.sv -ssf fifo.fsdb
-
-test:
+test: # for test
 	$(COMPILER) -sverilog ../rtl/fifo_inf.sv ../rtl/test_fifo_inf.sv \
 	-top test_fifo_inf \
 	$(TIMESCALE) \
 	$(FSDB) -R
+
+vtest: # for test
+	verdi +v2k -sverilog ../rtl/fifo_inf.sv ../rtl/test_fifo_inf.sv -ssf fifo.fsdb
+
+
 
 .PHONY:clean
 clean:

@@ -35,14 +35,14 @@ network nw(
     .rstn                                              (rstn),
     .data_i_stab                                       (data_i_stab),
     .valid_i_stab                                      (valid_i_stab),
-    .ready_o_stab                                      (ready_o_stab),
-    .data_o_flee0                                      (data_o_flee0),
-    .valid_o_flee0                                     (valid_o_flee0),
-    .ready_i_flee0                                     (ready_i_flee0),
-    .data_o_flee1                                      (data_o_flee1),
-    .valid_o_flee1                                     (valid_o_flee1),
-    .ready_i_flee1                                     (ready_i_flee1),
-'''
+    .ready_o_stab                                      (ready_o_stab),'''
+
+    for i in range(len(flees[0])):
+        containt += f'''
+    .data_o_flee{i}                                      (data_o_flee{i}),
+    .valid_o_flee{i}                                     (valid_o_flee{i}),
+    .ready_i_flee{i}                                     (ready_i_flee{i}),'''
+
     for i in range(w):
         for j in range(h): 
             containt += f'''

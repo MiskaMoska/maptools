@@ -37,7 +37,7 @@ class NocMapper(object):
             root_dir : str = os.environ['NVCIM_HOME']
                 The root directory of the project.
         
-            cast_method : bool = 'steiner'
+            cast_method : bool = 'dyxy'
                 'dyxy'      : DyXY-routing-based algorithm to run cast routing path plan, random.
                 'steiner'   : minimum steiner-tree-based algorithm to run cast routing path plan, deterministic.
 
@@ -115,23 +115,8 @@ class NocMapper(object):
                 break
 
     @staticmethod
-    def _route_dyxy(w: int, h: int, sx: int, sy: int, 
-                        dx: int, dy: int, path: List[Tuple], 
-                        region: Optional[List[Tuple]] = None) -> None:
-        '''
-        Route from (sx, sy) to (dx, dy) following DyXY routing algorithm.
-
-        Parameters
-        -------------------
-        path : List[Tuple]
-            Where the routing path results is located after performing this method.
-
-        region : Optional[List[Tuple]]
-            To constraint the routing path in a region.
-            When asserted, the routing path is limited to the nodes in `region`.
-        '''
-        if sx == dx and sy == dy:
-            return
+    def _dyxy_once(sx: int, sy: int, 
+                    dx: int, dy: int) -> Tuple:
         if sx != dx and sy != dy:
             # prechoose horizontal
             nxt_sy = sy
@@ -147,6 +132,65 @@ class NocMapper(object):
             elif sy == dy:
                 nxt_sy = sy
                 nxt_sx = sx + (1 if sx < dx else -1)
+        return nxt_sx, nxt_sy
+
+    @staticmethod
+    def _cast_route_dyxy(sx: int, sy: int,
+                            dx: int, dy: int,
+                            graph: nx.Graph) -> None:
+        '''
+        Only for cast tree planning.
+        Route from (sx, sy) to (dx, dy) following DyXY routing algorithm.
+
+        Parameters
+        ----------
+        graph : Graph
+            The udirected-tree-graph of the current cast communication.
+        '''
+        if sx == dx and sy == dy:
+            return
+        nxt_sx, nxt_sy = NocMapper._dyxy_once(sx, sy, dx, dy)
+        if (nxt_sx, nxt_sy) in graph.nodes:
+            graph.add_edge((sx, sy), (nxt_sx, nxt_sy))
+            return
+        graph.add_edge((sx, sy), (nxt_sx, nxt_sy))
+        NocMapper._cast_route_dyxy(nxt_sx, nxt_sy, dx, dy, graph)
+    
+    @staticmethod
+    def _build_cast_tree(root_node: Tuple, dst_nodes: List[Tuple]) -> nx.DiGraph:
+        '''
+        Build cast tree according to given root node and destination nodes.
+        Applying DyXY method.
+        '''
+        g = nx.Graph()
+        # if more randomization is need, deepcopy and shuffle the dst_nodes here
+        for d in dst_nodes:
+            if d not in g.nodes:
+                NocMapper._cast_route_dyxy(d[0], d[1], root_node[0], root_node[1], g)
+        assert nx.is_tree(g), f"failed to build cast tree, not a tree: {g.edges}"
+        g = nx.dfs_tree(g, source=root_node)
+        return g
+
+    @staticmethod
+    def _route_dyxy(sx: int, sy: int, 
+                        dx: int, dy: int, 
+                        path: List[Tuple], 
+                        region: Optional[List[Tuple]] = None) -> None:
+        '''
+        Route from (sx, sy) to (dx, dy) following DyXY routing algorithm.
+
+        Parameters
+        ----------
+        path : List[Tuple]
+            Where the routing path results is located after performing this method.
+
+        region : Optional[List[Tuple]]
+            To constraint the routing path in a region.
+            When asserted, the routing path is limited to the nodes in `region`.
+        '''
+        if sx == dx and sy == dy:
+            return
+        nxt_sx, nxt_sy = NocMapper._dyxy_once(sx, sy, dx, dy)
 
         # if constrained routing region considered
         if not region is None:
@@ -159,7 +203,7 @@ class NocMapper(object):
                     nxt_sx = sx + (1 if sx < dx else -1)
             assert (nxt_sx, nxt_sy) in region, "critical error ecountered at merge path"
         path.append(((sx, sy), (nxt_sx ,nxt_sy)))
-        NocMapper._route_dyxy(w,h,nxt_sx,nxt_sy,dx,dy,path,region=region)
+        NocMapper._route_dyxy(nxt_sx,nxt_sy,dx,dy,path,region=region)
 
     @staticmethod
     def _get_channel(bias_pos: Tuple, now_pos: Tuple, root_pos: Tuple) -> int:
@@ -181,39 +225,16 @@ class NocMapper(object):
 
         for sid, (name, root_node, dst_nodes) in enumerate(self.ctg.cast_trees,1):
             root_node = self.match_dict[root_node] # get the mapped node pos
+            dst_nodes = [self.match_dict[n] for n in dst_nodes] # get the mapped node pos
             print(f"starting cast plan {sid}/{cast_num} ....")
-            # keep generating the multicast tree until it is valid
-            # valid means every node in the multicast tree has no more than 1 in_edge
+
             if self.cast_method == 'steiner':
-                dst_nodes = [self.match_dict[n] for n in dst_nodes]
                 base_g = build_mesh(dst_nodes + [root_node])
                 g = nx.algorithms.approximation.steiner_tree(base_g, dst_nodes + [root_node])
                 g = nx.dfs_tree(g, source=root_node)
             elif self.cast_method == 'dyxy':
-                while True:
-                    # for each multicast tree
-                    # create the simple cast graph where each node represents a cast router
-                    g = nx.MultiDiGraph()
+                g = self._build_cast_tree(root_node, dst_nodes)
 
-                    # complete the simple cast graph by the generated multicast tree
-                    paths = []
-                    for dst_node in dst_nodes:
-                        path = []
-                        self._route_dyxy(self.w, self.h,
-                                            root_node[0], root_node[1], 
-                                            dst_node[0], dst_node[1], path)
-                        paths.extend(path)
-                    paths = list(set(paths))
-                    g.add_edges_from(paths)
-
-                    # verify the validity of the generated multicast tree
-                    flag = True
-                    for node in g.nodes():
-                        if g.in_degree(node) > 1:
-                            flag = False
-                            break
-                    if flag:
-                        break
             self.cast_paths[name] = dict()
             self.cast_paths[name]['sid'] = sid
             self.cast_paths[name]['src'] = [root_node]
@@ -235,6 +256,8 @@ class NocMapper(object):
             region_nodes = deepcopy(src_nodes)
             region_nodes.append(root_node)
             print(f"starting merge plan {sid}/{merge_num} ....")
+
+            # needed to be optimized by modified dyxy routing
             # keep generating the merge tree until it is valid
             # valid means every node in the merge tree has no more than 1 in_edge
             while True:
@@ -246,8 +269,7 @@ class NocMapper(object):
                 paths = []
                 for src_node in src_nodes:
                     path = []
-                    self._route_dyxy(self.w, self.h,
-                                        src_node[0], src_node[1], 
+                    self._route_dyxy(src_node[0], src_node[1], 
                                         root_node[0], root_node[1], path, 
                                         region=region_nodes)
                     paths.extend(path)
@@ -278,14 +300,13 @@ class NocMapper(object):
         gather_num = self.ctg.gather_num
         
         for sid, (name, src_node, dst_node) in enumerate(self.ctg.gather_pairs,1):
-            src_node = self.match_dict[src_node]
-            dst_node = self.match_dict[dst_node]
+            src_node = self.match_dict[src_node] # get the mapped node pos
+            dst_node = self.match_dict[dst_node] # get the mapped node pos
             print(f"starting gather plan {sid}/{gather_num} ....")
             # keep generating the gather path until it is valid
             # valid means it has no conflit with existing paths
             path = []
-            self._route_dyxy(self.w, self.h, 
-                                src_node[0], src_node[1],
+            self._route_dyxy(src_node[0], src_node[1],
                                 dst_node[0], dst_node[1], path)
             self.gather_paths[name] = dict()
             self.gather_paths[name]['sid'] = sid

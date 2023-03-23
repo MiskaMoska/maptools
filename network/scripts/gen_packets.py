@@ -6,7 +6,7 @@ from maptools import dec2bin
 __all__ = ['gen_packets']
 
 def gen_packets(root_dir, data_width, flit_num):
-    file_dir = os.path.join(root_dir, 'network', 'test', 'send_pool')
+    file_dir = os.path.join(root_dir, 'network', 'test', 'send_pool.txt')
     with open(file_dir,'w') as f:
         for i in range(flit_num):
             a = int.from_bytes(struct.pack("f",random.random()),'little')

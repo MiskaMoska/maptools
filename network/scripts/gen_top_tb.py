@@ -9,7 +9,7 @@ def gen_top_tb(root_dir, flees, flitnum):
         os.makedirs(save_dir)
     file_dir = os.path.join(save_dir, 'top_tb.sv')
     state_file = os.path.join(root_dir, 'network', 'test', 'run_state')
-    send_pool_file = os.path.join(root_dir, 'network', 'test', 'send_pool')
+    send_pool_file = os.path.join(root_dir, 'network', 'test', 'send_pool.txt')
     receive_pool_files = []
     for i in nf:
         receive_pool_files.append(os.path.join(root_dir, 'network', 'test', f'receive_pool_flee{i}.txt'))

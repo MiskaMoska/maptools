@@ -28,9 +28,12 @@ args = parser.parse_args()
 if args.clean:
     config_folder = os.path.join(root_dir, 'network', 'config')
     generated_folder = os.path.join(root_dir, 'network', 'rtl', 'generated')
-    test_file = os.path.join(root_dir, 'network', 'test', 'system.sv')
+    test_files = [os.path.join(root_dir, 'network', 'test', 'system.sv'),
+                    os.path.join(root_dir, 'network', 'test', 'top_tb.sv'),
+                    os.path.join(root_dir, 'network', 'test', 'send_pool.txt')
+                    ]
     send_pool = os.path.join(root_dir, 'network', 'test', 'send_pool')
-    for f in [config_folder, generated_folder, test_file, send_pool]:
+    for f in [config_folder, generated_folder] + test_files:
         print(f'removing {f}')
         os.system(f'rm -rf {f}')
     sys.exit()
@@ -107,7 +110,7 @@ for item in gather_paths.values():
     sid = item['sid']
     top_config[src]['gather_sid'] = sid
 
-gen_top_network_config(root_dir, w, h, top_config)
+gen_top_network_config(root_dir, w, h, top_config, flees)
 
 # generate params header
 gen_params_header(root_dir, w, h, args.datawidth, args.packetlen, args.cbufdepth)
