@@ -125,5 +125,3 @@ if args.test:
     gen_system(root_dir, w, h, flees)
     gen_top_tb(root_dir, flees, args.flitnum)
     gen_packets(root_dir, args.datawidth, args.flitnum)
-
-# 只剩下 virtual pe， top_tb了, 把生成数据包拿到外面来放到bulder里执行

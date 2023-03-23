@@ -1,3 +1,5 @@
+maptools/__pycache__/*
+network/scripts/__pycache__/*
 behavior_model/*
 onnx_models/*
 mapsave/*

@@ -6,7 +6,6 @@ from maptools.onnx_converter import *
 from maptools.operator_graph import *
 from maptools.xbar_mapper import *
 from maptools.utils import *
-from maptools.calcusim import *
 from maptools.noc_config import *
 from maptools.map_routine import *
 

@@ -71,6 +71,7 @@ class MapRoutine(object):
                 tsim.plot_execu()
             ctg = tsim.ctg
         if self.calcusim:
+            from maptools.calcusim import CalcuSim
             assert self.input is not None, "calcusim enabled but got input is None"
             assert isinstance(self.input, torch.Tensor), f"input must be torch.Tensor. but got {type(self.input)}"
             assert len(self.input.shape) == 4, f"input dimension must be 4 [N, C, H, W]. but got {len(self.input.shape)}"
