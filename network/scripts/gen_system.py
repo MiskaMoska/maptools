@@ -72,8 +72,13 @@ network nw(
         for j in range(h):
             containt += f'''
 virtual_pe #(
+    .cast_out                                          (cast_out_{i}_{j}),
     .merge_in                                          (merge_in_{i}_{j}),
+    .merge_out                                         (merge_out_{i}_{j}),
     .gather_in                                         (gather_in_{i}_{j}),
+    .gather_out                                        (gather_out_{i}_{j}),
+    .x                                                 ({i}),
+    .y                                                 ({j})
 )vpe_{i}_{j}(
     .clk                                               (clk),
     .rstn                                              (rstn),

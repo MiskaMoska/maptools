@@ -155,7 +155,7 @@ merge_network merge_nw(
     .ready_i                        (ready_i_merge_nw)
 );
 
-gather_network merge_nw(
+gather_network gather_nw(
     .clk                            (clk),
     .rstn                           (rstn),
     .data_i                         (data_i_gather_nw),

@@ -61,7 +61,7 @@ class NocMapper(object):
         self.w = w
         self.h = h
         self.root_dir = os.environ['NVCIM_HOME']
-        self.cast_method = 'steiner'
+        self.cast_method = 'dyxy' # steiner tree is harmful
         self.mapname = 'newmap'
         self.__dict__.update(kwargs)
 

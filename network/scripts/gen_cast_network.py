@@ -16,7 +16,7 @@ def gen_ports(w, h, flees):
 //Width: '''+str(w)+'''
 //Height:'''+str(h)+'''
 `include "params.svh"
-`include "cast_config.svh"
+`include "cast_network_config.svh"
 
 module cast_network(
     input       wire                            clk,
@@ -174,7 +174,7 @@ cast_router #(
     .isFC_list             (isFC_list_'''+str(j)+'''_'''+str(i)+'''),
     .FCdn_list             (FCdn_list_'''+str(j)+'''_'''+str(i)+'''),
     .FCpl_list             (FCpl_list_'''+str(j)+'''_'''+str(i)+'''),
-    .rt_file_list          (rt_file_list_'''+str(j)+'''_'''+str(i)+''')
+    .rt_file_list          (cast_rt_file_list_'''+str(j)+'''_'''+str(i)+''')
 )router_'''+str(j)+'''_'''+str(i)+'''(
     .clk                   (clk),
     .rstn                  (rstn),

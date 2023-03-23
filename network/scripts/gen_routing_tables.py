@@ -24,7 +24,7 @@ def gen_routing_tables(root_dir, w, h, config, type):
     for x in range(w):
         for y in range(h):
             for ip in range(5):
-                file_dir = os.path.join(save_dir, type+f'_{w}_{y}_{ip}')
+                file_dir = os.path.join(save_dir, type+f'_{x}_{y}_{ip}')
                 os.system('touch '+ file_dir)
 
     # save files
@@ -46,4 +46,4 @@ def gen_routing_tables(root_dir, w, h, config, type):
                 with open(file_dir, 'a') as f:
                     f.write(f'{dec2bin(input_dict[id], bit_wide=5)}{dec2bin(id, bit_wide=10)}\n')
                     f.flush()
-    print(f'new {type} routing tables have been written to {save_dir}')
+    print(f'new {type} routing tables have been written to: {save_dir}')

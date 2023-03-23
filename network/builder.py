@@ -21,6 +21,7 @@ parser.add_argument("--datawidth", type=int, default=34, help='network data widt
 parser.add_argument("--packetlen", type=int, default=18, help='packet length for cast and gather network')
 parser.add_argument("--cbufdepth", type=int, default=64, help='buffer depth in cast router')
 parser.add_argument("--test", action='store_true', help='generate files for local testing, not needed in system simulation')
+parser.add_argument("--flitnum", type=int, default=10000, help='number of flits to be generated, must be divided by `packetlen-2`')
 parser.add_argument("--clean", action='store_true', help='clean all generated files to reset the folder')
 args = parser.parse_args()
 
@@ -28,7 +29,8 @@ if args.clean:
     config_folder = os.path.join(root_dir, 'network', 'config')
     generated_folder = os.path.join(root_dir, 'network', 'rtl', 'generated')
     test_file = os.path.join(root_dir, 'network', 'test', 'system.sv')
-    for f in [config_folder, generated_folder, test_file]:
+    send_pool = os.path.join(root_dir, 'network', 'test', 'send_pool')
+    for f in [config_folder, generated_folder, test_file, send_pool]:
         print(f'removing {f}')
         os.system(f'rm -rf {f}')
     sys.exit()
@@ -88,6 +90,7 @@ top_config = dict()
 xbar_config = mapinfo['xbar_config']
 for xbar in xbar_config:
     top_config[xbar] = {'cast_out': xbar_config[xbar]['cast_out'], 
+                        'merge_out': xbar_config[xbar]['merge_out'],
                         'gather_out': xbar_config[xbar]['gather_out'],
                         'merge_in': xbar_config[xbar]['merge_in'],
                         'gather_in': xbar_config[xbar]['gather_in']}
@@ -104,15 +107,20 @@ for item in gather_paths.values():
     sid = item['sid']
     top_config[src]['gather_sid'] = sid
 
-gen_top_network_config(root_dir, top_config)
+gen_top_network_config(root_dir, w, h, top_config)
 
 # generate params header
 gen_params_header(root_dir, w, h, args.datawidth, args.packetlen, args.cbufdepth)
 
 if args.test:
+    assert args.flitnum % (args.packetlen-2) == 0, f"`flitnum`({args.flitnum}) must be divided by `packetlen-2`({args.packetlen-2}))"
     print("-"*50)
     print("generating files for local testing ....")
     from gen_system import *
+    from gen_top_tb import *
+    from gen_packets import *
     gen_system(root_dir, w, h, flees)
+    gen_top_tb(root_dir, flees, args.flitnum)
+    gen_packets(root_dir, args.datawidth, args.flitnum)
 
 # 只剩下 virtual pe， top_tb了, 把生成数据包拿到外面来放到bulder里执行

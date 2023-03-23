@@ -7,7 +7,7 @@ import os
 mapname = 'xxx'
 
 img = get_input('work/test.jpg')
-routine = MapRoutine(mapname='xxx',calcusim=False,show_ctg=False,save_cfginfo=True)
+routine = MapRoutine(mapname='xxx',calcusim=False,save_cfginfo=True,show_ctg=True)
 routine.run()
 
 cfginfo = read_cfginfo(mapname)

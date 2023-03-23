@@ -15,10 +15,10 @@ def gen_gather_network_config(root_dir, w, h):
         for j in range(h):
             rt_files = []
             for m in range(5):
-                file = os.path.join(root_dir, 'network', 'srcs', 'config', 'routing_tables', f'gather_{i}_{j}_{m}')
+                file = os.path.join(root_dir, 'network', 'config', 'routing_tables', f'gather_{i}_{j}_{m}')
                 file = '"'+file+'"'
                 rt_files.append(file)
-            containt += '''\nlocalparam string rt_file_list_'''+str(i)+'''_'''+str(j)+'''[`CN] = '{'''+rt_files[0]+''','''+rt_files[1]+''','''+rt_files[2]+''','''+rt_files[3]+''','''+rt_files[4]+'''};\n'''
+            containt += '''\nlocalparam string gather_rt_file_list_'''+str(i)+'''_'''+str(j)+'''[`CN] = '{'''+rt_files[0]+''','''+rt_files[1]+''','''+rt_files[2]+''','''+rt_files[3]+''','''+rt_files[4]+'''};\n'''
     containt += '''
 `endif'''
     with open(file_dir,"w") as my_file:

@@ -16,14 +16,14 @@ def gen_cast_network_config(root_dir, w, h):
         for j in range(h):
             containt += "\nlocalparam isUBM_list_"+str(i)+"_"+str(j)+"[`CN] = '{0,0,0,0,0};\n"
             containt += "localparam isFC_list_"+str(i)+"_"+str(j)+"[`CN] = '{0,0,0,0,0};\n"
-            containt += "localparam [`NOC_WIDTH*`NOC_HEIGHT-1:0] FCdn_list_"+str(i)+"_"+str(i)+"[`CN] = '{"+str(n)+"'b0,"+str(n)+"'b0,"+str(n)+"'b0,"+str(n)+"'b0,"+str(n)+"'b0};\n"
-            containt += "localparam int FCpl_list_"+str(i)+"_"+str(i)+"[`CN] = '{0,0,0,0,0};\n"
+            containt += "localparam [`NOC_WIDTH*`NOC_HEIGHT-1:0] FCdn_list_"+str(i)+"_"+str(j)+"[`CN] = '{"+str(n)+"'b0,"+str(n)+"'b0,"+str(n)+"'b0,"+str(n)+"'b0,"+str(n)+"'b0};\n"
+            containt += "localparam int FCpl_list_"+str(i)+"_"+str(j)+"[`CN] = '{0,0,0,0,0};\n"
             rt_files = []
             for m in range(5):
-                file = os.path.join(root_dir, 'network', 'srcs', 'config', 'routing_tables', f'cast_{i}_{j}_{m}')
+                file = os.path.join(root_dir, 'network', 'config', 'routing_tables', f'cast_{i}_{j}_{m}')
                 file = '"'+file+'"'
                 rt_files.append(file)
-            containt += '''localparam string rt_file_list_'''+str(i)+'''_'''+str(j)+'''[`CN] = '{'''+rt_files[0]+''','''+rt_files[1]+''','''+rt_files[2]+''','''+rt_files[3]+''','''+rt_files[4]+'''};\n'''
+            containt += '''localparam string cast_rt_file_list_'''+str(i)+'''_'''+str(j)+'''[`CN] = '{'''+rt_files[0]+''','''+rt_files[1]+''','''+rt_files[2]+''','''+rt_files[3]+''','''+rt_files[4]+'''};\n'''
     containt += '''
 `endif'''
     with open(file_dir,"w") as my_file:

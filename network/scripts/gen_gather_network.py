@@ -8,7 +8,7 @@ def gen_ports(w, h):
 //Width: '''+str(w)+'''
 //Height:'''+str(h)+'''
 `include "params.svh"
-`include "gather_config.svh"
+`include "gather_network_config.svh"
 
 module gather_network(
     input       wire                            clk,
@@ -67,13 +67,13 @@ def gen_instances(data_width, w, h):
                 south_out_valid = ""
                 south_out_ready = "1'b0"
             else:
-                south_in_data = "data_"+str(id+w)+"_to_"+str(id)+"_v0"
-                south_in_valid = "valid_"+str(id+w)+"_to_"+str(id)+"_v0"
-                south_in_ready = "ready_"+str(id)+"_to_"+str(id+w)+"_v0"
+                south_in_data = "data_"+str(id+w)+"_to_"+str(id)
+                south_in_valid = "valid_"+str(id+w)+"_to_"+str(id)
+                south_in_ready = "ready_"+str(id)+"_to_"+str(id+w)
 
-                south_out_data = "data_"+str(id)+"_to_"+str(id+w)+"_v1"
-                south_out_valid = "valid_"+str(id)+"_to_"+str(id+w)+"_v1"
-                south_out_ready = "ready_"+str(id+w)+"_to_"+str(id)+"_v1"
+                south_out_data = "data_"+str(id)+"_to_"+str(id+w)
+                south_out_valid = "valid_"+str(id)+"_to_"+str(id+w)
+                south_out_ready = "ready_"+str(id+w)+"_to_"+str(id)
 
             '''
             generate west port signals
@@ -118,7 +118,7 @@ def gen_instances(data_width, w, h):
             router_txt = '''
 /*Router '''+str(j)+''','''+str(i)+'''*/    
 gather_router #(
-    .rt_file_list          (rt_file_list_'''+str(j)+'''_'''+str(i)+''')
+    .rt_file_list          (gather_rt_file_list_'''+str(j)+'''_'''+str(i)+''')
 )router_'''+str(j)+'''_'''+str(i)+'''(
     .clk                   (clk),
     .rstn                  (rstn),
@@ -171,9 +171,9 @@ wire                ready_'''+str(w*i+j)+'''_to_'''+str(w*i+j+1)+''',\tready_'''
     for i in range(w):
         for j in range(h-1):
             temp_txt = '''
-wire    [`DW-1:0]   data_'''+str(i+j*w)+'''_to_'''+str(i+(j+1)*w)+''';\tdata_'''+str(i+(j+1)*w)+'''_to_'''+str(i+j*w)+''';
-wire                valid_'''+str(i+j*w)+'''_to_'''+str(i+(j+1)*w)+''';\tvalid_'''+str(i+(j+1)*w)+'''_to_'''+str(i+j*w)+''';
-wire                ready_'''+str(i+(j+1)*w)+'''_to_'''+str(i+j*w)+''';\tready_'''+str(i+j*w)+'''_to_'''+str(i+(j+1)*w)+''';'''
+wire    [`DW-1:0]   data_'''+str(i+j*w)+'''_to_'''+str(i+(j+1)*w)+''',\tdata_'''+str(i+(j+1)*w)+'''_to_'''+str(i+j*w)+''';
+wire                valid_'''+str(i+j*w)+'''_to_'''+str(i+(j+1)*w)+''',\tvalid_'''+str(i+(j+1)*w)+'''_to_'''+str(i+j*w)+''';
+wire                ready_'''+str(i+(j+1)*w)+'''_to_'''+str(i+j*w)+''',\tready_'''+str(i+j*w)+'''_to_'''+str(i+(j+1)*w)+''';'''
             wires_str += temp_txt
     wires_str += "\n"
     return wires_str

@@ -1,0 +1,110 @@
+Magic 271485
+Revision Verdi3_L-2016.06-1
+
+; Window Layout <x> <y> <width> <height> <signalwidth> <valuewidth>
+viewPort 1536 23 2194 1163 294 65
+
+; File list:
+; openDirFile [-d delimiter] [-s time_offset] [-rf auto_bus_rule_file] path_name file_name
+openDirFile -d / -i 0 "" "/mnt/c/git/nvcim-comm/network/test/wave.fsdb"
+
+; file time scale:
+; fileTimeScale ### s|ms|us|ns|ps
+
+; signal spacing:
+signalSpacing 5
+
+; windowTimeUnit is used for zoom, cursor & marker
+; waveform viewport range
+zoom 0.000000 5876623514.007139
+cursor 33000.000000
+marker 0.000000
+
+; visible top row signal index
+top 0
+; marker line index
+markerPos 33
+
+; event list
+; addEvent event_name event_expression
+; curEvent event_name
+
+
+
+COMPLEX_EVENT_BEGIN
+
+
+COMPLEX_EVENT_END
+
+
+
+; toolbar current search type
+; curSTATUS search_type
+curSTATUS ByChange
+
+
+addGroup "system" -e FALSE
+activeDirFile "" "/mnt/c/git/nvcim-comm/network/test/wave.fsdb"
+addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/cast_data_nw_2_pe[0:4]
+addSignal -h 15 -UNSIGNED -HEX -holdScope cast_data_pe_2_nw[0:4]
+addSignal -h 15 -UNSIGNED -HEX -holdScope cast_ready_nw_2_pe[0:4]
+addSignal -h 15 -UNSIGNED -HEX -holdScope cast_ready_pe_2_nw[0:4]
+addSignal -h 15 -UNSIGNED -HEX -holdScope cast_valid_nw_2_pe[0:4]
+addSignal -h 15 -UNSIGNED -HEX -holdScope cast_valid_pe_2_nw[0:4]
+addSignal -h 15 -holdScope clk
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_o_flee0[33:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_o_flee1[33:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope gather_data_nw_2_pe[0:4]
+addSignal -h 15 -UNSIGNED -HEX -holdScope gather_data_pe_2_nw[0:4]
+addSignal -h 15 -UNSIGNED -HEX -holdScope gather_ready_nw_2_pe[0:4]
+addSignal -h 15 -UNSIGNED -HEX -holdScope gather_ready_pe_2_nw[0:4]
+addSignal -h 15 -UNSIGNED -HEX -holdScope gather_valid_nw_2_pe[0:4]
+addSignal -h 15 -UNSIGNED -HEX -holdScope gather_valid_pe_2_nw[0:4]
+addSignal -h 15 -UNSIGNED -HEX -holdScope merge_data_nw_2_pe[0:4]
+addSignal -h 15 -UNSIGNED -HEX -holdScope merge_data_pe_2_nw[0:4]
+addSignal -h 15 -UNSIGNED -HEX -holdScope merge_ready_nw_2_pe[0:4]
+addSignal -h 15 -UNSIGNED -HEX -holdScope merge_ready_pe_2_nw[0:4]
+addSignal -h 15 -UNSIGNED -HEX -holdScope merge_valid_nw_2_pe[0:4]
+addSignal -h 15 -UNSIGNED -HEX -holdScope merge_valid_pe_2_nw[0:4]
+addSignal -h 15 -holdScope ready_i_flee0
+addSignal -h 15 -holdScope ready_i_flee1
+addSignal -h 15 -UNSIGNED -HEX -holdScope data_i_stab[33:0]
+addSignal -h 15 -holdScope ready_o_stab
+addSignal -h 15 -holdScope rstn
+addSignal -h 15 -holdScope valid_i_stab
+addSignal -h 15 -holdScope valid_o_flee0
+addSignal -h 15 -holdScope valid_o_flee1
+addGroup "G5"
+addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/vpe_1_3/cast_data_i[33:0]
+addSignal -h 15 -holdScope cast_valid_i
+addSignal -h 15 -holdScope cast_ready_o
+addGroup "G3"
+
+; getSignalForm Scope Hierarchy Status
+; active file of getSignalForm
+activeDirFile "" "/mnt/c/git/nvcim-comm/network/test/wave.fsdb"
+
+GETSIGNALFORM_SCOPE_HIERARCHY_BEGIN
+getSignalForm close
+
+"/_$novas_unit__1"
+"/top_tb"
+"/top_tb/dut"
+"/top_tb/dut/nw"
+"/top_tb/dut/nw/cast_nw"
+"/top_tb/dut/nw/cast_nw/router_0_0"
+
+SCOPE_LIST_BEGIN
+"/_$novas_unit__1"
+"/top_tb"
+"/top_tb/dut"
+"/top_tb/dut/nw/ni_0_0"
+"/top_tb/dut/nw"
+"/top_tb/dut/nw/cast_nw/router_0_0/input_stage_west"
+"/top_tb/dut/nw/cast_nw"
+"/top_tb/dut/nw/cast_nw/router_0_0"
+SCOPE_LIST_END
+
+GETSIGNALFORM_SCOPE_HIERARCHY_END
+
+

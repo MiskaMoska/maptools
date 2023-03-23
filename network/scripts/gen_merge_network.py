@@ -8,7 +8,7 @@ def gen_ports(w, h):
 //Width: '''+str(w)+'''
 //Height:'''+str(h)+'''
 `include "params.svh"
-`include "merge_config.svh"
+`include "merge_network_config.svh"
 
 module merge_network(
     input       wire                            clk,
