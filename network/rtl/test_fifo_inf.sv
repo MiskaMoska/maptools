@@ -9,6 +9,11 @@ wire read;
 reg write;
 assign read = ~empty;
 
+clocking cb @(posedge clk);
+    default output #0;
+    output write, data_i;
+endclocking
+
 initial begin
     $display("starting simulation");
     $fsdbDumpfile("fifo.fsdb");
@@ -21,11 +26,12 @@ initial begin
     # 33 rstn = 0;
     # 70 rstn = 1;
     repeat(10) begin
-        @(posedge clk)
-        data_i <= data_i + 1;
-        write <= 1'b1;
+        @(cb)
+        cb.write <= 1;
+        cb.data_i <= data_i + 1;
     end
-    write <= 1'b0;
+    # 3
+    cb.write <= 1'b0;
     # 1000
     $display("ending simulation");
     $finish;
@@ -33,9 +39,9 @@ end
 
 always #5 clk = ~clk;
 
-fifo_inf #(
+nfifo_inf #(
     .width                   (8)
-)cast_receive_fifo(
+)nfifo_inf(
     .clk_i                   (clk),
     .rst_i                   (~rstn),
     .read_i                  (read),

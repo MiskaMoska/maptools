@@ -21,13 +21,13 @@ verdi:
 	verdi +v2k -sverilog $(INCDIR) -f filelist.f -ssf wave.fsdb
 
 test: # for test
-	$(COMPILER) -sverilog ../rtl/fifo_inf.sv ../rtl/test_fifo_inf.sv \
+	$(COMPILER) -sverilog ../rtl/nfifo_inf.sv ../rtl/test_fifo_inf.sv \
 	-top test_fifo_inf \
 	$(TIMESCALE) \
 	$(FSDB) -R
 
 vtest: # for test
-	verdi +v2k -sverilog ../rtl/fifo_inf.sv ../rtl/test_fifo_inf.sv -ssf fifo.fsdb
+	verdi +v2k -sverilog ../rtl/nfifo_inf.sv ../rtl/test_fifo_inf.sv -ssf fifo.fsdb
 
 
 .PHONY:clean

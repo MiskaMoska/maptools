@@ -76,7 +76,8 @@ assign valid_all = cast_valid_i &
                     (gather_in == 1 ? gather_valid_i : 1'b1);
 
 assign ready_all = cast_gather_ready_i; 
-assign data_sum = cast_data_i; // no need to all, only simulate dependency
+// assign data_sum = cast_data_i; // no need to all, only simulate dependency
+assign data_sum = (gather_in == 1) ? gather_data_i : cast_data_i; // no need to all, only simulate dependency
 assign cast_gather_valid_o = (merge_out == 0) & valid_all;
 assign cast_ready_o = (merge_out == 0) ? valid_all & ready_all : merge_ready_i;
 assign merge_ready_o = (merge_out == 0) ? (merge_in == 1) & valid_all & ready_all : 1'b0;
@@ -84,69 +85,5 @@ assign gather_ready_o = (merge_out == 0) ? (gather_in == 1) & valid_all & ready_
 assign merge_valid_o = (merge_out == 1) & cast_valid_i;
 assign merge_data_o = data_sum;
 assign cast_gather_data_o = data_sum;
-
-// // asynchronous sending for cast and gather
-// wire fifo_read, fifo_write;
-// wire [`DW-1:0] fifo_dout;
-// reg resend;
-// reg [`PKT_LEN_LOG : 0] slice_cnt;
-
-// always@(posedge clk or negedge rstn) begin
-//     if(~rstn) begin
-//         slice_cnt <= 0;
-//         resend <= 1'b0;
-//     end
-//     else begin
-//         if((cast_out == 1) & (gather_out == 1)) begin
-//             if((~resend) & cast_valid_o & cast_ready_i) begin
-//                 if(slice_cnt == `PKT_LEN-3) begin
-//                     slice_cnt <= 0;
-//                     resend <= 1'b1;
-//                 end
-//                 else slice_cnt <= slice_cnt + 1;
-//             end
-//             else if(resend & gather_valid_o & gather_ready_i) begin
-//                 if(slice_cnt == `PKT_LEN-3) begin
-//                     slice_cnt <= 0;
-//                     resend <= 1'b0;
-//                 end
-//                 else slice_cnt <= slice_cnt + 1;
-//             end
-//         end
-//     end
-// end
-
-// assign ready_all = ((cast_out == 1) & (gather_out == 1)) ? (~resend) & cast_ready_i : (
-//                     (cast_out == 1)                      ? cast_ready_i             : gather_ready_i);
-
-// assign cast_valid_o = (merge_out == 0) & (
-//                         ((cast_out == 1) & (gather_out == 1)) ? (~resend) & valid_all : ( // read out data_sum
-//                         (cast_out == 1)                       ? valid_all : 1'b0));
-
-// assign gather_valid_o = (merge_out == 0) & (
-//                         ((cast_out == 1) & (gather_out == 1)) ? 1'b1 : ( // read out fifo
-//                         (cast_out == 1)                       ? 1'b0 : valid_all));
-
-// assign cast_data_o = data_sum;
-// assign gather_data_o = ((cast_out == 1) & (gather_out == 1)) ? fifo_dout : data_sum;
-
-// nfifo #(
-//     .width                   (`DW),
-//     .depth                   (`PKT_LEN-2),
-//     .depth_LOG               (`PKT_LEN_LOG + 1),
-//     .FWFT                    (1)
-// )slice_fifo(
-//     .clk_i                   (clk),
-//     .rst_i                   (~rstn),
-//     .read_i                  (fifo_read),
-//     .write_i                 (fifo_write),
-//     .empty_o                 (),
-//     .full_o                  (),
-//     .data_i                  (data_sum),
-//     .data_o                  (fifo_dout)
-// );
-
-// assign fifo_write = ((cast_out == 1) & (gather_out == 1)) & (~resend) & cast_valid_o & cast_ready_i;
-// assign fifo_read = ((cast_out == 1) & (gather_out == 1)) & resend & gather_valid_o & gather_ready_i;
 
 endmodule

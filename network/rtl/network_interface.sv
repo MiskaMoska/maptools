@@ -97,7 +97,7 @@ assign credit_upd = cast_rbuf_read;
 assign ready_o_cast_nw = 1'b1;
 
 // // cast network end receive buffer
-// fifo_inf #(
+// nfifo_inf #(
 //     .width                   (`DW)
 // )cast_receive_fifo(
 //     .clk_i                   (clk),
@@ -194,7 +194,7 @@ assign gather_rbuf_read = ~gather_rbuf_empty & gather_ready_o_nw;
 assign ready_o_gather_nw = 1'b1;
 
 // // gather network end receive buffer
-// fifo_inf #(
+// nfifo_inf #(
 //     .width                   (`DW)
 // )gather_receive_fifo(
 //     .clk_i                   (clk),
@@ -311,7 +311,7 @@ assign ready_o_cast_gather_pe = ((cast_out == 1) & (gather_out == 1)) ? (~resend
 assign valid_i_cast_pe = ((cast_out == 1) & (gather_out == 1)) ? (~resend) & valid_i_cast_gather_pe : ( // read out data_sum
                             (cast_out == 1)                    ? valid_i_cast_gather_pe : 1'b0);
 
-assign valid_i_gather_pe = ((cast_out == 1) & (gather_out == 1)) ? 1'b1 : ( // read out fifo
+assign valid_i_gather_pe = ((cast_out == 1) & (gather_out == 1)) ? resend : ( // read out fifo
                             (cast_out == 1)                      ? 1'b0 : valid_i_cast_gather_pe);
 
 assign data_i_cast_pe = data_i_cast_gather_pe;

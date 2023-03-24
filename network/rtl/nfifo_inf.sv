@@ -4,32 +4,34 @@
 module nfifo_inf #(
     parameter   width =                 32
 )(
-    input   wire                        clk_i,
-    input   wire                        rst_i,
+    input   logic                       clk_i,
+    input   logic                       rst_i,
 
-    input   wire                        read_i, 
-    input   wire                        write_i,
-    output  reg                         empty_o,
+    input   logic                       read_i, 
+    input   logic                       write_i,
+    output   reg                       empty_o,
 
-    input   wire    [width-1 : 0]       data_i,
-    output  reg     [width-1 : 0]       data_o
+    input   logic    [width-1 : 0]      data_i,
+    output  logic    [width-1 : 0]      data_o
 );
 
-reg [width-1 : 0] _buf_[$];
+typedef logic [width-1:0] data_t;
+data_t fifo[$];
 
-always_ff @(posedge clk_i or negedge rst_i) begin
+always @(posedge clk_i or posedge rst_i) begin
     if(rst_i)
-        _buf_ = {};
+        fifo = {};
     else begin
         if(write_i)
-            _buf_.push_back(data_i);
+            fifo.push_back(data_i);
         if(read_i & (~empty_o))
-            data_o <= _buf_.pop_front();
+            fifo.pop_front();
     end
 end
 
-always_comb begin
-    empty_o = rst_i ? 1'b1 : (_buf_.size() == 0);
+always @(posedge clk_i) begin
+    empty_o <= fifo.empty();
+    data_o <= fifo[0];
 end
 
 endmodule

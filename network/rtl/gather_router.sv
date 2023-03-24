@@ -68,25 +68,6 @@ wire    [`DW-1:0]   data_from_vc5,data_to_vc5;
 wire    [4:0]       valid_from,valid_to,ready_from,ready_to;
 wire    [4:0]       outVCAvailable,VCgranted,outVCAvailableReset;
 
-// // counts how many iterations have been fired from each input port
-// reg [31:0] local_cnt,west_cnt,east_cnt,north_cnt,south_cnt; 
-// always@(posedge clk or negedge rstn) begin
-//     if(~rstn) begin
-//         local_cnt <= 0; 
-//         west_cnt <= 0; 
-//         east_cnt <= 0; 
-//         north_cnt <= 0; 
-//         south_cnt <= 0; 
-//     end
-//     else begin
-//         if(local_valid_i & local_ready_o) local_cnt <= local_cnt + 1'b1;
-//         if(west_valid_i & west_ready_o) west_cnt <= west_cnt + 1'b1;
-//         if(east_valid_i & east_ready_o) east_cnt <= east_cnt + 1'b1;
-//         if(north_valid_i & north_ready_o) north_cnt <= north_cnt + 1'b1;
-//         if(south_valid_i & south_ready_o) south_cnt <= south_cnt + 1'b1;
-//     end
-// end
-
 gather_input_stage #(
     .rt_file                  (rt_file_list[1])
 )input_stage_west(
