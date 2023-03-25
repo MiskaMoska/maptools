@@ -9,10 +9,13 @@ module nfifo_inf #(
 
     input   logic                       read_i, 
     input   logic                       write_i,
-    output   reg                       empty_o,
+    output  reg                         empty_o,
 
     input   logic    [width-1 : 0]      data_i,
-    output  logic    [width-1 : 0]      data_o
+    output  logic    [width-1 : 0]      data_o,
+
+    input   wire                        din,
+    output  wire                        dout
 );
 
 typedef logic [width-1:0] data_t;
@@ -33,5 +36,7 @@ always @(posedge clk_i) begin
     empty_o <= fifo.empty();
     data_o <= fifo[0];
 end
+
+assign #15 dout = din;
 
 endmodule

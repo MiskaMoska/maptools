@@ -7,9 +7,11 @@ reg [7:0] data_i;
 wire [7:0] data_o;
 wire read;
 reg write;
+reg din;
+wire dout;
 assign read = ~empty;
 
-clocking cb @(posedge clk);
+clocking tcb @(posedge clk);
     default output #0;
     output write, data_i;
 endclocking
@@ -21,17 +23,22 @@ initial begin
     $fsdbDumpMDA(); //show array values
     clk = 0;
     write = 0;
+    din = 0;
     rstn = 1;
     data_i = 0;
     # 33 rstn = 0;
     # 70 rstn = 1;
     repeat(10) begin
-        @(cb)
-        cb.write <= 1;
-        cb.data_i <= data_i + 1;
+        @(tcb)
+        tcb.write <= 1;
+        tcb.data_i <= data_i + 1;
     end
     # 3
-    cb.write <= 1'b0;
+    tcb.write <= 1'b0;
+    repeat(10) begin
+        @(posedge clk)
+        din <= ~din;
+    end
     # 1000
     $display("ending simulation");
     $finish;
@@ -48,7 +55,9 @@ nfifo_inf #(
     .write_i                 (write),
     .empty_o                 (empty),
     .data_i                  (data_i),
-    .data_o                  (data_o)
+    .data_o                  (data_o),
+    .din                     (din),
+    .dout                    (dout)
 );
 
 endmodule

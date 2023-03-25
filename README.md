@@ -21,12 +21,20 @@ make requires
 make maptools
 ```
 
-#### For Windows
+#### For Powershell
 
 1. Set up environment variable.
 
+Open Powershell profile file.
+
 ```powershell
-$env:NVCIM_HOME=/root/directory/of/this/project
+code $PROFILE
+```
+
+Add a new line to the profile file.
+
+```powershell
+$Env:NVCIM_HOME = 'c:/root/directory/of/this/project'
 ```
 
 2. Run the following command to install required pip packages.
