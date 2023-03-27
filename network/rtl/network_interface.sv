@@ -64,6 +64,13 @@ module network_interface #(
     output      wire                            credit_upd
 );
 
+`ifdef TEST
+localparam fifo_depth_log = 30;
+`else
+localparam fifo_depth_log = 2
+`endif
+
+
 wire valid_i_cast_pe, ready_o_cast_pe, valid_i_gather_pe, ready_o_gather_pe;
 wire [`DW-1:0] data_i_cast_pe, data_i_gather_pe;
 
@@ -112,8 +119,8 @@ assign ready_o_cast_nw = 1'b1;
 // cast network end receive buffer
 nfifo #(
     .width                   (`DW),
-    .depth                   (429496729),
-    .depth_LOG               (32),
+    .depth                   (2**fifo_depth_log),
+    .depth_LOG               (fifo_depth_log),
     .FWFT                    (1)
 )cast_receive_fifo(
     .clk_i                   (clk),
@@ -129,7 +136,7 @@ nfifo #(
 // cast network end send buffer
 nfifo_cnt #(
     .width                   (`DW),
-    .depth                   (128),
+    .depth                   (`SEND_BUFFER_DEPTH),
     .depth_LOG               (7),
     .FWFT                    (1)
 )cast_send_fifo(
@@ -209,8 +216,8 @@ assign ready_o_gather_nw = 1'b1;
 // gather network end receive buffer
 nfifo #(
     .width                   (`DW),
-    .depth                   (429496729),
-    .depth_LOG               (32),
+    .depth                   (2**fifo_depth_log),
+    .depth_LOG               (fifo_depth_log),
     .FWFT                    (1)
 )gather_receive_fifo(
     .clk_i                   (clk),
@@ -226,7 +233,7 @@ nfifo #(
 // gather network end send buffer
 nfifo_cnt #(
     .width                   (`DW),
-    .depth                   (128),
+    .depth                   (`SEND_BUFFER_DEPTH),
     .depth_LOG               (7),
     .FWFT                    (1)
 )gather_send_fifo(

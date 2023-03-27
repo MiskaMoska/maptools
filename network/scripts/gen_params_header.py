@@ -3,7 +3,7 @@ import math
 
 __all__ = ['gen_params_header']
 
-def gen_params_header(root_dir, w, h, data_width, packet_len, cbuf_depth):
+def gen_params_header(root_dir, w, h, data_width, packet_len, cbuf_depth, sbuf_depth):
     save_dir = os.path.join(root_dir, 'network', 'config', 'network_config')
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
@@ -13,6 +13,9 @@ def gen_params_header(root_dir, w, h, data_width, packet_len, cbuf_depth):
     containt = f'''
 `ifndef         __PARAMS_SVH__
 `define         __PARAMS_SVH__
+
+// for local testing
+`define         TEST
 
 // data width
 // identical to cast, merge, and gather
@@ -49,6 +52,9 @@ def gen_params_header(root_dir, w, h, data_width, packet_len, cbuf_depth):
 `define         CAST_ROUTER_BUFFER_DEPTH_LOG                {cbuf_depth_log}
 `define         MERGE_ROUTER_BUFFER_DEPTH_LOG               4
 `define         GATHER_ROUTER_BUFFER_DEPTH_LOG              4
+
+// sending buffer fifo depth
+`define         SEND_BUFFER_DEPTH                           {sbuf_depth}
 
 // stream-id zone in packet header
 // identical to both cast and gather

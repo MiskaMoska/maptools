@@ -18,12 +18,15 @@ from maptools import read_mapinfo, read_cfginfo
 parser = argparse.ArgumentParser(description='Network Builder')
 parser.add_argument('--mapname', type=str, default='newmap' , help='name of the mapping case to be loaded, default: newmap')
 parser.add_argument("--datawidth", type=int, default=34, help='network data width, default: 34')
-parser.add_argument("--packetlen", type=int, default=18, help='packet length for cast and gather network, default: 18')
-parser.add_argument("--cbufdepth", type=int, default=64, help='buffer depth in cast router, default: 64')
+parser.add_argument("--packetlen", type=int, default=18, help='packet length for cast and gather network, must be lower than 128, default: 18')
+parser.add_argument("--cbufdepth", type=int, default=32, help='cast router buffer depth, must be larger than packet length, default: 32')
+parser.add_argument("--sbufdepth", type=int, default=64, help='cast sending buffer depth, must be larger than packet length and lower than 128, default: 64')
 parser.add_argument("--test", action='store_true', help='generate files for local testing, not needed in system simulation')
 parser.add_argument("--flitnum", type=int, default=10000, help='number of flits to be generated, must be divided by `packetlen-2`, default: 10000')
 parser.add_argument("--clean", action='store_true', help='clean all generated files to reset the folder')
 args = parser.parse_args()
+assert args.packetlen < 128, f"packet length (--packetlen) must be lower than 128, but got {args.packetlen}"
+assert args.sbufdepth < 128, f"sending buffer depth (--sbufdepth) must be lower than 128, but got {args.sbufdepth}"
 
 if args.clean:
     config_folder = os.path.join(root_dir, 'network', 'config')
@@ -113,7 +116,7 @@ for item in gather_paths.values():
 gen_top_network_config(root_dir, w, h, top_config, flees)
 
 # generate params header
-gen_params_header(root_dir, w, h, args.datawidth, args.packetlen, args.cbufdepth)
+gen_params_header(root_dir, w, h, args.datawidth, args.packetlen, args.cbufdepth, args.sbufdepth)
 
 if args.test:
     assert args.flitnum % (args.packetlen-2) == 0, f"`flitnum`({args.flitnum}) must be divided by `packetlen-2`({args.packetlen-2}))"
