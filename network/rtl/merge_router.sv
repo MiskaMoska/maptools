@@ -134,6 +134,7 @@ shortreal data_i_sr[5];
 shortreal sum;
 
 always@(*) begin
+    `ifdef CALC_ON
     for(int i=0; i<5; i++) begin
         if(input_mask[i]) data_i_sr[i] = $bitstoshortreal(data_i_fifo[i][`DW-3:0]);
         else data_i_sr[i] = 0;
@@ -153,6 +154,17 @@ always@(*) begin
             valid_o[i] = 1'b0;
         end
     end
+    `else
+    for(int i=0; i<5; i++) begin
+        if(output_sel[i]) begin 
+            data_o[i] = {`BODY,{(`DW-3){1'b0}}};
+            valid_o[i] = valid;
+        end else begin
+            data_o[i] = {`BODY,{(`DW-3){1'b0}}};
+            valid_o[i] = 1'b0;
+        end
+    end
+    `endif
 end
 
 always@(*) begin

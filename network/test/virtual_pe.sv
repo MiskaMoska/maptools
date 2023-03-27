@@ -76,8 +76,8 @@ assign valid_all = cast_valid_i &
                     (gather_in == 1 ? gather_valid_i : 1'b1);
 
 assign ready_all = cast_gather_ready_i; 
-// assign data_sum = cast_data_i; // no need to all, only simulate dependency
-assign data_sum = (gather_in == 1) ? gather_data_i : cast_data_i; // no need to all, only simulate dependency
+// assign data_sum = cast_data_i; // no need to add, only simulate dependency
+assign data_sum = (gather_in == 1) ? gather_data_i : cast_data_i; // no need to add, only simulate dependency
 assign cast_gather_valid_o = (merge_out == 0) & valid_all;
 assign cast_ready_o = (merge_out == 0) ? valid_all & ready_all : merge_ready_i;
 assign merge_ready_o = (merge_out == 0) ? (merge_in == 1) & valid_all & ready_all : 1'b0;
