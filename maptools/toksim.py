@@ -525,11 +525,11 @@ class TokSim(object):
                 local['load_ratio'] = local['load'] / self.max_comm_load
             self.ctg.update_dict(n, local)
 
-    def echo_xbar(self):
+    def echo_xbar(self) -> str:
+        log = ""
         for node in self.ctg.node_names:
             if self.ctg.is_xbar(node):
                 xbar = self.obj_dict[node]
-                conv_size = xbar.conv_input_size
                 conv_buf = xbar.conv_buf.max_buf
                 pool_buf = '--'
                 if 'Pool' in xbar.op_type:
@@ -537,32 +537,37 @@ class TokSim(object):
                 inter_buf = xbar.max_inter_buf
                 merge_buf = xbar.max_merge_buf
                 gather_buf = xbar.max_gather_buf
-                print("xbar:",node,
-                        "\tconv_size",conv_size,
-                        "\tconv_buf",conv_buf,
-                        "\tpool_buf",pool_buf,
-                        "\tinter_buf",inter_buf,
-                        "\tmerge_buf",merge_buf,
-                        "\tgather_buf",gather_buf
-                        )
+                log += '%-5s%-20s%-9s%-20s%-9s%-20s%-10s%-20s%-10s%-20s%-11s%-20s\n' % \
+                    ('xbar:',node,'conv_buf:',conv_buf,'pool_buf:',pool_buf,\
+                        'inter_buf:',inter_buf,'merge_buf:',merge_buf,'gather_buf:',gather_buf)
+        return log
 
-    def echo_comm(self):
+    def echo_comm(self) -> str:
+        log = ""
         for node in self.ctg.node_names:
             if self.ctg.is_comm(node):
                 comm = self.obj_dict[node]
-                print("connection:",node,
-                        "\tload:",comm.accum_tokens,
-                        "\t#channel", comm.nc
-                        )
+                log += '%-11s%-30s%-5s%-20s%-9s%-20s\n' % \
+                        ('connection:',node,'load:',comm.accum_tokens,'#channel:',comm.nc)
+        return log
 
     def save_execu(self, file_name: str = 'execu'):
         save_dir = os.path.join(self.root_dir, 'mapsave', self.mapname, 'toksim')
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
+        
+        # save execution information
         file_dir = os.path.join(save_dir, file_name+'.pkl')
         with open(file_dir,'wb') as f:
             pickle.dump(self.execu_dict, f)
         print(f"\nexecution info written to {file_dir}")
+
+        # save buffer log
+        file_dir = os.path.join(save_dir, 'buffer.log')
+        log = self.echo_xbar() + "\n\n" + self.echo_comm()
+        with open(file_dir, 'w') as f:
+            f.write(log)
+        print(f"\buffer log written to {file_dir}")
 
     def plot_execu(self, load_file: Optional[str] = None, 
                         start: int = 0, end: int = 1e6) -> None:
