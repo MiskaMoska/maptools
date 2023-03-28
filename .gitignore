@@ -1,4 +1,6 @@
 maptools/__pycache__/*
+maptools/toksim/__pycache__/*
+maptools/hardware/__pycache__/*
 network/scripts/__pycache__/*
 behavior_model/*
 onnx_models/*

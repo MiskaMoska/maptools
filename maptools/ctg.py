@@ -17,7 +17,7 @@ class CTG(object):
 
     def __init__(self, opgraph: OperatorGraph, 
                     match_dict: Dict[str, int],
-                    map_list: List[np.array],
+                    map_list: List[np.ndarray],
                     map_dict: Dict[Tuple[int, int, int, int], Dict[str, Any]],
                     *args, **kwargs) -> None:
         '''
@@ -35,7 +35,7 @@ class CTG(object):
             >>> idx = self.match_dict['n1']
             >>> map_info = self.map_list[idx]
 
-        map_list : List[np.array[2]]
+        map_list : List[np.ndarray]
             Contains each layer's mapping information
             For example, self.map_list = [
             np.array([[1, 2, 3], [1, 2, 3]]),
@@ -113,10 +113,10 @@ class CTG(object):
         return node in self.xbar_nodes
     
     def preds(self, node: Any) -> Generator:
-        return self.graph.predecessors(node)
+        yield from self.graph.predecessors(node)
 
     def succs(self, node: Any) -> Generator:
-        return self.graph.successors(node)
+        yield from self.graph.successors(node)
 
     def get_xbar_config(self, node: Any) -> Dict:
         assert self.is_xbar(node), "not a xbar node, cannot get config"

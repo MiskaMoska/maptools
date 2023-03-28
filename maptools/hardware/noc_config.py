@@ -4,6 +4,7 @@ import networkx as nx
 import numpy as np
 from typing import Tuple, List, Any, Optional, Dict
 from maptools import dec2bin
+from maptools.hardware.fc_plan import *
 
 __all__ = ['NocConfig']
 

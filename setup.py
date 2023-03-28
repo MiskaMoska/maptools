@@ -5,6 +5,8 @@ setup(
     version='1.0',
     packages = [
         'maptools',
-        'maptools.calcusim'
+        'maptools.calcusim',
+        'maptools.toksim',
+        'maptools.hardware'
     ]
 )

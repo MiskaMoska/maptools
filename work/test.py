@@ -17,7 +17,8 @@ routine = MapRoutine(
                         noc_size=(8, 11),
                         model_dir=test,
                         show_gather_path=True,
-                        toksim=True
+                        toksim=True,
+                        toksim_latency = 16
                     )
 routine.run()
 

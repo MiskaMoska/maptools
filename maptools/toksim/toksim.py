@@ -12,7 +12,6 @@ from maptools.utils import *
 import numpy as np
 from matplotlib import pyplot as plt
 from typing import Tuple, List, Any, Optional, Dict
-from functools import cached_property
 
 __all__ = ['TokSim']
 
@@ -551,16 +550,16 @@ class TokSim(object):
                         ('connection:',node,'load:',comm.accum_tokens,'#channel:',comm.nc)
         return log
 
-    def save_execu(self, file_name: str = 'execu'):
+    def save_execu(self, file_name: str = 'token'):
         save_dir = os.path.join(self.root_dir, 'mapsave', self.mapname, 'toksim')
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
         
-        # save execution information
+        # save token information
         file_dir = os.path.join(save_dir, file_name+'.pkl')
         with open(file_dir,'wb') as f:
             pickle.dump(self.execu_dict, f)
-        print(f"\nexecution info written to {file_dir}")
+        print(f"\ntoken info written to {file_dir}")
 
         # save buffer log
         file_dir = os.path.join(save_dir, 'buffer.log')
@@ -568,46 +567,6 @@ class TokSim(object):
         with open(file_dir, 'w') as f:
             f.write(log)
         print(f"\buffer log written to {file_dir}")
-
-    def plot_execu(self, load_file: Optional[str] = None, 
-                        start: int = 0, end: int = 1e6) -> None:
-        '''
-        plot the execution procedure of TokSim.
-
-        Parameters
-        ----------
-        load_file : Optional[str] = None
-            if None, use self-generated execution info,
-            if not None, give the name of the file containing the execution info to load.
-
-        start : int = 0
-            starting iteration index.
-
-        end : int = 0
-            ending iteration index.
-        '''
-        if load_file is None:
-            info_dict = self.execu_dict
-        else:
-            file_dir = os.path.join(self.root_dir, 'mapsave', self.mapname, 'toksim', load_file+'.pkl')
-            assert os.path.exists(file_dir), f"No such file: {file_dir}"
-            with open(file_dir, 'rb') as f:
-                info_dict = pickle.load(f)
-
-        total = []
-        for i, exe_list in enumerate(info_dict.values()):
-            total.append([])
-            for j, d in enumerate(exe_list):
-                if d != 0:
-                    if j > start and j < end:
-                        total[i].append((j, i))
-
-        for list in total:
-            if len(list) == 0:
-                continue
-            x, y = zip(*list)
-            plt.scatter(x, y, marker='|') 
-        plt.show()
 
 
 def test_window_slide():

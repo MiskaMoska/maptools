@@ -4,7 +4,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import pickle
 from copy import deepcopy
-from typing import List, Dict, Optional, Tuple, Any
+from typing import List, Dict, Optional, Tuple, Any, Union
 from maptools import CTG
 
 __all__ = ['CalcuSim']
@@ -12,10 +12,10 @@ __all__ = ['CalcuSim']
 def _rebuild_pads(pads: List) -> None:
     if pads is not None:
         _pads = deepcopy(pads)
-        pads[0] = pads[3]
-        pads[1] = pads[1]
-        pads[2] = pads[0]
-        pads[3] = pads[2]
+        pads[0] = _pads[3]
+        pads[1] = _pads[1]
+        pads[2] = _pads[0]
+        pads[3] = _pads[2]
 
 def _rebuild_conv_weight(icfg: List[Tuple], 
                         ocfg: Tuple, 
@@ -188,7 +188,7 @@ class CalcuSim(nn.Module):
 
         Key Members
         -----------
-        self.res_dict : Dict[Tuple, Dict[str, Optional[torch.Tensor]]]
+        self.res_dict : Dict[Union[str, Tuple], Dict[str, Optional[torch.Tensor]]]
             Stores the intermediate results of each xbar
             A dictionary with logical xbar as keys and result dictionary as values
             Where the result dictionary = 
@@ -202,7 +202,7 @@ class CalcuSim(nn.Module):
         self.__dict__.update(kwargs)
         self.obj_dict: Dict = dict()
         self._build_obj_dict()
-        self.res_dict: Dict[Tuple, Dict[str, Optional[torch.Tensor]]] = dict()
+        self.res_dict: Dict[Union[str, Tuple], Dict[str, Optional[torch.Tensor]]] = dict()
 
     def _build_obj_dict(self) -> None:
         for node in self.ctg.node_names:

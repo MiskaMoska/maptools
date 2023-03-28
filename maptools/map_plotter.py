@@ -84,7 +84,7 @@ class MapPlotter(object):
             return 'n_o' if mode == 'o' else 's_i'
     
     @staticmethod
-    def _get_link(edge: Tuple) -> Tuple:
+    def _get_link(edge: Tuple) -> Optional[Tuple]:
         sn = edge[0]
         dn = edge[1]
         if dn[0] > sn[0]:
@@ -217,7 +217,7 @@ class MapPlotter(object):
                         )
         return graph, pos
 
-    def _get_dir(self, file_name: str) -> None:
+    def _get_dir(self, file_name: str) -> str:
         save_dir = os.path.join(self.root_dir, 'mapsave', self.mapname, 'nocpath')
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)

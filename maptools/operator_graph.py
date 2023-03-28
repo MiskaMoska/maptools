@@ -244,7 +244,7 @@ class OperatorGraph(object):
                     break
                 else:
                     print(f'''
-                            calcuelated output size {size_o} larger than onnx output size {ofs[dim]}
+                            calculated output size {size_o} larger than onnx output size {ofs[dim]}
                             input_size: {ifs[dim]}, kernel_size: {ks[dim]},
                             strides: {strs[dim]}, pads: {[pads[0+dim], pads[2+dim]]}
                             need to decrease pads

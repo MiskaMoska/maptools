@@ -72,7 +72,7 @@ class OnnxConverter(object):
 
         Key Members
         -----------
-        self.param_dict : Dict[str, np.array]
+        self.param_dict : Dict[str, np.ndarray]
             A dictionary with tensor name as keys and numpy array as values.
             Stores the parameters of the model.
         '''
@@ -81,7 +81,7 @@ class OnnxConverter(object):
         self.root_dir = os.environ['NVCIM_HOME']
         self.mapname = 'newmap'
         self.__dict__.update(kwargs)
-        self.param_dict: Dict[str, np.array] = dict() 
+        self.param_dict: Dict[str, np.ndarray] = dict() 
         assert self.arch in OnnxConverter.valid_archs,\
                     f"unsupported model arch: {self.arch}"
 
@@ -90,7 +90,7 @@ class OnnxConverter(object):
         return True if node.op_type in OnnxConverter.merge_ops else False
 
     @staticmethod
-    def _get_node_attr(node: onnx.NodeProto, name: str) -> onnx.AttributeProto:
+    def _get_node_attr(node: onnx.NodeProto, name: str) -> Optional[onnx.AttributeProto]:
         for at in node.attribute:
             if at.name == name:
                 return at
@@ -100,7 +100,7 @@ class OnnxConverter(object):
         for tensor in graph.value_info:
             if tensor.name == name:
                 dim = tensor.type.tensor_type.shape.dim
-                return tuple([d.dim_value for d in dim])
+                return [d.dim_value for d in dim]
         dim = graph.input[0].type.tensor_type.shape.dim # not found in value_info, then it must be input
         return [d.dim_value for d in dim]
     

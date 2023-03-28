@@ -42,7 +42,7 @@ class XbarMapper(object):
             >>> idx = self.match_dict['n1']
             >>> map_info = self.map_list[idx]
 
-        self.map_list : List[np.array[2]]
+        self.map_list : List[np.ndarray]
             Contains each layer's mapping information
             For example, self.map_list = [
             np.array([[1, 2, 3], [1, 2, 3]]),
@@ -67,7 +67,7 @@ class XbarMapper(object):
         self.mapname = 'newmap'
         self.__dict__.update(kwargs)
         self.match_dict: Dict[str, int] = dict() 
-        self.map_list: List[np.array[2]] = []
+        self.map_list: List[np.ndarray] = []
         self.map_dict: Dict[Tuple[int, int, int, int], Dict[str, Any]] = dict() 
 
     def _xbar_map_resnet(self) -> None:
@@ -178,4 +178,3 @@ class XbarMapper(object):
         print("-"*70)
         print(f"total #xbar-{total}")
         self.total_xbar = total
-

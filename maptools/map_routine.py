@@ -2,6 +2,7 @@ import os
 import onnx
 from typing import Optional, List, Dict, Tuple, Any
 from maptools import *
+from maptools.toksim import *
 
 __all__ = ['MapRoutine']
 
@@ -28,9 +29,9 @@ class MapRoutine(object):
         self.show_raw_graph: bool = False
         self.show_op_graph: bool = False
         self.show_ctg: bool = False
-        self.show_execu: bool = False
 
         self.toksim: bool = False
+        self.toksim_latency: Optional[int] = None 
         self.calcusim: bool = True
 
         self.show_cast_path: bool = False
@@ -63,11 +64,9 @@ class MapRoutine(object):
         xm.print_config()
         ctg = xm.ctg
         if self.toksim:
-            tsim = TokSim(ctg, **self.config)
+            tsim = TokSim(ctg, latency=self.toksim_latency, **self.config)
             tsim.run()
             tsim.save_execu()
-            if self.show_execu:
-                tsim.plot_execu()
             ctg = tsim.ctg
         if self.calcusim:
             import torch
