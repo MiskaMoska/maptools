@@ -107,32 +107,27 @@ class XbarMapper(object):
                     start_ci = j * self.w
                     end_ci = j * self.w + slc_len
                     slc_pt = (self.h // slc_len) # max slices per tile
-                    pes_i = math.ceil((k_size[0]*k_size[1]) / slc_pt) 
+                    pes_i = math.ceil((k_size[0] * k_size[1]) / slc_pt) 
                     for t in range(pes_i):
                         icfg = []
-                        if (t + 1) * slc_pt > k_size[0]*k_size[1]:
-                            it = k_size[0]*k_size[1] % slc_pt
+                        if (t + 1) * slc_pt > k_size[0] * k_size[1]:
+                            it = k_size[0] * k_size[1] % slc_pt
                         else:
                             it = slc_pt
                         for k in range(it):
-                            icfg.append((t*slc_pt+k,start_ci,end_ci))
-                        xbar_dict = {'xbar_icfg': icfg, 'xbar_ocfg': (start_co,end_co), \
+                            icfg.append((t * slc_pt + k, start_ci, end_ci))
+                        xbar_dict = {'xbar_icfg': icfg, 'xbar_ocfg': (start_co, end_co), \
                                         'xbar_num_ichan': end_ci-start_ci, 'xbar_num_ochan': end_co-start_co}
                         xbar_dict.update(layer)
 
-                        # regularize xbar op_type,
-                        # cause only merge xbar has [add, act, pool]
-                        # and merge xbar may have [bias] 
-                        if self.arch == 'resnet':
-                            if j != 0 or t != 0: # not merge xbar
-                                    xbar_dict['op_type'] = xbar_dict['op_type']\
-                                        .rstrip('-Pool').rstrip('-Act').rstrip('-Add')
-                            else: # is merge xbar
-                                if 'conv_bias' in xbar_dict.keys():
-                                    xbar_dict['op_type'] += '-Bias'
-                        else:
-                            print('XbarMapper only supports resenet yet')
-                            sys.exit()
+                        # regularize xbar op_type, the method is only for resnet
+                        # cause only merge xbar can have [add, act, pool, bias]
+                        if j != 0 or t != 0: # not merge xbar
+                                xbar_dict['op_type'] = xbar_dict['op_type']\
+                                    .rstrip('-Pool').rstrip('-Act').rstrip('-Add')
+                        else: # is merge xbar
+                            if 'conv_bias' in xbar_dict.keys():
+                                xbar_dict['op_type'] += '-Bias'
                         self.map_dict[(l, i, j, t)] = xbar_dict
                         map_info[i][j] += 1
         
