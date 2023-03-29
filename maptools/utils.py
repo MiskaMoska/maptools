@@ -1,7 +1,6 @@
 import os
 import pickle
 from typing import List, Tuple, Dict
-from PIL import Image
 import networkx as nx
 
 __all__ = [
@@ -55,28 +54,28 @@ def build_mesh(eager_nodes: List[Tuple[int, int]]) -> nx.Graph:
     return g
 
 def read_params(mapname: str) -> Dict:
-    root_dir = os.environ['NVCIM_HOME']
+    root_dir = os.environ.get('NVCIM_HOME')
     file_dir = os.path.join(root_dir, 'mapsave', mapname, 'params.pkl')
     with open(file_dir, 'rb') as f:
         params = pickle.load(f)
     return params
 
 def read_mapinfo(mapname: str) -> Dict:
-    root_dir = os.environ['NVCIM_HOME']
+    root_dir = os.environ.get('NVCIM_HOME')
     file_dir = os.path.join(root_dir, 'mapsave', mapname, 'mapinfo.pkl')
     with open(file_dir, 'rb') as f:
         mapinfo = pickle.load(f)
     return mapinfo
 
 def read_cfginfo(mapname: str) -> Dict:
-    root_dir = os.environ['NVCIM_HOME']
+    root_dir = os.environ.get('NVCIM_HOME')
     file_dir = os.path.join(root_dir, 'mapsave', mapname, 'cfginfo.pkl')
     with open(file_dir, 'rb') as f:
         cfginfo = pickle.load(f)
     return cfginfo
 
 def read_results(mapname: str) -> Dict:
-    root_dir = os.environ['NVCIM_HOME']
+    root_dir = os.environ.get('NVCIM_HOME')
     file_dir = os.path.join(root_dir, 'mapsave', mapname, 'calcusim', 'results.pkl')
     with open(file_dir, 'rb') as f:
         results = pickle.load(f)

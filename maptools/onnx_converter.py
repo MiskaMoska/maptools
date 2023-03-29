@@ -64,7 +64,7 @@ class OnnxConverter(object):
                 The architecture of the model (or backbone).
                 The arch must be one of OnnxConverter.valid_archs.
 
-            root_dir : str = os.environ['NVCIM_HOME']
+            root_dir : str = os.environ.get('NVCIM_HOME')
                 The root directory of the project.
 
             mapname : str = 'newmap'
@@ -78,7 +78,7 @@ class OnnxConverter(object):
         '''
         self.model = model
         self.arch = 'resnet'
-        self.root_dir = os.environ['NVCIM_HOME']
+        self.root_dir = os.environ.get('NVCIM_HOME')
         self.mapname = 'newmap'
         self.__dict__.update(kwargs)
         self.param_dict: Dict[str, np.ndarray] = dict() 

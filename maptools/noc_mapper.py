@@ -6,7 +6,6 @@ import random
 from random import shuffle
 import pickle
 import networkx as nx
-from matplotlib import pyplot as plt
 from typing import List, Dict, Tuple, Any, Optional, Generator
 from functools import cached_property
 from maptools.xbar_mapper import *
@@ -34,7 +33,7 @@ class NocMapper(object):
             xbar array height
 
         kwargs : Dict
-            root_dir : str = os.environ['NVCIM_HOME']
+            root_dir : str = os.environ.get('NVCIM_HOME')
                 The root directory of the project.
         
             cast_method : bool = 'dyxy'
@@ -60,7 +59,7 @@ class NocMapper(object):
         self.ctg = ctg
         self.w = w
         self.h = h
-        self.root_dir = os.environ['NVCIM_HOME']
+        self.root_dir = os.environ.get('NVCIM_HOME')
         self.cast_method = 'dyxy' # steiner tree is harmful
         self.mapname = 'newmap'
         self.__dict__.update(kwargs)

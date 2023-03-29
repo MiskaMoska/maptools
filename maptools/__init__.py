@@ -12,4 +12,3 @@ from maptools.hardware import *
 
 from maptools import toksim
 from maptools.toksim import *
-

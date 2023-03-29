@@ -10,7 +10,6 @@ import pickle
 from maptools.ctg import *
 from maptools.utils import *
 import numpy as np
-from matplotlib import pyplot as plt
 from typing import Tuple, List, Any, Optional, Dict
 
 __all__ = ['TokSim']

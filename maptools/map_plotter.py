@@ -2,7 +2,6 @@ import os
 import networkx as nx
 from copy import deepcopy
 from matplotlib import pyplot as plt
-from matplotlib.transforms import Bbox
 from typing import Dict, List, Any, Optional, Tuple
 
 __all__ = ['MapPlotter']
@@ -36,7 +35,7 @@ class MapPlotter(object):
             gather paths generated from `NocMapper`
 
         kwargs : Dict
-            root_dir : str = os.environ['NVCIM_HOME']
+            root_dir : str = os.environ.get('NVCIM_HOME')
                 The root directory of the project.
         
             mapname : str = 'newmap'
@@ -47,7 +46,7 @@ class MapPlotter(object):
         self.cast_paths = cast_paths
         self.merge_paths = merge_paths
         self.gather_paths = gather_paths
-        self.root_dir = os.environ['NVCIM_HOME']
+        self.root_dir = os.environ.get('NVCIM_HOME')
         self.mapname = 'newmap'
         self.__dict__.update(kwargs)
 

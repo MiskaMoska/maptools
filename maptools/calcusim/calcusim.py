@@ -11,7 +11,7 @@ __all__ = ['CalcuSim']
 
 def _rebuild_pads(pads: List) -> None:
     if pads is not None:
-        _pads = deepcopy(pads)
+        _pads = pads.copy()
         pads[0] = _pads[3]
         pads[1] = _pads[1]
         pads[2] = _pads[0]
@@ -47,7 +47,7 @@ def _rebuild_conv_bias(ocfg: Tuple, bias: torch.Tensor) -> torch.Tensor:
 
 def _get_xbar_kwargs(cfg: Dict, params: Dict) -> Dict:
     kwargs = dict()
-    kwargs['conv_pads'] = deepcopy(cfg['conv_pads'])
+    kwargs['conv_pads'] = cfg['conv_pads'].copy()
     weight_ptr = cfg['conv_weight']
     weight = _rebuild_conv_weight(cfg['xbar_icfg'], cfg['xbar_ocfg'], 
                                     torch.tensor(params[weight_ptr]))
@@ -56,13 +56,13 @@ def _get_xbar_kwargs(cfg: Dict, params: Dict) -> Dict:
         bias_ptr = cfg['conv_bias']
         bias = _rebuild_conv_bias(cfg['xbar_ocfg'],torch.tensor(params[bias_ptr]))
         kwargs['conv_bias'] = bias
-    kwargs['conv_strides'] = deepcopy(cfg['conv_strides'])
+    kwargs['conv_strides'] = cfg['conv_strides'].copy()
     if 'Pool' in cfg['op_type']:
         kwargs['is_pool'] = True
         kwargs['pool_mode'] = deepcopy(cfg['pool_mode'])
-        kwargs['pool_pads'] = deepcopy(cfg['pool_pads'])
-        kwargs['pool_kernel_size'] = deepcopy(cfg['pool_kernel_size'])
-        kwargs['pool_strides'] = deepcopy(cfg['pool_strides'])
+        kwargs['pool_pads'] = cfg['pool_pads'].copy()
+        kwargs['pool_kernel_size'] = cfg['pool_kernel_size'].copy()
+        kwargs['pool_strides'] = cfg['pool_strides'].copy()
     if 'Act' in cfg['op_type']:
         kwargs['is_act'] = True
         kwargs['act_mode'] = deepcopy(cfg['act_mode'])
@@ -180,7 +180,7 @@ class CalcuSim(nn.Module):
             from `OnnxConverter.param_dict`
 
         kwargs : Dict
-            root_dir : str = os.environ['NVCIM_HOME']
+            root_dir : str = os.environ.get('NVCIM_HOME')
                 The root directory of the project.
 
             mapname : str = 'newmap'
@@ -197,7 +197,7 @@ class CalcuSim(nn.Module):
         super().__init__()
         self.ctg = ctg
         self.params = params
-        self.root_dir = os.environ['NVCIM_HOME']
+        self.root_dir = os.environ.get('NVCIM_HOME')
         self.mapname = 'newmap'
         self.__dict__.update(kwargs)
         self.obj_dict: Dict = dict()

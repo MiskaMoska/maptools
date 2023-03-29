@@ -4,10 +4,7 @@ TODO support for STMX
 import sys
 import math
 import numpy as np
-import networkx as nx
-from graphviz import Digraph
-from functools import cached_property
-from typing import List, Dict, Tuple, Any, Generator
+from typing import List, Dict, Tuple, Any
 from maptools.operator_graph import *
 from maptools.ctg import *
 from maptools.utils import *

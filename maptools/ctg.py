@@ -57,7 +57,7 @@ class CTG(object):
                 The architecture of the model (or backbone).
                 The arch must be one of OnnxConverter.valid_archs.
 
-            root_dir : str = os.environ['NVCIM_HOME']
+            root_dir : str = os.environ.get('NVCIM_HOME')
                 The root directory of the project.
 
             mapname : str = 'newmap'
@@ -69,7 +69,7 @@ class CTG(object):
         self.dicts = map_dict
 
         self.arch = 'resnet'
-        self.root_dir = os.environ['NVCIM_HOME']
+        self.root_dir = os.environ.get('NVCIM_HOME')
         self.mapname = 'newmap'
         self.__dict__.update(kwargs)
 
@@ -207,7 +207,7 @@ class CTG(object):
                     self.graph.add_edge(comm_name, dst_xbar)
 
             else: # cast
-                assert p_mtx.shape[0] == s_mtx.shape[1], "#regions in last later does not match #blocks in this layer"
+                assert p_mtx.shape[0] == s_mtx.shape[1], "#regions in last layer does not match #blocks in this layer"
                 for i in range(p_mtx.shape[0]): # for each region in the last layer
                     src_xbar = (p_lid, i, 0, 0) # root node of the cast tree
                     comm_name = 'cast_from_'+str(src_xbar)
@@ -241,7 +241,7 @@ class CTG(object):
         is_tail, is_head
         '''
         for xbar in self.xbar_nodes:
-            cast_in, merge_in, gather_in = (False, False, False)
+            cast_in, merge_in, gather_in = False, False, False
             for pred in self.graph.predecessors(xbar):
                 if pred in self.cast_comms:
                     cast_in = True
@@ -249,7 +249,7 @@ class CTG(object):
                     merge_in = True
                 if pred in self.gather_comms:
                     gather_in = True
-            cast_out, merge_out, gather_out = (False, False, False)
+            cast_out, merge_out, gather_out = False, False, False
             for succ in self.graph.successors(xbar):
                 if succ in self.cast_comms:
                     cast_out = True
@@ -257,14 +257,15 @@ class CTG(object):
                     merge_out = True
                 if succ in self.gather_comms:
                     gather_out = True
-            is_head, is_tail = (False, False)
+            is_head, is_tail = False, False
             if self.is_head_xbar(xbar):
                 is_head = True
                 cast_in = True # head xbar receives cast in but has no cast predecessors
             if self.is_tail_xbar(xbar):
                 is_tail = True
                 cast_out = True # tail xbar generates cast out but has no cast successors
-            self.dicts[xbar].update({'cast_in': cast_in, 
+            self.dicts[xbar].update({
+                                        'cast_in': cast_in, 
                                         'merge_in': merge_in,
                                         'gather_in': gather_in,
                                         'cast_out': cast_out,
@@ -272,7 +273,7 @@ class CTG(object):
                                         'gather_out': gather_out,
                                         'is_head': is_head,
                                         'is_tail': is_tail
-                                        })
+                                    })
 
     @property
     @overload

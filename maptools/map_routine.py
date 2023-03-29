@@ -3,6 +3,7 @@ import onnx
 from typing import Optional, List, Dict, Tuple, Any
 from maptools import *
 from maptools.toksim import *
+from maptools.hardware import *
 
 __all__ = ['MapRoutine']
 
