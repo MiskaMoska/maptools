@@ -2,6 +2,7 @@ import os
 import sys
 import argparse
 root_dir = os.environ.get('NVCIM_HOME')
+root_dir = root_dir.rstrip('/')
 sys.path.append(os.path.join(root_dir, 'network', 'scripts'))
 from gen_routing_tables import *
 from gen_cast_network import *
@@ -21,12 +22,16 @@ parser.add_argument("--datawidth", type=int, default=34, help='network data widt
 parser.add_argument("--packetlen", type=int, default=18, help='packet length for cast and gather network, must be lower than 128, default: 18')
 parser.add_argument("--cbufdepth", type=int, default=32, help='cast router buffer depth, must be larger than packet length, default: 32')
 parser.add_argument("--sbufdepth", type=int, default=64, help='cast sending buffer depth, must be larger than packet length and lower than 128, default: 64')
+parser.add_argument("--castcrdalloc", type=int, default=10000, help='cast credit allocated, implying the convolution input buffer size, default: 10000')
+parser.add_argument("--gathercrdalloc", type=int, default=10000, help='gather credit allocated, implying the gather input buffer size, default: 10000')
 parser.add_argument("--test", action='store_true', help='generate files for local testing, not needed in system simulation')
 parser.add_argument("--flitnum", type=int, default=10000, help='number of flits to be generated, must be divided by `packetlen-2`, default: 10000')
 parser.add_argument("--clean", action='store_true', help='clean all generated files to reset the folder')
 args = parser.parse_args()
-assert args.packetlen < 128, f"packet length (--packetlen) must be lower than 128, but got {args.packetlen}"
-assert args.sbufdepth < 128, f"sending buffer depth (--sbufdepth) must be lower than 128, but got {args.sbufdepth}"
+assert args.packetlen < 128, f"packet length (--packetlen) must be < 128, but got {args.packetlen}"
+assert args.sbufdepth < 128, f"sending buffer depth (--sbufdepth) must be < 128, but got {args.sbufdepth}"
+assert args.castcrdalloc >= args.packetlen - 2, f"cast credit allocated (--castcrdalloc) must be >= packet length (--packetlen) - 2"
+assert args.gathercrdalloc >= args.packetlen - 2, f"gather credit allocated (--gathercrdalloc) must be >= packet length (--packetlen) - 2"
 
 if args.clean:
     config_folder = os.path.join(root_dir, 'network', 'config')
@@ -49,8 +54,10 @@ h = cfginfo['network_height']
 cast_config = cfginfo['cast_config']
 merge_config = cfginfo['merge_config']
 gather_config = cfginfo['gather_config']
-dw = args.datawidth
+cast_fc = cfginfo['cast_fc']
+gather_fc = cfginfo['gather_fc']
 tail_xbars = mapinfo['tail_xbars']
+dw = args.datawidth
 
 # get flees ports
 flees = []
@@ -84,9 +91,9 @@ gen_merge_network(root_dir, dw, w, h)
 gen_gather_network(root_dir, dw, w, h)
 
 # generate cast, merge, and gather network configuration files
-gen_cast_network_config(root_dir, w, h)
+gen_cast_network_config(root_dir, w, h, cast_fc, args.packetlen)
+gen_gather_network_config(root_dir, w, h, gather_fc, args.packetlen)
 gen_merge_network_config(root_dir, merge_config)
-gen_gather_network_config(root_dir, w, h)
 
 # generate top network
 gen_top_network(root_dir, w, h, flees)
@@ -116,7 +123,7 @@ for item in gather_paths.values():
 gen_top_network_config(root_dir, w, h, top_config, flees)
 
 # generate params header
-gen_params_header(root_dir, w, h, args.datawidth, args.packetlen, args.cbufdepth, args.sbufdepth)
+gen_params_header(root_dir, w, h, args)
 
 if args.test:
     assert args.flitnum % (args.packetlen-2) == 0, f"`flitnum`({args.flitnum}) must be divided by `packetlen-2`({args.packetlen-2}))"

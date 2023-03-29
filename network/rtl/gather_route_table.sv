@@ -1,7 +1,7 @@
 `include "params.svh"
 
 module gather_route_table #(
-    parameter string rt_file = "/mnt/f/git/NVCIM-COMM/behavior_model/config/gather_rt_0_0_4"
+    parameter string rt_file = ""
 )(
     input       wire                            clk,
     input       wire                            rstn,  

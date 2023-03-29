@@ -1,7 +1,7 @@
 `include "params.svh"
 
 module cast_route_table #(
-    parameter string rt_file = "/mnt/f/git/NVCIM-COMM/behavior_model/config/cast_rt_0_0_4"
+    parameter string rt_file = ""
 )(
     input       wire                            clk,
     input       wire                            rstn,  
@@ -38,7 +38,7 @@ always@(*) begin
             candidateOutVC = tab[i][10+`CN-1:10];
             break;
         end
-    end 
+    end
 end
 
 endmodule

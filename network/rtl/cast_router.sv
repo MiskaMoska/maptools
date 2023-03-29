@@ -1,11 +1,13 @@
 `include "params.svh"
 
 module cast_router #(
+    parameter   x_pos = 0, //x position of router
+    parameter   y_pos = 0, //y position of router
     parameter   isUBM_list[`CN] = '{(`CN){0}}, //whether adopt unicast-based-multicast
     parameter   isFC_list[`CN] = '{(`CN){0}}, //is the FC start port or not
     parameter   [`NOC_WIDTH*`NOC_HEIGHT-1:0] FCdn_list[`CN] = '{(`CN){{(`NOC_WIDTH*`NOC_HEIGHT){1'b0}}}}, //FC destination nodes
     parameter   int FCpl_list[`CN] = '{(`CN){16}}, //FC packet length
-    parameter   string rt_file_list[`CN] = '{(`CN){"/mnt/f/git/NVCIM-COMM/behavior_model/config/cast_rt_0_0_4"}}
+    parameter   string rt_file_list[`CN] = '{(`CN){""}}
 )(
     input       wire                            clk,
     input       wire                            rstn, 
@@ -55,7 +57,7 @@ module cast_router #(
     output      wire        [`DW-1:0]           local_data_o,
     input       wire                            local_ready_i,
 
-    input       wire                            credit_upd[`NOC_WIDTH][`NOC_HEIGHT]  
+    input       wire        [31:0]              credit_upd[`NOC_WIDTH][`NOC_HEIGHT]  
 );
 
 wire    [4:0]       selVCfromVC0,reqVCfromVC0,selOutVCtoVC0;
@@ -75,6 +77,8 @@ wire    [4:0]       valid_from,valid_to,ready_from,ready_to;
 wire    [4:0]       outVCAvailable,VCgranted,outVCAvailableReset;
 
 cast_input_stage #(
+    .x_pos                    (x_pos),
+    .y_pos                    (y_pos),
     .isUBM                    (isUBM_list[1]),
     .isFC                     (isFC_list[1]), 
     .FCdn                     (FCdn_list[1]), 
@@ -97,6 +101,8 @@ cast_input_stage #(
 );
 
 cast_input_stage #(
+    .x_pos                    (x_pos),
+    .y_pos                    (y_pos),
     .isUBM                    (isUBM_list[2]),
     .isFC                     (isFC_list[2]), 
     .FCdn                     (FCdn_list[2]), 
@@ -119,6 +125,8 @@ cast_input_stage #(
 );
 
 cast_input_stage #(
+    .x_pos                    (x_pos),
+    .y_pos                    (y_pos),
     .isUBM                    (isUBM_list[3]),
     .isFC                     (isFC_list[3]), 
     .FCdn                     (FCdn_list[3]), 
@@ -141,6 +149,8 @@ cast_input_stage #(
 );
 
 cast_input_stage #(
+    .x_pos                    (x_pos),
+    .y_pos                    (y_pos),
     .isUBM                    (isUBM_list[4]),
     .isFC                     (isFC_list[4]), 
     .FCdn                     (FCdn_list[4]), 
@@ -163,6 +173,8 @@ cast_input_stage #(
 );
 
 cast_input_stage #(
+    .x_pos                    (x_pos),
+    .y_pos                    (y_pos),
     .isUBM                    (isUBM_list[0]),
     .isFC                     (isFC_list[0]), 
     .FCdn                     (FCdn_list[0]), 

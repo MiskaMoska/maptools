@@ -58,18 +58,10 @@ module network_interface #(
     //combined pe end
     input       wire                            valid_i_cast_gather_pe,
     input       wire        [`DW-1:0]           data_i_cast_gather_pe,
-    output      wire                            ready_o_cast_gather_pe,
-
-    //credit update signal
-    output      wire                            credit_upd
+    output      wire                            ready_o_cast_gather_pe
 );
 
-`ifdef TEST
-localparam fifo_depth_log = 30;
-`else
-localparam fifo_depth_log = 2
-`endif
-
+localparam fifo_depth_log = 2;
 
 wire valid_i_cast_pe, ready_o_cast_pe, valid_i_gather_pe, ready_o_gather_pe;
 wire [`DW-1:0] data_i_cast_pe, data_i_gather_pe;
@@ -100,8 +92,7 @@ wire [`DW-1:0] cast_sbuf_dout;
 
 assign data_o_cast_nw = cast_sbuf_dout;
 assign cast_rbuf_read = ~cast_rbuf_empty & cast_ready_o_nw;
-assign credit_upd = cast_rbuf_read;
-assign ready_o_cast_nw = 1'b1;
+assign ready_o_cast_nw = ~cast_rbuf_full;
 
 // // cast network end receive buffer
 // nfifo_inf #(
@@ -126,9 +117,9 @@ nfifo #(
     .clk_i                   (clk),
     .rst_i                   (~rstn),
     .read_i                  (cast_rbuf_read),
-    .write_i                 (valid_i_cast_nw),
+    .write_i                 (valid_i_cast_nw & ready_o_cast_nw),
     .empty_o                 (cast_rbuf_empty),
-    .full_o                  (),
+    .full_o                  (cast_rbuf_full),
     .data_i                  (data_i_cast_nw),
     .data_o                  (cast_rbuf_dout)
 );
@@ -198,7 +189,7 @@ wire [`DW-1:0] gather_sbuf_dout;
 
 assign data_o_gather_nw = gather_sbuf_dout;
 assign gather_rbuf_read = ~gather_rbuf_empty & gather_ready_o_nw;
-assign ready_o_gather_nw = 1'b1;
+assign ready_o_gather_nw = ~gather_rbuf_full;
 
 // // gather network end receive buffer
 // nfifo_inf #(
@@ -223,9 +214,9 @@ nfifo #(
     .clk_i                   (clk),
     .rst_i                   (~rstn),
     .read_i                  (gather_rbuf_read),
-    .write_i                 (valid_i_gather_nw),
+    .write_i                 (valid_i_gather_nw & ready_o_gather_nw),
     .empty_o                 (gather_rbuf_empty),
-    .full_o                  (),
+    .full_o                  (gather_rbuf_full),
     .data_i                  (data_i_gather_nw),
     .data_o                  (gather_rbuf_dout)
 );

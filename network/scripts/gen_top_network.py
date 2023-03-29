@@ -53,7 +53,10 @@ module network(
     output      wire                        gather_valid_o_{i}_{j},
     input       wire                        gather_ready_i_{i}_{j},'''
 
-    containt = containt.rstrip(',')
+    containt += '''
+    input       wire        [31:0]          cast_credit_upd[`NOC_WIDTH][`NOC_HEIGHT],
+    input       wire        [31:0]          gather_credit_upd[`NOC_WIDTH][`NOC_HEIGHT]
+    '''
     containt += '\n);'
     containt += '''
 wire [`DW-1:0] data_stab;
@@ -69,8 +72,6 @@ wire valid_flee{i}, ready_flee{i};
 wire [`DW-1:0] data_i_cast_nw[`NOC_WIDTH][`NOC_HEIGHT], data_o_cast_nw[`NOC_WIDTH][`NOC_HEIGHT], data_i_merge_nw[`NOC_WIDTH][`NOC_HEIGHT], data_o_merge_nw[`NOC_WIDTH][`NOC_HEIGHT], data_i_gather_nw[`NOC_WIDTH][`NOC_HEIGHT], data_o_gather_nw[`NOC_WIDTH][`NOC_HEIGHT];
 wire valid_i_cast_nw[`NOC_WIDTH][`NOC_HEIGHT], valid_o_cast_nw[`NOC_WIDTH][`NOC_HEIGHT], valid_i_merge_nw[`NOC_WIDTH][`NOC_HEIGHT], valid_o_merge_nw[`NOC_WIDTH][`NOC_HEIGHT], valid_i_gather_nw[`NOC_WIDTH][`NOC_HEIGHT], valid_o_gather_nw[`NOC_WIDTH][`NOC_HEIGHT];
 wire ready_i_cast_nw[`NOC_WIDTH][`NOC_HEIGHT], ready_o_cast_nw[`NOC_WIDTH][`NOC_HEIGHT], ready_i_merge_nw[`NOC_WIDTH][`NOC_HEIGHT], ready_o_merge_nw[`NOC_WIDTH][`NOC_HEIGHT], ready_i_gather_nw[`NOC_WIDTH][`NOC_HEIGHT], ready_o_gather_nw[`NOC_WIDTH][`NOC_HEIGHT];
-
-wire credit_upd[`NOC_WIDTH][`NOC_HEIGHT];
 '''
 
     containt += '''
@@ -139,7 +140,7 @@ cast_network cast_nw(
     .ready_i_flee{i}                  (ready_flee{i}),'''
 
     containt += '''
-    .credit_upd                     (credit_upd)
+    .credit_upd                     (cast_credit_upd)
 );                 
 
 merge_network merge_nw(
@@ -161,7 +162,8 @@ gather_network gather_nw(
     .ready_o                        (ready_o_gather_nw),
     .data_o                         (data_o_gather_nw),
     .valid_o                        (valid_o_gather_nw),
-    .ready_i                        (ready_i_gather_nw)
+    .ready_i                        (ready_i_gather_nw),
+    .credit_upd                     (gather_credit_upd)
 );\n
 '''
     for i in range(w):
@@ -213,9 +215,7 @@ network_interface #(
 
     .valid_o_gather_pe              (gather_valid_o_{i}_{j}),
     .data_o_gather_pe               (gather_data_o_{i}_{j}),
-    .ready_i_gather_pe              (gather_ready_i_{i}_{j}),
-
-    .credit_upd                     (credit_upd[{i}][{j}])
+    .ready_i_gather_pe              (gather_ready_i_{i}_{j})
 );\n\n'''
     containt += "endmodule"
     save_dir = os.path.join(root_dir, 'network', 'rtl', 'generated')

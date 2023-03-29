@@ -1,11 +1,13 @@
 `include "params.svh"
 
 module cast_input_stage #(
+    parameter   x_pos = 0,
+    parameter   y_pos = 0,
     parameter   isUBM = 0, //whether adopt unicast-based-multicast
     parameter   isFC = 0, //is the FC start port or not
     parameter   [`NOC_WIDTH*`NOC_HEIGHT-1:0] FCdn = {(`NOC_WIDTH*`NOC_HEIGHT){1'b0}}, //FC destination nodes
     parameter   int FCpl = 16, //FC packet length
-    parameter   string rt_file = "/mnt/f/git/NVCIM-COMM/behavior_model/config/cast_rt_0_0_4"
+    parameter   string rt_file = ""
 )(
     input       wire                            clk,
     input       wire                            rstn, 
@@ -23,14 +25,14 @@ module cast_input_stage #(
     output      wire        [`DW-1:0]           data_o,
     input       wire                            ready_i,
 
-    input       wire                            credit_upd[`NOC_WIDTH][`NOC_HEIGHT]    
+    input       wire        [31:0]              credit_upd[`NOC_WIDTH][`NOC_HEIGHT]    
 );
 
 wire            fifo_read,fifo_write;
 wire            fifo_empty,fifo_full;
 wire [`DW-1:0]  fifo_din,fifo_dout;
 wire [`CN-1:0]  candidateOutVC;
-wire [15:0]     credit_cnt;
+wire [31:0]     credit_cnt;
 wire            pop,read_reset;
 
 assign fifo_din = data_i;
@@ -73,6 +75,8 @@ cast_route_table #(
 );
 
 cast_input_controller #(
+    .x_pos                   (x_pos),
+    .y_pos                   (y_pos),
     .isUBM                   (isUBM),
     .isFC                    (isFC), 
     .FCpl                    (FCpl)

@@ -16,7 +16,6 @@ def gen_ports(w, h, flees):
 //Width: '''+str(w)+'''
 //Height:'''+str(h)+'''
 `include "params.svh"
-`include "cast_network_config.svh"
 
 module cast_network(
     input       wire                            clk,
@@ -47,8 +46,9 @@ module cast_network(
 '''
     port_str += '''
     //credit update signal input
-    input       wire                            credit_upd[`NOC_WIDTH][`NOC_HEIGHT]\n'''
-    port_str += "\n);\n"
+    input       wire        [31:0]              credit_upd[`NOC_WIDTH][`NOC_HEIGHT]\n'''
+    port_str += "\n);\n\n"
+    port_str += '`include "cast_network_config.svh"\n'
     return port_str
 
 def gen_instances(data_width, w, h, flees):
@@ -170,6 +170,8 @@ def gen_instances(data_width, w, h, flees):
             router_txt = '''
 /*Router '''+str(j)+''','''+str(i)+'''*/    
 cast_router #(
+    .x_pos                 ('''+str(j)+'''),
+    .y_pos                 ('''+str(i)+'''),
     .isUBM_list            (isUBM_list_'''+str(j)+'''_'''+str(i)+'''),
     .isFC_list             (isFC_list_'''+str(j)+'''_'''+str(i)+'''),
     .FCdn_list             (FCdn_list_'''+str(j)+'''_'''+str(i)+'''),

@@ -3,23 +3,26 @@ import math
 
 __all__ = ['gen_params_header']
 
-def gen_params_header(root_dir, w, h, data_width, packet_len, cbuf_depth, sbuf_depth):
+def gen_params_header(root_dir, w, h, args):
     save_dir = os.path.join(root_dir, 'network', 'config', 'network_config')
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
     file_dir = os.path.join(save_dir, 'params.svh')
-    packet_len_log = math.ceil(math.log2(packet_len))
-    cbuf_depth_log = math.ceil(math.log2(cbuf_depth))
+    packet_len_log = math.ceil(math.log2(args.packetlen))
+    cbuf_depth_log = math.ceil(math.log2(args.cbufdepth))
     containt = f'''
 `ifndef         __PARAMS_SVH__
 `define         __PARAMS_SVH__
+
+// root directory
+`define         ROOT_DIR                                    {'"'+root_dir+'"'}
 
 // for local testing
 `define         TEST
 
 // data width
 // identical to cast, merge, and gather
-`define         DW                                          {data_width} 
+`define         DW                                          {args.datawidth} 
 
 // channel number
 // for cast router:     0:local 1:west 2:east 3:vert0 4:vert1
@@ -32,11 +35,6 @@ def gen_params_header(root_dir, w, h, data_width, packet_len, cbuf_depth, sbuf_d
 `define         NOC_WIDTH                                   {w}
 `define         NOC_HEIGHT                                  {h}
 
-// buffer allocated for credit-based flow control
-// identical to both cast and gather
-`define         BUFFER_ALLOC                                256
-`define         BUFFER_ALLOC_LOG                            8
-
 // routing table depth, identical to both cast and gather
 // merge network does not use routing table
 // determined by how many streams one channel can support
@@ -45,7 +43,7 @@ def gen_params_header(root_dir, w, h, data_width, packet_len, cbuf_depth, sbuf_d
 // packet length
 // identical to both cast and gather 
 // merge network transfers data without packets
-`define         PKT_LEN                                     {packet_len}
+`define         PKT_LEN                                     {args.packetlen}
 `define         PKT_LEN_LOG                                 {packet_len_log}
 
 // intra-router fifo depth
@@ -54,7 +52,11 @@ def gen_params_header(root_dir, w, h, data_width, packet_len, cbuf_depth, sbuf_d
 `define         GATHER_ROUTER_BUFFER_DEPTH_LOG              4
 
 // sending buffer fifo depth
-`define         SEND_BUFFER_DEPTH                           {sbuf_depth}
+`define         SEND_BUFFER_DEPTH                           {args.sbufdepth}
+
+// credit allocated for cast and gather
+`define         CAST_CREDIT_ALLOC                           {args.castcrdalloc}
+`define         GATHER_CREDIT_ALLOC                         {args.gathercrdalloc}
 
 // stream-id zone in packet header
 // identical to both cast and gather

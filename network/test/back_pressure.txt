@@ -1,0 +1,8 @@
+reg [31:0] push;
+always@(posedge clk or negedge rstn) begin
+    if(~rstn) push <= 0;
+    else begin
+        if(push == 150) push <= 0;
+        else push <= push + 1;
+    end
+end

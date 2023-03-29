@@ -30,6 +30,9 @@ wire [`DW-1:0] cast_gather_data_pe_2_nw[`NOC_WIDTH][`NOC_HEIGHT], merge_data_pe_
 wire  cast_gather_valid_pe_2_nw[`NOC_WIDTH][`NOC_HEIGHT], merge_valid_pe_2_nw[`NOC_WIDTH][`NOC_HEIGHT], cast_valid_nw_2_pe[`NOC_WIDTH][`NOC_HEIGHT], merge_valid_nw_2_pe[`NOC_WIDTH][`NOC_HEIGHT], gather_valid_nw_2_pe[`NOC_WIDTH][`NOC_HEIGHT];
 wire  cast_ready_pe_2_nw[`NOC_WIDTH][`NOC_HEIGHT], merge_ready_pe_2_nw[`NOC_WIDTH][`NOC_HEIGHT], gather_ready_pe_2_nw[`NOC_WIDTH][`NOC_HEIGHT], merge_ready_nw_2_pe[`NOC_WIDTH][`NOC_HEIGHT], cast_gather_ready_nw_2_pe[`NOC_WIDTH][`NOC_HEIGHT];
 
+wire [31:0] cast_credit_upd[`NOC_WIDTH][`NOC_HEIGHT];
+wire [31:0] gather_credit_upd[`NOC_WIDTH][`NOC_HEIGHT];
+
 network nw(
     .clk                                               (clk),
     .rstn                                              (rstn),
@@ -61,8 +64,12 @@ network nw(
     .merge_ready_i_{i}_{j}                             (merge_ready_pe_2_nw[{i}][{j}]),
     .gather_data_o_{i}_{j}                             (gather_data_nw_2_pe[{i}][{j}]),
     .gather_valid_o_{i}_{j}                            (gather_valid_nw_2_pe[{i}][{j}]),
-    .gather_ready_i_{i}_{j}                            (gather_ready_pe_2_nw[{i}][{j}]),'''     
-    containt = containt.rstrip(',')
+    .gather_ready_i_{i}_{j}                            (gather_ready_pe_2_nw[{i}][{j}]),'''
+
+    containt += '''
+    .cast_credit_upd                                   (cast_credit_upd),
+    .gather_credit_upd                                 (gather_credit_upd)
+    '''
     containt += '\n);\n'
 
     for i in range(w):
@@ -93,7 +100,9 @@ virtual_pe #(
     .merge_ready_i                                     (merge_ready_nw_2_pe[{i}][{j}]),
     .gather_data_i                                     (gather_data_nw_2_pe[{i}][{j}]),
     .gather_valid_i                                    (gather_valid_nw_2_pe[{i}][{j}]),
-    .gather_ready_o                                    (gather_ready_pe_2_nw[{i}][{j}])
+    .gather_ready_o                                    (gather_ready_pe_2_nw[{i}][{j}]),
+    .cast_credit_upd                                   (cast_credit_upd[{i}][{j}]),
+    .gather_credit_upd                                 (gather_credit_upd[{i}][{j}])
 );\n\n'''
     containt += "endmodule"
     with open(file_dir,"w") as my_file:

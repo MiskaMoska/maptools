@@ -8,14 +8,11 @@ def gen_ports(w, h):
 //Width: '''+str(w)+'''
 //Height:'''+str(h)+'''
 `include "params.svh"
-`include "gather_network_config.svh"
 
 module gather_network(
     input       wire                            clk,
     input       wire                            rstn,
-'''
 
-    port_str += '''
     //router local ports
     input       wire        [`DW-1:0]           data_i[`NOC_WIDTH][`NOC_HEIGHT],
     input       wire                            valid_i[`NOC_WIDTH][`NOC_HEIGHT],
@@ -23,9 +20,13 @@ module gather_network(
 
     output      wire        [`DW-1:0]           data_o[`NOC_WIDTH][`NOC_HEIGHT],
     output      wire                            valid_o[`NOC_WIDTH][`NOC_HEIGHT],
-    input       wire                            ready_i[`NOC_WIDTH][`NOC_HEIGHT]'''
+    input       wire                            ready_i[`NOC_WIDTH][`NOC_HEIGHT],
 
-    port_str += "\n);\n"
+    //credit update signal input
+    input       wire        [31:0]              credit_upd[`NOC_WIDTH][`NOC_HEIGHT]'''
+
+    port_str += "\n);\n\n"
+    port_str += '`include "gather_network_config.svh"\n'
     return port_str
 
 def gen_instances(data_width, w, h):
@@ -118,6 +119,11 @@ def gen_instances(data_width, w, h):
             router_txt = '''
 /*Router '''+str(j)+''','''+str(i)+'''*/    
 gather_router #(
+    .x_pos                 ('''+str(j)+'''),
+    .y_pos                 ('''+str(i)+'''),
+    .isFC_list             (isFC_list_'''+str(j)+'''_'''+str(i)+'''),
+    .FCdn_list             (FCdn_list_'''+str(j)+'''_'''+str(i)+'''),
+    .FCpl_list             (FCpl_list_'''+str(j)+'''_'''+str(i)+'''),
     .rt_file_list          (gather_rt_file_list_'''+str(j)+'''_'''+str(i)+''')
 )router_'''+str(j)+'''_'''+str(i)+'''(
     .clk                   (clk),
@@ -151,7 +157,8 @@ gather_router #(
     .local_ready_o         (ready_o['''+str(j)+''']['''+str(i)+''']),
     .local_data_o          (data_o['''+str(j)+''']['''+str(i)+''']),
     .local_valid_o         (valid_o['''+str(j)+''']['''+str(i)+''']),
-    .local_ready_i         (ready_i['''+str(j)+''']['''+str(i)+'''])
+    .local_ready_i         (ready_i['''+str(j)+''']['''+str(i)+''']),
+    .credit_upd            (credit_upd)
 );\n'''
             inst_str += router_txt
     return inst_str

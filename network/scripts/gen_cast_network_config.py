@@ -1,8 +1,16 @@
 import os
+from maptools import dec2bin
 
 __all__ = ['gen_cast_network_config']
 
-def gen_cast_network_config(root_dir, w, h):
+def get_fcdn(w, h, dn_list):
+    data = 0
+    for n in dn_list:
+        i = n[0] + n[1] * w
+        data += 2**i
+    return dec2bin(data, bit_wide=w*h)
+
+def gen_cast_network_config(root_dir, w, h, cast_fc, packetlen):
     save_dir = os.path.join(root_dir, 'network', 'config', 'network_config')
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
@@ -14,10 +22,22 @@ def gen_cast_network_config(root_dir, w, h):
     n = w * h
     for i in range(w):
         for j in range(h):
+            # west flow control is for the (0, 0) xbar
+            local_is_fc, west_is_fc = 0, 0
+            local_fcdn, west_fcdn = 0, 0
+            local_pktlen, west_pktlen = 0, 0
+            if (i, j) in cast_fc: # is flow control source node
+                local_is_fc = 1
+                local_fcdn = get_fcdn(w, h, cast_fc[(i, j)])
+                local_pktlen = packetlen
+            if (i, j) == (0, 0): # is (0, 0) xbar
+                west_is_fc = 1
+                west_fcdn = get_fcdn(w, h, [(0, 0)]) # only fc with the first xbar (first layer)
+                west_pktlen = packetlen
             containt += "\nlocalparam isUBM_list_"+str(i)+"_"+str(j)+"[`CN] = '{1,1,1,1,1};\n"
-            containt += "localparam isFC_list_"+str(i)+"_"+str(j)+"[`CN] = '{0,0,0,0,0};\n"
-            containt += "localparam [`NOC_WIDTH*`NOC_HEIGHT-1:0] FCdn_list_"+str(i)+"_"+str(j)+"[`CN] = '{"+str(n)+"'b0,"+str(n)+"'b0,"+str(n)+"'b0,"+str(n)+"'b0,"+str(n)+"'b0};\n"
-            containt += "localparam int FCpl_list_"+str(i)+"_"+str(j)+"[`CN] = '{0,0,0,0,0};\n"
+            containt += "localparam isFC_list_"+str(i)+"_"+str(j)+"[`CN] = '{%d,%d,0,0,0};\n" % (local_is_fc, west_is_fc)
+            containt += "localparam [`NOC_WIDTH*`NOC_HEIGHT-1:0] FCdn_list_"+str(i)+"_"+str(j)+"[`CN] = '{"+str(n)+f"'b{local_fcdn},"+str(n)+f"'b{west_fcdn},"+str(n)+"'b0,"+str(n)+"'b0,"+str(n)+"'b0};\n"
+            containt += "localparam int FCpl_list_"+str(i)+"_"+str(j)+"[`CN] = '{%d,%d,0,0,0};\n" % (local_pktlen, west_pktlen)
             rt_files = []
             for m in range(5):
                 file = os.path.join(root_dir, 'network', 'config', 'routing_tables', f'cast_{i}_{j}_{m}')

@@ -2,8 +2,7 @@ import os
 import pickle
 import networkx as nx
 from typing import Tuple, List, Any, Optional, Dict
-from maptools import dec2bin
-from maptools.hardware.fc_plan import *
+from maptools.hardware.fc_plan import fc_plan
 
 __all__ = ['NocConfig']
 
@@ -37,7 +36,7 @@ class NocConfig(object):
                                 'path' : List[Tuple[Tuple]], 'load_ratio' : float, ....}
         
         kwargs : Dict
-            root_dir : str = os.environ['NVCIM_HOME']
+            root_dir : str = os.environ.get('NVCIM_HOME')
                 The root directory of the project.
 
             mapname : str = 'newmap'
@@ -198,11 +197,16 @@ class NocConfig(object):
             os.makedirs(save_dir)
         file_dir = os.path.join(save_dir, file_name+'.pkl')
         info_dict = dict()
+
         info_dict['network_width'] = self.w
         info_dict['network_height'] = self.h
+
         info_dict['cast_config'] = self.cast_config
         info_dict['merge_config'] = self.merge_config
         info_dict['gather_config'] = self.gather_config
+
+        info_dict['cast_fc'] = fc_plan(self.cast_paths, self.cast_config)
+        info_dict['gather_fc'] = fc_plan(self.gather_paths, self.gather_config)
 
         with open(file_dir, 'wb') as f:
             pickle.dump(info_dict, f)

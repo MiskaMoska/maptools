@@ -1,7 +1,12 @@
 `include "params.svh"
 
 module gather_router #(
-    parameter   string rt_file_list[`CN] = '{(`CN){"/mnt/f/git/NVCIM-COMM/behavior_model/config/gather_rt_0_0_4"}}
+    parameter   x_pos = 0, //x position of router
+    parameter   y_pos = 0, //y position of router
+    parameter   isFC_list[`CN] = '{(`CN){0}}, //is the FC start port or not
+    parameter   [`NOC_WIDTH*`NOC_HEIGHT-1:0] FCdn_list[`CN] = '{(`CN){{(`NOC_WIDTH*`NOC_HEIGHT){1'b0}}}}, //FC destination nodes
+    parameter   int FCpl_list[`CN] = '{(`CN){16}}, //FC packet length
+    parameter   string rt_file_list[`CN] = '{(`CN){""}}
 )(
     input       wire                            clk,
     input       wire                            rstn, 
@@ -49,7 +54,9 @@ module gather_router #(
 
     output      wire                            local_valid_o,
     output      wire        [`DW-1:0]           local_data_o,
-    input       wire                            local_ready_i
+    input       wire                            local_ready_i,
+
+    input       wire        [31:0]              credit_upd[`NOC_WIDTH][`NOC_HEIGHT]  
 );
 
 wire    [4:0]       selVCfromVC0,reqVCfromVC0,selOutVCtoVC0;
@@ -69,6 +76,11 @@ wire    [4:0]       valid_from,valid_to,ready_from,ready_to;
 wire    [4:0]       outVCAvailable,VCgranted,outVCAvailableReset;
 
 gather_input_stage #(
+    .x_pos                    (x_pos),
+    .y_pos                    (y_pos),
+    .isFC                     (isFC_list[1]), 
+    .FCdn                     (FCdn_list[1]), 
+    .FCpl                     (FCpl_list[1]), 
     .rt_file                  (rt_file_list[1])
 )input_stage_west(
     .clk                      (clk),
@@ -82,10 +94,16 @@ gather_input_stage #(
     .selXBVC                  (selVCfromVC1),
     .valid_o                  (valid_from[1]),
     .data_o                   (data_from_vc1),
-    .ready_i                  (ready_to[1])
+    .ready_i                  (ready_to[1]),
+    .credit_upd               (credit_upd)
 );
 
 gather_input_stage #( 
+    .x_pos                    (x_pos),
+    .y_pos                    (y_pos),
+    .isFC                     (isFC_list[2]), 
+    .FCdn                     (FCdn_list[2]), 
+    .FCpl                     (FCpl_list[2]), 
     .rt_file                  (rt_file_list[2])
 )input_stage_east(
     .clk                      (clk),
@@ -99,10 +117,16 @@ gather_input_stage #(
     .selXBVC                  (selVCfromVC2),
     .valid_o                  (valid_from[2]),
     .data_o                   (data_from_vc2),
-    .ready_i                  (ready_to[2])
+    .ready_i                  (ready_to[2]),
+    .credit_upd               (credit_upd)
 );
 
 gather_input_stage #(
+    .x_pos                    (x_pos),
+    .y_pos                    (y_pos),
+    .isFC                     (isFC_list[3]), 
+    .FCdn                     (FCdn_list[3]), 
+    .FCpl                     (FCpl_list[3]), 
     .rt_file                  (rt_file_list[3])
 )input_stage_north(
     .clk                      (clk),
@@ -116,10 +140,16 @@ gather_input_stage #(
     .selXBVC                  (selVCfromVC3),
     .valid_o                  (valid_from[3]),
     .data_o                   (data_from_vc3),
-    .ready_i                  (ready_to[3])
+    .ready_i                  (ready_to[3]),
+    .credit_upd               (credit_upd)
 );
 
 gather_input_stage #(
+    .x_pos                    (x_pos),
+    .y_pos                    (y_pos),
+    .isFC                     (isFC_list[4]), 
+    .FCdn                     (FCdn_list[4]), 
+    .FCpl                     (FCpl_list[4]), 
     .rt_file                  (rt_file_list[4])
 )input_stage_south(
     .clk                      (clk),
@@ -133,10 +163,16 @@ gather_input_stage #(
     .selXBVC                  (selVCfromVC4),
     .valid_o                  (valid_from[4]),
     .data_o                   (data_from_vc4),
-    .ready_i                  (ready_to[4])
+    .ready_i                  (ready_to[4]),
+    .credit_upd               (credit_upd)
 );
 
 gather_input_stage #(
+    .x_pos                    (x_pos),
+    .y_pos                    (y_pos),
+    .isFC                     (isFC_list[0]), 
+    .FCdn                     (FCdn_list[0]), 
+    .FCpl                     (FCpl_list[0]), 
     .rt_file                  (rt_file_list[0])
 )input_stage_local(
     .clk                      (clk),
@@ -150,7 +186,8 @@ gather_input_stage #(
     .selXBVC                  (selVCfromVC0),
     .valid_o                  (valid_from[0]),
     .data_o                   (data_from_vc0),
-    .ready_i                  (ready_to[0])
+    .ready_i                  (ready_to[0]),
+    .credit_upd               (credit_upd)
 );
 
 gather_output_stage output_stage_vc0(

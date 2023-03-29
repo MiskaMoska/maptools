@@ -1,7 +1,12 @@
 `include "params.svh"
 
 module gather_input_stage #(
-    parameter   string rt_file = "/mnt/f/git/NVCIM-COMM/behavior_model/config/cast_rt_0_0_4"
+    parameter   x_pos = 0,
+    parameter   y_pos = 0,
+    parameter   isFC = 0, //is the FC start port or not
+    parameter   [`NOC_WIDTH*`NOC_HEIGHT-1:0] FCdn = {(`NOC_WIDTH*`NOC_HEIGHT){1'b0}}, //FC destination nodes
+    parameter   int FCpl = 16, //FC packet length
+    parameter   string rt_file = ""
 )(
     input       wire                            clk,
     input       wire                            rstn, 
@@ -17,13 +22,16 @@ module gather_input_stage #(
 
     output      wire                            valid_o,
     output      wire        [`DW-1:0]           data_o,
-    input       wire                            ready_i
+    input       wire                            ready_i,
+
+    input       wire        [31:0]              credit_upd[`NOC_WIDTH][`NOC_HEIGHT]
 );
 
 wire            fifo_read,fifo_write;
 wire            fifo_empty,fifo_full;
 wire [`DW-1:0]  fifo_din,fifo_dout;
 wire [`CN-1:0]  candidateOutVC;
+wire [31:0]     credit_cnt;
 
 assign fifo_din = data_i;
 assign data_o = fifo_dout;
@@ -62,7 +70,12 @@ gather_route_table #(
     .candidateOutVC          (candidateOutVC)
 );
 
-gather_input_controller ctlr(
+gather_input_controller #(
+    .x_pos                   (x_pos),
+    .y_pos                   (y_pos),
+    .isFC                    (isFC), 
+    .FCpl                    (FCpl)
+)ctlr(
     .clk                     (clk),
     .rstn                    (rstn),
     .fifo_empty              (fifo_empty),
@@ -72,7 +85,20 @@ gather_input_controller ctlr(
     .VCgranted               (VCgranted),
     .selXBVC                 (selXBVC),
     .flit_type               (fifo_dout[`DW-1:`DW-2]),
-    .flit_fire               (fire)
+    .flit_fire               (fire),
+    .credit_cnt              (credit_cnt)
 );
 
+gather_credit_counter #(
+    .isFC                    (isFC), //is the FC start port or not
+    .FCdn                    (FCdn), //FC destination nodes
+    .FCpl                    (FCpl) //FC packet length
+)cc( 
+    .clk                     (clk),
+    .rstn                    (rstn), 
+    .fire                    (fire),
+    .flit_type               (fifo_dout[`DW-1:`DW-2]), 
+    .credit_upd              (credit_upd),
+    .credit_cnt              (credit_cnt)
+);
 endmodule

@@ -409,4 +409,3 @@ class NocMapper(object):
         Added physical xbar information than `CTG.plot_ctg()`
         '''
         self.ctg.plot_ctg(match_dict=self.match_dict)
-

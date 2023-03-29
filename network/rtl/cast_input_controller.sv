@@ -1,6 +1,8 @@
 `include "params.svh"
 
 module cast_input_controller #(
+    parameter   x_pos = 0,
+    parameter   y_pos = 0,
     parameter   isUBM = 0, //whether adopt unicast-based-multicast
     parameter   isFC = 0, //is the FC start port or not
     parameter   FCpl = 16 //FC packet length
@@ -17,7 +19,7 @@ module cast_input_controller #(
     input       wire                            flit_fire,
     output      wire                            pop, // to UBM FIFO
     output      wire                            read_reset, // to UBM FIFO
-    input       wire        [15:0]              credit_cnt //from credit counter
+    input       wire        [31:0]              credit_cnt //from credit counter
 );
 
 function bit isOneHot(input [`CN-1:0] data);
@@ -113,5 +115,28 @@ end
 assign selXBVC = outVCLock ? outVC : 
                     VCgranted ? selOutVC : 5'b0;
 
-assign reqVC = (flit_type == `HEAD) & (~outVCLock) & (~fifo_empty) & (isFC ? (credit_cnt >= FCpl) : 1'b1) ? ((isUBM == 1) ? arb_grt : candidateOutVC) : 0;
+assign reqVC = (flit_type == `HEAD) & (~outVCLock) & (~fifo_empty) & 
+                (isFC ? (credit_cnt >= FCpl-2) : 1'b1) ? (
+                (isUBM == 1) ? arb_grt : candidateOutVC) : 0;
+
+// output credit log
+bit lock = 0;
+integer crd_file;
+string crd_file_path = {`ROOT_DIR, "/network/log/cast_crd_", $sformatf("x%0d_y%0d.log", x_pos, y_pos)};
+initial begin
+    if(isFC) begin
+        crd_file = $fopen(crd_file_path);
+        wait(rstn);
+        forever begin
+            @(posedge clk)
+            if(credit_cnt >= FCpl - 2)
+                lock = 0;
+            else if(lock == 0 && credit_cnt < FCpl-2) begin // credit running out
+                $fwrite(crd_file, "time %0t, credit running out: %0d/%0d\n", $time, credit_cnt, `CAST_CREDIT_ALLOC);
+                lock = 1;
+            end
+        end
+    end
+end
+
 endmodule
