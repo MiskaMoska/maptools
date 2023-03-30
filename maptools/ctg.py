@@ -285,7 +285,7 @@ class CTG(object):
             src = list(src)[0]
             dst = self.graph.successors(c)
             dst = list(dst)
-            yield (src, dst)
+            yield (c, src, dst)
 
     @property
     def merge_trees(self) -> Generator[Tuple, None, None]:

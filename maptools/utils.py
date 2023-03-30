@@ -2,6 +2,7 @@ import os
 import pickle
 from typing import List, Tuple, Dict
 import networkx as nx
+import logging
 
 __all__ = [
     'dec2bin',
@@ -10,7 +11,8 @@ __all__ = [
     'read_params',
     'read_mapinfo',
     'read_cfginfo',
-    'read_results'
+    'read_results',
+    'get_logger'
 ]
 
 def dec2bin(dec_num, bit_wide: int = 16) -> str:    
@@ -80,3 +82,11 @@ def read_results(mapname: str) -> Dict:
     with open(file_dir, 'rb') as f:
         results = pickle.load(f)
     return results
+
+def get_logger(name: str, dir: str) -> logging.Logger:
+    filename = os.path.join(dir, f'{name}.log')
+    logger = logging.getLogger(name)
+    fh = logging.FileHandler(filename, mode='w', encoding='utf-8')
+    logger.setLevel(logging.DEBUG)
+    logger.addHandler(fh)
+    return logger

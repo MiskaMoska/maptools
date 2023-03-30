@@ -51,8 +51,10 @@ class _WindowBuf(object):
             when False, the window slides as much as possible in each iteration
         '''
         self.size_i_np = input_size
-        self.size_i = [input_size[0] + pads[0] + pads[2],\
-                       input_size[1] + pads[1] + pads[3]]
+        self.size_i = [
+            input_size[0] + pads[0] + pads[2],
+            input_size[1] + pads[1] + pads[3]
+        ]
         self.size_o = output_size
         self.ks = kernel_size
         self.strides = strides
@@ -83,7 +85,7 @@ class _WindowBuf(object):
             self.buf[:,0:self.pads[3]] = 1
 
     @property
-    def _now_buf(self) -> int:
+    def now_buf(self) -> int:
         # now occupied buffer size
         sy = self.pads[0]
         sx = self.pads[3]
@@ -92,8 +94,8 @@ class _WindowBuf(object):
         return np.sum(self.buf[sy:dy, sx:dx]) * self.ni
     
     def _update_max_buf(self) -> None:
-        if self._now_buf > self.max_buf:
-            self.max_buf = self._now_buf
+        if self.now_buf > self.max_buf:
+            self.max_buf = self.now_buf
 
     def add_token(self, token: int) -> None:
         if token == 0:
@@ -136,8 +138,10 @@ class _WindowBuf(object):
             rele_x = max([self.strides[1], self.ks[1]])
         else:
             rele_x = self.strides[1]
-        self.buf[self.win_pos[0]:self.win_pos[0]+rele_y, \
-                 self.win_pos[1]:self.win_pos[1]+rele_x] *= 0
+        self.buf[
+            self.win_pos[0]:self.win_pos[0]+rele_y,
+            self.win_pos[1]:self.win_pos[1]+rele_x
+        ] *= 0
 
     def try_slide(self) -> int:
         if self.done:
@@ -156,7 +160,6 @@ class _WindowBuf(object):
             if np.sum(window) == need_token: # all data in window is available
                 self._release_data()
                 self.rptr += 1 # slide window
-                self._update_max_buf()
                 if self.rptr == self.size_o[0] * self.size_o[1]:
                     self.done = True
                 token += 1 # return a token
@@ -164,6 +167,7 @@ class _WindowBuf(object):
                     break
             else: # data not prepared
                 break
+        self._update_max_buf()
         return token
 
 
@@ -174,7 +178,8 @@ class _Xbar(object):
         config: Dict, 
         is_merge: bool, 
         is_gather: bool, 
-        slide_once: bool = True
+        slide_once: bool = True,
+        **kwargs
     ) -> None:
         '''
         Xbar abstract model designed for TokSim
@@ -241,6 +246,7 @@ class _Xbar(object):
             self.conv_buf.add_token(token)
         res = self.conv_buf.try_slide() # number of results
         self.inter_buf += res # put the results to inter buffer
+
         if 'Pool' not in self.op_type:
             self.done = self.conv_buf.done
 
@@ -603,13 +609,13 @@ class TokSim(object):
         log = self.echo_xbar() + "\n\n" + self.echo_comm()
         with open(file_dir, 'w') as f:
             f.write(log)
-        print(f"\buffer log written to {file_dir}")
+        print(f"\nbuffer log written to {file_dir}")
 
 
 def test_window_slide():
-    buf = _WindowBuf([11,10], [7,7], [3,3], [2,2], [1,3,3,2], 64)
+    buf = _WindowBuf([11,10], [7,7], [3,3], [2,2], [1,3,3,2], 64, slide_once=False)
     while True:
-        buf.add_token(4)
+        buf.add_token(100)
         buf.try_slide()
         print(buf.buf,end='\n\n')
         time.sleep(0.5)

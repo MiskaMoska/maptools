@@ -67,7 +67,8 @@ class MapRoutine(object):
         ctg = xm.ctg
         if self.toksim:
             tsim = TokSim(
-                ctg, 
+                ctg,
+                slide_once=True,
                 latency=self.toksim_latency, 
                 **self.config
             )
@@ -78,8 +79,8 @@ class MapRoutine(object):
             import torch
             from maptools.calcusim import CalcuSim
             assert self.input is not None, "calcusim enabled but got input is None"
-            assert isinstance(self.input, torch.Tensor), f"input must be torch.Tensor. but got {type(self.input)}"
-            assert len(self.input.shape) == 4, f"input dimension must be 4 [N, C, H, W]. but got {len(self.input.shape)}"
+            assert isinstance(self.input, torch.Tensor), f"input must be torch.Tensor, but got {type(self.input)}"
+            assert len(self.input.shape) == 4, f"input dimension must be 4 [N, C, H, W], but got {len(self.input.shape)}"
             csim = CalcuSim(ctg, oc.param_dict, **self.config)
             _ = csim(self.input)
             csim.save_results()
