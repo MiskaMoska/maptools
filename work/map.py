@@ -6,21 +6,21 @@ import os
 
 root_dir = os.environ.get('NVCIM_HOME')
 mapname = 'resnet50'
-test = os.path.join(root_dir, 'onnx_models', 'simp-resnet50.onnx')
+test = os.path.join(root_dir, 'onnx_models', 'simp-resnet18.onnx')
 img = get_input('work/test.jpg')
 
 routine = MapRoutine(   
     mapname=mapname,
     noc_map=True,
-    calcusim=True,
+    calcusim=False,
     input=img,
     save_cfginfo=True,
     show_ctg=True,
-    noc_size=(10, 25),
+    noc_size=(5, 11),
     model_dir=test,
     show_gather_path=True,
-    toksim=False,
-    toksim_latency = 16
+    toksim=True,
+    toksim_latency = None
 )
 
 routine.run()

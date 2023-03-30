@@ -2,7 +2,7 @@ Magic 271485
 Revision Verdi3_L-2016.06-1
 
 ; Window Layout <x> <y> <width> <height> <signalwidth> <valuewidth>
-viewPort 1536 23 2194 1163 320 65
+viewPort 1536 23 2194 1163 100 65
 
 ; File list:
 ; openDirFile [-d delimiter] [-s time_offset] [-rf auto_bus_rule_file] path_name file_name
@@ -16,8 +16,8 @@ signalSpacing 5
 
 ; windowTimeUnit is used for zoom, cursor & marker
 ; waveform viewport range
-zoom 0.000000 633299.087031
-cursor 145000.000000
+zoom 23262861.494141 29909393.349609
+cursor 199985000.000000
 marker 0.000000
 
 ; user define markers
@@ -25,7 +25,7 @@ marker 0.000000
 ; visible top row signal index
 top 0
 ; marker line index
-markerPos 18
+markerPos 1
 
 ; event list
 ; addEvent event_name event_expression
@@ -47,25 +47,8 @@ curSTATUS ByChange
 
 addGroup "G1"
 activeDirFile "" "/mnt/c/git/nvcim-comm/network/test/wave.fsdb"
-addSignal -h 15 /top_tb/dut/nw/gather_nw/router_0_0/east_valid_o
-addSignal -h 15 -UNSIGNED -HEX -holdScope east_data_o[33:0]
-addSignal -h 15 -holdScope east_ready_i
+addSignal -w analog -ds pwc -h 98 -UNSIGNED -UDEC /top_tb/dut/nw/cast_nw/router_0_0/input_stage_west/cc/credit_cnt[31:0]
 addGroup "G2"
-addSignal -h 15 /top_tb/dut/nw/gather_nw/router_0_0/local_valid_i
-addSignal -h 15 -UNSIGNED -HEX -holdScope local_data_i[33:0]
-addSignal -h 15 -holdScope local_ready_o
-addGroup "G3"
-addSignal -h 15 /top_tb/dut/nw/ni_0_0/valid_i_cast_gather_pe
-addSignal -h 15 -UNSIGNED -HEX -holdScope data_i_cast_gather_pe[33:0]
-addSignal -h 15 -holdScope ready_o_cast_gather_pe
-addGroup "G4"
-addSignal -h 15 /top_tb/dut/nw/ni_0_0/resend
-addSignal -h 15 -UNSIGNED -HEX -holdScope slice_cnt[5:0]
-addGroup "G5"
-addSignal -h 15 -UNSIGNED -HEX /top_tb/dut/nw/ni_0_0/data_i_gather_pe[33:0]
-addSignal -h 15 -holdScope valid_i_gather_pe
-addSignal -h 15 -holdScope ready_o_gather_pe
-addGroup "G6"
 
 ; getSignalForm Scope Hierarchy Status
 ; active file of getSignalForm

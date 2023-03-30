@@ -279,7 +279,6 @@ class CTG(object):
             })
 
     @property
-    @overload
     def cast_trees(self) -> Generator[Tuple, None, None]:
         for c in self.cast_comms:
             src = self.graph.predecessors(c)
@@ -287,19 +286,6 @@ class CTG(object):
             dst = self.graph.successors(c)
             dst = list(dst)
             yield (src, dst)
-
-    @property
-    def cast_trees(self) -> Generator[Tuple, None, None]:
-        '''
-        for test 
-        '''
-        for i, c in enumerate(self.cast_comms):
-            if i >= 0:
-                src = self.graph.predecessors(c)
-                src = list(src)[0]
-                dst = self.graph.successors(c)
-                dst = list(dst)
-                yield (c, src, dst)
 
     @property
     def merge_trees(self) -> Generator[Tuple, None, None]:

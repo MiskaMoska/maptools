@@ -14,7 +14,10 @@ module cast_credit_counter #(
     input       wire        [31:0]              credit_upd[`NOC_WIDTH][`NOC_HEIGHT],
     output      wire        [31:0]              credit_cnt,
 
-    input       wire                            pop //consume credit only when popping
+    input       wire                            pop, //consume credit only when popping
+
+    // for credit logging
+    output      var         int                 min_crd_x, min_crd_y
 );
 
 reg [31:0] cnt;
@@ -26,49 +29,53 @@ initial begin
     for(int i=0; i<`NOC_WIDTH*`NOC_HEIGHT; i++) begin
         credit_inc[i] = 0;
     end
-    forever begin
-        @(posedge clk);
-        if(rstn && isFC) begin
-            
-            // update credit buffer
-            for(int x=0; x<`NOC_WIDTH; x++) begin
-                for(int y=0; y<`NOC_HEIGHT; y++) begin
+end
+
+function void update_credit();
+    // update credit buffer
+    for(int x=0; x<`NOC_WIDTH; x++) begin
+        for(int y=0; y<`NOC_HEIGHT; y++) begin
+            if(FCdn[y*`NOC_WIDTH+x]) begin
+                if(credit_upd[x][y] > 0) begin
                     if(FCdn[y*`NOC_WIDTH+x]) begin
-                        if(credit_upd[x][y] > 0) begin
-                            if(FCdn[y*`NOC_WIDTH+x]) begin
-                                credit_inc[y*`NOC_WIDTH+x] = credit_inc[y*`NOC_WIDTH+x] + credit_upd[x][y];
-                            end
-                        end
-                    end
-                end
-            end
-
-            min_crd = 100000000;
-            // record the minimum buffered credit among all destination nodes
-            for(int i=0; i<`NOC_WIDTH*`NOC_HEIGHT; i++) begin
-                if(FCdn[i]) begin
-                    if(credit_inc[i] < min_crd) min_crd = credit_inc[i];
-                end
-            end
-
-            if(min_crd > 0) begin // update credits
-                cnt = cnt + min_crd;
-                for(int i=0; i<`NOC_WIDTH*`NOC_HEIGHT; i++) begin
-                    if(FCdn[i]) begin
-                        credit_inc[i] = credit_inc[i] - min_crd;
+                        credit_inc[y*`NOC_WIDTH+x] = credit_inc[y*`NOC_WIDTH+x] + credit_upd[x][y];
                     end
                 end
             end
         end
     end
-end
+
+    min_crd = 100000000;
+    // record the minimum buffered credit among all destination nodes
+    for(int i=0; i<`NOC_WIDTH*`NOC_HEIGHT; i++) begin
+        if(FCdn[i]) begin
+            if(credit_inc[i] < min_crd) begin
+                min_crd = credit_inc[i];
+                // record the bottleneck node that makes credit run out
+                min_crd_x = i % `NOC_WIDTH;
+                min_crd_y = i / `NOC_WIDTH;
+            end
+        end
+    end
+
+    if(min_crd > 0) begin // update credits
+        cnt = cnt + min_crd;
+        for(int i=0; i<`NOC_WIDTH*`NOC_HEIGHT; i++) begin
+            if(FCdn[i]) begin
+                credit_inc[i] = credit_inc[i] - min_crd;
+            end
+        end
+    end
+
+    if((flit_type == `HEAD) & pop & fire)
+        cnt = cnt - FCpl + 2;
+endfunction
 
 always@(posedge clk or negedge rstn) begin
     if(~rstn) cnt <= `CAST_CREDIT_ALLOC;
     else if(~isFC) cnt = ~32'b0; //indicate this is not a FC start node
     else begin
-        if((flit_type == `HEAD) & pop & fire)
-            cnt = cnt - FCpl + 2;
+        update_credit();
     end
 end
 

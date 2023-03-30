@@ -19,7 +19,10 @@ module cast_input_controller #(
     input       wire                            flit_fire,
     output      wire                            pop, // to UBM FIFO
     output      wire                            read_reset, // to UBM FIFO
-    input       wire        [31:0]              credit_cnt //from credit counter
+    input       wire        [31:0]              credit_cnt, //from credit counter
+
+    // for credit logging
+    input       var         int                 min_crd_x, min_crd_y
 );
 
 function bit isOneHot(input [`CN-1:0] data);
@@ -131,8 +134,15 @@ initial begin
             @(posedge clk)
             if(credit_cnt >= FCpl - 2)
                 lock = 0;
-            else if(lock == 0 && credit_cnt < FCpl-2) begin // credit running out
-                $fwrite(crd_file, "time %0t, credit running out: %0d/%0d\n", $time, credit_cnt, `CAST_CREDIT_ALLOC);
+            else if(
+                (lock == 0) && 
+                (flit_type == `HEAD) && 
+                (~outVCLock) && 
+                (~fifo_empty) && 
+                (credit_cnt < FCpl-2)
+            ) begin // credit running out
+                $fwrite(crd_file, "time %0t\tcredit running out: %0d/%0d\t", $time, credit_cnt, `CAST_CREDIT_ALLOC);
+                $fwrite(crd_file, "bottleneck node: (%0d, %0d)\n", min_crd_x, min_crd_y);
                 lock = 1;
             end
         end

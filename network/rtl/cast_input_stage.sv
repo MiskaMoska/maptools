@@ -46,6 +46,8 @@ assign fifo_write = valid_i & ready_o;
 assign valid_o = ~fifo_empty & ready_i;
 assign ready_o = ~fifo_full;
 
+int min_crd_x, min_crd_y;
+
 nfifo_ubm #(
     .width                   (`DW),
     .depth                   (2**`CAST_ROUTER_BUFFER_DEPTH_LOG),
@@ -93,7 +95,9 @@ cast_input_controller #(
     .flit_fire               (fire),
     .pop                     (pop),
     .read_reset              (read_reset),
-    .credit_cnt              (credit_cnt)
+    .credit_cnt              (credit_cnt),
+    .min_crd_x               (min_crd_x),
+    .min_crd_y               (min_crd_y)
 );
 
 cast_credit_counter #(
@@ -107,7 +111,9 @@ cast_credit_counter #(
     .flit_type               (fifo_dout[`DW-1:`DW-2]), 
     .credit_upd              (credit_upd),
     .credit_cnt              (credit_cnt),
-    .pop                     (pop)
+    .pop                     (pop),
+    .min_crd_x               (min_crd_x),
+    .min_crd_y               (min_crd_y)
 );
 
 endmodule

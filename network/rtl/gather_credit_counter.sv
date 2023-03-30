@@ -19,35 +19,31 @@ reg [31:0] cnt;
 assign credit_cnt = cnt;
 bit breakout;
 
-initial begin
-    forever begin
-        @(posedge clk);
-        if(rstn && isFC) begin
-            breakout = 0;
-            for(int x=0; x<`NOC_WIDTH; x++) begin
-                if(breakout) break;
-                for(int y=0; y<`NOC_HEIGHT; y++) begin
+function void update_credit();
+    breakout = 0;
+    for(int x=0; x<`NOC_WIDTH; x++) begin
+        if(breakout) break;
+        for(int y=0; y<`NOC_HEIGHT; y++) begin
+            if(FCdn[y*`NOC_WIDTH+x]) begin
+                if(credit_upd[x][y] > 0) begin
                     if(FCdn[y*`NOC_WIDTH+x]) begin
-                        if(credit_upd[x][y] > 0) begin
-                            if(FCdn[y*`NOC_WIDTH+x]) begin
-                                cnt = cnt + credit_upd[x][y];
-                            end
-                        end
-                        breakout = 1;
-                        break;
+                        cnt = cnt + credit_upd[x][y];
                     end
                 end
+                breakout = 1;
+                break;
             end
         end
     end
-end
+    if((flit_type == `HEAD) & fire)
+        cnt = cnt - FCpl + 2;
+endfunction
 
 always@(posedge clk or negedge rstn) begin
     if(~rstn) cnt <= `GATHER_CREDIT_ALLOC;
     else if(~isFC) cnt = ~32'b0; //indicate this is not a FC start node
     else begin
-        if((flit_type == `HEAD) & fire)
-            cnt = cnt - FCpl + 2;
+        update_credit();
     end
 end
 

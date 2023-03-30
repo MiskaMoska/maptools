@@ -18,7 +18,7 @@ run:
 	./simv
 
 verdi:
-	verdi +v2k -sverilog $(INCDIR) -f filelist.f -ssf wave.fsdb
+	verdi +v2k -sverilog $(INCDIR) -f filelist.f -ssf wave.fsdb -sswr cfg1.rc
 
 test: # for test
 	$(COMPILER) -sverilog ../rtl/nfifo_inf.sv ../rtl/test_fifo_inf.sv \

@@ -53,8 +53,14 @@ initial begin
             @(posedge clk)
             if(credit_cnt >= FCpl - 2)
                 lock = 0;
-            else if(lock == 0 && credit_cnt < FCpl-2) begin // credit running out
-                $fwrite(crd_file, "time %0t, credit running out: %0d/%0d\n", $time, credit_cnt, `GATHER_CREDIT_ALLOC);
+            else if(
+                (lock == 0) && 
+                (flit_type == `HEAD) && 
+                (~outVCLock) && 
+                (~fifo_empty) && 
+                (credit_cnt < FCpl-2)
+            ) begin // credit running out
+                $fwrite(crd_file, "time %0t\tcredit running out: %0d/%0d\n", $time, credit_cnt, `GATHER_CREDIT_ALLOC);
                 lock = 1;
             end
         end
