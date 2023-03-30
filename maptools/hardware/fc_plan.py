@@ -2,8 +2,7 @@ from typing import Dict, Tuple, List, Generator
 
 __all__ = ['fc_plan']
 
-def fc_plan(paths: Dict[str, Dict],
-            config: Dict[Tuple, List[Tuple]]) -> Dict[Tuple, List[Tuple]]:
+def fc_plan(paths: Dict[str, Dict], config: Dict[Tuple, List[Tuple]]) -> Dict[Tuple, List[Tuple]]:
     '''
     This function analyzes flow control schemes for cast and gather networks and
     generates flow control planning information for network configuration.

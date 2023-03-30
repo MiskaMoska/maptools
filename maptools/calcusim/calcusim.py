@@ -17,10 +17,7 @@ def _rebuild_pads(pads: List) -> None:
         pads[2] = _pads[0]
         pads[3] = _pads[2]
 
-def _rebuild_conv_weight(icfg: List[Tuple], 
-                        ocfg: Tuple, 
-                        weight: torch.Tensor
-                        ) -> torch.Tensor:
+def _rebuild_conv_weight(icfg: List[Tuple], ocfg: Tuple, weight: torch.Tensor) -> torch.Tensor:
     '''
     Rebuild convolution weight according to vector slicing information
     '''
@@ -49,12 +46,17 @@ def _get_xbar_kwargs(cfg: Dict, params: Dict) -> Dict:
     kwargs = dict()
     kwargs['conv_pads'] = cfg['conv_pads'].copy()
     weight_ptr = cfg['conv_weight']
-    weight = _rebuild_conv_weight(cfg['xbar_icfg'], cfg['xbar_ocfg'], 
-                                    torch.tensor(params[weight_ptr]))
+    weight = _rebuild_conv_weight(
+        cfg['xbar_icfg'], cfg['xbar_ocfg'], 
+        torch.tensor(params[weight_ptr])
+    )
     kwargs['conv_weight'] = weight
     if 'Bias' in cfg['op_type']:
         bias_ptr = cfg['conv_bias']
-        bias = _rebuild_conv_bias(cfg['xbar_ocfg'],torch.tensor(params[bias_ptr]))
+        bias = _rebuild_conv_bias(
+            cfg['xbar_ocfg'],
+            torch.tensor(params[bias_ptr])
+        )
         kwargs['conv_bias'] = bias
     kwargs['conv_strides'] = cfg['conv_strides'].copy()
     if 'Pool' in cfg['op_type']:
@@ -107,10 +109,16 @@ class _Xbar(object):
 
     def forward(self) -> torch.Tensor:
         assert self.cast_in is not None, "cast in data got None"
-        x = F.pad(self.cast_in, self.conv_pads)
-        x = F.conv2d(x, self.conv_weight,
-                        bias = self.conv_bias,
-                        stride = self.conv_strides)
+        x = F.pad(
+            self.cast_in, 
+            self.conv_pads
+        )
+        x = F.conv2d(
+            x, 
+            self.conv_weight,
+            bias = self.conv_bias,
+            stride = self.conv_strides
+        )
         
         if self.is_merge:
             assert self.merge_in is not None, "merge in data got None"
@@ -131,11 +139,17 @@ class _Xbar(object):
             assert self.pool_mode in ['MaxPool', 'AveragePool'], f"got invalid pool mode: {self.pool_mode}"
             x = F.pad(x, self.pool_pads)
             if self.pool_mode == 'MaxPool':
-                x = F.max_pool2d(x, kernel_size = tuple(self.pool_kernel_size),
-                                        stride = tuple(self.pool_strides))
+                x = F.max_pool2d(
+                    x, 
+                    kernel_size = tuple(self.pool_kernel_size),
+                    stride = tuple(self.pool_strides)
+                )
             elif self.pool_mode == 'AveragePool':
-                x = F.avg_pool2d(x, kernel_size = tuple(self.pool_kernel_size),
-                                        stride = tuple(self.pool_strides))
+                x = F.avg_pool2d(
+                    x, 
+                    kernel_size = tuple(self.pool_kernel_size),
+                    stride = tuple(self.pool_strides)
+                )
         
         return x
 
@@ -222,7 +236,11 @@ class CalcuSim(nn.Module):
                         is_merge = True
                     if self.ctg.is_gather_comm(pred):
                         is_gather = True
-                self.obj_dict[node] = _Xbar(is_merge=is_merge, is_gather=is_gather, **kwargs)
+                self.obj_dict[node] = _Xbar(
+                    is_merge=is_merge, 
+                    is_gather=is_gather, 
+                    **kwargs
+                )
 
     def _arrage_output(self, y: List[Tuple]) -> torch.Tensor:
         y.sort(key=lambda x : x[0])

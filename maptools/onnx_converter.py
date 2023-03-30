@@ -331,7 +331,13 @@ class OnnxConverter(object):
         shape = 'box3d'
         labelloc = None
         for n in graph.nodes:
-            dot.node(n,dicts[n]['op_type'],shape=shape,labelloc=labelloc,fontname='Arial')
+            dot.node(
+                n,
+                dicts[n]['op_type'], 
+                shape=shape,
+                labelloc=labelloc,
+                fontname='Arial'
+            )
         for e in graph.edges:
             dot.edge(e[0],e[1])
         dot.view(cleanup=True, directory=save_dir, )

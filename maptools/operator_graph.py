@@ -226,8 +226,14 @@ class OperatorGraph(object):
                     self.__regu_size(pifs, pofs, pks, ppads, pstrs)
                     self.dicts[node]['pool_pads'] = ppads
 
-    def __regu_size(self, ifs: List[int], ofs: List[int], 
-                    ks: List[int], pads: List[int], strs: List[int]) -> None:
+    def __regu_size(
+        self, 
+        ifs: List[int], 
+        ofs: List[int], 
+        ks: List[int], 
+        pads: List[int], 
+        strs: List[int]
+    ) -> None:
         '''
         pads : List[int]
             `pads` is referenced, after performing this method, 
@@ -244,10 +250,10 @@ class OperatorGraph(object):
                     break
                 else:
                     print(f'''
-                            calculated output size {size_o} larger than onnx output size {ofs[dim]}
-                            input_size: {ifs[dim]}, kernel_size: {ks[dim]},
-                            strides: {strs[dim]}, pads: {[pads[0+dim], pads[2+dim]]}
-                            need to decrease pads
+                        calculated output size {size_o} larger than onnx output size {ofs[dim]}
+                        input_size: {ifs[dim]}, kernel_size: {ks[dim]},
+                        strides: {strs[dim]}, pads: {[pads[0+dim], pads[2+dim]]}
+                        need to decrease pads
                     ''')
             extra = remain % strs[dim]
             if extra != 0:

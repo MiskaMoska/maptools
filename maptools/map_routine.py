@@ -56,16 +56,21 @@ class MapRoutine(object):
             oc.plot_op_graph()
         if self.save_params:
             oc.save_params()
-        xm = XbarMapper(oc.og, 
-                        self.xbar_size[0], 
-                        self.xbar_size[1], 
-                        **self.config
-                        )
+        xm = XbarMapper(
+            oc.og, 
+            self.xbar_size[0], 
+            self.xbar_size[1], 
+            **self.config
+        )
         xm.run_map()
         xm.print_config()
         ctg = xm.ctg
         if self.toksim:
-            tsim = TokSim(ctg, latency=self.toksim_latency, **self.config)
+            tsim = TokSim(
+                ctg, 
+                latency=self.toksim_latency, 
+                **self.config
+            )
             tsim.run()
             tsim.save_execu()
             ctg = tsim.ctg
@@ -81,35 +86,38 @@ class MapRoutine(object):
         if self.noc_map:
             assert xm.total_xbar <= self.noc_size[0] * self.noc_size[1],\
                 f"Need larger networks, number of total xbars: {xm.total_xbar}"
-            nm = NocMapper(ctg, 
-                            self.noc_size[0], 
-                            self.noc_size[1],
-                            **self.config
-                            )
+            nm = NocMapper(
+                ctg, 
+                self.noc_size[0], 
+                self.noc_size[1],
+                **self.config
+            )
             nm.run_map()
             if self.save_mapinfo:
                 nm.save_map()
             if self.show_cast_path or self.show_gather_path:
-                plt = MapPlotter(self.noc_size[0], 
-                                    self.noc_size[1], 
-                                    nm.cast_paths, 
-                                    nm.merge_paths, 
-                                    nm.gather_paths, 
-                                    show_path=True,
-                                    **self.config
-                                    )
+                plt = MapPlotter(
+                    self.noc_size[0], 
+                    self.noc_size[1], 
+                    nm.cast_paths, 
+                    nm.merge_paths, 
+                    nm.gather_paths, 
+                    show_path=True,
+                    **self.config
+                )
                 if self.show_cast_path:
                     plt.plot_cast_map()
                 if self.show_gather_path:
                     plt.plot_gather_map()
             if self.save_cfginfo:
-                nc = NocConfig(self.noc_size[0], 
-                                self.noc_size[1],
-                                nm.cast_paths,
-                                nm.merge_paths,
-                                nm.gather_paths,
-                                **self.config
-                                )
+                nc = NocConfig(
+                    self.noc_size[0], 
+                    self.noc_size[1],
+                    nm.cast_paths,
+                    nm.merge_paths,
+                    nm.gather_paths,
+                    **self.config
+                )
                 nc.run_config()
                 nc.save_config()
                 

@@ -13,8 +13,14 @@ __all__ = ['XbarMapper']
 
 class XbarMapper(object):
 
-    def __init__(self, opgraph: OperatorGraph, 
-                    w: int, h: int, *args, **kwargs) -> None:
+    def __init__(
+        self, 
+        opgraph: OperatorGraph, 
+        w: int, 
+        h: int, 
+        *args, 
+        **kwargs
+    ) -> None:
         '''
         Parameters
         ----------
@@ -116,15 +122,21 @@ class XbarMapper(object):
                             it = slc_pt
                         for k in range(it):
                             icfg.append((t * slc_pt + k, start_ci, end_ci))
-                        xbar_dict = {'xbar_icfg': icfg, 'xbar_ocfg': (start_co, end_co), \
-                                        'xbar_num_ichan': end_ci-start_ci, 'xbar_num_ochan': end_co-start_co}
+                        xbar_dict = {
+                            'xbar_icfg': icfg, 
+                            'xbar_ocfg': (start_co, end_co),
+                            'xbar_num_ichan': end_ci-start_ci, 
+                            'xbar_num_ochan': end_co-start_co
+                        }
                         xbar_dict.update(layer)
 
                         # regularize xbar op_type, the method is only for resnet
                         # cause only merge xbar can have [add, act, pool, bias]
                         if j != 0 or t != 0: # not merge xbar
                                 xbar_dict['op_type'] = xbar_dict['op_type']\
-                                    .rstrip('-Pool').rstrip('-Act').rstrip('-Add')
+                                    .rstrip('-Pool')\
+                                    .rstrip('-Act')\
+                                    .rstrip('-Add')
                         else: # is merge xbar
                             if 'conv_bias' in xbar_dict.keys():
                                 xbar_dict['op_type'] += '-Bias'
@@ -135,13 +147,14 @@ class XbarMapper(object):
 
     @property
     def ctg(self) -> CTG:
-        return CTG(self.opgraph,
-                    self.match_dict,
-                    self.map_list,
-                    self.map_dict,
-                    arch = self.arch,
-                    mapname = self.mapname
-                    )
+        return CTG(
+            self.opgraph,
+            self.match_dict,
+            self.map_list,
+            self.map_dict,
+            arch = self.arch,
+            mapname = self.mapname
+        )
 
     def run_map(self) -> None: 
         '''

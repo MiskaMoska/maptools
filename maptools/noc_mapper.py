@@ -114,8 +114,7 @@ class NocMapper(object):
                 break
 
     @staticmethod
-    def _dyxy_once(sx: int, sy: int, 
-                    dx: int, dy: int) -> Tuple:
+    def _dyxy_once(sx: int, sy: int, dx: int, dy: int) -> Tuple:
         if sx != dx and sy != dy:
             # prechoose horizontal
             nxt_sy = sy
@@ -134,9 +133,7 @@ class NocMapper(object):
         return nxt_sx, nxt_sy
 
     @staticmethod
-    def _cast_route_dyxy(sx: int, sy: int,
-                            dx: int, dy: int,
-                            graph: nx.Graph) -> None:
+    def _cast_route_dyxy(sx: int, sy: int,dx: int, dy: int,graph: nx.Graph) -> None:
         '''
         Only for cast tree planning.
         Route from (sx, sy) to (dx, dy) following DyXY routing algorithm.
@@ -171,10 +168,14 @@ class NocMapper(object):
         return g
 
     @staticmethod
-    def _route_dyxy(sx: int, sy: int, 
-                        dx: int, dy: int, 
-                        path: List[Tuple], 
-                        region: Optional[List[Tuple]] = None) -> None:
+    def _route_dyxy(
+        sx: int, 
+        sy: int, 
+        dx: int, 
+        dy: int, 
+        path: List[Tuple], 
+        region: Optional[List[Tuple]] = None
+    ) -> None:
         '''
         Route from (sx, sy) to (dx, dy) following DyXY routing algorithm.
 
@@ -202,7 +203,7 @@ class NocMapper(object):
                     nxt_sx = sx + (1 if sx < dx else -1)
             assert (nxt_sx, nxt_sy) in region, "critical error ecountered at merge path"
         path.append(((sx, sy), (nxt_sx ,nxt_sy)))
-        NocMapper._route_dyxy(nxt_sx,nxt_sy,dx,dy,path,region=region)
+        NocMapper._route_dyxy(nxt_sx, nxt_sy, dx, dy, path, region=region)
 
     @staticmethod
     def _get_channel(bias_pos: Tuple, now_pos: Tuple, root_pos: Tuple) -> int:

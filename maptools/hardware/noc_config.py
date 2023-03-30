@@ -8,12 +8,16 @@ __all__ = ['NocConfig']
 
 class NocConfig(object):
 
-    def __init__(self, w: int, h: int,         
-                    cast_paths: Dict[str, Dict[str, Any]],
-                    merge_paths: Dict[str, Dict[str, Any]],
-                    gather_paths: Dict[str, Dict[str, Any]],
-                    *args, **kwargs
-                    ) -> None:
+    def __init__(
+        self, 
+        w: int, 
+        h: int,         
+        cast_paths: Dict[str, Dict[str, Any]],
+        merge_paths: Dict[str, Dict[str, Any]],
+        gather_paths: Dict[str, Dict[str, Any]],
+        *args, 
+        **kwargs
+    ) -> None:
         '''
         Convert the paths obtained from `NocMapper` to network configuration format,
         which can be configured to the network directly, then generate the network config 

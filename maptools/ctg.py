@@ -15,11 +15,15 @@ __all__ = ['CTG']
 
 class CTG(object):
 
-    def __init__(self, opgraph: OperatorGraph, 
-                    match_dict: Dict[str, int],
-                    map_list: List[np.ndarray],
-                    map_dict: Dict[Tuple[int, int, int, int], Dict[str, Any]],
-                    *args, **kwargs) -> None:
+    def __init__(
+        self, 
+        opgraph: OperatorGraph, 
+        match_dict: Dict[str, int],
+        map_list: List[np.ndarray],
+        map_dict: Dict[Tuple[int, int, int, int], Dict[str, Any]],
+        *args, 
+        **kwargs
+    ) -> None:
         '''
         Communication Trace Graph
         TODO support first layer cast comm
@@ -195,7 +199,7 @@ class CTG(object):
             s_mtx = self.map_list[s_lid] # dst node map info matrix
 
             if self.opgraph.in_degree(e[1]) > 1 \
-                and not is_subseq([e[0],e[1]],self.opgraph.trunk): # gather
+                and not is_subseq([e[0], e[1]], self.opgraph.trunk): # gather
                 assert p_mtx.shape[0] == s_mtx.shape[0], "#regions not match for gather communication"
                 for i in range(p_mtx.shape[0]): # for each region in the last layer
                     src_xbar = (p_lid, i, 0, 0) # source node of the gather path
@@ -236,9 +240,8 @@ class CTG(object):
 
     def _complete_attrs(self) -> None:
         '''
-        Complete Xbar attributes, for example:
-        cast/merge/gather_in/out
-        is_tail, is_head
+        Complete Xbar attributes:
+        cast/merge/gather_in/out, is_tail, is_head
         '''
         for xbar in self.xbar_nodes:
             cast_in, merge_in, gather_in = False, False, False
@@ -265,15 +268,15 @@ class CTG(object):
                 is_tail = True
                 cast_out = True # tail xbar generates cast out but has no cast successors
             self.dicts[xbar].update({
-                                        'cast_in': cast_in, 
-                                        'merge_in': merge_in,
-                                        'gather_in': gather_in,
-                                        'cast_out': cast_out,
-                                        'merge_out': merge_out,
-                                        'gather_out': gather_out,
-                                        'is_head': is_head,
-                                        'is_tail': is_tail
-                                    })
+                'cast_in': cast_in, 
+                'merge_in': merge_in,
+                'gather_in': gather_in,
+                'cast_out': cast_out,
+                'merge_out': merge_out,
+                'gather_out': gather_out,
+                'is_head': is_head,
+                'is_tail': is_tail
+            })
 
     @property
     @overload
@@ -352,7 +355,13 @@ class CTG(object):
         for n in self.graph.nodes:
             local = self.dicts[n] if n in self.dicts else dict()
             _label = ''
-            for key in ['conv_buf', 'pool_buf', 'gather_buf', 'load', 'load_ratio']:
+            for key in [
+                'conv_buf', 
+                'pool_buf', 
+                'gather_buf', 
+                'load', 
+                'load_ratio'
+            ]:
                 if key in local:
                     _label += f'\n{key} : {local[key]}'
             if self.is_xbar(n): # xbar
@@ -367,8 +376,13 @@ class CTG(object):
                 shape = 'point'
                 label = None
                 xlabel = _label.lstrip('\n')
-            dot.node(str(n), label=label, fontname='Arial',shape=shape, 
-                        xlabel=xlabel)
+            dot.node(
+                str(n), 
+                label=label, 
+                fontname='Arial',
+                shape=shape, 
+                xlabel=xlabel
+            )
 
         # plot edges
         for e in self.graph.edges:
@@ -378,6 +392,6 @@ class CTG(object):
                 color = 'blue'
             elif e[0] in self.gather_comms or e[1] in self.gather_comms:
                 color = 'purple'
-            dot.edge(str(e[0]),str(e[1]),color=color)
+            dot.edge(str(e[0]), str(e[1]), color=color)
         dot.view(cleanup=True, directory=save_dir)
         print(f"ctg save to {save_dir}")

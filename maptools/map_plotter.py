@@ -8,12 +8,17 @@ __all__ = ['MapPlotter']
 
 class MapPlotter(object):
 
-    def __init__(self, w: int, h: int, 
-                    cast_paths: Dict[str, Dict[str, Any]],
-                    merge_paths: Dict[str, Dict[str, Any]],
-                    gather_paths: Dict[str, Dict[str, Any]],
-                    show_path : Optional[bool] = False,
-                    *args, **kwargs) -> None:
+    def __init__(
+        self, 
+        w: int, 
+        h: int, 
+        cast_paths: Dict[str, Dict[str, Any]],
+        merge_paths: Dict[str, Dict[str, Any]],
+        gather_paths: Dict[str, Dict[str, Any]],
+        show_path : Optional[bool] = False,
+        *args, 
+        **kwargs
+    ) -> None:
         '''
         Plot the NoC-Mapped results
 
@@ -182,18 +187,63 @@ class MapPlotter(object):
         if self.show_path:
             for i in range(self.w):
                 for j in range(self.h):
-                    plt.plot([0+i*self.link_len,0+i*self.link_len],[-0-j*self.link_len,-4-j*self.link_len],color='black',linewidth=1)
-                    plt.plot([0+i*self.link_len,3+i*self.link_len],[-4-j*self.link_len,-4-j*self.link_len],color='black',linewidth=1)
-                    plt.plot([3+i*self.link_len,4+i*self.link_len],[-4-j*self.link_len,-3-j*self.link_len],color='black',linewidth=1)
-                    plt.plot([4+i*self.link_len,4+i*self.link_len],[-3-j*self.link_len,-0-j*self.link_len],color='black',linewidth=1)
-                    plt.plot([4+i*self.link_len,0+i*self.link_len],[-0-j*self.link_len,-0-j*self.link_len],color='black',linewidth=1)
+                    plt.plot(
+                        [0+i*self.link_len,0+i*self.link_len],
+                        [-0-j*self.link_len,-4-j*self.link_len],
+                        color='black',
+                        linewidth=1
+                    )
+                    plt.plot(
+                        [0+i*self.link_len,3+i*self.link_len],
+                        [-4-j*self.link_len,-4-j*self.link_len],
+                        color='black',
+                        linewidth=1
+                    )
+                    plt.plot(
+                        [3+i*self.link_len,4+i*self.link_len],
+                        [-4-j*self.link_len,-3-j*self.link_len],
+                        color='black',
+                        linewidth=1
+                    )
+                    plt.plot(
+                        [4+i*self.link_len,4+i*self.link_len],
+                        [-3-j*self.link_len,-0-j*self.link_len],
+                        color='black',
+                        linewidth=1
+                    )
+                    plt.plot(
+                        [4+i*self.link_len,0+i*self.link_len],
+                        [-0-j*self.link_len,-0-j*self.link_len],
+                        color='black',
+                        linewidth=1
+                    )
         else:
             for i in range(self.w):
                 for j in range(self.h):
-                    plt.plot([0+i*self.link_len,0+i*self.link_len],[-0-j*self.link_len,-4-j*self.link_len],color='black',linewidth=1)
-                    plt.plot([0+i*self.link_len,4+i*self.link_len],[-4-j*self.link_len,-4-j*self.link_len],color='black',linewidth=1)
-                    plt.plot([4+i*self.link_len,4+i*self.link_len],[-4-j*self.link_len,-0-j*self.link_len],color='black',linewidth=1)
-                    plt.plot([4+i*self.link_len,0+i*self.link_len],[-0-j*self.link_len,-0-j*self.link_len],color='black',linewidth=1)
+                    plt.plot(
+                        [0+i*self.link_len,0+i*self.link_len],
+                        [-0-j*self.link_len,-4-j*self.link_len],
+                        color='black',
+                        linewidth=1
+                    )
+                    plt.plot(
+                        [0+i*self.link_len,4+i*self.link_len],
+                        [-4-j*self.link_len,-4-j*self.link_len],
+                        color='black',
+                        linewidth=1
+                    )
+                    plt.plot(
+                        [4+i*self.link_len,4+i*self.link_len],
+                        [-4-j*self.link_len,-0-j*self.link_len],
+                        color='black',
+                        linewidth=1
+                    )
+                    plt.plot(
+                        [4+i*self.link_len,0+i*self.link_len],
+                        [-0-j*self.link_len,-0-j*self.link_len],
+                        color='black',
+                        linewidth=1
+                    )
 
     def _build_graph(self) -> Tuple[nx.MultiDiGraph, Dict[Tuple, Tuple]]:
         graph = nx.MultiDiGraph()
@@ -210,10 +260,10 @@ class MapPlotter(object):
             for j in range(self.h):
                 for k in range(len(legal_node)):
                     graph.add_node((i, j, legal_node[k]))
-                    pos[(i, j, legal_node[k])]=(
-                            legal_xpos[k]+self.link_len*i,
-                            -(legal_ypos[k]+self.link_len*j)
-                        )
+                    pos[(i, j, legal_node[k])] = (
+                        legal_xpos[k]+self.link_len*i,
+                        -(legal_ypos[k]+self.link_len*j)
+                    )
         return graph, pos
 
     def _get_dir(self, file_name: str) -> str:
@@ -227,27 +277,30 @@ class MapPlotter(object):
         self._plot_routers()
         self.cast_graph, pos = self._build_graph()
         self._cast_plan()
-        nx.draw(self.cast_graph, 
-                    pos, 
-                    node_size=self.node_size, 
-                    width=1, 
-                    arrowsize=self.arrow_size, 
-                    node_color='black',
-                    edge_color='blue',
-                    arrowstyle='-|>'
-                    )
+        nx.draw(
+            self.cast_graph, 
+            pos, 
+            node_size=self.node_size, 
+            width=1, 
+            arrowsize=self.arrow_size, 
+            node_color='black',
+            edge_color='blue',
+            arrowstyle='-|>'
+        )
         if not self.show_path:
-            nx.draw_networkx_edge_labels(self.cast_graph, 
-                                            pos, 
-                                            edge_labels=self.cast_links, 
-                                            font_size=self.label_size, 
-                                            label_pos=0.5
-                                            )
+            nx.draw_networkx_edge_labels(
+                self.cast_graph, 
+                pos, 
+                edge_labels=self.cast_links, 
+                font_size=self.label_size, 
+                label_pos=0.5
+            )
         file_dir = self._get_dir(file_name)
-        plt.savefig(file_dir,
-                    dpi=self.dpi, 
-                    bbox_inches='tight'
-                    )
+        plt.savefig(
+            file_dir,
+            dpi=self.dpi, 
+            bbox_inches='tight'
+        )
         print(f"image saved to {file_dir}")
 
     def plot_gather_map(self, file_name: str = 'gather_path'):
@@ -255,27 +308,30 @@ class MapPlotter(object):
         self._plot_routers()
         self.gather_graph, pos = self._build_graph()
         self._gather_plan()
-        nx.draw(self.gather_graph, 
-                    pos, 
-                    node_size=self.node_size, 
-                    width=1, 
-                    arrowsize=self.arrow_size, 
-                    node_color='black',
-                    edge_color='purple',
-                    arrowstyle='-|>'
-                    )
+        nx.draw(
+            self.gather_graph, 
+            pos, 
+            node_size=self.node_size, 
+            width=1, 
+            arrowsize=self.arrow_size, 
+            node_color='black',
+            edge_color='purple',
+            arrowstyle='-|>'
+        )
         if not self.show_path:
-            nx.draw_networkx_edge_labels(self.gather_graph, 
-                                            pos, 
-                                            edge_labels=self.gather_links, 
-                                            font_size=self.label_size, 
-                                            label_pos=0.5
-                                            )
+            nx.draw_networkx_edge_labels(
+                self.gather_graph, 
+                pos, 
+                edge_labels=self.gather_links, 
+                font_size=self.label_size, 
+                label_pos=0.5
+            )
         file_dir = self._get_dir(file_name)
-        plt.savefig(file_dir,
-                    dpi=self.dpi, 
-                    bbox_inches='tight'
-                    )
+        plt.savefig(
+            file_dir,
+            dpi=self.dpi, 
+            bbox_inches='tight'
+        )
         print(f"image saved to {file_dir}")
 
     def plot_cast_gather_map(self, file_name: str = 'cast_gather_map'):
@@ -298,26 +354,28 @@ class MapPlotter(object):
         for k, v in new_links.items():
             new_links[k] = round(v, 2)
 
-        nx.draw(new_graph, 
-                    pos, 
-                    node_size=self.node_size, 
-                    width=1, 
-                    arrowsize=self.arrow_size, 
-                    node_color='black',
-                    edge_color='blue',
-                    arrowstyle='-|>'
-                    )
+        nx.draw(
+            new_graph, 
+            pos, 
+            node_size=self.node_size, 
+            width=1, 
+            arrowsize=self.arrow_size, 
+            node_color='black',
+            edge_color='blue',
+            arrowstyle='-|>'
+        )
         if not self.show_path:
-            nx.draw_networkx_edge_labels(new_graph, 
-                                            pos, 
-                                            edge_labels=new_links, 
-                                            font_size=self.label_size, 
-                                            label_pos=0.5
-                                            )
+            nx.draw_networkx_edge_labels(
+                new_graph, 
+                pos, 
+                edge_labels=new_links, 
+                font_size=self.label_size, 
+                label_pos=0.5
+            )
         file_dir = self._get_dir(file_name)
-        plt.savefig(file_dir,
-                    dpi=self.dpi, 
-                    bbox_inches='tight'
-                    )
+        plt.savefig(
+            file_dir,
+            dpi=self.dpi, 
+            bbox_inches='tight'
+        )
         print(f"image saved to {file_dir}")
-

@@ -16,9 +16,16 @@ __all__ = ['TokSim']
 
 class _WindowBuf(object):
 
-    def __init__(self, input_size: List[int], output_size: List[int],
-                    kernel_size: List[int], strides: List[int], pads: List[int], 
-                    ni: int, slide_once: bool = True) -> None:
+    def __init__(
+        self, 
+        input_size: List[int], 
+        output_size: List[int],
+        kernel_size: List[int], 
+        strides: List[int], 
+        pads: List[int], 
+        ni: int, 
+        slide_once: bool = True
+    ) -> None:
         '''
         Window buffer
 
@@ -136,43 +143,39 @@ class _WindowBuf(object):
         if self.done:
             return 0
         token = 0
-        
-        if self.slide_once:
+        while True:
             # the window block in the buffer
-            window = self.buf[self.win_pos[0]:self.win_pos[2],self.win_pos[1]:self.win_pos[3]]
-            need_token = max([self.ks[0] * self.ks[1], self.strides[0] * self.strides[1]])
+            window = self.buf[
+                self.win_pos[0] : self.win_pos[2],
+                self.win_pos[1] : self.win_pos[3]
+            ]
+            need_token = max([
+                self.ks[0] * self.ks[1], 
+                self.strides[0] * self.strides[1]
+            ])
             if np.sum(window) == need_token: # all data in window is available
                 self._release_data()
                 self.rptr += 1 # slide window
                 self._update_max_buf()
                 if self.rptr == self.size_o[0] * self.size_o[1]:
                     self.done = True
-                token = 1 # return a token
-
-        else:
-            while True:
-                # the window block in the buffer
-                window = self.buf[self.win_pos[0]:self.win_pos[2],self.win_pos[1]:self.win_pos[3]]
-                need_token = max([self.ks[0] * self.ks[1], self.strides[0] * self.strides[1]])
-                if np.sum(window) == need_token: # all data in window is available
-                    self._release_data()
-                    self.rptr += 1 # slide window
-                    self._update_max_buf()
-                    if self.rptr == self.size_o[0] * self.size_o[1]:
-                        self.done = True
-                    token += 1 # return a token
-                else: # data not prepared
+                token += 1 # return a token
+                if self.slide_once:
                     break
+            else: # data not prepared
+                break
         return token
 
 
 class _Xbar(object):
 
-    def __init__(self, config: Dict, 
-                        is_merge: bool, 
-                        is_gather: bool, 
-                        slide_once: bool = True
-                        ) -> None:
+    def __init__(
+        self, 
+        config: Dict, 
+        is_merge: bool, 
+        is_gather: bool, 
+        slide_once: bool = True
+    ) -> None:
         '''
         Xbar abstract model designed for TokSim
         
@@ -196,15 +199,25 @@ class _Xbar(object):
             f"Xbar must perform convolution, now op_type: {self.__dict__['op_type']}"
         self.is_merge = is_merge
         self.is_gather = is_gather
-        self.conv_buf = _WindowBuf(self.conv_input_size, self.conv_output_size,
-                                    self.conv_kernel_size, self.conv_strides, 
-                                    self.conv_pads, self.xbar_num_ichan,
-                                    slide_once = slide_once)
+        self.conv_buf = _WindowBuf(
+            self.conv_input_size, 
+            self.conv_output_size,
+            self.conv_kernel_size, 
+            self.conv_strides, 
+            self.conv_pads, 
+            self.xbar_num_ichan,
+            slide_once = slide_once
+        )
         if 'Pool' in self.op_type: # has pooling
-            self.pool_buf = _WindowBuf(self.pool_input_size, self.pool_output_size,
-                                    self.pool_kernel_size, self.pool_strides, 
-                                    self.pool_pads, self.xbar_num_ochan,
-                                    slide_once = slide_once) # pooling input channel is conv output channel
+            self.pool_buf = _WindowBuf(
+                self.pool_input_size, 
+                self.pool_output_size,
+                self.pool_kernel_size, 
+                self.pool_strides, 
+                self.pool_pads, 
+                self.xbar_num_ochan,
+                slide_once = slide_once
+            ) # pooling input channel is conv output channel
         
         # buffers for results merging
         self.inter_buf = 0
@@ -329,8 +342,12 @@ class _Comm(object):
 
 class _MergeComm(_Comm):
 
-    def __init__(self, nc: int, preds: List[Any], 
-                    latency: Optional[int] = None) -> None:
+    def __init__(
+        self, 
+        nc: int, 
+        preds: List[Any], 
+        latency: Optional[int] = None
+    ) -> None:
         '''
         nc : number of channels
         '''
@@ -353,11 +370,14 @@ class _MergeComm(_Comm):
 
 class TokSim(object):
 
-    def __init__(self, ctg: CTG, 
-                    slide_once: bool = True, 
-                    latency: Optional[int] = None,
-                    *args, **kwargs
-                    ) -> None:
+    def __init__(
+        self, 
+        ctg: CTG, 
+        slide_once: bool = True, 
+        latency: Optional[int] = None,
+        *args, 
+        **kwargs
+    ) -> None:
         '''
         Token simulation machine designed for buffer size and communication load analysis.
         Buffer allocation is important in AI accelerators, especially NVCIM systems, because in
@@ -434,11 +454,16 @@ class TokSim(object):
                 pred = preds[0]
                 cfg = self.ctg.get_xbar_config(pred)
                 if self.ctg.is_merge_comm(node): # merge comm
-                    self.obj_dict[node] = _MergeComm(cfg['xbar_num_ochan'], 
-                                                        preds, latency=self.latency)
+                    self.obj_dict[node] = _MergeComm(
+                        cfg['xbar_num_ochan'], 
+                        preds, 
+                        latency=self.latency
+                    )
                 else: # normal comm
-                    self.obj_dict[node] = _Comm(cfg['xbar_num_ochan'],
-                                                    latency=self.latency)
+                    self.obj_dict[node] = _Comm(
+                        cfg['xbar_num_ochan'],
+                        latency=self.latency
+                    )
             elif self.ctg.is_xbar(node): # xbar
                 config = self.ctg.get_xbar_config(node)
                 is_merge = False
@@ -448,8 +473,12 @@ class TokSim(object):
                         is_merge = True
                     if self.ctg.is_gather_comm(pred):
                         is_gather = True
-                self.obj_dict[node] = _Xbar(config, is_merge, is_gather, 
-                                                slide_once=self.slide_once)
+                self.obj_dict[node] = _Xbar(
+                    config, 
+                    is_merge, 
+                    is_gather, 
+                    slide_once=self.slide_once
+                )
                 self.execu_dict[node] = []
 
     def iter(self) -> bool:
@@ -507,8 +536,9 @@ class TokSim(object):
         Comm : {load, load_ratio}
         '''
         # maximum communication load
-        self.max_comm_load = max([self.obj_dict[n].accum_tokens\
-                                    for n in self.ctg.comms])
+        self.max_comm_load = max([
+            self.obj_dict[n].accum_tokens for n in self.ctg.comms
+        ])
         for n in self.ctg.node_names:
             local = dict()
             node = self.obj_dict[n]
@@ -535,9 +565,14 @@ class TokSim(object):
                 inter_buf = xbar.max_inter_buf
                 merge_buf = xbar.max_merge_buf
                 gather_buf = xbar.max_gather_buf
-                log += '%-5s%-20s%-9s%-20s%-9s%-20s%-10s%-20s%-10s%-20s%-11s%-20s\n' % \
-                    ('xbar:',node,'conv_buf:',conv_buf,'pool_buf:',pool_buf,\
-                        'inter_buf:',inter_buf,'merge_buf:',merge_buf,'gather_buf:',gather_buf)
+                log += '%-5s%-20s%-9s%-20s%-9s%-20s%-10s%-20s%-10s%-20s%-11s%-20s\n' % (
+                    'xbar:', node,
+                    'conv_buf:', conv_buf,
+                    'pool_buf:', pool_buf,
+                    'inter_buf:', inter_buf,
+                    'merge_buf:', merge_buf,
+                    'gather_buf:', gather_buf
+                )
         return log
 
     def echo_comm(self) -> str:
@@ -545,8 +580,11 @@ class TokSim(object):
         for node in self.ctg.node_names:
             if self.ctg.is_comm(node):
                 comm = self.obj_dict[node]
-                log += '%-11s%-30s%-5s%-20s%-9s%-20s\n' % \
-                        ('connection:',node,'load:',comm.accum_tokens,'#channel:',comm.nc)
+                log += '%-11s%-30s%-5s%-20s%-9s%-20s\n' % (
+                    'connection:', node,
+                    'load:', comm.accum_tokens,
+                    '#channel:', comm.nc
+                )
         return log
 
     def save_execu(self, file_name: str = 'token'):
@@ -574,7 +612,6 @@ def test_window_slide():
         buf.add_token(4)
         buf.try_slide()
         print(buf.buf,end='\n\n')
-        # print(buf.wptr,buf.rptr, buf.close, buf.done)
         time.sleep(0.5)
         if buf.done:
             break
