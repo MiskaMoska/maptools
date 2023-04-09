@@ -15,9 +15,8 @@ class MapPlotter(object):
         cast_paths: Dict[str, Dict[str, Any]],
         merge_paths: Dict[str, Dict[str, Any]],
         gather_paths: Dict[str, Dict[str, Any]],
-        show_path : Optional[bool] = False,
-        *args, 
-        **kwargs
+        show_path: Optional[bool] = False,
+        **kwargs: Any
     ) -> None:
         '''
         Plot the NoC-Mapped results
@@ -105,6 +104,11 @@ class MapPlotter(object):
             self.cast_links[link] = 0
             self.cast_graph.add_edge(link[0], link[1])
         self.cast_links[link] += ratio
+    
+    def _update_merge_links(self, link: Tuple) -> None:
+        if link not in self.merge_links:
+            self.merge_links[link] = 0
+            self.merge_graph.add_edge(link[0], link[1])
 
     def _update_gather_links(self, link: Tuple, ratio: float) -> None:
         if link not in self.gather_links:
@@ -147,6 +151,34 @@ class MapPlotter(object):
             for edge in g.edges: # add inter-router paths
                 link = self._get_link(edge)
                 self._update_cast_links(link, 0 if self.show_path else round(ratio, 2))
+
+    def _merge_plan(self):
+        for connect in self.merge_paths.values():
+            g = nx.MultiDiGraph()
+            g.add_edges_from(connect['path'])
+            if self.show_path:
+                for node in g.nodes: # add intra-router paths
+                    if g.out_degree(node) == 0: # root node
+                        dst_chan = (node[0], node[1], 'l_o')
+                        for src_pos in g.predecessors(node):
+                            in_chan = self._route_channel(src_pos, node, 'i')
+                            in_chan = (node[0], node[1], in_chan)
+                            self.merge_graph.add_edge(in_chan, dst_chan)
+
+                    else: # not root node, must be source node
+                        dst_pos = list(g.successors(node))[0]
+                        dst_chan = self._route_channel(node, dst_pos, 'o')
+                        dst_chan = (node[0], node[1], dst_chan)
+                        src_chan = (node[0], node[1], 'l_i')
+                        self.merge_graph.add_edge(src_chan, dst_chan)
+                        for src_pos in g.predecessors(node):
+                            src_chan = self._route_channel(src_pos, node, 'i')
+                            src_chan = (node[0], node[1], src_chan)
+                            self.merge_graph.add_edge(src_chan, dst_chan)
+
+            for edge in g.edges: # add inter-router paths
+                link = self._get_link(edge)
+                self._update_merge_links(link)
 
     def _gather_plan(self):
         for connect in self.gather_paths.values():
@@ -284,7 +316,7 @@ class MapPlotter(object):
             width=1, 
             arrowsize=self.arrow_size, 
             node_color='black',
-            edge_color='blue',
+            edge_color='red',
             arrowstyle='-|>'
         )
         if not self.show_path:
@@ -295,6 +327,29 @@ class MapPlotter(object):
                 font_size=self.label_size, 
                 label_pos=0.5
             )
+        file_dir = self._get_dir(file_name)
+        plt.savefig(
+            file_dir,
+            dpi=self.dpi, 
+            bbox_inches='tight'
+        )
+        print(f"image saved to {file_dir}")
+
+    def plot_merge_map(self, file_name: str = 'merge_path'):
+        plt.figure(figsize=(self.w,self.h))
+        self._plot_routers()
+        self.merge_graph, pos = self._build_graph()
+        self._merge_plan()
+        nx.draw(
+            self.merge_graph, 
+            pos, 
+            node_size=self.node_size, 
+            width=1, 
+            arrowsize=self.arrow_size, 
+            node_color='black',
+            edge_color='blue',
+            arrowstyle='-|>'
+        )
         file_dir = self._get_dir(file_name)
         plt.savefig(
             file_dir,

@@ -5,8 +5,8 @@ from maptools.calcusim import get_input
 import os
 
 root_dir = os.environ.get('NVCIM_HOME')
-mapname = 'newmap'
-test = os.path.join(root_dir, 'onnx_models', 'simp-resnet18.onnx')
+mapname = 'example'
+test = os.path.join(root_dir, 'onnx_models', 'simp-example.onnx')
 # img = get_input('work/test.jpg')
 
 routine = MapRoutine(   
@@ -15,11 +15,14 @@ routine = MapRoutine(
     calcusim=False,
     save_cfginfo=True,
     show_ctg=True,
-    noc_size=(5, 11),
+    show_op_graph=False,
+    xbar_size = (128, 128*5),
+    noc_size=(4, 6),
     model_dir=test,
-    show_cast_path = True,
+    show_cast_path=True,
+    show_merge_path=True,
     show_gather_path=True,
-    toksim=True,
+    toksim=False,
     toksim_latency = None
 )
 

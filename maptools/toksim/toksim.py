@@ -179,7 +179,7 @@ class _Xbar(object):
         is_merge: bool, 
         is_gather: bool, 
         slide_once: bool = True,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         '''
         Xbar abstract model designed for TokSim
@@ -381,8 +381,7 @@ class TokSim(object):
         ctg: CTG, 
         slide_once: bool = True, 
         latency: Optional[int] = None,
-        *args, 
-        **kwargs
+        **kwargs: Any
     ) -> None:
         '''
         Token simulation machine designed for buffer size and communication load analysis.

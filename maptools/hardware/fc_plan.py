@@ -1,4 +1,4 @@
-from typing import Dict, Tuple, List, Generator
+from typing import Dict, Tuple, List
 
 __all__ = ['fc_plan']
 

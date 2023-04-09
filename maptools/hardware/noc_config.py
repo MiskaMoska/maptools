@@ -1,7 +1,7 @@
 import os
 import pickle
 import networkx as nx
-from typing import Tuple, List, Any, Optional, Dict
+from typing import Tuple, List, Any, Dict
 from maptools.hardware.fc_plan import fc_plan
 
 __all__ = ['NocConfig']
@@ -15,8 +15,7 @@ class NocConfig(object):
         cast_paths: Dict[str, Dict[str, Any]],
         merge_paths: Dict[str, Dict[str, Any]],
         gather_paths: Dict[str, Dict[str, Any]],
-        *args, 
-        **kwargs
+        **kwargs: Any
     ) -> None:
         '''
         Convert the paths obtained from `NocMapper` to network configuration format,

@@ -21,8 +21,7 @@ class CTG(object):
         match_dict: Dict[str, int],
         map_list: List[np.ndarray],
         map_dict: Dict[Tuple[int, int, int, int], Dict[str, Any]],
-        *args, 
-        **kwargs
+        **kwargs: Any
     ) -> None:
         '''
         Communication Trace Graph
@@ -334,7 +333,7 @@ class CTG(object):
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
 
-        dot = Digraph('graph')
+        dot = Digraph('graph', format='svg')
         dot.attr(rankdir='LR')
 
         # plot nodes
@@ -352,6 +351,7 @@ class CTG(object):
                     _label += f'\n{key} : {local[key]}'
             if self.is_xbar(n): # xbar
                 shape = 'rectangle'
+                shape = 'box3d'
                 label = 'log: ' + str(n) 
                 if match_dict is not None:
                     label += '\nphy: ' + str(match_dict[n])

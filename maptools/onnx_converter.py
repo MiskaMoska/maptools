@@ -25,7 +25,7 @@ class OnnxConverter(object):
     valid_archs = ['vgg','resnet','googlenet','squeezenet']
     merge_ops = ['Mul','Add','Concat']
 
-    def __init__(self, model: onnx.ModelProto, *args, **kwargs) -> None:
+    def __init__(self, model: onnx.ModelProto, **kwargs: Any) -> None:
         '''
         Convert Onnx to NVCIM intermediate representation which will be fed to TileMapper and NocMapper.
         About supported op_type:
@@ -327,7 +327,7 @@ class OnnxConverter(object):
         save_dir = os.path.join(self.root_dir, 'mapsave', self.mapname, name)
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
-        dot = Digraph('graph')
+        dot = Digraph('graph', format='svg')
         shape = 'box3d'
         labelloc = None
         for n in graph.nodes:

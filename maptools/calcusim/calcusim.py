@@ -72,7 +72,7 @@ def _get_xbar_kwargs(cfg: Dict, params: Dict) -> Dict:
 
 class _Xbar(object):
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         self.conv_pads: Optional[List] = None
         self.conv_weight: Optional[torch.Tensor] = None
         self.conv_bias: Optional[torch.Tensor] = None
@@ -183,7 +183,7 @@ class _MergeComm(object):
 
 class CalcuSim(nn.Module):
 
-    def __init__(self, ctg: CTG, params: Dict, *args, **kwargs) -> None:
+    def __init__(self, ctg: CTG, params: Dict, **kwargs: Any) -> None:
         '''
         Parameters
         ----------

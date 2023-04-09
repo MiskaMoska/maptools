@@ -18,8 +18,7 @@ class XbarMapper(object):
         opgraph: OperatorGraph, 
         w: int, 
         h: int, 
-        *args, 
-        **kwargs
+        **kwargs: Any
     ) -> None:
         '''
         Parameters

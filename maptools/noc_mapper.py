@@ -17,7 +17,7 @@ __all__ = ['NocMapper']
 
 class NocMapper(object):
 
-    def __init__(self, ctg: CTG, w: int, h: int, *args, **kwargs) -> None:
+    def __init__(self, ctg: CTG, w: int, h: int, **kwargs: Any) -> None:
         '''
         Map the communication trace graph (CTG) onto network-on-chip (NoC)
 

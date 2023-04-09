@@ -1,3 +1,4 @@
+from maptools.maptype import *
 from maptools.ctg import *
 from maptools.map_plotter import *
 from maptools.noc_mapper import *
