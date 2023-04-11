@@ -4,6 +4,8 @@ from typing import Optional, List, Dict, Tuple, Any
 from maptools import *
 from maptools.toksim import *
 from maptools.hardware import *
+from maptools import DeviceParams
+from maptools.utils import read_quantparams
 
 __all__ = ['MapRoutine']
 
@@ -15,7 +17,6 @@ class MapRoutine(object):
         self.model_dir = os.path.join(self.root_dir, 'onnx_models', 'simp-resnet18.onnx')
         self.mapname = 'newmap'
         self.arch = 'resnet'
-        self.config = kwargs
 
         # hardware configuration
         self.xbar_size: Tuple[int, int] = (256, 256*5)
@@ -26,9 +27,11 @@ class MapRoutine(object):
 
         # procedure control
         self.noc_map: bool = True
+        self.quantize: bool = True
 
-        self.show_raw_graph: bool = False
-        self.show_op_graph: bool = False
+        self.show_origin_graph: bool = False
+        self.show_host_graph: bool = False
+        self.show_device_graph: bool = False
         self.show_ctg: bool = False
 
         self.toksim: bool = False
@@ -43,22 +46,27 @@ class MapRoutine(object):
         self.save_mapinfo: bool = True
         self.save_cfginfo: bool = False
 
+        config_keys = ['root_dir', 'mapname', 'arch', 'quantize']
+        self.config = {k: kwargs[k] for k in config_keys if k in kwargs}
         self.__dict__.update(kwargs)
+
         assert isinstance(self.mapname, str),\
             f"mapname should be {str}, but got {type(self.mapname)}"
 
-    def run(self) -> None:
+    def run(self) -> CTG:
         model = onnx.load(self.model_dir)
         oc = OnnxConverter(model, **self.config)
         oc.run_conversion()
-        if self.show_raw_graph:
-            oc.plot_raw_graph()
-        if self.show_op_graph:
-            oc.plot_op_graph()
+        if self.show_origin_graph:
+            oc.plot_origin_graph()
+        if self.show_host_graph:
+            oc.plot_host_graph()
+        if self.show_device_graph:
+            oc.plot_device_graph()
         if self.save_params:
             oc.save_params()
         xm = XbarMapper(
-            oc.og, 
+            oc.device_graph, 
             self.xbar_size[0], 
             self.xbar_size[1], 
             **self.config
@@ -82,15 +90,18 @@ class MapRoutine(object):
             assert self.input is not None, "calcusim enabled but got input is None"
             assert isinstance(self.input, torch.Tensor), f"input must be {torch.Tensor}, but got {type(self.input)}"
             assert len(self.input.shape) == 4, f"input dimension must be 4 [N, C, H, W], but got {len(self.input.shape)}"
-            csim = CalcuSim(ctg, oc.param_dict, **self.config)
-            _ = csim(self.input)
+            params = read_quantparams(self.mapname) if self.quantize else oc.param_dict
+            csim = CalcuSim(ctg, oc.host_graph, params, **self.config)
+            _, host_output = csim(self.input)
+            print('host_output:', host_output)
+            print('index:', torch.argmax(host_output))
             csim.save_results()
         if self.noc_map:
             assert xm.total_xbar <= self.noc_size[0] * self.noc_size[1],\
                 f"Need larger networks, number of total xbars: {xm.total_xbar}"
             nm = NocMapper(
                 ctg, 
-                self.noc_size[0], 
+                self.noc_size[0],
                 self.noc_size[1],
                 **self.config
             )
@@ -130,3 +141,5 @@ class MapRoutine(object):
                 nm.plot_ctg()
             else:
                 ctg.plot_ctg()
+
+        return ctg

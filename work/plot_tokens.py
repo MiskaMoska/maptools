@@ -1,3 +1,3 @@
 from maptools.toksim import *
 
-plot_tokens('resnet34',start=53000)
+plot_tokens('resnet18',start=0)

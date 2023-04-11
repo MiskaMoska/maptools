@@ -7,6 +7,9 @@ setup(
         'maptools',
         'maptools.calcusim',
         'maptools.toksim',
-        'maptools.hardware'
+        'maptools.hardware',
+        'maptools.quantization',
+        'maptools.core',
+        'maptools.host'
     ]
 )

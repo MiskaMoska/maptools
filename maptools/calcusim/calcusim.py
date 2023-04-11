@@ -1,78 +1,24 @@
 import os
+import sys
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import pickle
 from copy import deepcopy
-from typing import List, Dict, Optional, Tuple, Any, Union
-from maptools import CTG
+from typing import List, Dict, Optional, Tuple, Any, Union, Callable
+from maptools import CTG, OperatorGraph
+from maptools.calcusim.utils import *
+from maptools.host import HostTask
+from maptools import DeviceParams
+from maptools.core import QuantConfig
+from functools import cached_property, wraps
 
 __all__ = ['CalcuSim']
-
-def _rebuild_pads(pads: List) -> None:
-    if pads is not None:
-        _pads = pads.copy()
-        pads[0] = _pads[3]
-        pads[1] = _pads[1]
-        pads[2] = _pads[0]
-        pads[3] = _pads[2]
-
-def _rebuild_conv_weight(icfg: List[Tuple], ocfg: Tuple, weight: torch.Tensor) -> torch.Tensor:
-    '''
-    Rebuild convolution weight according to vector slicing information
-    '''
-    assert len(weight.shape) == 4, f"dimension of weight should be 4, but got {len(weight.shape)}"
-    ichan_s = icfg[0][1]
-    ichan_d = icfg[0][2]
-    ochan_s = ocfg[0]
-    ochan_d = ocfg[1]
-    _weight = deepcopy(weight[ochan_s:ochan_d, ichan_s:ichan_d, :, :])
-    _weight_ = torch.zeros_like(_weight)
-    kw = weight.shape[3]
-    for i in [m[0] for m in icfg]:
-        y = i // kw
-        x = i % kw
-        _weight_[:, :, y, x] = _weight[:, :, y, x] # mask
-    return _weight_
-
-def _rebuild_conv_bias(ocfg: Tuple, bias: torch.Tensor) -> torch.Tensor:
-    '''
-    Rebuild convolution bias according to vector slicing information
-    '''
-    assert len(bias.shape) == 1, f"dimension of weight should be 1, but got {len(bias.shape)}"
-    return deepcopy(bias[ocfg[0]:ocfg[1]])
-
-def _get_xbar_kwargs(cfg: Dict, params: Dict) -> Dict:
-    kwargs = dict()
-    kwargs['conv_pads'] = cfg['conv_pads'].copy()
-    weight_ptr = cfg['conv_weight']
-    weight = _rebuild_conv_weight(
-        cfg['xbar_icfg'], cfg['xbar_ocfg'], 
-        torch.tensor(params[weight_ptr])
-    )
-    kwargs['conv_weight'] = weight
-    if 'Bias' in cfg['op_type']:
-        bias_ptr = cfg['conv_bias']
-        bias = _rebuild_conv_bias(
-            cfg['xbar_ocfg'],
-            torch.tensor(params[bias_ptr])
-        )
-        kwargs['conv_bias'] = bias
-    kwargs['conv_strides'] = cfg['conv_strides'].copy()
-    if 'Pool' in cfg['op_type']:
-        kwargs['is_pool'] = True
-        kwargs['pool_mode'] = deepcopy(cfg['pool_mode'])
-        kwargs['pool_pads'] = cfg['pool_pads'].copy()
-        kwargs['pool_kernel_size'] = cfg['pool_kernel_size'].copy()
-        kwargs['pool_strides'] = cfg['pool_strides'].copy()
-    if 'Act' in cfg['op_type']:
-        kwargs['is_act'] = True
-        kwargs['act_mode'] = deepcopy(cfg['act_mode'])
-    return kwargs
 
 class _Xbar(object):
 
     def __init__(self, **kwargs: Any) -> None:
+        # for general
         self.conv_pads: Optional[List] = None
         self.conv_weight: Optional[torch.Tensor] = None
         self.conv_bias: Optional[torch.Tensor] = None
@@ -86,18 +32,24 @@ class _Xbar(object):
         self.is_act: bool = False
         self.is_merge: bool = False
         self.is_gather: bool = False
+
+        # for quantization
+        self.merge_node: bool = False
+        self.quantize: bool = False
+        self.ochan_range: Tuple[int, int] = (0, 0) 
+        self.quant_config: Optional[QuantConfig] = None
         self.__dict__.update(kwargs)
 
-        _rebuild_pads(self.conv_pads)
-        _rebuild_pads(self.pool_pads)
+        rebuild_pads(self.conv_pads)
+        rebuild_pads(self.pool_pads)
     
         # initialize input data
         self.cast_in: Optional[torch.Tensor] = None
         self.merge_in: Optional[torch.Tensor] = None
         self.gather_in: Optional[torch.Tensor] = None
 
-        # results before pool
-        self.before_pool = None
+        self.before_pool = None # results before pool
+        self._weight_scale = None
 
     def absorb(self, data: torch.Tensor, pred_type: str) -> None:
         if pred_type == 'Cast':
@@ -106,6 +58,24 @@ class _Xbar(object):
             self.merge_in = data
         elif pred_type == 'Gather':
             self.gather_in = data
+
+    def memorize(func: Callable) -> Callable:
+        @wraps(func)
+        def wrapper(self, *args):
+            if self._weight_scale is not None:
+                return self._weight_scale
+            else:
+                result = func(self, *args)
+                self._weight_scale = result
+                return result
+        return wrapper
+
+    @memorize
+    def weight_scale(self, x: torch.Tensor) -> torch.Tensor:
+        shape2d = x.shape[-2:]
+        scale = self.quant_config.weight_scale
+        to_stack = [torch.ones(shape2d)*scale[i] for i in range(*self.ochan_range)]
+        return torch.stack(to_stack).expand(1, -1, -1, -1)
 
     def forward(self) -> torch.Tensor:
         assert self.cast_in is not None, "cast in data got None"
@@ -122,21 +92,34 @@ class _Xbar(object):
         
         if self.is_merge:
             assert self.merge_in is not None, "merge in data got None"
-            assert x.shape == self.merge_in.shape, f"got x's shape = {x.shape} but merge's shape = {self.merge_in.shape}, cannot merge"
+            assert x.shape == self.merge_in.shape, (
+                f"got x's shape = {x.shape} but merge's shape = {self.merge_in.shape}, cannot merge")
             x = torch.add(x, self.merge_in)
-            
+
+        # only for merge node where a complete sum should appear
+        # quantization converting from input to output, return a int8
+        if self.merge_node and self.quantize:
+            assert self.quant_config is not None, (
+                f"quantize enabled but got no quant_config")
+            input_scale = self.quant_config.input_scale
+            output_scale = self.quant_config.output_scale
+            x = torch.round(torch.mul(x, self.weight_scale(x)) * input_scale / output_scale)
+
         if self.is_gather:
             assert self.gather_in is not None, "gather in data got None"
-            assert x.shape == self.gather_in.shape, f"got x's shape = {x.shape} but gather's shape = {self.gather_in.shape}, cannot gather"
+            assert x.shape == self.gather_in.shape, (
+                f"got x's shape = {x.shape} but gather's shape = {self.gather_in.shape}, cannot gather")
             x = torch.add(x, self.gather_in)
 
         if self.is_act:
-            assert self.act_mode == 'Relu', f"activation mode must be Relu, but got {self.act_mode}"
+            assert self.act_mode == 'Relu', (
+                f"activation mode must be Relu, but got {self.act_mode}")
             x = F.relu(x)
 
         if self.is_pool:
             self.before_pool = x
-            assert self.pool_mode in ['MaxPool', 'AveragePool'], f"got invalid pool mode: {self.pool_mode}"
+            assert self.pool_mode in ['MaxPool', 'AveragePool'], (
+                f"got invalid pool mode: {self.pool_mode}")
             x = F.pad(x, self.pool_pads)
             if self.pool_mode == 'MaxPool':
                 x = F.max_pool2d(
@@ -145,6 +128,7 @@ class _Xbar(object):
                     stride = tuple(self.pool_strides)
                 )
             elif self.pool_mode == 'AveragePool':
+                assert not self.quantize, "quantitized average pooling not supported yet"
                 x = F.avg_pool2d(
                     x, 
                     kernel_size = tuple(self.pool_kernel_size),
@@ -183,14 +167,20 @@ class _MergeComm(object):
 
 class CalcuSim(nn.Module):
 
-    def __init__(self, ctg: CTG, params: Dict, **kwargs: Any) -> None:
+    def __init__(
+        self, 
+        ctg: CTG, 
+        host_graph: OperatorGraph, 
+        params: DeviceParams,
+        **kwargs: Any
+    ) -> None:
         '''
         Parameters
         ----------
         ctg : CTG
             communication trace graph
         
-        params : Dict
+        params : DeviceParams
             from `OnnxConverter.param_dict`
 
         kwargs : Dict
@@ -213,12 +203,14 @@ class CalcuSim(nn.Module):
         self.params = params
         self.root_dir = os.environ.get('NVCIM_HOME')
         self.mapname = 'newmap'
+        self.quantize = False
         self.__dict__.update(kwargs)
         self.obj_dict: Dict = dict()
-        self._build_obj_dict()
+        self._build_device_task()
+        self._build_host_task(host_graph)
         self.res_dict: Dict[Union[str, Tuple], Dict[str, Optional[torch.Tensor]]] = dict()
 
-    def _build_obj_dict(self) -> None:
+    def _build_device_task(self) -> None:
         for node in self.ctg.node_names:
             if self.ctg.is_comm(node): # is comm
                 preds = list(self.ctg.preds(node))
@@ -228,7 +220,7 @@ class CalcuSim(nn.Module):
                     self.obj_dict[node] = _Comm()
             else: # is xbar
                 cfg = self.ctg.get_xbar_config(node)
-                kwargs = _get_xbar_kwargs(cfg, self.params)
+                kwargs = get_xbar_kwargs(cfg, self.params)
                 is_merge = False
                 is_gather = False
                 for pred in self.ctg.preds(node):
@@ -242,15 +234,25 @@ class CalcuSim(nn.Module):
                     **kwargs
                 )
 
+    def _build_host_task(self, host_graph: OperatorGraph) -> None:
+        self.host_task = HostTask(host_graph)
+
     def _arrage_output(self, y: List[Tuple]) -> torch.Tensor:
         y.sort(key=lambda x : x[0])
         return torch.cat([v[1] for v in y], dim=1)
 
-    def forward(self, x: torch.Tensor):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         assert isinstance(x, torch.Tensor), f"input should be torch.Tensor, but got {type(x)}"
         assert len(x.shape) == 4, f"input dimension should be 4 [N, C, H, W], but got {len(x.shape)}"
         print('Launching CalcuSim ....')
+        print('Quantization ' + ('Enabled' if self.quantize else 'Disabled'))
         y = []
+
+        #quantizing before performing device task
+        if self.quantize:
+            x = torch.round(torch.divide(x, self.ctg.input_quant_config.input_scale))
+
+        # device task
         for node in self.ctg.node_names:
             if self.ctg.is_xbar(node): # xbar
                 if self.ctg.is_head_xbar(node): # head xbar
@@ -284,10 +286,19 @@ class CalcuSim(nn.Module):
                     pred_type = 'Gather'
                 for succ in self.ctg.succs(node): # comm successors must be xbar
                     self.obj_dict[succ].absorb(result, pred_type)
-        y_ = self._arrage_output(y)
-        self.res_dict['output'] = y_
+        device_output = self._arrage_output(y)
+        self.res_dict['output'] = device_output # the output of device task
+
+        # dequantizing before performing host task
+        if self.quantize:
+            device_output = torch.mul(device_output, self.ctg.output_quant_config.output_scale)
+        print('Finished Device Task')
+
+        # host task
+        host_output = self.host_task(device_output)
+        print('Finished Host Task')
         print('Finished CalcuSim')
-        return y_
+        return device_output, host_output
     
     def save_results(self, file_name: str = 'results'):
         save_dir = os.path.join(self.root_dir, 'mapsave', self.mapname, 'calcusim')
@@ -297,11 +308,3 @@ class CalcuSim(nn.Module):
         with open(file_dir,'wb') as f:
             pickle.dump(self.res_dict, f)
         print(f"\nintermediate results written to {file_dir}")
-
-
-
-
-
-
-
-

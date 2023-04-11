@@ -1,0 +1,18 @@
+import os
+import pickle
+from ppq import BaseGraph, QuantableVariable, QuantableOperation, TensorQuantizationConfig, OperationQuantizationConfig
+from maptools import *
+
+mapname = 'resnet18'
+root_dir = os.environ.get('NVCIM_HOME')
+quantinfo_path = os.path.join(root_dir, 'mapsave', mapname, 'quantinfo.pkl')
+graph_path = os.path.join(root_dir, 'mapsave', mapname, 'quantized_graph.pkl')
+
+with open(quantinfo_path, 'rb') as f:
+    quantinfo = pickle.load(f)
+
+for i in quantinfo.values():
+    print(i.weight_scale.cpu())
+
+# qparams = read_quantparams(mapname)
+# params = read_params(mapname)

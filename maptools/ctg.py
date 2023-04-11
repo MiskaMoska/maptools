@@ -7,9 +7,9 @@ import networkx as nx
 from graphviz import Digraph
 from functools import cached_property
 from typing import List, Dict, Tuple, Any, Generator, Optional
-from typing import overload
 from maptools.operator_graph import *
 from maptools.utils import *
+from maptools.maptype import XbarConfig
 
 __all__ = ['CTG']
 
@@ -17,7 +17,7 @@ class CTG(object):
 
     def __init__(
         self, 
-        opgraph: OperatorGraph, 
+        device_graph: OperatorGraph, 
         match_dict: Dict[str, int],
         map_list: List[np.ndarray],
         map_dict: Dict[Tuple[int, int, int, int], Dict[str, Any]],
@@ -29,8 +29,8 @@ class CTG(object):
 
         Parameters
         ----------
-        opgraph : OperatorGraph
-            Operator graph for the model
+        device_graph : OperatorGraph
+            Device operator graph generated from `OnnxConverter`
 
         match_dict : Dict[str, int]
             Matches each compute node in the operator graph to each layer in self.map_list
@@ -66,7 +66,6 @@ class CTG(object):
             mapname : str = 'newmap'
                 Map name
         '''
-        self.opgraph = opgraph
         self.match_dict = match_dict
         self.map_list = map_list
         self.dicts = map_dict
@@ -74,6 +73,7 @@ class CTG(object):
         self.arch = 'resnet'
         self.root_dir = os.environ.get('NVCIM_HOME')
         self.mapname = 'newmap'
+        self.quantize = device_graph.quantize
         self.__dict__.update(kwargs)
 
         self.xbar_nodes: List[Tuple[int, int, int, int]] = []
@@ -83,10 +83,11 @@ class CTG(object):
 
         # build ctg
         if self.arch == 'resnet':
-            self._build_ctg_resnet()
+            self._build_ctg_resnet(device_graph)
 
         # complete attributes
-        self._complete_attrs()
+        self._complete_quant_attrs(device_graph)
+        self._complete_connection_attrs()
 
     @cached_property
     def node_names(self) -> List[Any]:
@@ -121,7 +122,7 @@ class CTG(object):
     def succs(self, node: Any) -> Generator:
         yield from self.graph.successors(node)
 
-    def get_xbar_config(self, node: Any) -> Dict:
+    def get_xbar_config(self, node: Any) -> XbarConfig:
         assert self.is_xbar(node), "not a xbar node, cannot get config"
         return self.dicts[node]
 
@@ -183,23 +184,25 @@ class CTG(object):
                         idx += 1
                 yield base_idx, region
 
-    def _build_ctg_resnet(self) -> None:
+    def _build_ctg_resnet(self, device_graph: OperatorGraph) -> None:
         self.graph = nx.MultiDiGraph()
         self.xbar_nodes = list(self.dicts.keys())
         self.graph.add_nodes_from(self.xbar_nodes)
-        self._add_comms_resnet()
+        self._add_comms_resnet(device_graph)
 
-    def _add_comms_resnet(self) -> None: 
+    def _add_comms_resnet(self, device_graph: OperatorGraph) -> None: 
         # add cast and gather comms
-        for e in self.opgraph.egdes: # for ResNet, every edge in opgraph corresponds to a communication
+        # for ResNet, every edge in opgraph corresponds to a communication
+        for e in device_graph.egdes: 
             p_lid = self.match_dict[e[0]]
             s_lid = self.match_dict[e[1]]
             p_mtx = self.map_list[p_lid] # source node map info matrix
             s_mtx = self.map_list[s_lid] # dst node map info matrix
 
-            if self.opgraph.in_degree(e[1]) > 1 \
-                and not is_subseq([e[0], e[1]], self.opgraph.trunk): # gather
-                assert p_mtx.shape[0] == s_mtx.shape[0], "#regions not match for gather communication"
+            if device_graph.in_degree(e[1]) > 1 \
+                and not is_subseq([e[0], e[1]], device_graph.trunk): # gather
+                assert p_mtx.shape[0] == s_mtx.shape[0],(
+                    "#regions not match for gather communication")
                 for i in range(p_mtx.shape[0]): # for each region in the last layer
                     src_xbar = (p_lid, i, 0, 0) # source node of the gather path
                     dst_xbar = (s_lid, i, 0, 0) # dst node of the gather path
@@ -210,7 +213,8 @@ class CTG(object):
                     self.graph.add_edge(comm_name, dst_xbar)
 
             else: # cast
-                assert p_mtx.shape[0] == s_mtx.shape[1], "#regions in last layer does not match #blocks in this layer"
+                assert p_mtx.shape[0] == s_mtx.shape[1], (
+                    "#regions in last layer does not match #blocks in this layer")
                 for i in range(p_mtx.shape[0]): # for each region in the last layer
                     src_xbar = (p_lid, i, 0, 0) # root node of the cast tree
                     comm_name = 'cast_from_'+str(src_xbar)
@@ -237,10 +241,15 @@ class CTG(object):
                             if node != dst_xbar:
                                 self.graph.add_edge(node, comm_name)
 
-    def _complete_attrs(self) -> None:
+    def _complete_quant_attrs(self, device_graph: OperatorGraph) -> None:
+        io_quant_config = device_graph.input_output_quant_config
+        if self.quantize:
+            self.input_quant_config = io_quant_config[0]
+            self.output_quant_config = io_quant_config[1]
+
+    def _complete_connection_attrs(self) -> None:
         '''
-        Complete Xbar attributes:
-        cast/merge/gather_in/out, is_tail, is_head
+        Complete connection attributes
         '''
         for xbar in self.xbar_nodes:
             cast_in, merge_in, gather_in = False, False, False

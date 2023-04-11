@@ -3,12 +3,14 @@ import pickle
 from typing import List, Tuple, Dict
 import networkx as nx
 import logging
+from maptools.consts import root_dir
 
 __all__ = [
     'dec2bin',
     'is_subseq',
     'build_mesh',
     'read_params',
+    'read_quantparams',
     'read_mapinfo',
     'read_cfginfo',
     'read_results',
@@ -56,28 +58,30 @@ def build_mesh(eager_nodes: List[Tuple[int, int]]) -> nx.Graph:
     return g
 
 def read_params(mapname: str) -> Dict:
-    root_dir = os.environ.get('NVCIM_HOME')
     file_dir = os.path.join(root_dir, 'mapsave', mapname, 'params.pkl')
     with open(file_dir, 'rb') as f:
         params = pickle.load(f)
     return params
 
+def read_quantparams(mapname: str) -> Dict:
+    file_dir = os.path.join(root_dir, 'mapsave', mapname, 'quantparams.pkl')
+    with open(file_dir, 'rb') as f:
+        params = pickle.load(f)
+    return params
+
 def read_mapinfo(mapname: str) -> Dict:
-    root_dir = os.environ.get('NVCIM_HOME')
     file_dir = os.path.join(root_dir, 'mapsave', mapname, 'mapinfo.pkl')
     with open(file_dir, 'rb') as f:
         mapinfo = pickle.load(f)
     return mapinfo
 
 def read_cfginfo(mapname: str) -> Dict:
-    root_dir = os.environ.get('NVCIM_HOME')
     file_dir = os.path.join(root_dir, 'mapsave', mapname, 'cfginfo.pkl')
     with open(file_dir, 'rb') as f:
         cfginfo = pickle.load(f)
     return cfginfo
 
 def read_results(mapname: str) -> Dict:
-    root_dir = os.environ.get('NVCIM_HOME')
     file_dir = os.path.join(root_dir, 'mapsave', mapname, 'calcusim', 'results.pkl')
     with open(file_dir, 'rb') as f:
         results = pickle.load(f)

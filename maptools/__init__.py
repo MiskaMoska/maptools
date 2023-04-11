@@ -7,9 +7,13 @@ from maptools.operator_graph import *
 from maptools.xbar_mapper import *
 from maptools.utils import *
 from maptools.map_routine import *
+from maptools.consts import *
 
 from maptools import hardware
 from maptools.hardware import *
 
 from maptools import toksim
 from maptools.toksim import *
+
+from maptools import core
+from maptools.core import *

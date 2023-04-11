@@ -17,7 +17,7 @@ model = tv.models.resnet18()
 print(model.get_num_params())
 ox.export(
     model,
-    torch.randn([1,3,224,224]),
+    torch.randn([1,3,1000,224]),
     "onnx_models/resnet18.onnx",
     opset_version=11,
     input_names=["input"],

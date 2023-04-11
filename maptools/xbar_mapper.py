@@ -15,7 +15,7 @@ class XbarMapper(object):
 
     def __init__(
         self, 
-        opgraph: OperatorGraph, 
+        device_graph: OperatorGraph, 
         w: int, 
         h: int, 
         **kwargs: Any
@@ -23,8 +23,8 @@ class XbarMapper(object):
         '''
         Parameters
         ----------
-        opgraph : OperatorGraph
-            pass
+        device_graph : OperatorGraph
+            `OnnxConverter.device_graph`
 
         w : int
             Xbar width
@@ -62,7 +62,7 @@ class XbarMapper(object):
             >>> config_info = self.map_dict[key]
         '''
         assert w <= h, "Xbar height must be no smaller than width"
-        self.opgraph = opgraph
+        self.device_graph = device_graph
         self.w = w
         self.h = h
         self.arch = 'resnet'
@@ -76,7 +76,7 @@ class XbarMapper(object):
         '''
         In ResNet, there is no concat operation
         '''
-        for l, layer in enumerate(self.opgraph.node_dicts):
+        for l, layer in enumerate(self.device_graph.node_dicts):
             map_info = []
             self.match_dict[layer['name']] = l
 
@@ -147,7 +147,7 @@ class XbarMapper(object):
     @property
     def ctg(self) -> CTG:
         return CTG(
-            self.opgraph,
+            self.device_graph,
             self.match_dict,
             self.map_list,
             self.map_dict,
@@ -182,3 +182,4 @@ class XbarMapper(object):
         print("-"*70)
         print(f"total #xbar-{total}")
         self.total_xbar = total
+

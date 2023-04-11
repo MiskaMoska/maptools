@@ -16,6 +16,7 @@ from graphviz import Digraph
 from copy import deepcopy 
 import numpy as np
 from maptools.operator_graph import *
+from maptools.maptype import OperatorConfig
 
 __all__ = ['OnnxConverter']
 
@@ -32,7 +33,7 @@ class OnnxConverter(object):
             The supported onnx op_types are listed in OnnxConverter.valid_ops. Note that:
             1. Sigmoid is not supported cause it is not hardware-friendly.
             2. Reshape is not supported. If you want to transform a [1, N, 1, 1] tensor to [1, N], always use Flatten instead of Reshape.
-            3. Seperate Pad is not supported. Please fuse pad to other opts like Conv or Pool.
+            3. Seperate Pad is not supported. Please fuse pad to other operations like Conv or Pool.
             4. Dropout is not supported.
         
         About the supported archs:
@@ -46,12 +47,11 @@ class OnnxConverter(object):
         >>> oc = OnnxConverter(model,arch='googlenet)
         >>> oc.run_conversion()
 
-        The conversion results are located in OnnxConverter.og
-        >>> og: OperationGraph = oc.og
-
-        Or you can get the seperate results from OnnxConverter.op_graph and OnnxConverter.op_dicts:
-        >>> op_graph: nx.MultiDiGraph = oc.op_graph
-        >>> op_dicts: Dict[str, Dict] = oc.op_dicts
+        The conversion results are located in `OnnxConverter.device_graph` and `OnnxConverter.host_graph`.
+        The `device_graph` is the operator graph that should be offloaded onto NVCIM device.
+        The `host_graph` is the operator graph deployed on host proccessor.
+        >>> dg = oc.device_graph
+        >>> hg = oc.host_graph
 
         Parameters
         -------------
@@ -70,9 +70,12 @@ class OnnxConverter(object):
             mapname : str = 'newmap'
                 Map name
 
+            quantize : bool = True
+                whether to include quantization information
+
         Key Members
         -----------
-        self.param_dict : Dict[str, np.ndarray]
+        self.param_dict : DeviceParams
             A dictionary with tensor name as keys and numpy array as values.
             Stores the parameters of the model.
         '''
@@ -80,8 +83,9 @@ class OnnxConverter(object):
         self.arch = 'resnet'
         self.root_dir = os.environ.get('NVCIM_HOME')
         self.mapname = 'newmap'
+        self.quantize = True
         self.__dict__.update(kwargs)
-        self.param_dict: Dict[str, np.ndarray] = dict() 
+        self.param_dict = dict() 
         assert self.arch in OnnxConverter.valid_archs,\
                     f"unsupported model arch: {self.arch}"
 
@@ -140,17 +144,17 @@ class OnnxConverter(object):
         o_dims = self._get_data_dims(name,self.model.graph)
         return list(i_dims[-2:]), list(o_dims[-2:])
 
-    def _complete_conv_info(self, node: onnx.NodeProto, d: Dict) -> None:
+    def _complete_conv_config(self, node: onnx.NodeProto, d: Dict) -> None:
         size_i, size_o = self._get_io_size(node)
         d['conv_input_size'] = size_i
         d['conv_output_size'] = size_o
         for at in node.attribute:
             if at.name == 'dilations':
                 assert list(at.ints) == [1, 1],\
-                        f"conv_dilations must be [1, 1], but got {at.ints}"
+                    f"conv_dilations must be [1, 1], but got {at.ints}"
             elif at.name == 'group':
                 assert at.i == 1,\
-                        f"conv_group must be 1, but got {at.i}"
+                    f"conv_group must be 1, but got {at.i}"
             elif at.name == 'kernel_shape':
                 d['conv_kernel_size'] = list(at.ints)
             elif at.name == 'pads':
@@ -176,7 +180,7 @@ class OnnxConverter(object):
         d['conv_num_ichan'] = weight.dims[1] # input channel number
         d['conv_num_ochan'] = weight.dims[0] # output channel number
 
-    def _complete_pool_info(self, node: onnx.NodeProto, d: Dict) -> None:
+    def _complete_pool_config(self, node: onnx.NodeProto, d: Dict) -> None:
         size_i, size_o = self._get_io_size(node)
         d['pool_input_size'] = size_i
         d['pool_output_size'] = size_o
@@ -191,7 +195,7 @@ class OnnxConverter(object):
             elif at.name == 'strides':
                 d['pool_strides'] = list(at.ints)
 
-    def _complete_gemm_info(self, node: onnx.NodeProto, d: Dict) -> None:
+    def _complete_gemm_config(self, node: onnx.NodeProto, d: Dict) -> None:
         weight = self._get_tensor(node.input[1]) # input[1] should be weight
         bias = None
         if len(node.input[2]): # if has bias
@@ -201,39 +205,38 @@ class OnnxConverter(object):
         d['fc_len_inv'] = weight.dims[1] # input vector length
         d['fc_len_outv'] = weight.dims[0] # output vector length
 
-    def _complete_act_info(self, node: onnx.NodeProto, d: Dict) -> None:
+    def _complete_act_config(self, node: onnx.NodeProto, d: Dict) -> None:
         d['act_mode'] = node.op_type 
         for at in node.attribute:
             if at.name == 'alpha':
                 d['act_alpha'] = at.f
 
-    def _construct_raw_dict(self, node: onnx.NodeProto) -> Dict:
-        d = dict()
-        d['op_type'] = node.op_type
-
+    def _get_raw_config(self, node: onnx.NodeProto) -> OperatorConfig:
+        config = dict()
+        config['op_type'] = node.op_type
         if self._is_conv(node.op_type):
-            self._complete_conv_info(node, d)
+            self._complete_conv_config(node, config)
         elif self._is_pool(node.op_type): 
-            self._complete_pool_info(node, d)
+            self._complete_pool_config(node, config)
         elif self._is_gemm(node.op_type):
-            self._complete_gemm_info(node, d)
+            self._complete_gemm_config(node, config)
         elif self._is_act(node.op_type):
-            self._complete_act_info(node, d)
-        return d
+            self._complete_act_config(node, config)
+        return config
 
     def _remove_data_nodes(self) -> None:
         '''
         Remove data nodes in raw bipartite graph.
         features:
-        1. opt nodes has multi(>=1) inputs and single output
-        2. data nodes has single input and multi(>=1) outputs
+        1. opt nodes has at least one (>=1) inputs and single output
+        2. data nodes has single input and at least one (>=1) outputs
         '''
         for n in self.data_nodes:
             inputs = list(self.raw_graph.predecessors(n))
             outputs = list(self.raw_graph.successors(n))
             self.raw_graph.remove_node(n)
             if len(inputs) > 0 and len(outputs) > 0: # not input data nor output data
-                assert len(inputs) == 1, "ERROR: data node has multiple inputs" # feature 2
+                assert len(inputs) == 1, f"error: data node {n} has multiple inputs" # feature 2
                 for output in outputs:
                     self.raw_graph.add_edge(inputs[0],output)
 
@@ -248,52 +251,68 @@ class OnnxConverter(object):
 
         for n in self.model.graph.node:
             now_node = n.name
-            self.compute_nodes.append(now_node+'_o')
+            self.compute_nodes.append(now_node)
             self._verify_op_type(n) # verify if the op type is supported
 
             if self._is_merge_node(n): # multi inputs
                 for pred_node in n.input:
                     self.data_nodes.append(pred_node+'_d')
-                    self.raw_graph.add_edge(pred_node+'_d',now_node+'_o')
+                    self.raw_graph.add_edge(pred_node+'_d',now_node)
     
             else: # only one input
                 self.data_nodes.append(n.input[0]+'_d')
-                self.raw_graph.add_edge(n.input[0]+'_d',now_node+'_o')
+                self.raw_graph.add_edge(n.input[0]+'_d', now_node)
 
             succ_node = n.output[0] # there is always one output
             self.data_nodes.append(succ_node+'_d')
-            self.raw_graph.add_edge(now_node+'_o',succ_node+'_d')
-            self.raw_dicts[now_node+'_o'] = self._construct_raw_dict(n)
+            self.raw_graph.add_edge(now_node, succ_node+'_d')
+            self.raw_dicts[now_node] = self._get_raw_config(n)
 
         self.data_nodes = list(set(self.data_nodes))
         self._remove_data_nodes()
 
-    def __resnet(self, og: OperatorGraph) -> None:
-        og._cut_graph()
-        og._fuse_act() 
-        og._fuse_pool()
-        og._regu_pool()
-        og._fuse_add()
+    def _construct_for_resnet(self, op_graph: OperatorGraph) -> None:
+        op_graph.fuse_act() 
+        op_graph.fuse_pool()
+        op_graph.regu_pool()
+        op_graph.fuse_add()
 
-    def __googlenet(self, og: OperatorGraph) -> None:
-        og._cut_graph()
-        og._fuse_act()
-        og._head_pool('Concat')
-        og._fuse_pool()
-        og._regu_pool()
+    def _construct_for_googlenet(self, op_graph: OperatorGraph) -> None:
+        op_graph.fuse_act()
+        op_graph.head_pool('Concat')
+        op_graph.fuse_pool()
+        op_graph.regu_pool()
+
+    def _insert_quant_info(self) -> None:
+        '''
+        Insert quantization information to original operation graph
+        The device graph is constructed from the original graph,
+        so the quantization information will be updated to the device graph
+        '''
+        quantinfo_path = os.path.join(self.root_dir, 'mapsave', self.mapname, 'quantinfo.pkl')
+        assert os.path.exists(quantinfo_path), (
+            f"quantization including enabled, but quantization information file not exist: {quantinfo_path}")
+        with open(quantinfo_path, 'rb') as f:
+            quantinfo = pickle.load(f)
+        for node, config in quantinfo.items():
+            if node in self.origin_graph.dicts:
+                self.origin_graph.add_attr_to_node(node, 'quant_config', config)
 
     def construct_op_graph(self) -> None:
         '''
         Construct opt compute graph where each node is a nvcim opt
         '''
-        self.og = OperatorGraph(self.raw_graph,self.raw_dicts,self.arch) 
+        # the original operator graph
+        self.origin_graph = OperatorGraph(self.raw_graph, self.raw_dicts, self.arch)
+        if self.quantize:
+            self._insert_quant_info()
+        self.host_graph, self.device_graph = self.origin_graph.dispatch_graph('GlobalAveragePool')
+        self.device_graph.quantize = self.quantize
         if self.arch == 'resnet':
-            self.__resnet(self.og)
+            self._construct_for_resnet(self.device_graph)
         elif self.arch == 'googlenet':
-            self.__googlenet(self.og)
-        self.og._check_size()
-        self.op_graph = self.og.graph
-        self.op_dicts = self.og.dicts
+            self._construct_for_googlenet(self.device_graph)
+        self.origin_graph._check_size()
 
     def run_conversion(self) -> None:
         self.construct_raw_graph()
@@ -319,35 +338,17 @@ class OnnxConverter(object):
     def print_raw_dict(self) -> None:
         self._print_dict(self.raw_dicts)
 
-    def print_op_dict(self) -> None:
-        self._print_dict(self.op_dicts)
-
-    def _plot_graph(self, graph: nx.MultiDiGraph, dicts: Dict) -> None:
-        name = 'raw_graph' if dicts is self.raw_dicts else 'op_graph'
+    def _plot_graph(self, op_graph: OperatorGraph, name: str) -> None:
         save_dir = os.path.join(self.root_dir, 'mapsave', self.mapname, name)
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
-        dot = Digraph('graph', format='svg')
-        shape = 'box3d'
-        labelloc = None
-        for n in graph.nodes:
-            dot.node(
-                n,
-                dicts[n]['op_type'], 
-                shape=shape,
-                labelloc=labelloc,
-                fontname='Arial'
-            )
-        for e in graph.edges:
-            dot.edge(e[0],e[1])
-        dot.view(cleanup=True, directory=save_dir, )
-        print(f"graph saved to {save_dir}")
+        op_graph.plot_graph(save_dir)
 
-    def plot_raw_graph(self) -> None:
-        self._plot_graph(self.raw_graph, self.raw_dicts)
+    def plot_origin_graph(self) -> None:
+        self._plot_graph(self.origin_graph, 'origin_graph')
 
-    def plot_op_graph(self) -> None:
-        self._plot_graph(self.op_graph, self.op_dicts)
+    def plot_host_graph(self) -> None:
+        self._plot_graph(self.host_graph, 'host_graph')
 
-
-
+    def plot_device_graph(self) -> None:
+        self._plot_graph(self.device_graph, 'device_graph')
