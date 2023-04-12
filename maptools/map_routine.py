@@ -1,4 +1,5 @@
 import os
+import sys
 import onnx
 from typing import Optional, List, Dict, Tuple, Any
 from maptools import *
@@ -57,20 +58,19 @@ class MapRoutine(object):
         model = onnx.load(self.model_dir)
         oc = OnnxConverter(model, **self.config)
         oc.run_conversion()
-        if self.show_origin_graph:
-            oc.plot_origin_graph()
-        if self.show_host_graph:
-            oc.plot_host_graph()
-        if self.show_device_graph:
-            oc.plot_device_graph()
-        if self.save_params:
-            oc.save_params()
+
+        if self.show_origin_graph: oc.plot_origin_graph()
+        if self.show_host_graph: oc.plot_host_graph()
+        if self.show_device_graph: oc.plot_device_graph()
+        if self.save_params: oc.save_params()
+
         xm = XbarMapper(
             oc.device_graph, 
             self.xbar_size[0], 
             self.xbar_size[1], 
             **self.config
         )
+
         xm.run_map()
         xm.print_config()
         ctg = xm.ctg
@@ -84,18 +84,22 @@ class MapRoutine(object):
             tsim.run()
             tsim.save_execu()
             ctg = tsim.ctg
+
         if self.calcusim:
             import torch
             from maptools.calcusim import CalcuSim
             assert self.input is not None, "calcusim enabled but got input is None"
             assert isinstance(self.input, torch.Tensor), f"input must be {torch.Tensor}, but got {type(self.input)}"
             assert len(self.input.shape) == 4, f"input dimension must be 4 [N, C, H, W], but got {len(self.input.shape)}"
+
             params = read_quantparams(self.mapname) if self.quantize else oc.param_dict
             csim = CalcuSim(ctg, oc.host_graph, params, **self.config)
             _, host_output = csim(self.input)
             print('host_output:', host_output)
+            print('max:', torch.max(host_output))
             print('index:', torch.argmax(host_output))
-            csim.save_results()
+            csim.save_results(file_name='quantres' if self.quantize else 'res')
+
         if self.noc_map:
             assert xm.total_xbar <= self.noc_size[0] * self.noc_size[1],\
                 f"Need larger networks, number of total xbars: {xm.total_xbar}"
@@ -106,8 +110,9 @@ class MapRoutine(object):
                 **self.config
             )
             nm.run_map()
-            if self.save_mapinfo:
-                nm.save_map()
+
+            if self.save_mapinfo: nm.save_map()
+
             if self.show_cast_path or self.show_gather_path:
                 plt = MapPlotter(
                     self.noc_size[0], 
@@ -118,12 +123,11 @@ class MapRoutine(object):
                     show_path=True,
                     **self.config
                 )
-                if self.show_cast_path:
-                    plt.plot_cast_map()
-                if self.show_merge_path:
-                    plt.plot_merge_map()
-                if self.show_gather_path:
-                    plt.plot_gather_map()
+
+                if self.show_cast_path: plt.plot_cast_map()
+                if self.show_merge_path: plt.plot_merge_map()
+                if self.show_gather_path: plt.plot_gather_map()
+            
             if self.save_cfginfo:
                 nc = NocConfig(
                     self.noc_size[0], 
@@ -137,9 +141,7 @@ class MapRoutine(object):
                 nc.save_config()
                 
         if self.show_ctg:
-            if self.noc_map:
-                nm.plot_ctg()
-            else:
-                ctg.plot_ctg()
+            if self.noc_map: nm.plot_ctg()
+            else: ctg.plot_ctg()
 
         return ctg

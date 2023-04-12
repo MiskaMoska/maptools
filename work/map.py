@@ -8,7 +8,7 @@ import os
 root_dir = os.environ.get('NVCIM_HOME')
 mapname = 'resnet18'
 test = os.path.join(root_dir, 'onnx_models', 'simp-resnet18.onnx')
-img = get_input('work/test4.png')
+img = get_input('work/test6.png')
 
 routine = MapRoutine(   
     mapname=mapname,
@@ -26,7 +26,7 @@ routine = MapRoutine(
     toksim=False,
     toksim_latency = 4,
     input=img,
-    quantize=True
+    quantize=False
 )
 
 ctg = routine.run()

@@ -12,7 +12,7 @@ with open(quantinfo_path, 'rb') as f:
     quantinfo = pickle.load(f)
 
 for i in quantinfo.values():
-    print(i.weight_scale.cpu())
+    print(i.__dict__)
 
 # qparams = read_quantparams(mapname)
 # params = read_params(mapname)

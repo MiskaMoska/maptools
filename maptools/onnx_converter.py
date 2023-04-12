@@ -14,7 +14,7 @@ import networkx as nx
 from typing import Any, List, Dict, Tuple, Optional, Generator
 from graphviz import Digraph
 from copy import deepcopy 
-import numpy as np
+from maptools.quantization.interface import load_quant_to_graph
 from maptools.operator_graph import *
 from maptools.maptype import OperatorConfig
 
@@ -290,23 +290,22 @@ class OnnxConverter(object):
         so the quantization information will be updated to the device graph
         '''
         quantinfo_path = os.path.join(self.root_dir, 'mapsave', self.mapname, 'quantinfo.pkl')
-        assert os.path.exists(quantinfo_path), (
-            f"quantization including enabled, but quantization information file not exist: {quantinfo_path}")
-        with open(quantinfo_path, 'rb') as f:
-            quantinfo = pickle.load(f)
-        for node, config in quantinfo.items():
-            if node in self.origin_graph.dicts:
-                self.origin_graph.add_attr_to_node(node, 'quant_config', config)
+        load_quant_to_graph(quantinfo_path, self.origin_graph)
 
-    def construct_op_graph(self) -> None:
+    def construct_op_graph(self, truncate_point: str = 'GlobalAveragePool') -> None:
         '''
         Construct opt compute graph where each node is a nvcim opt
+        
+        Parameters
+        ----------
+        truncate_point : str
+            The dividing op_type for graph dispatching.
+            The divide line between host graph and device graph.
         '''
-        # the original operator graph
-        self.origin_graph = OperatorGraph(self.raw_graph, self.raw_dicts, self.arch)
+        self.origin_graph = OperatorGraph(self.raw_graph, self.raw_dicts, self.arch) # the original operator graph
         if self.quantize:
             self._insert_quant_info()
-        self.host_graph, self.device_graph = self.origin_graph.dispatch_graph('GlobalAveragePool')
+        self.host_graph, self.device_graph = self.origin_graph.dispatch_graph(truncate_point)
         self.device_graph.quantize = self.quantize
         if self.arch == 'resnet':
             self._construct_for_resnet(self.device_graph)

@@ -95,30 +95,29 @@ class XbarMapper(object):
 
                 # output vector mapping
                 start_co = i * self.w
-                if (i + 1) * self.w > n_outchan:
-                    end_co = n_outchan
-                else:
-                    end_co = (i + 1) * self.w
+                if (i + 1) * self.w > n_outchan: end_co = n_outchan
+                else: end_co = (i + 1) * self.w
                 
                 # input vector mapping
                 slcs = math.ceil(n_inchan / self.w) # how many slcs a channel vector is divided to
                 # get slice length, each slice is shorter than Xbar width
                 for j in range(slcs):
                     map_info[i].append(0) # add a new block
+
                     if (j + 1) * self.w > n_inchan:
                         slc_len = n_inchan % self.w
-                    else:
-                        slc_len = self.w
-                    start_ci = j * self.w
-                    end_ci = j * self.w + slc_len
+                    else: slc_len = self.w
+
+                    start_ci, end_ci = j * self.w, j * self.w + slc_len
                     slc_pt = (self.h // slc_len) # max slices per tile
-                    pes_i = math.ceil((k_size[0] * k_size[1]) / slc_pt) 
+                    pes_i = math.ceil((k_size[0] * k_size[1]) / slc_pt)
+                    
                     for t in range(pes_i):
                         icfg = []
                         if (t + 1) * slc_pt > k_size[0] * k_size[1]:
                             it = k_size[0] * k_size[1] % slc_pt
-                        else:
-                            it = slc_pt
+                        else: it = slc_pt
+                        
                         for k in range(it):
                             icfg.append((t * slc_pt + k, start_ci, end_ci))
                         xbar_dict = {

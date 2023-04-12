@@ -10,7 +10,22 @@ import torch.nn as nn
 # print(b.shape)
 
 
-a = torch.Tensor([[1,2],
-                 [3,4]],device='cpu')
+a = torch.tensor([2,4,6,8])
+b = torch.tensor([[[[1,1,1],
+                  [1,1,1],
+                  [1,1,1]],
+                 [[1,1,1],
+                  [1,1,1],
+                  [1,1,1]],
+                 [[1,1,1],
+                  [1,1,1],
+                  [1,1,1]],
+                 [[1,1,1],
+                  [1,1,1],
+                  [1,1,1]]]])
 
-print(a)
+a = a.view(1,-1,1,1)
+c = a * b
+print(a.shape)
+print(b.shape)
+print(c)

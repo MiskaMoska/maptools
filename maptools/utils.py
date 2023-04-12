@@ -81,8 +81,9 @@ def read_cfginfo(mapname: str) -> Dict:
         cfginfo = pickle.load(f)
     return cfginfo
 
-def read_results(mapname: str) -> Dict:
-    file_dir = os.path.join(root_dir, 'mapsave', mapname, 'calcusim', 'results.pkl')
+def read_results(mapname: str, quantize: bool = False) -> Dict:
+    file_name = 'quantres.pkl' if quantize else 'res.pkl'
+    file_dir = os.path.join(root_dir, 'mapsave', mapname, 'calcusim', file_name)
     with open(file_dir, 'rb') as f:
         results = pickle.load(f)
     return results

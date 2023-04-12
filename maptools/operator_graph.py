@@ -56,7 +56,14 @@ class OperatorGraph(object):
         head_node, tail_node = nodes[0], nodes[-1]
         head_config, tail_config = self.config(head_node), self.config(tail_node)
         if self.quantize:
-            return head_config['quant_config'], tail_config['quant_config']
+            head_quant_config = head_config['conv_quant_config']
+            tail_name = 'conv_'
+            if 'Act' in self.op_type(tail_node):
+                tail_name = 'add_'
+            elif 'Add' in self.op_type(tail_node):
+                tail_name = 'relu_'
+            tail_quant_config = tail_config[tail_name + 'quant_config']
+            return head_quant_config, tail_quant_config
 
     def in_degree(self, node: str) -> int:
         return self.graph.in_degree(node)
@@ -119,8 +126,8 @@ class OperatorGraph(object):
                 return host_graph, device_graph
         assert True, f"error when dispatching: the origin graph has no operation node typed '{op_type}'"
 
-    def fuse_dict(self, snode: str, dnode: str) -> None:
-        # Fuse dict to another's
+    def _fuse_operator(self, snode: str, dnode: str) -> None:
+        # Fuse one operator to another
         tmp = deepcopy(self.dicts[snode])
         tmp.pop('op_type')
         self.dicts[dnode].update(tmp)
@@ -134,7 +141,7 @@ class OperatorGraph(object):
                 assert pred_type in ['Conv','Add'], \
                     f"the predecessor of an activation node must be Conv or Add rather than {pred_type}"
                 self.exten_op_type(self.pred(n), '-Act') # fuse relu will change the op-type of the predecessor
-                self.fuse_dict(n, self.pred(n))
+                self._fuse_operator(n, self.pred(n))
                 ks2rmv.append(n)
                 succs = list(self.graph.successors(n)) # successors of act
                 es = [(self.pred(n), node) for node in succs] # edges to be added 
@@ -157,7 +164,7 @@ class OperatorGraph(object):
                 if pred_type not in ['Conv','Conv-Act']: # for non-resnet archs
                     continue
                 self.exten_op_type(self.pred(n), '-Pool') # fuse pool will change the op-type of the predecessor
-                self.fuse_dict(n, self.pred(n))
+                self._fuse_operator(n, self.pred(n))
                 succs = list(self.graph.successors(n)) # successors of pool
                 es = [(self.pred(n), node) for node in succs] # edges to be added 
                 ns2rmv.append(n)
@@ -219,7 +226,7 @@ class OperatorGraph(object):
                     for succ in succs:
                         self.graph.add_edge(d_pred,succ)
                     self.exten_op_type(d_pred, '-'+self.op_type(n))
-                    self.fuse_dict(n, d_pred)
+                    self._fuse_operator(n, d_pred)
                     self.dicts.pop(n)
                     break
             if nf:

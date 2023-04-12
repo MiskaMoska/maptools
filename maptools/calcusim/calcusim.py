@@ -11,9 +11,22 @@ from maptools.calcusim.utils import *
 from maptools.host import HostTask
 from maptools import DeviceParams
 from maptools.core import QuantConfig
-from functools import cached_property, wraps
+from functools import wraps
 
 __all__ = ['CalcuSim']
+
+OBSERVE_VARS = {
+    'cast_in',
+    'merge_in', 
+    'gather_in',
+    'cast_in_float', 
+    'merge_in_float', 
+    'gather_in_float',
+    'before_pool', 
+    'before_pool_float',
+    'data_out',
+    'data_out_float'
+}
 
 class _Xbar(object):
 
@@ -37,19 +50,85 @@ class _Xbar(object):
         self.merge_node: bool = False
         self.quantize: bool = False
         self.ochan_range: Tuple[int, int] = (0, 0) 
-        self.quant_config: Optional[QuantConfig] = None
+        self._ini_quant_config()
         self.__dict__.update(kwargs)
+        if self.quantize: self._init_for_quantization()
+        self._init_observe_vars()
 
         rebuild_pads(self.conv_pads)
         rebuild_pads(self.pool_pads)
-    
-        # initialize input data
-        self.cast_in: Optional[torch.Tensor] = None
-        self.merge_in: Optional[torch.Tensor] = None
-        self.gather_in: Optional[torch.Tensor] = None
 
-        self.before_pool = None # results before pool
-        self._weight_scale = None
+    def _ini_quant_config(self) -> None:
+        for name in ['conv', 'add', 'relu']:
+            self.__dict__[name + '_quant_config']: Optional[QuantConfig] = None
+
+    def _init_observe_vars(self) -> None:
+        for name in OBSERVE_VARS:
+            self.__dict__[name]: Optional[torch.Tensor] = None
+
+    def _init_for_quantization(self) -> None:
+        if self.merge_node:
+            assert self.conv_quant_config is not None, (
+                f"quantize enabled but got no conv_quant_config")
+        if self.is_gather:
+            assert self.add_quant_config is not None, (
+                f"quantize enabled but got no add_quant_config")
+            assert self.co_scale == self.ai_scale, (
+                f"conv output scale ({self.co_scale}) not add input scale ({self.ai_scale})")
+        if self.is_act:
+            assert self.relu_quant_config is not None, (
+                f"quantize enabled but got no relu_quant_config")
+
+    @property
+    def cw_scale(self) -> torch.Tensor:
+        return self.conv_quant_config.weight_scale
+    
+    @property
+    def ci_scale(self) -> float:
+        return self.conv_quant_config.input_scale
+    
+    @property
+    def co_scale(self) -> float:
+        return self.conv_quant_config.output_scale
+    
+    @property
+    def ai_scale(self) -> float: # should be equal to `self.co_scale`
+        return self.add_quant_config.input_scale
+
+    @property
+    def ao_scale(self) -> float:
+        return self.add_quant_config.output_scale
+    
+    @property
+    def ri_scale(self) -> float:
+        return self.relu_quant_config.input_scale
+    
+    @property
+    def ro_scale(self) -> float:
+        return self.relu_quant_config.output_scale
+    
+    def record_observe_vars(func: Callable) -> Callable:
+        @wraps(func)
+        def wrapper(self, *args):
+            res = func(self, *args)
+            self.data_out = res
+            if self.quantize:
+                if self.cast_in is not None:
+                    self.cast_in_float = self.cast_in * self.ci_scale
+                elif self.merge_in is not None:
+                    self.merge_in_float = self.merge_in * self.ci_scale
+                elif self.gather_in is not None:
+                    self.gather_in_float = self.gather_in * self.co_scale
+                output_scale = self.co_scale
+                if self.is_act:
+                    output_scale = self.ro_scale
+                elif self.is_gather:
+                    output_scale = self.ao_scale
+                self.data_out_float = self.data_out * output_scale
+                if self.before_pool is not None: 
+                    self.before_pool_float = self.before_pool * output_scale
+            return res
+        return wrapper
 
     def absorb(self, data: torch.Tensor, pred_type: str) -> None:
         if pred_type == 'Cast':
@@ -58,25 +137,9 @@ class _Xbar(object):
             self.merge_in = data
         elif pred_type == 'Gather':
             self.gather_in = data
+        if not self.quantize: return 
 
-    def memorize(func: Callable) -> Callable:
-        @wraps(func)
-        def wrapper(self, *args):
-            if self._weight_scale is not None:
-                return self._weight_scale
-            else:
-                result = func(self, *args)
-                self._weight_scale = result
-                return result
-        return wrapper
-
-    @memorize
-    def weight_scale(self, x: torch.Tensor) -> torch.Tensor:
-        shape2d = x.shape[-2:]
-        scale = self.quant_config.weight_scale
-        to_stack = [torch.ones(shape2d)*scale[i] for i in range(*self.ochan_range)]
-        return torch.stack(to_stack).expand(1, -1, -1, -1)
-
+    @record_observe_vars
     def forward(self) -> torch.Tensor:
         assert self.cast_in is not None, "cast in data got None"
         x = F.pad(
@@ -97,24 +160,33 @@ class _Xbar(object):
             x = torch.add(x, self.merge_in)
 
         # only for merge node where a complete sum should appear
-        # quantization converting from input to output, return a int8
+        # conv quantization converting from input to output, return a int8
         if self.merge_node and self.quantize:
-            assert self.quant_config is not None, (
-                f"quantize enabled but got no quant_config")
-            input_scale = self.quant_config.input_scale
-            output_scale = self.quant_config.output_scale
-            x = torch.round(torch.mul(x, self.weight_scale(x)) * input_scale / output_scale)
+            weight_scale = self.cw_scale[self.ochan_range[0]:self.ochan_range[1]]
+            weight_scale = weight_scale.view([1, -1, 1, 1])
+            x = torch.round(x * weight_scale * self.ci_scale / self.co_scale)
 
         if self.is_gather:
+            assert self.merge_node, f"this is a gather_in node but is not a merge node"
             assert self.gather_in is not None, "gather in data got None"
             assert x.shape == self.gather_in.shape, (
                 f"got x's shape = {x.shape} but gather's shape = {self.gather_in.shape}, cannot gather")
             x = torch.add(x, self.gather_in)
 
+            # only for xbar with gather in dataflow
+            # add quantization converting from input to output, return a int8
+            if self.quantize:
+                x = torch.round(x * self.ai_scale / self.ao_scale)
+
         if self.is_act:
             assert self.act_mode == 'Relu', (
                 f"activation mode must be Relu, but got {self.act_mode}")
             x = F.relu(x)
+
+            # only for xbar with activation (relu)
+            # add quantization converting from input to output, return a int8
+            if self.quantize:
+                x = torch.round(x * self.ri_scale / self.ro_scale)
 
         if self.is_pool:
             self.before_pool = x
@@ -134,7 +206,7 @@ class _Xbar(object):
                     kernel_size = tuple(self.pool_kernel_size),
                     stride = tuple(self.pool_strides)
                 )
-        
+
         return x
 
 
@@ -261,10 +333,8 @@ class CalcuSim(nn.Module):
 
                 # collect intermediate results
                 res = dict()
-                for name in ['cast_in', 'merge_in', 'gather_in']:
+                for name in OBSERVE_VARS:
                     res[name] = self.obj_dict[node].__dict__[name]
-                res['before_pool'] = self.obj_dict[node].before_pool
-                res['data_out'] = result 
                 self.res_dict[node] = res
 
                 # xbar may have multiple successors typed "comm"

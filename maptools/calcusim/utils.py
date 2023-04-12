@@ -62,18 +62,23 @@ def get_xbar_kwargs(cfg: XbarConfig, params: DeviceParams) -> Dict:
     kwargs = dict()
     kwargs['conv_pads'] = cfg['conv_pads'].copy()
     weight_ptr = cfg['conv_weight']
+
+    # get conv weight
     weight = rebuild_conv_weight(
         cfg['xbar_icfg'], cfg['xbar_ocfg'], 
-        torch.tensor(params[weight_ptr]).float()
+        torch.tensor(params[weight_ptr]).float().cpu()
     )
     kwargs['conv_weight'] = weight
+
+    # get conv bias
     if 'Bias' in cfg['op_type']:
         bias_ptr = cfg['conv_bias']
         bias = rebuild_conv_bias(
             cfg['xbar_ocfg'],
-            torch.tensor(params[bias_ptr]).float()
+            torch.tensor(params[bias_ptr]).float().cpu()
         )
         kwargs['conv_bias'] = bias
+    
     kwargs['conv_strides'] = cfg['conv_strides'].copy()
     if 'Pool' in cfg['op_type']:
         kwargs['is_pool'] = True
@@ -88,9 +93,15 @@ def get_xbar_kwargs(cfg: XbarConfig, params: DeviceParams) -> Dict:
     # output channel range
     kwargs['ochan_range'] = cfg['xbar_ocfg']
 
-    if 'quant_config' in cfg:
-        kwargs['quantize'] = True
-        kwargs['quant_config'] = cfg['quant_config']
+    config_names = {
+        'conv_quant_config', 
+        'add_quant_config',
+        'relu_quant_config'
+    }
+    for name in config_names:
+        if name in cfg:
+            kwargs['quantize'] = True
+            kwargs[name] = cfg[name]
 
     if not cfg['merge_out']:
         kwargs['merge_node'] = True
