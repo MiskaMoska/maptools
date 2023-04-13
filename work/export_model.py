@@ -1,3 +1,5 @@
+# 将pytorch的模型导出onnx
+
 import torch 
 import torchvision as tv
 import torch.nn as nn

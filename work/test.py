@@ -5,3 +5,4 @@ print(a)
 b=torch.clamp(a,3,9)
 print(b)
 print(b.dtype)
+torch.topk

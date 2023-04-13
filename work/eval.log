@@ -1,0 +1,5 @@
+量化 calcusim: accuracy: 0.7817996431302574
+
+非量化 calcusim: accuracy: 0.7825643640071374
+
+torch推理: accuracy: 0.7823094570481774

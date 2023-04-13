@@ -7,6 +7,8 @@ import onnx
 from PIL import Image
 from torchvision import transforms
 import torchvision as tv
+# 使用onnxruntime进行推理
+
 import torch.onnx as ox
 from maptools.calcusim import get_input
 

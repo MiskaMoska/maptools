@@ -10,6 +10,7 @@ import sys
 import pickle
 import onnx
 import onnx.numpy_helper as onh
+import numpy as np
 import networkx as nx
 from typing import Any, List, Dict, Tuple, Optional, Generator
 from graphviz import Digraph
@@ -196,14 +197,14 @@ class OnnxConverter(object):
                 d['pool_strides'] = list(at.ints)
 
     def _complete_gemm_config(self, node: onnx.NodeProto, d: Dict) -> None:
-        weight = self._get_tensor(node.input[1]) # input[1] should be weight
-        bias = None
+        weight = onh.to_array(self._get_tensor(node.input[1])) # input[1] should be weight
         if len(node.input[2]): # if has bias
-            bias = self._get_tensor(node.input[2]) # input[2] should be weight
-        d['fc_weight'] = onh.to_array(weight)
-        d['fc_bias'] = onh.to_array(bias)
-        d['fc_len_inv'] = weight.dims[1] # input vector length
-        d['fc_len_outv'] = weight.dims[0] # output vector length
+            bias = onh.to_array(self._get_tensor(node.input[2])) # input[2] should be weight
+        else: bias = np.zeros(weight.dims[0])
+        d['fc_weight'] = weight
+        d['fc_bias'] = bias
+        d['fc_len_inv'] = weight.shape[1] # input vector length
+        d['fc_len_outv'] = weight.shape[0] # output vector length
 
     def _complete_act_config(self, node: onnx.NodeProto, d: Dict) -> None:
         d['act_mode'] = node.op_type 

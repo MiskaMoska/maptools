@@ -9,7 +9,7 @@ from maptools.quantization.saving import save_quantization
 
 __all__ = ["quantize"]
 
-PLATFORM  = TargetPlatform.TRT_INT8
+PLATFORM = TargetPlatform.TRT_INT8
 
 def generate_calibration_dataset(
     input_shapes: Dict[str, List[int]],

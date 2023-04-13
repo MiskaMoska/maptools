@@ -1,6 +1,7 @@
+# 加载保存的pkl文件进行观察
+
 import os
 import pickle
-from ppq import BaseGraph, QuantableVariable, QuantableOperation, TensorQuantizationConfig, OperationQuantizationConfig
 from maptools import *
 
 mapname = 'resnet18'

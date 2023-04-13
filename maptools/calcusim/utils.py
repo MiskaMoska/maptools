@@ -66,7 +66,7 @@ def get_xbar_kwargs(cfg: XbarConfig, params: DeviceParams) -> Dict:
     # get conv weight
     weight = rebuild_conv_weight(
         cfg['xbar_icfg'], cfg['xbar_ocfg'], 
-        torch.tensor(params[weight_ptr]).float().cpu()
+        torch.tensor(params[weight_ptr]).float()
     )
     kwargs['conv_weight'] = weight
 
@@ -75,7 +75,7 @@ def get_xbar_kwargs(cfg: XbarConfig, params: DeviceParams) -> Dict:
         bias_ptr = cfg['conv_bias']
         bias = rebuild_conv_bias(
             cfg['xbar_ocfg'],
-            torch.tensor(params[bias_ptr]).float().cpu()
+            torch.tensor(params[bias_ptr]).float()
         )
         kwargs['conv_bias'] = bias
     
@@ -100,7 +100,6 @@ def get_xbar_kwargs(cfg: XbarConfig, params: DeviceParams) -> Dict:
     }
     for name in config_names:
         if name in cfg:
-            kwargs['quantize'] = True
             kwargs[name] = cfg[name]
 
     if not cfg['merge_out']:

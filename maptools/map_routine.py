@@ -38,6 +38,7 @@ class MapRoutine(object):
         self.toksim: bool = False
         self.toksim_latency: Optional[int] = None 
         self.calcusim: bool = True
+        self.save_results: bool = False
 
         self.show_cast_path: bool = False
         self.show_merge_path: bool = False
@@ -93,12 +94,13 @@ class MapRoutine(object):
             assert len(self.input.shape) == 4, f"input dimension must be 4 [N, C, H, W], but got {len(self.input.shape)}"
 
             params = read_quantparams(self.mapname) if self.quantize else oc.param_dict
-            csim = CalcuSim(ctg, oc.host_graph, params, **self.config)
-            _, host_output = csim(self.input)
+            csim = CalcuSim(ctg, oc.host_graph, params, observe=self.save_results, **self.config)
+            host_output = csim(self.input)
             print('host_output:', host_output)
             print('max:', torch.max(host_output))
             print('index:', torch.argmax(host_output))
-            csim.save_results(file_name='quantres' if self.quantize else 'res')
+            if self.save_results:
+                csim.save_results(file_name='quantres' if self.quantize else 'res')
 
         if self.noc_map:
             assert xm.total_xbar <= self.noc_size[0] * self.noc_size[1],\

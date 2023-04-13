@@ -1,3 +1,5 @@
+# 对比量化前后的calcusim的结果
+
 import os
 from maptools import read_results
 root_dir = os.environ.get('NVCIM_HOME')

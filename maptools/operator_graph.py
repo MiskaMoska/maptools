@@ -55,6 +55,7 @@ class OperatorGraph(object):
         nodes = list(self.nodes)
         head_node, tail_node = nodes[0], nodes[-1]
         head_config, tail_config = self.config(head_node), self.config(tail_node)
+        
         if self.quantize:
             head_quant_config = head_config['conv_quant_config']
             tail_name = 'conv_'
@@ -81,7 +82,7 @@ class OperatorGraph(object):
         # Get node's op_type
         return self.dicts[node]['op_type']
 
-    def exten_op_type(self, node: str, suffix: str) -> None:
+    def _exten_op_type(self, node: str, suffix: str) -> None:
         # Extend node's op_type
         self.dicts[node]['op_type'] += suffix
 
@@ -126,7 +127,7 @@ class OperatorGraph(object):
                 return host_graph, device_graph
         assert True, f"error when dispatching: the origin graph has no operation node typed '{op_type}'"
 
-    def _fuse_operator(self, snode: str, dnode: str) -> None:
+    def _fuse_config(self, snode: str, dnode: str) -> None:
         # Fuse one operator to another
         tmp = deepcopy(self.dicts[snode])
         tmp.pop('op_type')
@@ -140,8 +141,8 @@ class OperatorGraph(object):
                 pred_type = self.op_type(self.pred(n))
                 assert pred_type in ['Conv','Add'], \
                     f"the predecessor of an activation node must be Conv or Add rather than {pred_type}"
-                self.exten_op_type(self.pred(n), '-Act') # fuse relu will change the op-type of the predecessor
-                self._fuse_operator(n, self.pred(n))
+                self._exten_op_type(self.pred(n), '-Act') # fuse relu will change the op-type of the predecessor
+                self._fuse_config(n, self.pred(n))
                 ks2rmv.append(n)
                 succs = list(self.graph.successors(n)) # successors of act
                 es = [(self.pred(n), node) for node in succs] # edges to be added 
@@ -163,8 +164,8 @@ class OperatorGraph(object):
                         f"the predecessor of an window pool node must conrtains Conv rather than {pred_type}"
                 if pred_type not in ['Conv','Conv-Act']: # for non-resnet archs
                     continue
-                self.exten_op_type(self.pred(n), '-Pool') # fuse pool will change the op-type of the predecessor
-                self._fuse_operator(n, self.pred(n))
+                self._exten_op_type(self.pred(n), '-Pool') # fuse pool will change the op-type of the predecessor
+                self._fuse_config(n, self.pred(n))
                 succs = list(self.graph.successors(n)) # successors of pool
                 es = [(self.pred(n), node) for node in succs] # edges to be added 
                 ns2rmv.append(n)
@@ -225,8 +226,8 @@ class OperatorGraph(object):
                     self.graph.add_edge(s_pred,d_pred)
                     for succ in succs:
                         self.graph.add_edge(d_pred,succ)
-                    self.exten_op_type(d_pred, '-'+self.op_type(n))
-                    self._fuse_operator(n, d_pred)
+                    self._exten_op_type(d_pred, '-'+self.op_type(n))
+                    self._fuse_config(n, d_pred)
                     self.dicts.pop(n)
                     break
             if nf:

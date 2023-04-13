@@ -1,3 +1,5 @@
+# 执行全流程映射
+
 import pickle
 from maptools import CTG
 from maptools import MapRoutine
@@ -8,12 +10,13 @@ import os
 root_dir = os.environ.get('NVCIM_HOME')
 mapname = 'resnet18'
 test = os.path.join(root_dir, 'onnx_models', 'simp-resnet18.onnx')
-img = get_input('work/test6.png')
+img = get_input('work/test8.png')
 
 routine = MapRoutine(   
     mapname=mapname,
-    noc_map=False,
+    noc_map=True,
     calcusim=True,
+    save_results=True,
     save_cfginfo=True,
     show_ctg=False,
     show_origin_graph=False,
@@ -26,7 +29,7 @@ routine = MapRoutine(
     toksim=False,
     toksim_latency = 4,
     input=img,
-    quantize=False
+    quantize=True
 )
 
 ctg = routine.run()

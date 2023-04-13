@@ -5,13 +5,13 @@ import torch.nn as nn
 import torch.nn.functional as F
 import pickle
 from copy import deepcopy
-from typing import List, Dict, Optional, Tuple, Any, Union, Callable
+from typing import List, Dict, Optional, Tuple, Any, Union, Callable, Literal
 from maptools import CTG, OperatorGraph
 from maptools.calcusim.utils import *
 from maptools.host import HostTask
 from maptools import DeviceParams
 from maptools.core import QuantConfig
-from functools import wraps
+from functools import wraps, cached_property
 
 __all__ = ['CalcuSim']
 
@@ -46,19 +46,23 @@ class _Xbar(object):
         self.is_merge: bool = False
         self.is_gather: bool = False
 
+        # whether to observe data while running
+        # enabling this variable whill slow down the operation
+        self.observe: bool = False 
+
         # for quantization
         self.merge_node: bool = False
         self.quantize: bool = False
         self.ochan_range: Tuple[int, int] = (0, 0) 
-        self._ini_quant_config()
+        self._init_quant_config()
         self.__dict__.update(kwargs)
         if self.quantize: self._init_for_quantization()
-        self._init_observe_vars()
+        if self.observe: self._init_observe_vars()
 
         rebuild_pads(self.conv_pads)
         rebuild_pads(self.pool_pads)
 
-    def _ini_quant_config(self) -> None:
+    def _init_quant_config(self) -> None:
         for name in ['conv', 'add', 'relu']:
             self.__dict__[name + '_quant_config']: Optional[QuantConfig] = None
 
@@ -78,10 +82,29 @@ class _Xbar(object):
         if self.is_act:
             assert self.relu_quant_config is not None, (
                 f"quantize enabled but got no relu_quant_config")
+            
+    def to(self, device: torch.device) -> None:
+        if device == torch.device('cpu'):
+            try:
+                self.conv_weight = self.conv_weight.cpu()
+                self.conv_bias = self.conv_bias.cpu()
+                self.cw_scale = self.cw_scale.cpu()
+            except: pass
+
+        elif device == torch.device('cuda'):
+            try:
+                self.conv_weight = self.conv_weight.cuda()
+                self.conv_bias = self.conv_bias.cuda()
+                self.cw_scale = self.cw_scale.cuda()
+            except: pass
 
     @property
     def cw_scale(self) -> torch.Tensor:
         return self.conv_quant_config.weight_scale
+    
+    @cw_scale.setter
+    def cw_scale(self, value: torch.Tensor) -> None:
+        self.conv_quant_config.weight_scale = value
     
     @property
     def ci_scale(self) -> float:
@@ -107,27 +130,30 @@ class _Xbar(object):
     def ro_scale(self) -> float:
         return self.relu_quant_config.output_scale
     
+    @cached_property
+    def o_scale(self) -> float:
+        scale = self.co_scale
+        if self.is_act: scale = self.ro_scale
+        elif self.is_gather: scale = self.ao_scale
+        return scale
+    
     def record_observe_vars(func: Callable) -> Callable:
         @wraps(func)
         def wrapper(self, *args):
             res = func(self, *args)
-            self.data_out = res
-            if self.quantize:
-                if self.cast_in is not None:
-                    self.cast_in_float = self.cast_in * self.ci_scale
-                elif self.merge_in is not None:
+
+            if self.quantize and self.observe:
+                self.cast_in_float = self.cast_in * self.ci_scale
+                if self.is_merge:
                     self.merge_in_float = self.merge_in * self.ci_scale
-                elif self.gather_in is not None:
+                if self.is_gather:
                     self.gather_in_float = self.gather_in * self.co_scale
-                output_scale = self.co_scale
-                if self.is_act:
-                    output_scale = self.ro_scale
-                elif self.is_gather:
-                    output_scale = self.ao_scale
-                self.data_out_float = self.data_out * output_scale
-                if self.before_pool is not None: 
-                    self.before_pool_float = self.before_pool * output_scale
+                if self.is_pool: 
+                    self.before_pool_float = self.before_pool * self.o_scale
+                self.data_out = res
+                self.data_out_float = self.data_out * self.o_scale
             return res
+        
         return wrapper
 
     def absorb(self, data: torch.Tensor, pred_type: str) -> None:
@@ -189,7 +215,7 @@ class _Xbar(object):
                 x = torch.round(x * self.ri_scale / self.ro_scale)
 
         if self.is_pool:
-            self.before_pool = x
+            if self.observe: self.before_pool = x
             assert self.pool_mode in ['MaxPool', 'AveragePool'], (
                 f"got invalid pool mode: {self.pool_mode}")
             x = F.pad(x, self.pool_pads)
@@ -274,8 +300,9 @@ class CalcuSim(nn.Module):
         self.ctg = ctg
         self.params = params
         self.root_dir = os.environ.get('NVCIM_HOME')
-        self.mapname = 'newmap'
-        self.quantize = False
+        self.mapname: str = 'newmap'
+        self.quantize: bool = False
+        self.observe: bool = False
         self.__dict__.update(kwargs)
         self.obj_dict: Dict = dict()
         self._build_device_task()
@@ -302,7 +329,9 @@ class CalcuSim(nn.Module):
                         is_gather = True
                 self.obj_dict[node] = _Xbar(
                     is_merge=is_merge, 
-                    is_gather=is_gather, 
+                    is_gather=is_gather,
+                    quantize = self.quantize,
+                    observe = self.observe,
                     **kwargs
                 )
 
@@ -312,6 +341,23 @@ class CalcuSim(nn.Module):
     def _arrage_output(self, y: List[Tuple]) -> torch.Tensor:
         y.sort(key=lambda x : x[0])
         return torch.cat([v[1] for v in y], dim=1)
+
+    def to(self, device: torch.device) -> None:
+        '''
+        This method is implemented particularly to support cuda acceleration.
+        For example, to enable cuda acceleration, use:
+        >>> model = CalcuSim(*args, **kwargs)
+        >>> device = torch.device('cuda')
+        >>> model.to(device)
+        to disable cuda acceleration, use:
+        >>> device = torch.device('cpu')
+        >>> model.to(device)
+        cuda is default to be disabled when the CalcuSim obejct is initialized.
+        '''
+        self.host_task.to(device)
+        for node in self.obj_dict.keys():
+            if self.ctg.is_xbar(node):
+                self.obj_dict[node].to(device)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         assert isinstance(x, torch.Tensor), f"input should be torch.Tensor, but got {type(x)}"
@@ -332,10 +378,12 @@ class CalcuSim(nn.Module):
                 result = self.obj_dict[node].forward()
 
                 # collect intermediate results
-                res = dict()
-                for name in OBSERVE_VARS:
-                    res[name] = self.obj_dict[node].__dict__[name]
-                self.res_dict[node] = res
+                # execute only when observing is enabled
+                if self.observe:
+                    res = dict()
+                    for name in OBSERVE_VARS:
+                        res[name] = self.obj_dict[node].__dict__[name]
+                    self.res_dict[node] = res
 
                 # xbar may have multiple successors typed "comm"
                 # it may be any one of cast, merge, and gather
@@ -368,7 +416,7 @@ class CalcuSim(nn.Module):
         host_output = self.host_task(device_output)
         print('Finished Host Task')
         print('Finished CalcuSim')
-        return device_output, host_output
+        return host_output
     
     def save_results(self, file_name: str = 'results'):
         save_dir = os.path.join(self.root_dir, 'mapsave', self.mapname, 'calcusim')

@@ -1,31 +1,38 @@
 import torch
 import torch.nn.functional as F
 import torch.nn as nn
+from typing import Generator
 
-# a = torch.Tensor([1,2,3,4,5])
+class A(nn.Module):
 
-# b = [torch.ones(3,3)*a[i] for i in range(a.shape[0])]
-# b = torch.stack(b)
-# b = b.expand(1,-1,-1,-1)
-# print(b.shape)
+    def __init__(self) -> None:
+        super().__init__()
+        self.b = nn.Conv2d(32,32,[3,3])
+        self.c = nn.Conv2d(32,32,[3,3])
+        self.dict = {}
+        self.dict['d'] = nn.Conv2d(32,32,[3,3])
+        self.dict['e'] = nn.Conv2d(32,32,[3,3])
+
+    def children(self) -> Generator:
+        yield from iter([self.b, self.c])
+        yield from self.dict.values()
+
+device = torch.device('cuda')
 
 
-a = torch.tensor([2,4,6,8])
-b = torch.tensor([[[[1,1,1],
-                  [1,1,1],
-                  [1,1,1]],
-                 [[1,1,1],
-                  [1,1,1],
-                  [1,1,1]],
-                 [[1,1,1],
-                  [1,1,1],
-                  [1,1,1]],
-                 [[1,1,1],
-                  [1,1,1],
-                  [1,1,1]]]])
+class Gemm(nn.Module):
+    
+    def __init__(self, weight: torch.Tensor) -> None:
+        super().__init__()
+        self.weight = torch.tensor(weight)
+    
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        return F.linear(x, self.weight)
+    
 
-a = a.view(1,-1,1,1)
-c = a * b
-print(a.shape)
-print(b.shape)
-print(c)
+gemm = torch.nn.Linear(10,20)
+
+print(gemm.weight.device)
+gemm.to(device)
+
+print(gemm.weight.device)
