@@ -10,7 +10,7 @@ from maptools import CTG, OperatorGraph
 from maptools.calcusim.utils import *
 from maptools.host import HostTask
 from maptools import DeviceParams
-from maptools.core import QuantConfig
+from maptools.core import QuantConfig, ROOT_DIR
 from functools import wraps, cached_property
 
 __all__ = ['CalcuSim']
@@ -47,7 +47,7 @@ class _Xbar(object):
         self.is_gather: bool = False
 
         # whether to observe data while running
-        # enabling this variable whill slow down the operation
+        # enabling this variable will slow down the execution
         self.observe: bool = False 
 
         # for quantization
@@ -163,7 +163,6 @@ class _Xbar(object):
             self.merge_in = data
         elif pred_type == 'Gather':
             self.gather_in = data
-        if not self.quantize: return 
 
     @record_observe_vars
     def forward(self) -> torch.Tensor:
@@ -282,9 +281,6 @@ class CalcuSim(nn.Module):
             from `OnnxConverter.param_dict`
 
         kwargs : Dict
-            root_dir : str = os.environ.get('NVCIM_HOME')
-                The root directory of the project.
-
             mapname : str = 'newmap'
                 Map name
 
@@ -293,13 +289,11 @@ class CalcuSim(nn.Module):
         self.res_dict : Dict[Union[str, Tuple], Dict[str, Optional[torch.Tensor]]]
             Stores the intermediate results of each xbar
             A dictionary with logical xbar as keys and result dictionary as values
-            Where the result dictionary = 
-            {'cast_in': tensor, 'merge_in': tensor, 'gather_in': tensor, 'data_out': tensor}
+            Where the result dictionary has keys in `OBSERVE_VARS`
         '''
         super().__init__()
         self.ctg = ctg
         self.params = params
-        self.root_dir = os.environ.get('NVCIM_HOME')
         self.mapname: str = 'newmap'
         self.quantize: bool = False
         self.observe: bool = False
@@ -419,7 +413,7 @@ class CalcuSim(nn.Module):
         return host_output
     
     def save_results(self, file_name: str = 'results'):
-        save_dir = os.path.join(self.root_dir, 'mapsave', self.mapname, 'calcusim')
+        save_dir = os.path.join(ROOT_DIR, 'mapsave', self.mapname, 'calcusim')
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
         file_dir = os.path.join(save_dir, file_name+'.pkl')

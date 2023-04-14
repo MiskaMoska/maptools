@@ -8,7 +8,7 @@ from graphviz import Digraph as GDG
 from typing import Any, List, Dict, Tuple, Optional, Generator
 from maptools.maptype import OperatorConfig
 from functools import cached_property
-from maptools.core.proto import QuantConfig
+from maptools.core import QuantConfig, NNModelArchs
 from copy import deepcopy 
 
 __all__ = ['OperatorGraph']
@@ -19,15 +19,13 @@ class OperatorGraph(object):
         self, 
         graph: nx.MultiDiGraph, 
         dicts: Dict[str, OperatorConfig], 
-        arch: str
+        arch: NNModelArchs,
+        quantize: bool
         ) -> None:
-        '''
-        Operater graph for graph division, fusion, and optimization
-        '''
         self.graph = deepcopy(graph)
         self.dicts = deepcopy(dicts)
         self.arch = arch
-        self.quantize = False
+        self.quantize = quantize
 
     @property
     def trunk(self) -> List[str]:
@@ -55,7 +53,7 @@ class OperatorGraph(object):
         nodes = list(self.nodes)
         head_node, tail_node = nodes[0], nodes[-1]
         head_config, tail_config = self.config(head_node), self.config(tail_node)
-        
+
         if self.quantize:
             head_quant_config = head_config['conv_quant_config']
             tail_name = 'conv_'
@@ -73,7 +71,7 @@ class OperatorGraph(object):
         return self.dicts[node]
 
     def pred(self, node: str) -> str:
-        # Get node's only predecessor
+        # Get node's unique predecessor
         preds = list(self.graph.predecessors(node))
         assert len(preds) == 1, "Multi predecessors of activation node"
         return preds[0]
@@ -101,7 +99,7 @@ class OperatorGraph(object):
                 break
         self.graph.remove_nodes_from(_to_rmv)
 
-    def dispatch_graph(self, op_type: str) -> Tuple:
+    def dispatch_graph(self, op_type: str) -> Tuple['OperatorGraph', 'OperatorGraph']:
         '''
         Dispatch the operator graph into host graph and device graph
         The division line is the first `op_type` typed operation from behind
@@ -120,10 +118,10 @@ class OperatorGraph(object):
                 assert self.graph.in_degree(n) == 1 and self.graph.out_degree(n) == 1, (
                     f"the division operation '{op_type}' has multiple predeccessors or successors")
                 host_pure_graph = self.graph.subgraph(host_nodes)
-                host_graph = OperatorGraph(host_pure_graph, host_dicts, None)
+                host_graph = OperatorGraph(host_pure_graph, host_dicts, self.arch, self.quantize)
                 device_pure_graph = deepcopy(self.graph)
                 device_pure_graph.remove_nodes_from(host_nodes)
-                device_graph = OperatorGraph(device_pure_graph,device_dicts, None)
+                device_graph = OperatorGraph(device_pure_graph, device_dicts, self.arch, self.quantize)
                 return host_graph, device_graph
         assert True, f"error when dispatching: the origin graph has no operation node typed '{op_type}'"
 
@@ -159,7 +157,7 @@ class OperatorGraph(object):
         for n in self.graph.nodes:
             if self.op_type(n) in ['MaxPool','AveragePool']: # current node is pool
                 pred_type = self.op_type(self.pred(n))
-                if self.arch in ['resnet']:
+                if self.arch in {NNModelArchs.RESNET}:
                     assert pred_type in ['Conv','Conv-Act'], \
                         f"the predecessor of an window pool node must conrtains Conv rather than {pred_type}"
                 if pred_type not in ['Conv','Conv-Act']: # for non-resnet archs

@@ -1,6 +1,7 @@
 import os
 import pickle
 from matplotlib import pyplot as plt
+from maptools.core import ROOT_DIR
 
 __all__ = ['plot_tokens']
 
@@ -19,8 +20,7 @@ def plot_tokens(mapname: str, start: int = 0, end: int = 1e6) -> None:
     end : int = 0
         ending iteration index.
     '''
-    root_dir = os.environ.get('NVCIM_HOME')
-    file_dir = os.path.join(root_dir, 'mapsave', mapname, 'toksim', 'token.pkl')
+    file_dir = os.path.join(ROOT_DIR, 'mapsave', mapname, 'toksim', 'token.pkl')
     assert os.path.exists(file_dir), f"No such file: {file_dir}"
     with open(file_dir, 'rb') as f:
         info_dict = pickle.load(f)

@@ -3,6 +3,7 @@ import pickle
 import networkx as nx
 from typing import Tuple, List, Any, Dict
 from maptools.hardware.fc_plan import fc_plan
+from maptools.core import ROOT_DIR
 
 __all__ = ['NocConfig']
 
@@ -39,9 +40,6 @@ class NocConfig(object):
                                 'path' : List[Tuple[Tuple]], 'load_ratio' : float, ....}
         
         kwargs : Dict
-            root_dir : str = os.environ.get('NVCIM_HOME')
-                The root directory of the project.
-
             mapname : str = 'newmap'
                 Map name
 
@@ -68,7 +66,6 @@ class NocConfig(object):
         self.merge_paths = merge_paths
         self.gather_paths = gather_paths
         self._assertion()
-        self.root_dir = os.environ.get('NVCIM_HOME')
         self.mapname = 'newmap'
         self.__dict__.update(kwargs)
 
@@ -195,7 +192,7 @@ class NocConfig(object):
         '''
         save the configuration results as pkl sequence
         '''
-        save_dir = os.path.join(self.root_dir, 'mapsave', self.mapname)
+        save_dir = os.path.join(ROOT_DIR, 'mapsave', self.mapname)
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
         file_dir = os.path.join(save_dir, file_name+'.pkl')

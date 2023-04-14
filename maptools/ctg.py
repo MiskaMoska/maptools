@@ -10,6 +10,7 @@ from typing import List, Dict, Tuple, Any, Generator, Optional
 from maptools.operator_graph import *
 from maptools.utils import *
 from maptools.maptype import XbarConfig
+from maptools.core import NNModelArchs, ROOT_DIR
 
 __all__ = ['CTG']
 
@@ -56,12 +57,8 @@ class CTG(object):
             >>> config_info = self.map_dict[key]
 
         kwargs : Dict
-            arch : str = 'resnet'
+            arch : NNModelArchs = NNModelArchs.RESNET
                 The architecture of the model (or backbone).
-                The arch must be one of OnnxConverter.valid_archs.
-
-            root_dir : str = os.environ.get('NVCIM_HOME')
-                The root directory of the project.
 
             mapname : str = 'newmap'
                 Map name
@@ -70,8 +67,7 @@ class CTG(object):
         self.map_list = map_list
         self.dicts = map_dict
 
-        self.arch = 'resnet'
-        self.root_dir = os.environ.get('NVCIM_HOME')
+        self.arch = NNModelArchs.RESNET
         self.mapname = 'newmap'
         self.quantize = device_graph.quantize
         self.__dict__.update(kwargs)
@@ -82,7 +78,7 @@ class CTG(object):
         self.gather_comms: List[str] = []
 
         # build ctg
-        if self.arch == 'resnet':
+        if self.arch == NNModelArchs.RESNET:
             self._build_ctg_resnet(device_graph)
 
         # complete attributes
@@ -338,7 +334,7 @@ class CTG(object):
                 self.update_dict(n, {'load': load, 'load_ratio': load / max_load})
 
     def plot_ctg(self, match_dict: Optional[Dict] = None) -> None:
-        save_dir = os.path.join(self.root_dir, 'mapsave', self.mapname, 'ctg')
+        save_dir = os.path.join(ROOT_DIR, 'mapsave', self.mapname, 'ctg')
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
 

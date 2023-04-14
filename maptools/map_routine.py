@@ -7,6 +7,7 @@ from maptools.toksim import *
 from maptools.hardware import *
 from maptools import DeviceParams
 from maptools.utils import read_quantparams
+from maptools.core import NNModelArchs, ROOT_DIR
 
 __all__ = ['MapRoutine']
 
@@ -14,10 +15,9 @@ class MapRoutine(object):
 
     def __init__(self, **kwargs: Any) -> None:
         # global defination
-        self.root_dir = os.environ.get('NVCIM_HOME')
-        self.model_dir = os.path.join(self.root_dir, 'onnx_models', 'simp-resnet18.onnx')
+        self.model_dir = os.path.join(ROOT_DIR, 'onnx_models', 'simp-resnet18.onnx')
         self.mapname = 'newmap'
-        self.arch = 'resnet'
+        self.arch = NNModelArchs.RESNET
 
         # hardware configuration
         self.xbar_size: Tuple[int, int] = (256, 256*5)
@@ -48,7 +48,7 @@ class MapRoutine(object):
         self.save_mapinfo: bool = True
         self.save_cfginfo: bool = False
 
-        config_keys = ['root_dir', 'mapname', 'arch', 'quantize']
+        config_keys = ['mapname', 'arch', 'quantize']
         self.config = {k: kwargs[k] for k in config_keys if k in kwargs}
         self.__dict__.update(kwargs)
 

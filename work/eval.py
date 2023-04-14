@@ -15,8 +15,8 @@ K = 3
 MAPNAME = 'resnet18'
 ONNXDIR = 'onnx_models/simp-resnet18.onnx'
 QUANTIZE = True
-DEVICE = 'cuda'
-BATCHSIZE = 8
+DEVICE = 'cpu'
+BATCHSIZE = 16
 
 ########################## CalcuSim Model Begin############################################
 model = onnx.load(ONNXDIR)

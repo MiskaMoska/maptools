@@ -72,11 +72,6 @@ def save_quantization(
 ) -> None:
     '''
     Save quantization configuration and quantized parameters
-
-    Parameters
-    ----------
-    graph : BaseGraph
-        graph generated from quantizer
     '''
     config_dict = {}
     params_dict = {}
@@ -111,9 +106,6 @@ def save_quantization(
                         weight_config
                     )
                     params_dict[op.name + '_conv_bias'] = bias_tensor.cpu().numpy()
-
-                    # print("bias tensor dtype:", bias_tensor.dtype)
-                    # print("max:", torch.max(bias_tensor))
             
             elif op._type == 'Add': ...
             elif op._type == 'Relu': ...

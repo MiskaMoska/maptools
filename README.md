@@ -1,4 +1,4 @@
-# NVCIM
+# NVCIM-COMM
 
 ## Set Up Environments
 
@@ -50,3 +50,12 @@ Then, install `graphviz` on the client side.
 ```powershell
 python setup.py install
 ```
+
+## Dependent Tools
+
+### Graphviz
+
+### onnx-simplifier
+
+Make sure to use the stable version 0.4.17
+

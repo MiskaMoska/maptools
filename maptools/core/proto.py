@@ -1,5 +1,9 @@
+from enum import Enum
 
-__all__ = ['QuantConfig']
+__all__ = [
+    'QuantConfig',
+    'NNModelArchs'
+]
 
 class QuantConfig(object):
 
@@ -7,7 +11,15 @@ class QuantConfig(object):
         self.__dict__.update(kwargs)
 
     def __str__(self) -> str:
-        ret = '/ QuantConfig Object /\n'
+        ret = '[ QuantConfig Object ]\n'
         for k, v in self.__dict__.items():
             ret += '%-20s%s\n' % (k, v)
         return ret + '\n'
+
+
+class NNModelArchs(Enum):
+    VGG             = 0
+    RESNET          = 1
+    GOOGLENET       = 2
+    YOLO_V3         = 3
+

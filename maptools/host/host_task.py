@@ -17,14 +17,6 @@ class HostTask(nn.Module):
     def _construct_operators(self) -> None:
         for n in self.host_graph.nodes:
             self._modules[n] = HostOperator(self.host_graph.config(n))
-    
-    ## The following codes are dangerous, not recommended
-    # def children(self) -> Iterator[nn.Module]:
-    #     '''
-    #     To support recursive children configuration
-    #     This method is used to support cuda acceleration
-    #     '''
-    #     yield from self.operators.values()
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         for n in self.host_graph.nodes:

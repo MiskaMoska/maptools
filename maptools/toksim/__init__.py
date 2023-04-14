@@ -1,2 +1,2 @@
-from maptools.toksim.toksim import *
-from maptools.toksim.utils import *
+from .toksim import *
+from .utils import *

@@ -18,18 +18,18 @@ routine = MapRoutine(
     calcusim=True,
     save_results=True,
     save_cfginfo=True,
-    show_ctg=False,
-    show_origin_graph=False,
+    show_ctg=True,
+    show_origin_graph=True,
     xbar_size = (256, 256*5),
     noc_size=(5, 10),
     model_dir=test,
     show_cast_path=True,
     show_merge_path=True,
     show_gather_path=True,
-    toksim=False,
+    toksim=True,
     toksim_latency = 4,
     input=img,
-    quantize=True
+    quantize=False
 )
 
 ctg = routine.run()

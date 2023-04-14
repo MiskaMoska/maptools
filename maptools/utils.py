@@ -3,7 +3,7 @@ import pickle
 from typing import List, Tuple, Dict
 import networkx as nx
 import logging
-from maptools.consts import root_dir
+from maptools.core import ROOT_DIR
 
 __all__ = [
     'dec2bin',
@@ -58,32 +58,32 @@ def build_mesh(eager_nodes: List[Tuple[int, int]]) -> nx.Graph:
     return g
 
 def read_params(mapname: str) -> Dict:
-    file_dir = os.path.join(root_dir, 'mapsave', mapname, 'params.pkl')
+    file_dir = os.path.join(ROOT_DIR, 'mapsave', mapname, 'params.pkl')
     with open(file_dir, 'rb') as f:
         params = pickle.load(f)
     return params
 
 def read_quantparams(mapname: str) -> Dict:
-    file_dir = os.path.join(root_dir, 'mapsave', mapname, 'quantparams.pkl')
+    file_dir = os.path.join(ROOT_DIR, 'mapsave', mapname, 'quantparams.pkl')
     with open(file_dir, 'rb') as f:
         params = pickle.load(f)
     return params
 
 def read_mapinfo(mapname: str) -> Dict:
-    file_dir = os.path.join(root_dir, 'mapsave', mapname, 'mapinfo.pkl')
+    file_dir = os.path.join(ROOT_DIR, 'mapsave', mapname, 'mapinfo.pkl')
     with open(file_dir, 'rb') as f:
         mapinfo = pickle.load(f)
     return mapinfo
 
 def read_cfginfo(mapname: str) -> Dict:
-    file_dir = os.path.join(root_dir, 'mapsave', mapname, 'cfginfo.pkl')
+    file_dir = os.path.join(ROOT_DIR, 'mapsave', mapname, 'cfginfo.pkl')
     with open(file_dir, 'rb') as f:
         cfginfo = pickle.load(f)
     return cfginfo
 
 def read_results(mapname: str, quantize: bool = False) -> Dict:
     file_name = 'quantres.pkl' if quantize else 'res.pkl'
-    file_dir = os.path.join(root_dir, 'mapsave', mapname, 'calcusim', file_name)
+    file_dir = os.path.join(ROOT_DIR, 'mapsave', mapname, 'calcusim', file_name)
     with open(file_dir, 'rb') as f:
         results = pickle.load(f)
     return results

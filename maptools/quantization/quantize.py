@@ -6,6 +6,7 @@ from ppq.api import dispatch_graph, export_ppq_graph, load_onnx_graph, quantize_
 from ppq.quantization.analyse.graphwise import graphwise_error_analyse
 from ppq.executor.torch import TorchExecutor
 from maptools.quantization.saving import save_quantization
+from maptools.core import ROOT_DIR
 
 __all__ = ["quantize"]
 
@@ -73,8 +74,7 @@ def quantize(
     )
 
     # save quantized onnx model and quantization information
-    root_dir  = os.environ.get('NVCIM_HOME')
-    quant_save_dir = os.path.join(root_dir, 'mapsave', mapname)
+    quant_save_dir = os.path.join(ROOT_DIR, 'mapsave', mapname)
 
     if not os.path.exists(quant_save_dir):
         os.makedirs(quant_save_dir)

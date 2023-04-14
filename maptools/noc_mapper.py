@@ -11,6 +11,7 @@ from functools import cached_property
 from maptools.xbar_mapper import *
 from maptools.ctg import *
 from maptools.utils import *
+from maptools.core import ROOT_DIR
 from copy import deepcopy
 
 __all__ = ['NocMapper']
@@ -33,9 +34,6 @@ class NocMapper(object):
             xbar array height
 
         kwargs : Dict
-            root_dir : str = os.environ.get('NVCIM_HOME')
-                The root directory of the project.
-        
             cast_method : bool = 'dyxy'
                 'dyxy'      : DyXY-routing-based algorithm to run cast routing path plan, random.
                 'steiner'   : minimum steiner-tree-based algorithm to run cast routing path plan, deterministic.
@@ -59,7 +57,6 @@ class NocMapper(object):
         self.ctg = ctg
         self.w = w
         self.h = h
-        self.root_dir = os.environ.get('NVCIM_HOME')
         self.cast_method = 'dyxy' # steiner tree is harmful
         self.mapname = 'newmap'
         self.__dict__.update(kwargs)
@@ -375,7 +372,7 @@ class NocMapper(object):
         '''
         save the mapping results as pkl sequence
         '''
-        save_dir = os.path.join(self.root_dir, 'mapsave', self.mapname)
+        save_dir = os.path.join(ROOT_DIR, 'mapsave', self.mapname)
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
         file_dir = os.path.join(save_dir, file_name+'.pkl')

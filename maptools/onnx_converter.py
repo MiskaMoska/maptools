@@ -13,39 +13,36 @@ import onnx.numpy_helper as onh
 import numpy as np
 import networkx as nx
 from typing import Any, List, Dict, Tuple, Optional, Generator
-from graphviz import Digraph
 from copy import deepcopy 
 from maptools.quantization.interface import load_quant_to_graph
 from maptools.operator_graph import *
 from maptools.maptype import OperatorConfig
+from maptools.core import VALID_OPS, MERGE_OPS, ROOT_DIR, NNModelArchs 
+from maptools.maptype import DeviceParams
 
 __all__ = ['OnnxConverter']
 
 class OnnxConverter(object):
 
-    valid_ops = ['Conv','Mul','Add','Relu','PRelu','MaxPool','AveragePool','GlobalAveragePool','HardSigmoid','Flatten','Gemm','Concat','Softmax']
-    valid_archs = ['vgg','resnet','googlenet','squeezenet']
-    merge_ops = ['Mul','Add','Concat']
-
     def __init__(self, model: onnx.ModelProto, **kwargs: Any) -> None:
         '''
         Convert Onnx to NVCIM intermediate representation which will be fed to TileMapper and NocMapper.
         About supported op_type:
-            The supported onnx op_types are listed in OnnxConverter.valid_ops. Note that:
+            The supported onnx op_types are listed in `VALID_OPS`. Note that:
             1. Sigmoid is not supported cause it is not hardware-friendly.
             2. Reshape is not supported. If you want to transform a [1, N, 1, 1] tensor to [1, N], always use Flatten instead of Reshape.
             3. Seperate Pad is not supported. Please fuse pad to other operations like Conv or Pool.
             4. Dropout is not supported.
         
         About the supported archs:
-            The supported archs are listed in OnnxConverter.valid_archs. Note that:
+            The supported archs are listed in `NNModelArchs`. Note that:
             1. ResNet must have a GlobalAveragePool layer before the linear layer, 
                ResNet must have only 2 branches to merge
 
         Examples
         -------------
         >>> model = onnx.load("googlenet.onnx")
-        >>> oc = OnnxConverter(model,arch='googlenet)
+        >>> oc = OnnxConverter(model, arch=NNModelArchs.GOOGLENET)
         >>> oc.run_conversion()
 
         The conversion results are located in `OnnxConverter.device_graph` and `OnnxConverter.host_graph`.
@@ -61,12 +58,8 @@ class OnnxConverter(object):
             It's better to preview the model structure using netron before running OnnxConverter.
 
         kwargs : Dict
-            arch : str = 'resnet'
+            arch : NNModelArchs = NNModelArchs.RESNET
                 The architecture of the model (or backbone).
-                The arch must be one of OnnxConverter.valid_archs.
-
-            root_dir : str = os.environ.get('NVCIM_HOME')
-                The root directory of the project.
 
             mapname : str = 'newmap'
                 Map name
@@ -80,19 +73,26 @@ class OnnxConverter(object):
             A dictionary with tensor name as keys and numpy array as values.
             Stores the parameters of the model.
         '''
-        self.model = model
-        self.arch = 'resnet'
-        self.root_dir = os.environ.get('NVCIM_HOME')
+        self._model = model
+        self.arch = NNModelArchs.RESNET
         self.mapname = 'newmap'
-        self.quantize = True
+        self.quantize = False
         self.__dict__.update(kwargs)
-        self.param_dict = dict() 
-        assert self.arch in OnnxConverter.valid_archs,\
-                    f"unsupported model arch: {self.arch}"
+        assert isinstance(self.arch, NNModelArchs), f"unsupported model arch: {self.arch}"
+
+        self._raw_graph: nx.MultiDiGraph = nx.MultiDiGraph()
+        self._raw_dicts: Dict = dict() 
+        self._operator_nodes: List[str] = []
+        self._variable_nodes: List[str] = []
+        self.param_dict: DeviceParams = dict()
+
+        self.origin_graph: OperatorGraph
+        self.host_graph: OperatorGraph
+        self.device_graph: OperatorGraph
 
     @staticmethod
     def _is_merge_node(node: onnx.NodeProto) -> bool:
-        return True if node.op_type in OnnxConverter.merge_ops else False
+        return True if node.op_type in MERGE_OPS else False
 
     @staticmethod
     def _get_node_attr(node: onnx.NodeProto, name: str) -> Optional[onnx.AttributeProto]:
@@ -126,23 +126,23 @@ class OnnxConverter(object):
         return True if type in ['Relu','PRelu','HardSigmoid'] else False
 
     def _get_tensor(self, name: str) -> onnx.TensorProto:
-        for tensor in self.model.graph.initializer:
+        for tensor in self._model.graph.initializer:
             if tensor.name == name:
                 return tensor
         print(f"cannot find tensor named {name}")
         sys.exit()
 
     def _verify_op_type(self, node: onnx.NodeProto) -> None:
-        assert node.op_type in self.valid_ops, f"unsupported op type: {node.op_type}"
-        if node.op_type in ['Concat, Flatten']:
-            assert self._get_node_attr(node,'axis') == 1, f"axis must be 1 at op type: {node.op_type}" 
+        assert node.op_type in VALID_OPS, f"unsupported op type: {node.op_type}"
+        if node.op_type in {'Concat, Flatten'}:
+            assert self._get_node_attr(node,'axis') == 1, f"axis must be 1 for op_type: {node.op_type}" 
 
     def _get_io_size(self, node: onnx.NodeProto) -> Tuple[List[int], List[int]]:
         # get input and output size
         name = node.input[0]
-        i_dims = self._get_data_dims(name,self.model.graph)
+        i_dims = self._get_data_dims(name,self._model.graph)
         name = node.output[0]
-        o_dims = self._get_data_dims(name,self.model.graph)
+        o_dims = self._get_data_dims(name,self._model.graph)
         return list(i_dims[-2:]), list(o_dims[-2:])
 
     def _complete_conv_config(self, node: onnx.NodeProto, d: Dict) -> None:
@@ -151,11 +151,10 @@ class OnnxConverter(object):
         d['conv_output_size'] = size_o
         for at in node.attribute:
             if at.name == 'dilations':
-                assert list(at.ints) == [1, 1],\
-                    f"conv_dilations must be [1, 1], but got {at.ints}"
+                assert list(at.ints) == [1, 1], (
+                    f"conv_dilations must be [1, 1], but got {at.ints}")
             elif at.name == 'group':
-                assert at.i == 1,\
-                    f"conv_group must be 1, but got {at.i}"
+                assert at.i == 1, f"conv_group must be 1, but got {at.i}"
             elif at.name == 'kernel_shape':
                 d['conv_kernel_size'] = list(at.ints)
             elif at.name == 'pads':
@@ -227,50 +226,62 @@ class OnnxConverter(object):
 
     def _remove_data_nodes(self) -> None:
         '''
-        Remove data nodes in raw bipartite graph.
-        features:
-        1. opt nodes has at least one (>=1) inputs and single output
-        2. data nodes has single input and at least one (>=1) outputs
+        This constructed raw graph is naturally a bipartite graph
+        which contains both operator nodes and variable nodes.
+        This method simplifies the raw graph by removes variable nodes in it.
+
+        The implementation of this method follows two features in the raw graph:
+        1. Operator nodes have at least one inputs and a single output.
+        2. Variable nodes have single input and at least one outputs.
         '''
-        for n in self.data_nodes:
-            inputs = list(self.raw_graph.predecessors(n))
-            outputs = list(self.raw_graph.successors(n))
-            self.raw_graph.remove_node(n)
+        self._variable_nodes = list(set(self._variable_nodes))
+        for n in self._variable_nodes:
+            inputs = list(self._raw_graph.predecessors(n))
+            outputs = list(self._raw_graph.successors(n))
+            self._raw_graph.remove_node(n)
             if len(inputs) > 0 and len(outputs) > 0: # not input data nor output data
                 assert len(inputs) == 1, f"error: data node {n} has multiple inputs" # feature 2
                 for output in outputs:
-                    self.raw_graph.add_edge(inputs[0],output)
+                    self._raw_graph.add_edge(inputs[0],output)
 
-    def construct_raw_graph(self) -> None:
+    def _insert_quant_info(self) -> None:
         '''
-        Construct raw compute graph where each node is an onnx opt
+        Insert quantization information to original operation graph
+        The device graph is constructed from the original graph,
+        so the quantization information will be updated to the device graph
         '''
-        self.raw_graph = nx.MultiDiGraph() # bipartite graph
-        self.compute_nodes = []
-        self.data_nodes = []
-        self.raw_dicts = dict() # key: name, value: info dict
+        quantinfo_path = os.path.join(ROOT_DIR, 'mapsave', self.mapname, 'quantinfo.pkl')
+        load_quant_to_graph(quantinfo_path, self.origin_graph)
 
-        for n in self.model.graph.node:
+    def construct_origin_graph(self) -> None:
+        for n in self._model.graph.node:
             now_node = n.name
-            self.compute_nodes.append(now_node)
+            self._operator_nodes.append(now_node)
             self._verify_op_type(n) # verify if the op type is supported
 
             if self._is_merge_node(n): # multi inputs
                 for pred_node in n.input:
-                    self.data_nodes.append(pred_node+'_d')
-                    self.raw_graph.add_edge(pred_node+'_d',now_node)
+                    self._variable_nodes.append(pred_node+'_d')
+                    self._raw_graph.add_edge(pred_node+'_d',now_node)
     
             else: # only one input
-                self.data_nodes.append(n.input[0]+'_d')
-                self.raw_graph.add_edge(n.input[0]+'_d', now_node)
+                self._variable_nodes.append(n.input[0]+'_d')
+                self._raw_graph.add_edge(n.input[0]+'_d', now_node)
 
             succ_node = n.output[0] # there is always one output
-            self.data_nodes.append(succ_node+'_d')
-            self.raw_graph.add_edge(now_node, succ_node+'_d')
-            self.raw_dicts[now_node] = self._get_raw_config(n)
+            self._variable_nodes.append(succ_node+'_d')
+            self._raw_graph.add_edge(now_node, succ_node+'_d')
+            self._raw_dicts[now_node] = self._get_raw_config(n)
 
-        self.data_nodes = list(set(self.data_nodes))
         self._remove_data_nodes()
+        self.origin_graph = OperatorGraph(
+            self._raw_graph, 
+            self._raw_dicts, 
+            self.arch,
+            self.quantize
+        )
+        if self.quantize:
+            self._insert_quant_info()
 
     def _construct_for_resnet(self, op_graph: OperatorGraph) -> None:
         op_graph.fuse_act() 
@@ -284,42 +295,24 @@ class OnnxConverter(object):
         op_graph.fuse_pool()
         op_graph.regu_pool()
 
-    def _insert_quant_info(self) -> None:
-        '''
-        Insert quantization information to original operation graph
-        The device graph is constructed from the original graph,
-        so the quantization information will be updated to the device graph
-        '''
-        quantinfo_path = os.path.join(self.root_dir, 'mapsave', self.mapname, 'quantinfo.pkl')
-        load_quant_to_graph(quantinfo_path, self.origin_graph)
-
-    def construct_op_graph(self, truncate_point: str = 'GlobalAveragePool') -> None:
-        '''
-        Construct opt compute graph where each node is a nvcim opt
-        
-        Parameters
-        ----------
-        truncate_point : str
-            The dividing op_type for graph dispatching.
-            The divide line between host graph and device graph.
-        '''
-        self.origin_graph = OperatorGraph(self.raw_graph, self.raw_dicts, self.arch) # the original operator graph
-        if self.quantize:
-            self._insert_quant_info()
+    def construct_host_graph(self, truncate_point: str = 'GlobalAveragePool') -> None:
         self.host_graph, self.device_graph = self.origin_graph.dispatch_graph(truncate_point)
+
+    def construct_device_graph(self) -> None:
         self.device_graph.quantize = self.quantize
-        if self.arch == 'resnet':
+        if self.arch == NNModelArchs.RESNET:
             self._construct_for_resnet(self.device_graph)
-        elif self.arch == 'googlenet':
+        elif self.arch == NNModelArchs.GOOGLENET:
             self._construct_for_googlenet(self.device_graph)
         self.origin_graph._check_size()
 
     def run_conversion(self) -> None:
-        self.construct_raw_graph()
-        self.construct_op_graph()
+        self.construct_origin_graph()
+        self.construct_host_graph()
+        self.construct_device_graph()
 
     def save_params(self) -> None:
-        save_dir = os.path.join(self.root_dir, 'mapsave', self.mapname)
+        save_dir = os.path.join(ROOT_DIR, 'mapsave', self.mapname)
         file_dir = os.path.join(save_dir, 'params.pkl')
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
@@ -336,10 +329,10 @@ class OnnxConverter(object):
                     print(k1)
 
     def print_raw_dict(self) -> None:
-        self._print_dict(self.raw_dicts)
+        self._print_dict(self._raw_dicts)
 
     def _plot_graph(self, op_graph: OperatorGraph, name: str) -> None:
-        save_dir = os.path.join(self.root_dir, 'mapsave', self.mapname, name)
+        save_dir = os.path.join(ROOT_DIR, 'mapsave', self.mapname, name)
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
         op_graph.plot_graph(save_dir)

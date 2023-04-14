@@ -1,2 +1,2 @@
-from maptools.host.host_task import *
-from maptools.host.host_operator import *
+from .host_task import *
+from .host_operator import *

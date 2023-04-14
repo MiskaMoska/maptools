@@ -9,6 +9,7 @@ import time
 import pickle
 from maptools.ctg import *
 from maptools.utils import *
+from maptools.core import ROOT_DIR
 import numpy as np
 from typing import Tuple, List, Any, Optional, Dict
 
@@ -426,9 +427,6 @@ class TokSim(object):
             when int, indicate communication latency is `latency`, `latency` must > 0
 
         kwargs : Dict
-            root_dir : str = os.environ['NVCIM_HOME']
-                The root directory of the project.
-
             mapname : str = 'newmap'
                 Map name
 
@@ -444,7 +442,6 @@ class TokSim(object):
         self.ctg = ctg
         self.slide_once = slide_once
         self.latency = latency
-        self.root_dir = os.environ['NVCIM_HOME']
         self.mapname = 'newmap'
         self.__dict__.update(kwargs)
         self.execu_dict = dict()
@@ -593,7 +590,7 @@ class TokSim(object):
         return log
 
     def save_execu(self, file_name: str = 'token'):
-        save_dir = os.path.join(self.root_dir, 'mapsave', self.mapname, 'toksim')
+        save_dir = os.path.join(ROOT_DIR, 'mapsave', self.mapname, 'toksim')
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
         

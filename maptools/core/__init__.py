@@ -1,1 +1,2 @@
-from maptools.core.proto import *
+from .proto import *
+from .common import *

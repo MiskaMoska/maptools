@@ -3,6 +3,7 @@ import networkx as nx
 from copy import deepcopy
 from matplotlib import pyplot as plt
 from typing import Dict, List, Any, Optional, Tuple
+from maptools.core import ROOT_DIR
 
 __all__ = ['MapPlotter']
 
@@ -39,9 +40,6 @@ class MapPlotter(object):
             gather paths generated from `NocMapper`
 
         kwargs : Dict
-            root_dir : str = os.environ.get('NVCIM_HOME')
-                The root directory of the project.
-        
             mapname : str = 'newmap'
                 Map name
         '''
@@ -50,7 +48,6 @@ class MapPlotter(object):
         self.cast_paths = cast_paths
         self.merge_paths = merge_paths
         self.gather_paths = gather_paths
-        self.root_dir = os.environ.get('NVCIM_HOME')
         self.mapname = 'newmap'
         self.__dict__.update(kwargs)
 
@@ -299,7 +296,7 @@ class MapPlotter(object):
         return graph, pos
 
     def _get_dir(self, file_name: str) -> str:
-        save_dir = os.path.join(self.root_dir, 'mapsave', self.mapname, 'nocpath')
+        save_dir = os.path.join(ROOT_DIR, 'mapsave', self.mapname, 'nocpath')
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
         return os.path.join(save_dir, file_name+'.png')
