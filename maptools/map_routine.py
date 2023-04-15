@@ -1,13 +1,15 @@
 import os
 import sys
 import onnx
+import torch
 from typing import Optional, List, Dict, Tuple, Any
 from maptools import *
 from maptools.toksim import *
 from maptools.hardware import *
 from maptools import DeviceParams
 from maptools.utils import read_quantparams
-from maptools.core import NNModelArchs, ROOT_DIR
+from maptools.core import NNModelArch, ROOT_DIR
+from maptools.calcusim import CalcuSim
 
 __all__ = ['MapRoutine']
 
@@ -17,14 +19,14 @@ class MapRoutine(object):
         # global defination
         self.model_dir = os.path.join(ROOT_DIR, 'onnx_models', 'simp-resnet18.onnx')
         self.mapname = 'newmap'
-        self.arch = NNModelArchs.RESNET
+        self.arch = NNModelArch.RESNET
 
         # hardware configuration
         self.xbar_size: Tuple[int, int] = (256, 256*5)
         self.noc_size: Tuple[int, int] = (5, 10)
 
         # data input    
-        self.input: Optional[Any] = None
+        self.input: Optional[torch.Tensor] = None
 
         # procedure control
         self.noc_map: bool = True
@@ -37,7 +39,7 @@ class MapRoutine(object):
 
         self.toksim: bool = False
         self.toksim_latency: Optional[int] = None 
-        self.calcusim: bool = True
+        self.calcusim: bool = False
         self.save_results: bool = False
 
         self.show_cast_path: bool = False
@@ -87,8 +89,6 @@ class MapRoutine(object):
             ctg = tsim.ctg
 
         if self.calcusim:
-            import torch
-            from maptools.calcusim import CalcuSim
             assert self.input is not None, "calcusim enabled but got input is None"
             assert isinstance(self.input, torch.Tensor), f"input must be {torch.Tensor}, but got {type(self.input)}"
             assert len(self.input.shape) == 4, f"input dimension must be 4 [N, C, H, W], but got {len(self.input.shape)}"

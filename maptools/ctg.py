@@ -10,7 +10,7 @@ from typing import List, Dict, Tuple, Any, Generator, Optional
 from maptools.operator_graph import *
 from maptools.utils import *
 from maptools.maptype import XbarConfig
-from maptools.core import NNModelArchs, ROOT_DIR
+from maptools.core import NNModelArch, ROOT_DIR
 
 __all__ = ['CTG']
 
@@ -57,7 +57,7 @@ class CTG(object):
             >>> config_info = self.map_dict[key]
 
         kwargs : Dict
-            arch : NNModelArchs = NNModelArchs.RESNET
+            arch : NNModelArch = NNModelArch.RESNET
                 The architecture of the model (or backbone).
 
             mapname : str = 'newmap'
@@ -67,7 +67,7 @@ class CTG(object):
         self.map_list = map_list
         self.dicts = map_dict
 
-        self.arch = NNModelArchs.RESNET
+        self.arch = NNModelArch.RESNET
         self.mapname = 'newmap'
         self.quantize = device_graph.quantize
         self.__dict__.update(kwargs)
@@ -78,7 +78,7 @@ class CTG(object):
         self.gather_comms: List[str] = []
 
         # build ctg
-        if self.arch == NNModelArchs.RESNET:
+        if self.arch == NNModelArch.RESNET:
             self._build_ctg_resnet(device_graph)
 
         # complete attributes

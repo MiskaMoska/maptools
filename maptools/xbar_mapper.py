@@ -8,7 +8,7 @@ from typing import List, Dict, Tuple, Any
 from maptools.operator_graph import *
 from maptools.ctg import *
 from maptools.utils import *
-from maptools.core import NNModelArchs
+from maptools.core import NNModelArch
 
 __all__ = ['XbarMapper']
 
@@ -34,7 +34,7 @@ class XbarMapper(object):
             Xbar height
 
         kwargs : Dict
-            arch : NNModelArchs = NNModelArchs.RESNET
+            arch : NNModelArch = NNModelArch.RESNET
                 model architecture
 
         Key Members
@@ -66,7 +66,7 @@ class XbarMapper(object):
         self.device_graph = device_graph
         self.w = w
         self.h = h
-        self.arch = NNModelArchs.RESNET
+        self.arch = NNModelArch.RESNET
         self.mapname = 'newmap'
         self.__dict__.update(kwargs)
         self.match_dict: Dict[str, int] = dict() 
@@ -160,7 +160,7 @@ class XbarMapper(object):
         Map the operator graph to xbars
         Note that any xbar supports all ops
         '''
-        if self.arch == NNModelArchs.RESNET:
+        if self.arch == NNModelArch.RESNET:
             self._xbar_map_resnet()
 
     @property

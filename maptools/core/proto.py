@@ -2,7 +2,7 @@ from enum import Enum
 
 __all__ = [
     'QuantConfig',
-    'NNModelArchs'
+    'NNModelArch'
 ]
 
 class QuantConfig(object):
@@ -17,7 +17,7 @@ class QuantConfig(object):
         return ret + '\n'
 
 
-class NNModelArchs(Enum):
+class NNModelArch(Enum):
     VGG             = 0
     RESNET          = 1
     GOOGLENET       = 2

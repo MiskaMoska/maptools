@@ -17,7 +17,7 @@ from copy import deepcopy
 from maptools.quantization.interface import load_quant_to_graph
 from maptools.operator_graph import *
 from maptools.maptype import OperatorConfig
-from maptools.core import VALID_OPS, MERGE_OPS, ROOT_DIR, NNModelArchs 
+from maptools.core import VALID_OPS, MERGE_OPS, ROOT_DIR, NNModelArch 
 from maptools.maptype import DeviceParams
 
 __all__ = ['OnnxConverter']
@@ -35,14 +35,14 @@ class OnnxConverter(object):
             4. Dropout is not supported.
         
         About the supported archs:
-            The supported archs are listed in `NNModelArchs`. Note that:
+            The supported archs are listed in `NNModelArch`. Note that:
             1. ResNet must have a GlobalAveragePool layer before the linear layer, 
                ResNet must have only 2 branches to merge
 
         Examples
         -------------
         >>> model = onnx.load("googlenet.onnx")
-        >>> oc = OnnxConverter(model, arch=NNModelArchs.GOOGLENET)
+        >>> oc = OnnxConverter(model, arch=NNModelArch.GOOGLENET)
         >>> oc.run_conversion()
 
         The conversion results are located in `OnnxConverter.device_graph` and `OnnxConverter.host_graph`.
@@ -58,7 +58,7 @@ class OnnxConverter(object):
             It's better to preview the model structure using netron before running OnnxConverter.
 
         kwargs : Dict
-            arch : NNModelArchs = NNModelArchs.RESNET
+            arch : NNModelArch = NNModelArch.RESNET
                 The architecture of the model (or backbone).
 
             mapname : str = 'newmap'
@@ -74,11 +74,11 @@ class OnnxConverter(object):
             Stores the parameters of the model.
         '''
         self._model = model
-        self.arch = NNModelArchs.RESNET
+        self.arch = NNModelArch.RESNET
         self.mapname = 'newmap'
         self.quantize = False
         self.__dict__.update(kwargs)
-        assert isinstance(self.arch, NNModelArchs), f"unsupported model arch: {self.arch}"
+        assert isinstance(self.arch, NNModelArch), f"unsupported model arch: {self.arch}"
 
         self._raw_graph: nx.MultiDiGraph = nx.MultiDiGraph()
         self._raw_dicts: Dict = dict() 
@@ -300,9 +300,9 @@ class OnnxConverter(object):
 
     def construct_device_graph(self) -> None:
         self.device_graph.quantize = self.quantize
-        if self.arch == NNModelArchs.RESNET:
+        if self.arch == NNModelArch.RESNET:
             self._construct_for_resnet(self.device_graph)
-        elif self.arch == NNModelArchs.GOOGLENET:
+        elif self.arch == NNModelArch.GOOGLENET:
             self._construct_for_googlenet(self.device_graph)
         self.origin_graph._check_size()
 

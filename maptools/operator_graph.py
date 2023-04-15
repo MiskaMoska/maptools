@@ -8,7 +8,7 @@ from graphviz import Digraph as GDG
 from typing import Any, List, Dict, Tuple, Optional, Generator
 from maptools.maptype import OperatorConfig
 from functools import cached_property
-from maptools.core import QuantConfig, NNModelArchs
+from maptools.core import QuantConfig, NNModelArch
 from copy import deepcopy 
 
 __all__ = ['OperatorGraph']
@@ -19,7 +19,7 @@ class OperatorGraph(object):
         self, 
         graph: nx.MultiDiGraph, 
         dicts: Dict[str, OperatorConfig], 
-        arch: NNModelArchs,
+        arch: NNModelArch,
         quantize: bool
         ) -> None:
         self.graph = deepcopy(graph)
@@ -157,7 +157,7 @@ class OperatorGraph(object):
         for n in self.graph.nodes:
             if self.op_type(n) in ['MaxPool','AveragePool']: # current node is pool
                 pred_type = self.op_type(self.pred(n))
-                if self.arch in {NNModelArchs.RESNET}:
+                if self.arch in {NNModelArch.RESNET}:
                     assert pred_type in ['Conv','Conv-Act'], \
                         f"the predecessor of an window pool node must conrtains Conv rather than {pred_type}"
                 if pred_type not in ['Conv','Conv-Act']: # for non-resnet archs
