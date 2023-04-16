@@ -73,6 +73,18 @@ class XbarMapper(object):
         self.map_list: List[np.ndarray] = []
         self.map_dict: Dict[Tuple[int, int, int, int], Dict[str, Any]] = dict() 
 
+    def _assert_first_layer(self, in_len: int, out_len: int) -> None:
+        '''
+        The first layer of the device graph must hold the weights whose size
+        is no larger than the volume of one xbar, so assertion is needed
+        '''
+        if in_len > self.h:
+            raise ValueError(
+                f"first layer input vector overflow, xbar height {self.h} but got vector length {in_len}")
+        if out_len > self.w:
+            raise ValueError(
+                f"first layer output vector overflow, xbar width {self.w} but got vector length {out_len}")
+
     def _xbar_map_resnet(self) -> None:
         '''
         In ResNet, there is no concat operation
@@ -84,11 +96,14 @@ class XbarMapper(object):
             if "Conv" not in layer['op_type']: # this layer contains no Conv
                 n_inchan = layer['input_dims'][1]
                 n_outchan = n_inchan
-                k_size = (1,1)
+                k_size = (1, 1)
             else: # this layer contains Conv
                 n_inchan = layer['conv_num_ichan']
                 n_outchan = layer['conv_num_ochan']
                 k_size = layer['conv_kernel_size']
+
+            if l == 0:
+                self._assert_first_layer(n_inchan * k_size[0] * k_size[1], n_outchan)
 
             pes_o = math.ceil(n_outchan / self.w) 
             for i in range(pes_o):

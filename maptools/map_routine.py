@@ -31,6 +31,7 @@ class MapRoutine(object):
         # procedure control
         self.noc_map: bool = True
         self.quantize: bool = True
+        self.physical: bool = True
 
         self.show_origin_graph: bool = False
         self.show_host_graph: bool = False
@@ -94,9 +95,16 @@ class MapRoutine(object):
             assert len(self.input.shape) == 4, f"input dimension must be 4 [N, C, H, W], but got {len(self.input.shape)}"
 
             params = read_quantparams(self.mapname) if self.quantize else oc.param_dict
-            csim = CalcuSim(ctg, oc.host_graph, params, observe=self.save_results, **self.config)
+            csim = CalcuSim(
+                ctg, 
+                oc.host_graph, 
+                params, 
+                observe=self.save_results, 
+                physical=self.physical, 
+                **self.config
+            )
             host_output = csim(self.input)
-            print('host_output:', host_output)
+            # print('host_output:', host_output)
             print('max:', torch.max(host_output))
             print('index:', torch.argmax(host_output))
             if self.save_results:

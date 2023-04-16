@@ -137,33 +137,6 @@ class CTG(object):
     def has_gather_in(self, node: Tuple) -> bool:
         return self.dicts[node]['gather_in']
     
-    def has_cast_out(self, node: Tuple) -> bool:
-        return self.dicts[node]['cast_out']
-    
-    def has_merge_out(self, node: Tuple) -> bool:
-        return self.dicts[node]['merge_out']
-    
-    def has_gather_out(self, node: Tuple) -> bool:
-        return self.dicts[node]['gather_out']
-    
-    def cast_pred_comm(self, node: Tuple) -> str:
-        return self.dicts[node]['cast_pred_comm']
-
-    def merge_pred_comm(self, node: Tuple) -> str:
-        return self.dicts[node]['merge_pred_comm']
-
-    def gather_pred_comm(self, node: Tuple) -> str:
-        return self.dicts[node]['gather_pred_comm']
-
-    def cast_succ_comm(self, node: Tuple) -> str:
-        return self.dicts[node]['cast_succ_comm']
-
-    def merge_succ_comm(self, node: Tuple) -> str:
-        return self.dicts[node]['merge_succ_comm']
-
-    def gather_succ_comm(self, node: Tuple) -> str:
-        return self.dicts[node]['gather_succ_comm']
-    
     def get_attr(self, node: Any, attr: str) -> Any:
         if node in self.dicts:
             if attr in self.dicts[node]:
@@ -281,66 +254,41 @@ class CTG(object):
 
     def _complete_connection_attrs(self) -> None:
         '''
-        Complete connection attributes.
-        This step is performed after building CTG rather than in-time with 
-        building CTG to achieve procedure decoupling and safety.
+        Complete connection attributes
         '''
         for xbar in self.xbar_nodes:
-            is_head, is_tail = False, False
-
             cast_in, merge_in, gather_in = False, False, False
-            cast_pred_comm, merge_pred_comm, gather_pred_comm = None, None, None
-
-            cast_out, merge_out, gather_out = False, False, False
-            cast_succ_comm, merge_succ_comm, gather_succ_comm = None, None, None
-
             for pred in self.graph.predecessors(xbar):
                 if pred in self.cast_comms:
-                    cast_in, cast_pred_comm = True, pred
-
+                    cast_in = True
                 if pred in self.merge_comms:
-                    merge_in, merge_pred_comm = True, pred
-
+                    merge_in = True
                 if pred in self.gather_comms:
-                    gather_in, gather_pred_comm = True, pred
-
+                    gather_in = True
+            cast_out, merge_out, gather_out = False, False, False
             for succ in self.graph.successors(xbar):
                 if succ in self.cast_comms:
-                    cast_out, cast_succ_comm = True, succ
-
+                    cast_out = True
                 if succ in self.merge_comms:
-                    merge_out, merge_succ_comm = True, succ
-
+                    merge_out = True
                 if succ in self.gather_comms:
-                    gather_out, gather_succ_comm = True, succ
-
+                    gather_out = True
+            is_head, is_tail = False, False
             if self.is_head_xbar(xbar):
                 is_head = True
                 cast_in = True # head xbar receives cast in but has no cast predecessors
-
             if self.is_tail_xbar(xbar):
                 is_tail = True
                 cast_out = True # tail xbar generates cast out but has no cast successors
-
             self.dicts[xbar].update({
-                'is_head': is_head,
-                'is_tail': is_tail,
-
                 'cast_in': cast_in, 
                 'merge_in': merge_in,
                 'gather_in': gather_in,
-
                 'cast_out': cast_out,
                 'merge_out': merge_out,
                 'gather_out': gather_out,
-
-                'cast_pred_comm': cast_pred_comm,
-                'merge_pred_comm': merge_pred_comm,
-                'gather_pred_comm': gather_pred_comm,
-
-                'cast_succ_comm': cast_succ_comm,
-                'merge_succ_comm': merge_succ_comm,
-                'gather_succ_comm': gather_succ_comm
+                'is_head': is_head,
+                'is_tail': is_tail
             })
 
     @property

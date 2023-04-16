@@ -1,8 +1,17 @@
-import torch
+import torchvision.transforms as transforms
+from torchvision.io import image
+import torchvision as tv
 
-a=torch.randint(low=0,high=10,size=(10,1))
-print(a)
-b=torch.clamp(a,3,9)
-print(b)
-print(b.dtype)
-torch.topk
+trans = transforms.Compose([
+    transforms.Resize([10, 10]),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225))
+])
+
+testset = tv.datasets.ImageFolder(root=r'C:\Users\wx98\Downloads\val', transform=trans)
+
+
+# img = image.read_image('work/test1.png').float()
+# img = trans(img)
+
+

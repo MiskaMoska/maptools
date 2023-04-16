@@ -1,6 +1,6 @@
 import os
 import torch
-from typing import Iterable, Tuple, Dict, List, Any
+from typing import Iterable, Tuple, Dict, List, Any, Optional
 from ppq import BaseGraph, QuantizationSettingFactory, TargetPlatform
 from ppq.api import dispatch_graph, export_ppq_graph, load_onnx_graph, quantize_onnx_model
 from ppq.quantization.analyse.graphwise import graphwise_error_analyse
@@ -16,18 +16,20 @@ def generate_calibration_dataset(
     input_shapes: Dict[str, List[int]],
     graph: BaseGraph, 
     num_of_batches: int = 32
-) -> Tuple[Iterable[dict], torch.Tensor]:
+) -> Iterable[Dict[str, torch.Tensor]]:
     dataset = []
     for i in range(num_of_batches):
         sample = {name: torch.rand(input_shapes[name]) for name in graph.inputs}
         dataset.append(sample)
-    return dataset, sample # last sample
+    return dataset
 
 def quantize(
     input_shapes: Dict[str, List[int]],
     device: str,
     onnx_path: str,
-    mapname = 'newmap'
+    mapname = 'newmap',
+    calibset: Optional[Iterable[Dict[str, torch.Tensor]]] = None,
+    calib_steps: int = 32
 ) -> None:
     def collate_fn(batch: dict) -> torch.Tensor:
         return {k: v.to(device) for k, v in batch.items()}
@@ -47,14 +49,19 @@ def quantize(
     if len(graph.outputs) != 1:
         raise ValueError('This program requires graph to have only 1 output.')
 
-    # generate calibration dataset
-    calibration_dataset, sample = generate_calibration_dataset(input_shapes, graph)
+    # get calibration dataset
+    if calibset is None:
+        print("Calibration dataset not specified, using default calibration dataset")
+        calibset = generate_calibration_dataset(input_shapes, graph)
+    else:
+        print("Using user defined calibration dataset")
+
     quantized: BaseGraph = quantize_onnx_model(
         onnx_import_file=onnx_path, 
-        calib_dataloader=calibration_dataset,
-        calib_steps=32, 
+        calib_dataloader=calibset,
+        calib_steps=calib_steps, 
         input_shape=None, 
-        inputs=collate_fn(sample),
+        inputs=collate_fn(calibset[-1]),
         setting=QSetting, 
         collate_fn=collate_fn, 
         platform=PLATFORM,
@@ -63,14 +70,14 @@ def quantize(
     )
 
     executor, reference_outputs = TorchExecutor(quantized), []
-    for sample in calibration_dataset:
+    for sample in calibset:
         reference_outputs.append(executor.forward(collate_fn(sample)))
 
     graphwise_error_analyse(
         graph=quantized, 
         running_device=device, 
         collate_fn=collate_fn, 
-        dataloader=calibration_dataset
+        dataloader=calibset
     )
 
     # save quantized onnx model and quantization information

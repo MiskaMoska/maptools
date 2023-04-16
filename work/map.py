@@ -14,12 +14,12 @@ img = get_input('work/test8.png')
 
 routine = MapRoutine(   
     mapname=mapname,
-    noc_map=True,
-    calcusim=False,
+    noc_map=False,
+    calcusim=True,
     save_results=True,
     save_cfginfo=True,
     show_ctg=True,
-    show_origin_graph=True,
+    show_origin_graph=False,
     xbar_size = (256, 256*5),
     noc_size=(5, 10),
     model_dir=test,
@@ -29,7 +29,8 @@ routine = MapRoutine(
     toksim=False,
     toksim_latency = 4,
     input=img,
-    quantize=False
+    quantize=True,
+    physical=True
 )
 
 ctg = routine.run()

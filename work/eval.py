@@ -15,10 +15,11 @@ K = 3
 MAPNAME = 'resnet18'
 ONNXDIR = 'onnx_models/simp-resnet18.onnx'
 QUANTIZE = True
-DEVICE = 'cpu'
-BATCHSIZE = 16
+DEVICE = 'cuda'
+BATCHSIZE = 32
+PHYSICAL = True
 
-########################## CalcuSim Model Begin############################################
+########################## CalcuSim Model Begin ############################################
 model = onnx.load(ONNXDIR)
 oc = OnnxConverter(model, mapname=MAPNAME, quantize=QUANTIZE)
 oc.run_conversion()
@@ -31,7 +32,7 @@ xm = XbarMapper(
 )
 xm.run_map()
 params = read_quantparams(MAPNAME) if QUANTIZE else oc.param_dict
-model = CalcuSim(xm.ctg, oc.host_graph, params, mapname=MAPNAME, quantize=QUANTIZE)
+model = CalcuSim(xm.ctg, oc.host_graph, params, mapname=MAPNAME, quantize=QUANTIZE, physical=PHYSICAL)
 ########################## CalcuSim Model End ############################################
 
 
@@ -41,12 +42,13 @@ model.eval()
 ########################## Pytorch Model End ############################################
 
 device = torch.device(DEVICE)
-model.to(device)
+if DEVICE == 'cuda':
+    model.cuda()
 
 trans = transforms.Compose([
     transforms.Resize([224, 224]),
     transforms.ToTensor(),
-    transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
+    transforms.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225))
 ])
 
 testset = tv.datasets.ImageFolder(root=r'C:\Users\wx98\Downloads\val', transform=trans)

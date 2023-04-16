@@ -28,60 +28,9 @@ OBSERVE_VARS = {
     'data_out_float'
 }
 
-def cimu_conv2d(
-    x: torch.Tensor,
-    weight: torch.Tensor,
-    bias: Optional[torch.Tensor] = None,
-    stride: Optional[List[int]] = [1, 1]
-) -> torch.Tensor:
-    x = torch.clamp(x, -128, 127)
-    x = x.type(torch.int8)
-    y = 0
-    for i in range(8):
-        _y = F.conv2d(
-            ((x >> i) & 1).float(),
-            weight,
-            stride=stride
-        )
-        print("max:%-15dmin:%-15davg_abs:%d"%(int(torch.max(_y)), int(torch.min(_y)), float(torch.mean(torch.abs(_y)))))
-        _y = torch.clamp(_y, -1024, 1023)
-        if i == 7: # sign bit
-            y += _y*(-pow(2, 7))
-        else: # non sign bit
-            y += _y*pow(2, i)
-    if bias is not None:
-        y += bias.view([1, -1, 1, 1])
-    return y
-
-
-class ConvUnit(nn.Module):
-
-    def __init__(
-        self, 
-        weight: torch.Tensor, 
-        bias: torch.Tensor, 
-        strides: List[int],
-        physical: bool = False
-    ) -> None:
-        super().__init__()
-        self.weight = weight
-        self.bias = bias
-        self.strides = strides
-        self.func = cimu_conv2d if physical else F.conv2d
-
-    def cuda(self):
-        self.weight = self.weight.cuda()
-        if self.bias is not None:
-            self.bias = self.bias.cuda()
-
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        return self.func(x, self.weight, bias=self.bias, stride=self.strides)
-
-
-class _Xbar(nn.Module):
+class _Xbar(object):
 
     def __init__(self, **kwargs: Any) -> None:
-        super().__init__()
         # for general
         self.conv_pads: Optional[List] = None
         self.conv_weight: Optional[torch.Tensor] = None
@@ -104,24 +53,14 @@ class _Xbar(nn.Module):
         # for quantization
         self.merge_node: bool = False
         self.quantize: bool = False
-        self.physical: bool = False
         self.ochan_range: Tuple[int, int] = (0, 0) 
         self._init_quant_config()
         self.__dict__.update(kwargs)
         if self.quantize: self._init_for_quantization()
         if self.observe: self._init_observe_vars()
-        self._init_conv_module()
 
         rebuild_pads(self.conv_pads)
         rebuild_pads(self.pool_pads)
-
-    def _init_conv_module(self) -> None:
-        self._conv = ConvUnit(
-            self.conv_weight, 
-            self.conv_bias, 
-            self.conv_strides, 
-            physical=self.physical
-        )
 
     def _init_quant_config(self) -> None:
         for name in ['conv', 'add', 'relu']:
@@ -143,11 +82,21 @@ class _Xbar(nn.Module):
         if self.is_act:
             assert self.relu_quant_config is not None, (
                 f"quantize enabled but got no relu_quant_config")
+            
+    def to(self, device: torch.device) -> None:
+        if device == torch.device('cpu'):
+            try:
+                self.conv_weight = self.conv_weight.cpu()
+                self.conv_bias = self.conv_bias.cpu()
+                self.cw_scale = self.cw_scale.cpu()
+            except: pass
 
-    def cuda(self) -> None:
-        self._conv.cuda()
-        if self.quantize:
-            self.cw_scale = self.cw_scale.cuda()
+        elif device == torch.device('cuda'):
+            try:
+                self.conv_weight = self.conv_weight.cuda()
+                self.conv_bias = self.conv_bias.cuda()
+                self.cw_scale = self.cw_scale.cuda()
+            except: pass
 
     @property
     def cw_scale(self) -> torch.Tensor:
@@ -190,8 +139,8 @@ class _Xbar(nn.Module):
     
     def record_observe_vars(func: Callable) -> Callable:
         @wraps(func)
-        def wrapper(self, *args, **kwargs):
-            res = func(self, *args, **kwargs)
+        def wrapper(self, *args):
+            res = func(self, *args)
             if self.quantize and self.observe:
                 self.cast_in_float = self.cast_in * self.ci_scale
                 if self.is_merge:
@@ -205,20 +154,27 @@ class _Xbar(nn.Module):
             return res
         return wrapper
 
-    def _absorb(self, *args: Tuple[torch.Tensor]) -> None:
-        self.cast_in = args[0]
-        self.merge_in = args[1]
-        self.gather_in = args[2]
+    def absorb(self, data: torch.Tensor, pred_type: str) -> None:
+        if pred_type == 'Cast':
+            self.cast_in = data
+        elif pred_type == 'Merge':
+            self.merge_in = data
+        elif pred_type == 'Gather':
+            self.gather_in = data
 
     @record_observe_vars
-    def forward(self, *args: Tuple[torch.Tensor]) -> torch.Tensor:
-        self._absorb(*args)
+    def forward(self) -> torch.Tensor:
         assert self.cast_in is not None, "cast in data got None"
         x = F.pad(
             self.cast_in, 
             self.conv_pads
         )
-        x = self._conv(x)
+        x = F.conv2d(
+            x, 
+            self.conv_weight,
+            bias = self.conv_bias,
+            stride = self.conv_strides
+        )
         
         if self.is_merge:
             assert self.merge_in is not None, "merge in data got None"
@@ -280,6 +236,33 @@ class _Xbar(nn.Module):
         return x
 
 
+class _Comm(object):
+
+    def __init__(self) -> None:
+        self.data: Optional[torch.Tensor] = None
+
+    def absorb(self, data: torch.Tensor, pred: Any) -> None:
+        self.data = data
+
+    def forward(self) -> torch.Tensor:
+        assert self.data is not None, f"data_in is None"
+        return self.data
+
+
+class _MergeComm(object):
+
+    def __init__(self, preds: List[Any]) -> None:
+        self.datapool: Dict[Any, Optional[torch.Tensor]] = {k: None for k in preds}
+
+    def absorb(self, data: torch.Tensor, pred: Any) -> None:
+        self.datapool[pred] = data
+
+    def forward(self) -> torch.Tensor:
+        for tensor in self.datapool.values():
+            assert tensor is not None, f"datapool still has None value(s)"
+        return torch.sum(torch.stack([v for v in self.datapool.values()]), dim=0)
+
+
 class CalcuSim(nn.Module):
 
     def __init__(
@@ -315,21 +298,20 @@ class CalcuSim(nn.Module):
         self.mapname: str = 'newmap'
         self.quantize: bool = False
         self.observe: bool = False
-        self.physical: bool = False
         self.__dict__.update(kwargs)
-        if self.physical and not self.quantize:
-            raise AssertionError ("to use physical CIMU, quantize must be enabled")
-        self.obj_dict: Dict[Any, Union[_Xbar, torch.Tensor]] = dict()
+        self.obj_dict: Dict = dict()
         self._build_device_task()
         self._build_host_task(host_graph)
         self.res_dict: Dict[Union[str, Tuple], Dict[str, Optional[torch.Tensor]]] = dict()
 
     def _build_device_task(self) -> None:
         for node in self.ctg.node_names:
-
             if self.ctg.is_comm(node): # is comm
-                self.obj_dict[node] = 0
-                
+                preds = list(self.ctg.preds(node))
+                if self.ctg.is_merge_comm(node): # merge comm
+                    self.obj_dict[node] = _MergeComm(preds)
+                else: # normal comm
+                    self.obj_dict[node] = _Comm()
             else: # is xbar
                 cfg = self.ctg.get_xbar_config(node)
                 kwargs = get_xbar_kwargs(cfg, self.params)
@@ -343,8 +325,7 @@ class CalcuSim(nn.Module):
                 self.obj_dict[node] = _Xbar(
                     is_merge=is_merge, 
                     is_gather=is_gather,
-                    quantize=self.quantize,
-                    physical=self.physical,
+                    quantize = self.quantize,
                     observe = self.observe,
                     **kwargs
                 )
@@ -356,28 +337,23 @@ class CalcuSim(nn.Module):
         y.sort(key=lambda x : x[0])
         return torch.cat([v[1] for v in y], dim=1)
 
-    def cuda(self) -> None:
+    def to(self, device: torch.device) -> None:
         '''
         This method is implemented particularly to support cuda acceleration.
         For example, to enable cuda acceleration, use:
         >>> model = CalcuSim(*args, **kwargs)
-        >>> model.cuda()
-        cuda acceleration is default to be disabled when the CalcuSim obejct is initialized.
+        >>> device = torch.device('cuda')
+        >>> model.to(device)
+        to disable cuda acceleration, use:
+        >>> device = torch.device('cpu')
+        >>> model.to(device)
+        cuda is default to be disabled when the CalcuSim obejct is initialized.
         '''
-        self.host_task.cuda()
+        self.host_task.to(device)
         for node in self.obj_dict.keys():
             if self.ctg.is_xbar(node):
-                self.obj_dict[node].cuda()
+                self.obj_dict[node].to(device)
 
-    def empty_data_cache(func: Callable) -> Callable:
-        @wraps(func)
-        def wrapper(self, *args, **kwargs):
-            for comm in self.ctg.comms:
-                self.obj_dict[comm] = 0
-            return func(self, *args, **kwargs)
-        return wrapper
-
-    @empty_data_cache
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         assert isinstance(x, torch.Tensor), f"input should be torch.Tensor, but got {type(x)}"
         assert len(x.shape) == 4, f"input dimension should be 4 [N, C, H, W], but got {len(x.shape)}"
@@ -391,42 +367,39 @@ class CalcuSim(nn.Module):
             x = torch.clamp(x, -128, 127)
 
         # device task
-        for node in self.ctg.xbars:
-            # get input data
-            cast_in, merge_in, gather_in = None, None, None
-            if self.ctg.is_head_xbar(node):
-                cast_in = x
-            else:
-                if self.ctg.has_cast_in(node):
-                    cast_in = self.obj_dict[self.ctg.cast_pred_comm(node)]
-                if self.ctg.has_merge_in(node):
-                    merge_in = self.obj_dict[self.ctg.merge_pred_comm(node)]
-                if self.ctg.has_gather_in(node):
-                    gather_in = self.obj_dict[self.ctg.gather_pred_comm(node)]
-            
-            # perform xbar execution
-            temp_y = self.obj_dict[node](cast_in, merge_in, gather_in)
-            
-            # store output data
-            if self.ctg.is_tail_xbar(node):
-                y.append((node[1], temp_y))
+        for node in self.ctg.node_names:
+            if self.ctg.is_xbar(node): # xbar
+                if self.ctg.is_head_xbar(node): # head xbar
+                    self.obj_dict[node].absorb(x, 'Cast')
+                result = self.obj_dict[node].forward()
 
-            else:
-                if self.ctg.has_cast_out(node):
-                    self.obj_dict[self.ctg.cast_succ_comm(node)] = temp_y
-                if self.ctg.has_merge_out(node):
-                    self.obj_dict[self.ctg.merge_succ_comm(node)] += temp_y
-                if self.ctg.has_gather_out(node):
-                    self.obj_dict[self.ctg.gather_succ_comm(node)] = temp_y
-            
-            # collect intermediate results
-            # execute only when observing is enabled
-            if self.observe:
-                res = dict()
-                for name in OBSERVE_VARS:
-                    res[name] = self.obj_dict[node].__dict__[name]
-                self.res_dict[node] = res
+                # collect intermediate results
+                # execute only when observing is enabled
+                if self.observe:
+                    res = dict()
+                    for name in OBSERVE_VARS:
+                        res[name] = self.obj_dict[node].__dict__[name]
+                    self.res_dict[node] = res
 
+                # xbar may have multiple successors typed "comm"
+                # it may be any one of cast, merge, and gather
+                succs = list(self.ctg.succs(node))
+                if len(succs) == 0: # tail xbar (must be merge xbar)
+                    y.append((node[1], result))
+                    continue
+                for succ in succs:
+                    self.obj_dict[succ].absorb(result, node)
+
+            elif self.ctg.is_comm(node): # comm
+                result = self.obj_dict[node].forward()
+                if self.ctg.is_cast_comm(node):
+                    pred_type = 'Cast'
+                elif self.ctg.is_merge_comm(node):
+                    pred_type = 'Merge'
+                else:
+                    pred_type = 'Gather'
+                for succ in self.ctg.succs(node): # comm successors must be xbar
+                    self.obj_dict[succ].absorb(result, pred_type)
         device_output = self._arrage_output(y)
         self.res_dict['output'] = device_output # the output of device task
 
