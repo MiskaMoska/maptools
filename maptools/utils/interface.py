@@ -1,7 +1,5 @@
-import os
 import pickle
-from maptools.operator_graph import OperatorGraph
-from maptools.core.proto import QuantConfig
+from maptools.core import OperatorGraph, QuantConfig
 
 __all__ = ['load_quant_to_graph']
 

@@ -4,26 +4,12 @@ from PIL import Image
 from typing import Tuple
 from copy import deepcopy
 from typing import List, Tuple, Dict
-from maptools.maptype import DeviceParams, XbarConfig
+from maptools.core import DeviceParams, TileConfig
 
 __all__ = [
-    'get_input',
     'rebuild_pads',
     'get_xbar_kwargs'
 ]
-
-def get_input(img_path: str, resize: Tuple = (224, 224)) -> torch.Tensor:
-    assert len(resize) == 2, f"resize must be a 2-element tuple, but got {len(resize)}"
-    trans = transforms.Compose([
-        transforms.ToTensor(),
-        transforms.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225))
-    ])
-    image_file = img_path
-    img = Image.open(image_file)
-    img = img.resize(resize)
-    img = trans(img)
-    return torch.unsqueeze(img, dim=0)
-
 
 def rebuild_pads(pads: List) -> None:
     if pads is not None:
@@ -61,7 +47,7 @@ def rebuild_conv_bias(ocfg: Tuple, bias: torch.Tensor) -> torch.Tensor:
     return deepcopy(bias[ocfg[0]:ocfg[1]])
 
 
-def get_xbar_kwargs(cfg: XbarConfig, params: DeviceParams) -> Dict:
+def get_xbar_kwargs(cfg: TileConfig, params: DeviceParams) -> Dict:
     kwargs = dict()
     kwargs['conv_pads'] = cfg['conv_pads'].copy()
     weight_ptr = cfg['conv_weight']

@@ -3,8 +3,7 @@
 import pickle
 from maptools import CTG
 from maptools import MapRoutine
-from maptools import read_cfginfo, read_mapinfo
-from maptools.calcusim import get_input
+from maptools import read_cfginfo, read_mapinfo, get_input
 import os
 
 root_dir = os.environ.get('NVCIM_HOME')
@@ -14,19 +13,19 @@ img = get_input('work/test8.png')
 
 routine = MapRoutine(   
     mapname=mapname,
-    noc_map=False,
+    noc_map=True,
     calcusim=True,
     save_results=True,
     save_cfginfo=True,
     show_ctg=True,
-    show_origin_graph=False,
+    show_origin_graph=True,
     xbar_size = (256, 256*5),
     noc_size=(5, 10),
     model_dir=test,
     show_cast_path=True,
     show_merge_path=True,
     show_gather_path=True,
-    toksim=False,
+    toksim=True,
     toksim_latency = 4,
     input=img,
     quantize=True,

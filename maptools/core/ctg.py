@@ -1,16 +1,14 @@
-'''
-TODO support for STMX
-'''
 import os
 import numpy as np
 import networkx as nx
 from graphviz import Digraph
 from functools import cached_property
 from typing import List, Dict, Tuple, Any, Generator, Optional
-from maptools.operator_graph import *
-from maptools.utils import *
-from maptools.maptype import XbarConfig
-from maptools.core import NNModelArch, ROOT_DIR
+from maptools.core.graph import DeviceGraph
+from maptools.core.utils import is_subseq
+from maptools.core.typing import TileConfig
+from maptools.core.proto import NNModelArch
+from maptools.core.common import ROOT_DIR
 
 __all__ = ['CTG']
 
@@ -18,7 +16,7 @@ class CTG(object):
 
     def __init__(
         self, 
-        device_graph: OperatorGraph, 
+        device_graph: DeviceGraph, 
         match_dict: Dict[str, int],
         map_list: List[np.ndarray],
         map_dict: Dict[Tuple[int, int, int, int], Dict[str, Any]],
@@ -30,7 +28,7 @@ class CTG(object):
 
         Parameters
         ----------
-        device_graph : OperatorGraph
+        device_graph : DeviceGraph
             Device operator graph generated from `OnnxConverter`
 
         match_dict : Dict[str, int]
@@ -118,7 +116,7 @@ class CTG(object):
     def succs(self, node: Any) -> Generator:
         yield from self.graph.successors(node)
 
-    def get_xbar_config(self, node: Any) -> XbarConfig:
+    def get_xbar_config(self, node: Any) -> TileConfig:
         assert self.is_xbar(node), "not a xbar node, cannot get config"
         return self.dicts[node]
 
@@ -216,13 +214,13 @@ class CTG(object):
                         idx += 1
                 yield base_idx, region
 
-    def _build_ctg_resnet(self, device_graph: OperatorGraph) -> None:
+    def _build_ctg_resnet(self, device_graph: DeviceGraph) -> None:
         self.graph = nx.MultiDiGraph()
         self.xbar_nodes = list(self.dicts.keys())
         self.graph.add_nodes_from(self.xbar_nodes)
         self._add_comms_resnet(device_graph)
 
-    def _add_comms_resnet(self, device_graph: OperatorGraph) -> None: 
+    def _add_comms_resnet(self, device_graph: DeviceGraph) -> None: 
         # add cast and gather comms
         # for ResNet, every edge in opgraph corresponds to a communication
         for e in device_graph.egdes: 
@@ -273,7 +271,7 @@ class CTG(object):
                             if node != dst_xbar:
                                 self.graph.add_edge(node, comm_name)
 
-    def _complete_quant_attrs(self, device_graph: OperatorGraph) -> None:
+    def _complete_quant_attrs(self, device_graph: DeviceGraph) -> None:
         io_quant_config = device_graph.input_output_quant_config
         if self.quantize:
             self.input_quant_config = io_quant_config[0]
@@ -346,28 +344,22 @@ class CTG(object):
     @property
     def cast_trees(self) -> Generator[Tuple, None, None]:
         for c in self.cast_comms:
-            src = self.graph.predecessors(c)
-            src = list(src)[0]
-            dst = self.graph.successors(c)
-            dst = list(dst)
+            src = list(self.graph.predecessors(c))[0]
+            dst = list(self.graph.successors(c))
             yield (c, src, dst)
 
     @property
     def merge_trees(self) -> Generator[Tuple, None, None]:
         for m in self.merge_comms:
-            src = self.graph.predecessors(m)
-            src = list(src)
-            dst = self.graph.successors(m)
-            dst = list(dst)[0]
+            src = list(self.graph.predecessors(m))
+            dst = list(self.graph.successors(m))[0]
             yield (m, src, dst)
 
     @property
     def gather_pairs(self) -> Generator[Tuple, None, None]:
         for g in self.gather_comms:
-            src = self.graph.predecessors(g)
-            src = list(src)[0]
-            dst = self.graph.successors(g)
-            dst = list(dst)[0]
+            src = list(self.graph.predecessors(g))[0]
+            dst = list(self.graph.successors(g))[0]
             yield (g, src, dst)
 
     def comm_load_analysis(self) -> None:

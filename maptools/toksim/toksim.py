@@ -7,11 +7,9 @@ TODO support linear layer
 import os
 import time
 import pickle
-from maptools.ctg import *
-from maptools.utils import *
-from maptools.core import ROOT_DIR
 import numpy as np
-from typing import Tuple, List, Any, Optional, Dict
+from typing import Tuple, List, Any, Optional, Dict 
+from maptools.core import CTG, ROOT_DIR
 
 __all__ = ['TokSim']
 

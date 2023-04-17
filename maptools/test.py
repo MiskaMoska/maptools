@@ -55,3 +55,6 @@ print(b.var)
 b.var = 1
 print(b.var)
 
+a = '11223344-55'
+a = a.replace('sa', '')
+print(a)

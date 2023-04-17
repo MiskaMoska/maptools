@@ -1,14 +1,14 @@
 import os
+import torch
 import pickle
-from typing import List, Tuple, Dict
-import networkx as nx
 import logging
+from PIL import Image
+from typing import Tuple, Dict
+from torchvision import transforms as transforms
 from maptools.core import ROOT_DIR
 
 __all__ = [
-    'dec2bin',
-    'is_subseq',
-    'build_mesh',
+    'get_input',
     'read_params',
     'read_quantparams',
     'read_mapinfo',
@@ -17,45 +17,17 @@ __all__ = [
     'get_logger'
 ]
 
-def dec2bin(dec_num, bit_wide: int = 16) -> str:    
-    _, bin_num_abs = bin(dec_num).split('b')    
-    if len(bin_num_abs) > bit_wide:        
-        raise ValueError   
-    else:        
-        if dec_num >= 0:            
-            bin_num = bin_num_abs.rjust(bit_wide, '0')        
-        else:            
-            _, bin_num = bin(2**bit_wide + dec_num).split('b')    
-    return bin_num 
-
-def is_subseq(a: List, b: List) -> bool:
-    '''
-    This function judges if is the susequence of b, where a must be a 2-element list.
-    '''
-    for i in range(len(b)-1):
-        if a[0] == b[i]:
-            if b[i+1] == a[1]:
-                return True
-    return False
-
-def build_mesh(eager_nodes: List[Tuple[int, int]]) -> nx.Graph:
-    '''
-    This function returns a mesh graph from given range of nodes.
-    This function is designed for constructing steiner tree for cast routing plan.
-    '''
-    xs, ys = zip(*eager_nodes)
-    sx = min(xs)
-    dx = max(xs)
-    sy = min(ys)
-    dy = max(ys)
-    g = nx.Graph()
-    for x in range(sx, dx+1):
-        for y in range(sy, dy):
-            g.add_edge((x,y),(x,y+1))
-    for y in range(sy, dy+1):
-        for x in range(sx, dx):
-            g.add_edge((x,y),(x+1,y))
-    return g
+def get_input(img_path: str, resize: Tuple = (224, 224)) -> torch.Tensor:
+    assert len(resize) == 2, f"resize must be a 2-element tuple, but got {len(resize)}"
+    trans = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225))
+    ])
+    image_file = img_path
+    img = Image.open(image_file)
+    img = img.resize(resize)
+    img = trans(img)
+    return torch.unsqueeze(img, dim=0)
 
 def read_params(mapname: str) -> Dict:
     file_dir = os.path.join(ROOT_DIR, 'mapsave', mapname, 'params.pkl')

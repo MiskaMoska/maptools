@@ -34,5 +34,3 @@ VALID_OPS = {
     'MaxPool', 'AveragePool', 'GlobalAveragePool',
     'Flatten', 'Reshape', 'Resize', 'Transpose'
 }
-
-

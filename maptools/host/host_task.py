@@ -1,14 +1,14 @@
 import torch
 import torch.nn as nn
-from maptools import OperatorGraph
-from maptools.host.host_operator import HostOperator
 from typing import Dict, List, Tuple, Iterator
+from maptools.core import HostGraph
+from maptools.host.host_operator import HostOperator
 
 __all__ = ['HostTask']
 
 class HostTask(nn.Module):
 
-    def __init__(self, host_graph: OperatorGraph) -> None:
+    def __init__(self, host_graph: HostGraph) -> None:
         super().__init__()
         self.host_graph = host_graph
         self._modules: Dict[str, nn.Module] = {}

@@ -1,14 +1,7 @@
-'''
-TODO support for STMX
-'''
-import sys
 import math
 import numpy as np
 from typing import List, Dict, Tuple, Any
-from maptools.operator_graph import *
-from maptools.ctg import *
-from maptools.utils import *
-from maptools.core import NNModelArch
+from maptools.core import DeviceGraph, CTG, NNModelArch
 
 __all__ = ['XbarMapper']
 
@@ -16,7 +9,7 @@ class XbarMapper(object):
 
     def __init__(
         self, 
-        device_graph: OperatorGraph, 
+        device_graph: DeviceGraph, 
         w: int, 
         h: int, 
         **kwargs: Any
@@ -24,7 +17,7 @@ class XbarMapper(object):
         '''
         Parameters
         ----------
-        device_graph : OperatorGraph
+        device_graph : DeviceGraph
             `OnnxConverter.device_graph`
 
         w : int
@@ -89,73 +82,75 @@ class XbarMapper(object):
         '''
         In ResNet, there is no concat operation
         '''
-        for l, layer in enumerate(self.device_graph.node_dicts):
+        for layer_index, layer_config in enumerate(self.device_graph.node_dicts):
             map_info = []
-            self.match_dict[layer['name']] = l
+            self.match_dict[layer_config['name']] = layer_index
 
-            if "Conv" not in layer['op_type']: # this layer contains no Conv
-                n_inchan = layer['input_dims'][1]
-                n_outchan = n_inchan
-                k_size = (1, 1)
+            if "Conv" not in layer_config['op_type']: # this layer contains no Conv
+                n_ichan = layer_config['input_dims'][1]
+                n_ochan = n_ichan
+                kernel_size = (1, 1)
             else: # this layer contains Conv
-                n_inchan = layer['conv_num_ichan']
-                n_outchan = layer['conv_num_ochan']
-                k_size = layer['conv_kernel_size']
+                n_ichan = layer_config['conv_num_ichan']
+                n_ochan = layer_config['conv_num_ochan']
+                kernel_size = layer_config['conv_kernel_size']
 
-            if l == 0:
-                self._assert_first_layer(n_inchan * k_size[0] * k_size[1], n_outchan)
+            if layer_index == 0:
+                self._assert_first_layer(n_ichan * kernel_size[0] * kernel_size[1], n_ochan)
 
-            pes_o = math.ceil(n_outchan / self.w) 
-            for i in range(pes_o):
+            pes_o = math.ceil(n_ochan / self.w) 
+            for region_index in range(pes_o):
                 map_info.append([]) # add a new region
 
                 # output vector mapping
-                start_co = i * self.w
-                if (i + 1) * self.w > n_outchan: end_co = n_outchan
-                else: end_co = (i + 1) * self.w
+                # identical for all nerual network architectures
+                start_ochan_index = region_index * self.w
+                if (region_index + 1) * self.w > n_ochan: end_ochan_index = n_ochan
+                else: end_ochan_index = (region_index + 1) * self.w
                 
                 # input vector mapping
-                slcs = math.ceil(n_inchan / self.w) # how many slcs a channel vector is divided to
+                slices_splited = math.ceil(n_ichan / self.w) # how many slices a channel vector is divided to
                 # get slice length, each slice is shorter than Xbar width
-                for j in range(slcs):
-                    map_info[i].append(0) # add a new block
+                for block_index in range(slices_splited):
+                    map_info[region_index].append(0) # add a new block
 
-                    if (j + 1) * self.w > n_inchan:
-                        slc_len = n_inchan % self.w
-                    else: slc_len = self.w
+                    if (block_index + 1) * self.w > n_ichan:
+                        slice_len = n_ichan % self.w
+                    else: slice_len = self.w
 
-                    start_ci, end_ci = j * self.w, j * self.w + slc_len
-                    slc_pt = (self.h // slc_len) # max slices per tile
-                    pes_i = math.ceil((k_size[0] * k_size[1]) / slc_pt)
+                    start_ichan_index = block_index * self.w 
+                    end_ichan_index = block_index * self.w + slice_len
+                    slices_per_tile = (self.h // slice_len) # max slices per tile
+                    pes_i = math.ceil((kernel_size[0] * kernel_size[1]) / slices_per_tile)
                     
-                    for t in range(pes_i):
+                    for tile_index in range(pes_i):
                         icfg = []
-                        if (t + 1) * slc_pt > k_size[0] * k_size[1]:
-                            it = k_size[0] * k_size[1] % slc_pt
-                        else: it = slc_pt
+                        if (tile_index + 1) * slices_per_tile > kernel_size[0] * kernel_size[1]:
+                            slices_now_tile = kernel_size[0] * kernel_size[1] % slices_per_tile
+                        else: slices_now_tile = slices_per_tile
                         
-                        for k in range(it):
-                            icfg.append((t * slc_pt + k, start_ci, end_ci))
+                        for k in range(slices_now_tile):
+                            icfg.append((tile_index * slices_per_tile + k, start_ichan_index, end_ichan_index))
                         xbar_dict = {
                             'xbar_icfg': icfg, 
-                            'xbar_ocfg': (start_co, end_co),
-                            'xbar_num_ichan': end_ci-start_ci, 
-                            'xbar_num_ochan': end_co-start_co
+                            'xbar_ocfg': (start_ochan_index, end_ochan_index),
+                            'xbar_num_ichan': end_ichan_index - start_ichan_index, 
+                            'xbar_num_ochan': end_ochan_index - start_ochan_index
                         }
-                        xbar_dict.update(layer)
+                        xbar_dict.update(layer_config)
 
                         # regularize xbar op_type, the method is only for resnet
                         # cause only merge xbar can have [add, act, pool, bias]
-                        if j != 0 or t != 0: # not merge xbar
-                                xbar_dict['op_type'] = xbar_dict['op_type']\
-                                    .rstrip('-Pool')\
-                                    .rstrip('-Act')\
-                                    .rstrip('-Add')
+                        if block_index != 0 or tile_index != 0: # not merge xbar
+                            xbar_dict['op_type'] = xbar_dict['op_type']\
+                                .rstrip('-Pool')\
+                                .rstrip('-Act')\
+                                .rstrip('-Add')
                         else: # is merge xbar
                             if 'conv_bias' in xbar_dict.keys():
                                 xbar_dict['op_type'] += '-Bias'
-                        self.map_dict[(l, i, j, t)] = xbar_dict
-                        map_info[i][j] += 1
+                        self.map_dict[(layer_index, region_index, block_index, tile_index)] = xbar_dict
+                        map_info[region_index][block_index] += 1
         
             self.map_list.append(np.array(map_info))
 

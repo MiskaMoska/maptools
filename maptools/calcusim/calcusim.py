@@ -6,12 +6,10 @@ import torch.nn.functional as F
 import pickle
 from copy import deepcopy
 from typing import List, Dict, Optional, Tuple, Any, Union, Callable, Literal
-from maptools import CTG, OperatorGraph
+from functools import wraps, cached_property
+from maptools.core import CTG, OperatorGraph, QuantConfig, DeviceParams, ROOT_DIR
 from maptools.calcusim.utils import *
 from maptools.host import HostTask
-from maptools import DeviceParams
-from maptools.core import QuantConfig, ROOT_DIR
-from functools import wraps, cached_property
 
 __all__ = ['CalcuSim']
 
@@ -43,7 +41,7 @@ def cimu_conv2d(
             weight,
             stride=stride
         )
-        print("max:%-15dmin:%-15davg_abs:%d"%(int(torch.max(_y)), int(torch.min(_y)), float(torch.mean(torch.abs(_y)))))
+        # print("max:%-15dmin:%-15davg_abs:%d"%(int(torch.max(_y)), int(torch.min(_y)), float(torch.mean(torch.abs(_y)))))
         _y = torch.clamp(_y, -1024, 1023)
         if i == 7: # sign bit
             y += _y*(-pow(2, 7))

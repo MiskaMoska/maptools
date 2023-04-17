@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from functools import wraps
-from  maptools.maptype import OperatorConfig
+from maptools.core import OperatorConfig
 
 __all__ = ['HostOperator']
 

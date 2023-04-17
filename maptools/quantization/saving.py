@@ -3,7 +3,7 @@ import pickle
 from ppq import BaseGraph
 from ppq import QuantableOperation, TensorQuantizationConfig
 from ppq.quantization.qfunction import PPQuantFunction_toInt
-from maptools.core.proto import QuantConfig
+from maptools.core import QuantConfig
 
 __all__ = ['save_quantization']
 

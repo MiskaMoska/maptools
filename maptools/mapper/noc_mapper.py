@@ -3,16 +3,14 @@ TODO need to provide support for random region division
 '''
 import os
 import random
-from random import shuffle
 import pickle
 import networkx as nx
+from random import shuffle
+from copy import deepcopy
 from typing import List, Dict, Tuple, Any, Optional, Generator
 from functools import cached_property
-from maptools.xbar_mapper import *
-from maptools.ctg import *
-from maptools.utils import *
-from maptools.core import ROOT_DIR
-from copy import deepcopy
+from maptools.mapper.xbar_mapper import XbarMapper
+from maptools.core import CTG, ROOT_DIR
 
 __all__ = ['NocMapper']
 
@@ -63,12 +61,6 @@ class NocMapper(object):
 
         # mapping from logical xbars to physical xbars
         self.match_dict: Dict[Tuple[int, int, int, int], Tuple[int, int]] = dict()
-
-        # # intermediate representations
-        # self.projected_model = []
-        # self.model_regions = []
-        # self.merge_nodes = []
-        # self.cast_targets = []
 
         # network routing paths
         self.cast_paths: Dict[str, Dict[str, Any]] = dict()
@@ -225,10 +217,10 @@ class NocMapper(object):
             dst_nodes = [self.match_dict[n] for n in dst_nodes] # get the mapped node pos
             print(f"starting cast plan {sid}/{cast_num} ....")
 
-            if self.cast_method == 'steiner':
-                base_g = build_mesh(dst_nodes + [root_node])
-                g = nx.algorithms.approximation.steiner_tree(base_g, dst_nodes + [root_node])
-                g = nx.dfs_tree(g, source=root_node)
+            if self.cast_method == 'steiner': ... # deprecated
+                # base_g = build_mesh(dst_nodes + [root_node])
+                # g = nx.algorithms.approximation.steiner_tree(base_g, dst_nodes + [root_node])
+                # g = nx.dfs_tree(g, source=root_node)
             elif self.cast_method == 'dyxy':
                 g = self._build_cast_tree(root_node, dst_nodes)
 

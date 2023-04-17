@@ -13,12 +13,12 @@ import onnx.numpy_helper as onh
 import numpy as np
 import networkx as nx
 from typing import Any, List, Dict, Tuple, Optional, Generator
-from copy import deepcopy 
-from maptools.quantization.interface import load_quant_to_graph
-from maptools.operator_graph import *
-from maptools.maptype import OperatorConfig
-from maptools.core import VALID_OPS, MERGE_OPS, ROOT_DIR, NNModelArch 
-from maptools.maptype import DeviceParams
+from maptools.utils import load_quant_to_graph, regularize_pad_sizes
+from maptools.mapper.shaper import *
+from maptools.core import (
+    OperatorGraph, OriginGraph, HostGraph, DeviceGraph, NNModelArch,
+    VALID_OPS, MERGE_OPS, ROOT_DIR, OperatorConfig, DeviceParams
+)
 
 __all__ = ['OnnxConverter']
 
@@ -79,6 +79,7 @@ class OnnxConverter(object):
         self.quantize = False
         self.__dict__.update(kwargs)
         assert isinstance(self.arch, NNModelArch), f"unsupported model arch: {self.arch}"
+        self.shaper: BaseShaper = self._get_shaper()
 
         self._raw_graph: nx.MultiDiGraph = nx.MultiDiGraph()
         self._raw_dicts: Dict = dict() 
@@ -86,9 +87,12 @@ class OnnxConverter(object):
         self._variable_nodes: List[str] = []
         self.param_dict: DeviceParams = dict()
 
-        self.origin_graph: OperatorGraph
-        self.host_graph: OperatorGraph
-        self.device_graph: OperatorGraph
+        self.origin_graph: OriginGraph
+        self.host_graph: HostGraph
+        self.device_graph: DeviceGraph
+
+    def _get_shaper(self) -> None:
+        return __SHAPER_ACCESS_TABLE__[self.arch]()
 
     @staticmethod
     def _is_merge_node(node: onnx.NodeProto) -> bool:
@@ -111,25 +115,29 @@ class OnnxConverter(object):
     
     @staticmethod
     def _is_conv(type: str) -> bool:
-        return True if type in ['Conv'] else False
+        return True if type in {'Conv'} else False
 
     @staticmethod
     def _is_gemm(type: str) -> bool:
-        return True if type in ['Gemm'] else False
+        return True if type in {'Gemm'} else False
 
     @staticmethod
     def _is_pool(type: str) -> bool:
-        return True if type in ['MaxPool','AveragePool','GlobalAveragePool'] else False
+        return True if type in {'MaxPool','AveragePool','GlobalAveragePool'} else False
 
     @staticmethod
     def _is_act(type: str) -> bool:
-        return True if type in ['Relu','PRelu','HardSigmoid'] else False
+        return True if type in {'Relu','PRelu','HardSigmoid'} else False
+    
+    @staticmethod
+    def _is_resize(type: str) -> bool:
+        return True if type in {'Resize'} else False
 
-    def _get_tensor(self, name: str) -> onnx.TensorProto:
-        for tensor in self._model.graph.initializer:
-            if tensor.name == name:
-                return tensor
-        print(f"cannot find tensor named {name}")
+    def _get_variable(self, name: str) -> onnx.TensorProto:
+        for var in self._model.graph.initializer:
+            if var.name == name:
+                return var
+        print(f"cannot find variable named {name}")
         sys.exit()
 
     def _verify_op_type(self, node: onnx.NodeProto) -> None:
@@ -149,6 +157,8 @@ class OnnxConverter(object):
         size_i, size_o = self._get_io_size(node)
         d['conv_input_size'] = size_i
         d['conv_output_size'] = size_o
+        d['conv_pads'] = [0]*4 # some conv operators have no conv_pads
+
         for at in node.attribute:
             if at.name == 'dilations':
                 assert list(at.ints) == [1, 1], (
@@ -162,10 +172,10 @@ class OnnxConverter(object):
             elif at.name == 'strides':
                 d['conv_strides'] = list(at.ints)
 
-        weight = self._get_tensor(node.input[1]) # input[1] should be weight
+        weight = self._get_variable(node.input[1]) # input[1] should be weight
         bias = None
-        if len(node.input[2]): # if has bias
-            bias = self._get_tensor(node.input[2]) # input[2] should be weight
+        if len(node.input) > 2: # if has bias
+            bias = self._get_variable(node.input[2]) # input[2] should be weight
 
         # save convolution weights
         name = node.name + '_conv_weight'
@@ -175,7 +185,7 @@ class OnnxConverter(object):
         # save convolution bias
         name = node.name + '_conv_bias'
         d['conv_bias'] = name
-        self.param_dict[name] = onh.to_array(bias)
+        self.param_dict[name] = None if bias is None else onh.to_array(bias)
 
         d['conv_num_ichan'] = weight.dims[1] # input channel number
         d['conv_num_ochan'] = weight.dims[0] # output channel number
@@ -185,6 +195,7 @@ class OnnxConverter(object):
         d['pool_input_size'] = size_i
         d['pool_output_size'] = size_o
         d['pool_mode'] = node.op_type
+
         for at in node.attribute:
             if at.name == 'ceil_mode':
                 d['pool_ceil_mode'] = at.i
@@ -196,10 +207,11 @@ class OnnxConverter(object):
                 d['pool_strides'] = list(at.ints)
 
     def _complete_gemm_config(self, node: onnx.NodeProto, d: Dict) -> None:
-        weight = onh.to_array(self._get_tensor(node.input[1])) # input[1] should be weight
+        weight = onh.to_array(self._get_variable(node.input[1])) # input[1] should be weight
         if len(node.input[2]): # if has bias
-            bias = onh.to_array(self._get_tensor(node.input[2])) # input[2] should be weight
+            bias = onh.to_array(self._get_variable(node.input[2])) # input[2] should be weight
         else: bias = np.zeros(weight.dims[0])
+
         d['fc_weight'] = weight
         d['fc_bias'] = bias
         d['fc_len_inv'] = weight.shape[1] # input vector length
@@ -211,17 +223,31 @@ class OnnxConverter(object):
             if at.name == 'alpha':
                 d['act_alpha'] = at.f
 
+    def _complete_resize_config(self, node: onnx.NodeProto, d: Dict) -> None:
+        scales = onh.to_array(self._get_variable(node.input[1]))
+        assert scales.shape[0] == 4, f"resize scales must be a 4-element array"
+        assert scales[0] * scales[1] == 1, f"resize scales on batch and channels must be 1, but got {scales}"
+        d['resize_scales'] = scales
+
     def _get_raw_config(self, node: onnx.NodeProto) -> OperatorConfig:
         config = dict()
         config['op_type'] = node.op_type
+
         if self._is_conv(node.op_type):
             self._complete_conv_config(node, config)
+
         elif self._is_pool(node.op_type): 
             self._complete_pool_config(node, config)
+
         elif self._is_gemm(node.op_type):
             self._complete_gemm_config(node, config)
+
         elif self._is_act(node.op_type):
             self._complete_act_config(node, config)
+
+        elif self._is_resize(node.op_type):
+            self._complete_resize_config(node, config)
+
         return config
 
     def _remove_data_nodes(self) -> None:
@@ -254,8 +280,8 @@ class OnnxConverter(object):
         load_quant_to_graph(quantinfo_path, self.origin_graph)
 
     def construct_origin_graph(self) -> None:
-        for n in self._model.graph.node:
-            now_node = n.name
+        for i, n in enumerate(self._model.graph.node):
+            now_node = n.name if n.name != '' else f'{n.op_type}_{i}'
             self._operator_nodes.append(now_node)
             self._verify_op_type(n) # verify if the op type is supported
 
@@ -274,7 +300,7 @@ class OnnxConverter(object):
             self._raw_dicts[now_node] = self._get_raw_config(n)
 
         self._remove_data_nodes()
-        self.origin_graph = OperatorGraph(
+        self.origin_graph = OriginGraph(
             self._raw_graph, 
             self._raw_dicts, 
             self.arch,
@@ -283,28 +309,12 @@ class OnnxConverter(object):
         if self.quantize:
             self._insert_quant_info()
 
-    def _construct_for_resnet(self, op_graph: OperatorGraph) -> None:
-        op_graph.fuse_act() 
-        op_graph.fuse_pool()
-        op_graph.regu_pool()
-        op_graph.fuse_add()
-
-    def _construct_for_googlenet(self, op_graph: OperatorGraph) -> None:
-        op_graph.fuse_act()
-        op_graph.head_pool('Concat')
-        op_graph.fuse_pool()
-        op_graph.regu_pool()
-
-    def construct_host_graph(self, truncate_point: str = 'GlobalAveragePool') -> None:
-        self.host_graph, self.device_graph = self.origin_graph.dispatch_graph(truncate_point)
+    def construct_host_graph(self) -> None:
+        self.host_graph, self.device_graph = self.origin_graph.dispatch_graph()
 
     def construct_device_graph(self) -> None:
-        self.device_graph.quantize = self.quantize
-        if self.arch == NNModelArch.RESNET:
-            self._construct_for_resnet(self.device_graph)
-        elif self.arch == NNModelArch.GOOGLENET:
-            self._construct_for_googlenet(self.device_graph)
-        self.origin_graph._check_size()
+        self.shaper(self.device_graph)
+        regularize_pad_sizes(self.device_graph)
 
     def run_conversion(self) -> None:
         self.construct_origin_graph()
@@ -331,11 +341,11 @@ class OnnxConverter(object):
     def print_raw_dict(self) -> None:
         self._print_dict(self._raw_dicts)
 
-    def _plot_graph(self, op_graph: OperatorGraph, name: str) -> None:
+    def _plot_graph(self, graph: OperatorGraph, name: str) -> None:
         save_dir = os.path.join(ROOT_DIR, 'mapsave', self.mapname, name)
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
-        op_graph.plot_graph(save_dir)
+        graph.plot_graph(save_dir=save_dir)
 
     def plot_origin_graph(self) -> None:
         self._plot_graph(self.origin_graph, 'origin_graph')
