@@ -30,7 +30,8 @@ class XbarMapper(object):
         -----------
         self.match_dict : Dict[str, int]
             Matches each compute node in the operator graph to each layer in self.map_list
-            For example, to find the corresponding mapping information of node "n1" of the operator graph, use:
+            For example, to find the corresponding mapping information of node "n1" of the 
+            operator graph, use:
             >>> idx = self.match_dict['n1']
             >>> map_info = self.map_list[idx]
 
@@ -46,8 +47,9 @@ class XbarMapper(object):
 
         self.map_dict : Dict[Tuple[int, int, int, int], Dict[str, Any]]
             A look-up-table for each mapped xbar to get the corresponding configuration information.
-            The Tuple key is organized as (layer, region, block, idx_in_block).
-            For example, to get the configuration information of the second xbar in region 1, block 2 of the first layer, use:
+            The Tuple key is organized as (layer_idx, region_idx, block_idx, idx_in_block).
+            For example, to get the configuration information of the second xbar in region 1, 
+            block 2 of the first layer, use:
             >>> key = (0, 1, 2, 1)
             >>> config_info = self.map_dict[key]
         '''

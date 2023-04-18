@@ -1,3 +1,7 @@
+'''
+TODO trunk is harmful to hybrid network structures
+'''
+
 import os
 import sys
 import networkx as nx
@@ -53,6 +57,12 @@ class OperatorGraph(object):
     @property
     def unique_output(self) -> str:
         return self.trunk[-1]
+    
+    def is_input(self, node: str) -> bool:
+        return self.graph.in_degree(node) == 0
+    
+    def is_output(self, node: str) -> bool:
+        return self.graph.out_degree(node) == 0
 
     def config(self, node: str) -> OperatorConfig:
         return self.dicts[node]
@@ -121,19 +131,26 @@ class OriginGraph(OperatorGraph):
         self, 
         graph: nx.MultiDiGraph, 
         host_nodes: List[str], 
-        now_node: str
+        now_node: str,
+        marker: List[Any]
     ) -> None:
         host_nodes.append(now_node)
-        for node in graph.predecessors(now_node):
-            if self.op_type(node) in TRUNCATE_OPS:
-                if graph.in_degree(now_node) > 1 or graph.out_degree(node) > 1:
-                    raise AssertionError(
-                        f"truncate node {node} must have one-to-one connection with its successor {now_node}")
-                graph.remove_edge(node, now_node)
+        for pred in graph.predecessors(now_node):
+            if self.op_type(pred) in TRUNCATE_OPS:
+                assert graph.in_degree(now_node) == 1 and graph.out_degree(pred) == 1, (
+                    f"truncate node {pred} must have one-to-one connection with its successor {now_node}")
+                
+                # record bridge index
+                self.dicts[now_node]['bridge_idx'] = len(marker)
+                self.dicts[pred]['bridge_idx'] = len(marker)
+                marker.append(None)
+
+                # cut graph at truncate node
+                graph.remove_edge(pred, now_node)
                 return
         
-        for node in graph.predecessors(now_node):
-            self._dfs_cut(graph, host_nodes, node)
+        for pred in graph.predecessors(now_node):
+            self._dfs_cut(graph, host_nodes, pred, marker)
 
     def dispatch_graph(self) -> Tuple['HostGraph', 'DeviceGraph']:
         '''
@@ -142,7 +159,7 @@ class OriginGraph(OperatorGraph):
         host_nodes = []
         device_pure_graph = deepcopy(self.graph)
 
-        self._dfs_cut(device_pure_graph, host_nodes, self.unique_output)
+        self._dfs_cut(device_pure_graph, host_nodes, self.unique_output, [])
         device_pure_graph.remove_nodes_from(host_nodes)
         host_pure_graph = self.graph.subgraph(host_nodes)
         device_dicts = deepcopy(self.dicts)

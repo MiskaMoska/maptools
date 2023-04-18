@@ -1,3 +1,7 @@
+'''
+TODO trunk is harmful to hybrid network structures
+'''
+
 import os
 import numpy as np
 import networkx as nx
@@ -32,7 +36,8 @@ class CTG(object):
 
         match_dict : Dict[str, int]
             Matches each compute node in the operator graph to each layer in self.map_list
-            For example, to find the corresponding mapping information of node "n1" of the operator graph, use:
+            For example, to find the corresponding mapping information of node "n1" of the 
+            operator graph, use:
             >>> idx = self.match_dict['n1']
             >>> map_info = self.map_list[idx]
 
@@ -48,8 +53,9 @@ class CTG(object):
 
         map_dict : Dict[Tuple[int, int, int, int], Dict[str, Any]]
             A look-up-table for each mapped xbar to get the corresponding configuration information.
-            The Tuple key is organized as (layer, region, block, idx_in_block).
-            For example, to get the configuration information of the second xbar in region 1, block 2 of the first layer, use:
+            The Tuple key is organized as (layer_idx, region_idx, block_idx, idx_in_block).
+            For example, to get the configuration information of the second xbar in region 1, 
+            block 2 of the first layer, use:
             >>> key = (0, 1, 2, 1)
             >>> config_info = self.map_dict[key]
 
@@ -225,13 +231,15 @@ class CTG(object):
             # add gather comms
             if device_graph.in_degree(e[1]) > 1 and (
                 'Add' in device_graph.dicts[e[1]]['op_type']) and (
-                not is_subseq([e[0], e[1]], device_graph.trunk)):
+                not is_subseq([e[0], e[1]], device_graph.trunk)): 
                 assert p_mtx.shape[0] == s_mtx.shape[0], (
                     "#regions not match for gather communication")
+                    
                 for i in range(p_mtx.shape[0]): # for each region in the last layer
                     src_xbar = (p_lid, i, 0, 0) # source node of the gather path
                     dst_xbar = (s_lid, i, 0, 0) # dst node of the gather path
                     comm_name = 'gather_from_'+str(src_xbar)
+
                     self.graph.add_node(comm_name)
                     self.gather_comms.append(comm_name)
                     self.graph.add_edge(src_xbar, comm_name)
@@ -253,10 +261,12 @@ class CTG(object):
                 for i in range(p_mtx.shape[0]):
                     src_xbar = (p_lid, i, 0, 0)
                     comm_name = 'cast_from_' + str(src_xbar)
+
                     if comm_name not in self.cast_comms:
                         self.graph.add_node(comm_name)
                         self.graph.add_edge(src_xbar, comm_name)
                         self.cast_comms.append(comm_name)
+
                     for j in range(s_mtx.shape[0]):
                         for k in range(s_mtx[j, i]):
                             self.graph.add_edge(comm_name, (s_lid, j, base_block_idx+i, k))
@@ -267,9 +277,11 @@ class CTG(object):
                 if np.sum(mtx[i]) > 1: # there are more than 1 xbar in the current region
                     dst_xbar = (lid, i, 0, 0) # root node of the merge tree
                     comm_name = 'merge_to_'+str(dst_xbar)
+                    
                     self.graph.add_node(comm_name)
                     self.graph.add_edge(comm_name, dst_xbar)
                     self.merge_comms.append(comm_name)
+                    
                     for j in range(mtx.shape[1]):
                         for k in range(mtx[i, j]):
                             node = (lid, i, j, k)

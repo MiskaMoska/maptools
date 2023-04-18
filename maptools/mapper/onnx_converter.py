@@ -30,7 +30,6 @@ class OnnxConverter(object):
         About supported op_type:
             The supported onnx op_types are listed in `VALID_OPS`. Note that:
             1. Sigmoid is not supported cause it is not hardware-friendly.
-            2. Reshape is not supported. If you want to transform a [1, N, 1, 1] tensor to [1, N], always use Flatten instead of Reshape.
             3. Seperate Pad is not supported. Please fuse pad to other operations like Conv or Pool.
             4. Dropout is not supported.
         
@@ -52,7 +51,7 @@ class OnnxConverter(object):
         >>> hg = oc.host_graph
 
         Parameters
-        -------------
+        ----------
         model : onnx.ModelProto
             The onnx model must be simplified model, run `onnxsim model.onnx model_sim.onnx` to simplify the model.
             It's better to preview the model structure using netron before running OnnxConverter.

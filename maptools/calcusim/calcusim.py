@@ -5,9 +5,12 @@ import torch.nn as nn
 import torch.nn.functional as F
 import pickle
 from copy import deepcopy
-from typing import List, Dict, Optional, Tuple, Any, Union, Callable, Literal
+from typing import List, Dict, Optional, Tuple, Any, Union, Callable
 from functools import wraps, cached_property
-from maptools.core import CTG, OperatorGraph, QuantConfig, DeviceParams, ROOT_DIR
+from maptools.core import (
+    CTG, HostGraph, QuantConfig, 
+    DeviceParams, ROOT_DIR, PhysicalTile
+)
 from maptools.calcusim.utils import *
 from maptools.host import HostTask
 
@@ -42,7 +45,7 @@ def cimu_conv2d(
             stride=stride
         )
         # print("max:%-15dmin:%-15davg_abs:%d"%(int(torch.max(_y)), int(torch.min(_y)), float(torch.mean(torch.abs(_y)))))
-        _y = torch.clamp(_y, -1024, 1023)
+        # _y = torch.clamp(_y, -1024, 1023)
         if i == 7: # sign bit
             y += _y*(-pow(2, 7))
         else: # non sign bit
@@ -283,29 +286,70 @@ class CalcuSim(nn.Module):
     def __init__(
         self, 
         ctg: CTG, 
-        host_graph: OperatorGraph, 
+        host_graph: HostGraph, 
         params: DeviceParams,
         **kwargs: Any
     ) -> None:
         '''
+        `CalcuSim` is a calculation simulation engine for post-mapping inference.
+
+        The original AI model is deconstructed to some abstract data structures such
+        as `HostGraph`, `DeviceGraph`, and `CTG`, but is reconstructed in `CalcuSim` 
+        in the format of `torch.nn.Module`.
+
+        `CalcuSim` is composed of two main parts: the host task and the device task.
+        The host task is reconstructed as a `HostTask` according to `HostGraph`.
+        The device task is reconstructed by multiple tiles executors according to `CTG`.
+
+        Examples
+        --------
+        Users can treat `CalcuSim` as a complete replacement of the torch model.
+        For example, if we have an AI model with the format of `torch.nn.Module`, 
+        we can perform inference by calling the model object:
+
+        >>> model = .... # my torch model
+        >>> x = torch.Tensor(...) # input data
+        >>> y = model(x)
+
+        Now suppose we have our torch model exported to an .onnx file and then mapped
+        to `CTG` and `HostGraph`, to reconstruct the inference task of the original 
+        AI model, we can instantiate a CalcuSim object and call it:
+
+        >>> csim = CalcuSim(...) # instantiate a CalcuSim object
+        >>> y = csim(x)
+
+        That means, `CalcuSim` expose the same software interface as the torch model, 
+        and we can perform post-mapping infrence as if we are operating the torch model.
+
+        Besides, `CalcuSim` supports cuda acceleration, which can be enabled by calling
+        the method `CalcuSim.cuda()`:
+
+        >>> csim.cuda()
+        >>> y = csim(x)
+
         Parameters
         ----------
         ctg : CTG
-            communication trace graph
+            communication trace graph, obtained from `XbarMapper.ctg`
         
         params : DeviceParams
-            from `OnnxConverter.param_dict`
+            device param dictionary, with operator name as keys and the parameters as
+            values, obtained from `OnnxConverter.param_dict`.
 
         kwargs : Dict
             mapname : str = 'newmap'
-                Map name
+                map name
 
         Key Members
         -----------
+        self.obj_dict : Dict[Union[PhysicalTile, str], Union[_Xbar, torch.Tensor]]
+            A dictionary with physical tile id as keys and its corrensponding tile
+            executors and values. The tile executors are the submodules of CalcuSim.
+
         self.res_dict : Dict[Union[str, Tuple], Dict[str, Optional[torch.Tensor]]]
-            Stores the intermediate results of each xbar
+            Stores the intermediate results of each xbar.
             A dictionary with logical xbar as keys and result dictionary as values
-            Where the result dictionary has keys in `OBSERVE_VARS`
+            Where the result dictionary has keys in `OBSERVE_VARS`.
         '''
         super().__init__()
         self.ctg = ctg
@@ -315,12 +359,16 @@ class CalcuSim(nn.Module):
         self.observe: bool = False
         self.physical: bool = False
         self.__dict__.update(kwargs)
+
         if self.physical and not self.quantize:
             raise AssertionError ("to use physical CIMU, quantize must be enabled")
-        self.obj_dict: Dict[Any, Union[_Xbar, torch.Tensor]] = dict()
+        
+        self.obj_dict: Dict[Union[PhysicalTile, str], torch.Tensor] = dict()
+        self.res_dict: Dict[Union[PhysicalTile, str], Dict[str, Optional[torch.Tensor]]] = dict()
+
         self._build_device_task()
         self._build_host_task(host_graph)
-        self.res_dict: Dict[Union[str, Tuple], Dict[str, Optional[torch.Tensor]]] = dict()
+
 
     def _build_device_task(self) -> None:
         for node in self.ctg.node_names:
@@ -347,7 +395,7 @@ class CalcuSim(nn.Module):
                     **kwargs
                 )
 
-    def _build_host_task(self, host_graph: OperatorGraph) -> None:
+    def _build_host_task(self, host_graph: HostGraph) -> None:
         self.host_task = HostTask(host_graph)
 
     def _arrage_output(self, y: List[Tuple]) -> torch.Tensor:
@@ -355,13 +403,6 @@ class CalcuSim(nn.Module):
         return torch.cat([v[1] for v in y], dim=1)
 
     def cuda(self) -> None:
-        '''
-        This method is implemented particularly to support cuda acceleration.
-        For example, to enable cuda acceleration, use:
-        >>> model = CalcuSim(*args, **kwargs)
-        >>> model.cuda()
-        cuda acceleration is default to be disabled when the CalcuSim obejct is initialized.
-        '''
         self.host_task.cuda()
         for node in self.obj_dict.keys():
             if self.ctg.is_xbar(node):
