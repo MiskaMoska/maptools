@@ -79,7 +79,7 @@ class OnnxConverter(object):
         self.quantize = False
         self.__dict__.update(kwargs)
         assert isinstance(self.arch, NNModelArch), f"unsupported model arch: {self.arch}"
-        self.shaper: BaseShaper = self._get_shaper()
+        self.shaper: BaseGraphShaper = self._get_shaper()
 
         self._raw_graph: nx.MultiDiGraph = nx.MultiDiGraph()
         self._raw_dicts: Dict = dict() 
