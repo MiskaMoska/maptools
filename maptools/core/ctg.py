@@ -7,7 +7,6 @@ from typing import List, Dict, Tuple, Any, Generator, Optional
 from maptools.core.graph import DeviceGraph
 from maptools.core.utils import is_subseq
 from maptools.core.typing import TileConfig
-from maptools.core.proto import NNModelArch
 from maptools.core.common import ROOT_DIR
 
 __all__ = ['CTG']
@@ -55,9 +54,6 @@ class CTG(object):
             >>> config_info = self.map_dict[key]
 
         kwargs : Dict
-            arch : NNModelArch = NNModelArch.RESNET
-                The architecture of the model (or backbone).
-
             mapname : str = 'newmap'
                 Map name
         '''
@@ -65,7 +61,6 @@ class CTG(object):
         self.map_list = map_list
         self.dicts = map_dict
 
-        self.arch = NNModelArch.RESNET
         self.mapname = 'newmap'
         self.quantize = device_graph.quantize
         self.__dict__.update(kwargs)
@@ -76,11 +71,11 @@ class CTG(object):
         self.gather_comms: List[str] = []
 
         # build ctg
-        if self.arch == NNModelArch.RESNET:
-            self._build_ctg_resnet(device_graph)
+        self._build_ctg(device_graph)
 
         # complete attributes
-        self._complete_quant_attrs(device_graph)
+        if self.quantize:
+            self._complete_quant_attrs(device_graph)
         self._complete_connection_attrs()
 
     @cached_property
@@ -214,24 +209,24 @@ class CTG(object):
                         idx += 1
                 yield base_idx, region
 
-    def _build_ctg_resnet(self, device_graph: DeviceGraph) -> None:
+    def _build_ctg(self, device_graph: DeviceGraph) -> None:
         self.graph = nx.MultiDiGraph()
         self.xbar_nodes = list(self.dicts.keys())
         self.graph.add_nodes_from(self.xbar_nodes)
-        self._add_comms_resnet(device_graph)
+        self._construct_connections(device_graph)
 
-    def _add_comms_resnet(self, device_graph: DeviceGraph) -> None: 
-        # add cast and gather comms
-        # for ResNet, every edge in opgraph corresponds to a communication
+    def _construct_connections(self, device_graph: DeviceGraph) -> None: 
         for e in device_graph.egdes: 
-            p_lid = self.match_dict[e[0]]
-            s_lid = self.match_dict[e[1]]
+            p_lid = self.match_dict[e[0]] # source node layer id
+            s_lid = self.match_dict[e[1]] # dest node layer id
             p_mtx = self.map_list[p_lid] # source node map info matrix
-            s_mtx = self.map_list[s_lid] # dst node map info matrix
+            s_mtx = self.map_list[s_lid] # dest node map info matrix
 
-            if device_graph.in_degree(e[1]) > 1 \
-                and not is_subseq([e[0], e[1]], device_graph.trunk): # gather
-                assert p_mtx.shape[0] == s_mtx.shape[0],(
+            # add gather comms
+            if device_graph.in_degree(e[1]) > 1 and (
+                'Add' in device_graph.dicts[e[1]]['op_type']) and (
+                not is_subseq([e[0], e[1]], device_graph.trunk)):
+                assert p_mtx.shape[0] == s_mtx.shape[0], (
                     "#regions not match for gather communication")
                 for i in range(p_mtx.shape[0]): # for each region in the last layer
                     src_xbar = (p_lid, i, 0, 0) # source node of the gather path
@@ -242,19 +237,29 @@ class CTG(object):
                     self.graph.add_edge(src_xbar, comm_name)
                     self.graph.add_edge(comm_name, dst_xbar)
 
-            else: # cast
-                assert p_mtx.shape[0] == s_mtx.shape[1], (
-                    "#regions in last layer does not match #blocks in this layer")
-                for i in range(p_mtx.shape[0]): # for each region in the last layer
-                    src_xbar = (p_lid, i, 0, 0) # root node of the cast tree
-                    comm_name = 'cast_from_'+str(src_xbar)
+            else: # add cast comms
+                if device_graph.in_degree(e[1]) > 1 and (
+                    'Add' not in device_graph.dicts[e[1]]['op_type']): # is a concat connection
+                    concat_slots = device_graph.dicts[e[0]]['concat_slots']
+                    concat_idx = concat_slots[e[1]]
+                    block_nums = device_graph.dicts[e[1]]['block_nums']
+                    base_block_idx = sum(block_nums[:concat_idx])
+
+                else: # is not a concat connection
+                    assert p_mtx.shape[0] == s_mtx.shape[1], (
+                        "#regions in last layer does not match #blocks in this layer")
+                    base_block_idx = 0
+
+                for i in range(p_mtx.shape[0]):
+                    src_xbar = (p_lid, i, 0, 0)
+                    comm_name = 'cast_from_' + str(src_xbar)
                     if comm_name not in self.cast_comms:
                         self.graph.add_node(comm_name)
                         self.graph.add_edge(src_xbar, comm_name)
                         self.cast_comms.append(comm_name)
                     for j in range(s_mtx.shape[0]):
                         for k in range(s_mtx[j, i]):
-                            self.graph.add_edge(comm_name, (s_lid, j, i, k))
+                            self.graph.add_edge(comm_name, (s_lid, j, base_block_idx+i, k))
         
         # add merge comms
         for lid, mtx in enumerate(self.map_list):
@@ -273,9 +278,8 @@ class CTG(object):
 
     def _complete_quant_attrs(self, device_graph: DeviceGraph) -> None:
         io_quant_config = device_graph.input_output_quant_config
-        if self.quantize:
-            self.input_quant_config = io_quant_config[0]
-            self.output_quant_config = io_quant_config[1]
+        self.input_quant_config = io_quant_config[0]
+        self.output_quant_config = io_quant_config[1]
 
     def _complete_connection_attrs(self) -> None:
         '''
@@ -295,20 +299,16 @@ class CTG(object):
             for pred in self.graph.predecessors(xbar):
                 if pred in self.cast_comms:
                     cast_in, cast_pred_comm = True, pred
-
                 if pred in self.merge_comms:
                     merge_in, merge_pred_comm = True, pred
-
                 if pred in self.gather_comms:
                     gather_in, gather_pred_comm = True, pred
 
             for succ in self.graph.successors(xbar):
                 if succ in self.cast_comms:
                     cast_out, cast_succ_comm = True, succ
-
                 if succ in self.merge_comms:
                     merge_out, merge_succ_comm = True, succ
-
                 if succ in self.gather_comms:
                     gather_out, gather_succ_comm = True, succ
 
@@ -408,12 +408,19 @@ class CTG(object):
                 if key in local:
                     _label += f'\n{key} : {local[key]}'
             if self.is_xbar(n): # xbar
+                config = self.dicts[n]
+                icfg = config['xbar_icfg'][0]
+                ocfg = config['xbar_ocfg']
+                box_idx = config['box_idx']
                 shape = 'rectangle'
                 shape = 'box3d'
                 label = 'log: ' + str(n) 
                 if match_dict is not None:
                     label += '\nphy: ' + str(match_dict[n])
-                label += '\n' + self.dicts[n]['op_type']
+                label += f'\nop_type: {config["op_type"]}'
+                label += f'\nichan: {(icfg[1], icfg[2])}'
+                label += f'\nochan: {ocfg}'
+                label += f'\nbox_idx: {box_idx}'
                 label += _label
                 xlabel = None
             else: # comm

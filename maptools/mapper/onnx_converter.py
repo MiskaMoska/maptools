@@ -16,7 +16,7 @@ from typing import Any, List, Dict, Tuple, Optional, Generator
 from maptools.utils import load_quant_to_graph, regularize_pad_sizes
 from maptools.mapper.shaper import *
 from maptools.core import (
-    OperatorGraph, OriginGraph, HostGraph, DeviceGraph, NNModelArch,
+    OperatorVariableGraph, OperatorGraph, OriginGraph, HostGraph, DeviceGraph, NNModelArch,
     VALID_OPS, MERGE_OPS, ROOT_DIR, OperatorConfig, DeviceParams
 )
 
@@ -79,14 +79,10 @@ class OnnxConverter(object):
         self.quantize = False
         self.__dict__.update(kwargs)
         assert isinstance(self.arch, NNModelArch), f"unsupported model arch: {self.arch}"
-        self.shaper: BaseGraphShaper = self._get_shaper()
 
-        self._raw_graph: nx.MultiDiGraph = nx.MultiDiGraph()
-        self._raw_dicts: Dict = dict() 
-        self._operator_nodes: List[str] = []
-        self._variable_nodes: List[str] = []
         self.param_dict: DeviceParams = dict()
-
+        self.shaper: BaseGraphShaper = self._get_shaper()
+        self.raw_graph = OperatorVariableGraph()
         self.origin_graph: OriginGraph
         self.host_graph: HostGraph
         self.device_graph: DeviceGraph
@@ -249,7 +245,7 @@ class OnnxConverter(object):
     def _construct_raw_graph(self) -> None:
         for i, n in enumerate(self._model.graph.node):
             node_name = n.name if n.name != '' else f'{n.op_type}_{i}'
-            self._operator_nodes.append(node_name)
+            self.raw_graph.add_operator_node(node_name)
             self._verify_op_type(n) # verify if the op type is supported
 
             if self._is_merge_node(n): # multi inputs
@@ -257,57 +253,22 @@ class OnnxConverter(object):
                 # and destination node is an operator, it will guarantee the order of 
                 # the merge variables, which is necessary for operators like Concat.
                 for pred_node in n.input:
-                    self._variable_nodes.append(pred_node+'_d')
-                    self._raw_graph.add_edge(pred_node+'_d',node_name)
+                    self.raw_graph.add_variable_node(pred_node+'_d')
+                    self.raw_graph.add_edge(pred_node+'_d', node_name)
     
             else: # only one input
-                self._variable_nodes.append(n.input[0]+'_d')
-                self._raw_graph.add_edge(n.input[0]+'_d', node_name)
+                self.raw_graph.add_variable_node(n.input[0]+'_d')
+                self.raw_graph.add_edge(n.input[0]+'_d', node_name)
 
             succ_node = n.output[0] # there is always a unique output
-            self._variable_nodes.append(succ_node+'_d')
-            self._raw_graph.add_edge(node_name, succ_node+'_d')
-            self._raw_dicts[node_name] = self._get_raw_config(n, node_name)
+            self.raw_graph.add_variable_node(succ_node+'_d')
+            self.raw_graph.add_edge(node_name, succ_node+'_d')
+            self.raw_graph.set_operator_config(
+                node_name, 
+                self._get_raw_config(n, node_name)
+            )
 
-    def _get_concat_target(self, current_node: str, ) -> List[str]: ...
-
-
-    def _construct_concat_conenction(self) -> None:
-        '''
-        This method is for concat information configuration, which is a necessary
-        step to construct a valid device graph. For concat operators, the concat 
-        order is critical, the edge order is guaranteed when constructing `self._raw_graph`,
-        but the conv operators concerned with the concat operator still know nothing about
-        the concat order, this method writes through the concat order information directly 
-        to the related conv operators to construct complete concat connection. 
-
-        Always make sure to call this method after `self._construct_raw_graph` but 
-        before `self._remove_varible_nodes`.
-        '''
-        pass
-
-
-    def _remove_variable_nodes(self) -> None:
-        '''
-        The constructed raw graph is naturally a bipartite graph
-        which contains both operator nodes and variable nodes.
-        This method simplifies the raw graph by removes variable nodes in it.
-
-        The implementation of this method follows two features in the raw graph:
-        1. Operator nodes have at least one inputs and a single output.
-        2. Variable nodes have single input and at least one outputs.
-        '''
-        self._variable_nodes = list(set(self._variable_nodes))
-        for n in self._variable_nodes:
-            inputs = list(self._raw_graph.predecessors(n))
-            outputs = list(self._raw_graph.successors(n))
-            self._raw_graph.remove_node(n)
-            if len(inputs) > 0 and len(outputs) > 0: # not input data nor output data
-                assert len(inputs) == 1, f"error: data node {n} has multiple inputs" # feature 2
-                for output in outputs:
-                    self._raw_graph.add_edge(inputs[0], output)
-
-    def _insert_quant_info(self) -> None:
+    def insert_quant_info(self) -> None:
         '''
         Insert quantization information to original operation graph
         The device graph is constructed from the original graph,
@@ -318,16 +279,11 @@ class OnnxConverter(object):
 
     def construct_origin_graph(self) -> None:
         self._construct_raw_graph()
-        self._construct_concat_conenction()
-        self._remove_variable_nodes()
-        self.origin_graph = OriginGraph(
-            self._raw_graph, 
-            self._raw_dicts, 
-            self.arch,
-            self.quantize
-        )
+        self.raw_graph.connect_concats()
+        self.origin_graph = self.raw_graph.reduce(quantize=self.quantize)
+
         if self.quantize:
-            self._insert_quant_info()
+            self.insert_quant_info()
 
     def construct_host_graph(self) -> None:
         self.host_graph, self.device_graph = self.origin_graph.dispatch_graph()
@@ -350,16 +306,8 @@ class OnnxConverter(object):
             pickle.dump(self.param_dict, f)
         print(f"parameters of the model has been written to: {file_dir}")
 
-    def _print_dict(self, dicts: Dict[str, Dict]) -> None:
-        for v in dicts.values():
-            print('\n'+'-'*20)
-            print(f"op_type:{v['op_type']}")
-            for k1 in v.keys():
-                if k1 != 'op_type':
-                    print(k1)
-
     def print_raw_dict(self) -> None:
-        self._print_dict(self._raw_dicts)
+        self.raw_graph.print_dict()
 
     def _plot_graph(self, graph: OperatorGraph, name: str) -> None:
         save_dir = os.path.join(ROOT_DIR, 'mapsave', self.mapname, name)

@@ -3,8 +3,8 @@ import sys
 import networkx as nx
 from copy import deepcopy 
 from graphviz import Digraph as GDG
-from functools import cached_property
-from typing import Any, List, Dict, Tuple, Optional, Generator
+from functools import cached_property, wraps
+from typing import Any, List, Dict, Tuple, Optional, Generator, Callable
 from maptools.core.typing import OperatorConfig
 from maptools.core.proto import QuantConfig, NNModelArch
 from maptools.core.common import ROOT_DIR, TRUNCATE_OPS
@@ -13,10 +13,9 @@ __all__ = [
     'OperatorGraph',
     'OriginGraph',
     'HostGraph',
-    'DeviceGraph'
+    'DeviceGraph',
+    'OperatorVariableGraph'
 ]
-
-# class BipartiteGraph(nx.MultiDiGraph)
 
 class OperatorGraph(object):
 
@@ -24,12 +23,10 @@ class OperatorGraph(object):
         self, 
         graph: nx.MultiDiGraph, 
         dicts: Dict[str, OperatorConfig], 
-        arch: NNModelArch,
         quantize: bool
     ) -> None:
         self.graph = deepcopy(graph)
         self.dicts = deepcopy(dicts)
-        self.arch = arch
         self.quantize = quantize
 
     @property
@@ -38,11 +35,8 @@ class OperatorGraph(object):
         return list(nx.dag_longest_path(self.graph))
 
     @property
-    def node_dicts(self) -> Generator[Dict, None, None]:
-        for n in nx.topological_sort(self.graph):
-            tmp = {'name':n}
-            tmp.update(self.dicts[n])
-            yield tmp
+    def node_configs(self) -> Generator[Dict, None, None]:
+        yield from (self.dicts[n] for n in nx.topological_sort(self.graph))
 
     @property
     def nodes(self) -> Generator[str, None, None]:
@@ -127,18 +121,18 @@ class OriginGraph(OperatorGraph):
         self, 
         graph: nx.MultiDiGraph, 
         host_nodes: List[str], 
-        current_node: str
+        now_node: str
     ) -> None:
-        host_nodes.append(current_node)
-        for node in graph.predecessors(current_node):
+        host_nodes.append(now_node)
+        for node in graph.predecessors(now_node):
             if self.op_type(node) in TRUNCATE_OPS:
-                if graph.in_degree(current_node) > 1 or graph.out_degree(node) > 1:
+                if graph.in_degree(now_node) > 1 or graph.out_degree(node) > 1:
                     raise AssertionError(
-                        f"truncate node {node} must have one-to-one connection with its successor {current_node}")
-                graph.remove_edge(node, current_node)
+                        f"truncate node {node} must have one-to-one connection with its successor {now_node}")
+                graph.remove_edge(node, now_node)
                 return
         
-        for node in graph.predecessors(current_node):
+        for node in graph.predecessors(now_node):
             self._dfs_cut(graph, host_nodes, node)
 
     def dispatch_graph(self) -> Tuple['HostGraph', 'DeviceGraph']:
@@ -154,8 +148,8 @@ class OriginGraph(OperatorGraph):
         device_dicts = deepcopy(self.dicts)
         host_dicts = {n: device_dicts.pop(n) for n in host_nodes}
 
-        host_graph = HostGraph(host_pure_graph, host_dicts, self.arch, self.quantize)
-        device_graph = DeviceGraph(device_pure_graph, device_dicts, self.arch, self.quantize)
+        host_graph = HostGraph(host_pure_graph, host_dicts, self.quantize)
+        device_graph = DeviceGraph(device_pure_graph, device_dicts, self.quantize)
 
         return host_graph, device_graph
 
@@ -253,11 +247,8 @@ class DeviceGraph(OperatorGraph):
         for n in self.graph.nodes:
             if self.op_type(n) in {'MaxPool', 'AveragePool'}: # current node is pool
                 pred_type = self.op_type(self.unique_pred(n))
-                if self.arch in {NNModelArch.RESNET}:
-                    assert pred_type in {'Conv', 'Conv-Act'}, (
-                        f"the predecessor of an window pool node must conrtains Conv rather than {pred_type}")
-                if pred_type not in {'Conv', 'Conv-Act'}: # for non-resnet archs
-                    continue
+                assert pred_type in {'Conv', 'Conv-Act'}, (
+                    f"the predecessor of an window pool node must conrtains Conv rather than {pred_type}")
                 self._exten_op_type(self.unique_pred(n), '-Pool') # fuse pool will change the op-type of the predecessor
                 self._fuse_config(n, self.unique_pred(n))
                 succs = list(self.succs(n)) # successors of pool
@@ -332,3 +323,163 @@ class DeviceGraph(OperatorGraph):
         for n in self.graph.nodes:
             if self.op_type(n) in {'MaxPool', 'AveragePool', 'GlobalAveragePool'}:
                 raise RuntimeError("existing remain pools")
+
+
+class OperatorVariableGraph(object):
+    
+    def __init__(self) -> None:
+        self.graph: nx.MultiDiGraph = nx.MultiDiGraph()
+        self.dicts: Dict[str, Any] = {}
+        self.operators: List[str] = []
+        self.variables: List[str] = []
+    
+    def is_operator(self, node: str) -> bool:
+        return node in self.operators
+    
+    def is_variable(self, node: str) -> bool:
+        return node in self.variables
+
+    def add_node_routine(func: Callable) -> Callable:
+        @wraps(func)
+        def wrapper(self, *args):
+            self.graph.add_node(args[0])
+            return func(self, *args)
+        return wrapper
+
+    @add_node_routine
+    def add_operator_node(self, node: str) -> None:
+        if node not in self.operators:
+            self.operators.append(node)
+    
+    @add_node_routine
+    def add_variable_node(self, node: str) -> None:
+        if node not in self.variables:
+            self.variables.append(node)
+
+    def add_edge(self, *args, **kwargs) -> None:
+        self.graph.add_edge(*args, **kwargs)
+
+    def set_operator_config(self, node: str, config: OperatorConfig) -> None:
+        assert self.is_operator(node), (
+            f"setting operator config but got non-operator node: {node}")
+        self.dicts[node] = config
+
+    def op_type(self, node: str) -> str:
+        return self.dicts[node]['op_type']
+    
+    def op_name(self, node: str) -> str:
+        return self.dicts[node]['name']
+
+    def _search_concat_targets(self, now_node: str, targets: List[str]) -> bool:
+        if self.is_operator(now_node) and (
+            self.op_type(now_node) == 'Conv'): # find a target
+            targets.append(now_node)
+            return True
+        
+        flag = False
+        for node in self.graph.successors(now_node):
+            if self.is_operator(node) and (
+                self.op_type(node) == 'Concat'):
+                raise AssertionError("continuous concat is not permitted")
+            if self._search_concat_targets(node, targets): flag = True
+        
+        return flag
+    
+    def _config_concat(self, now_node: str, targets: List[str], marker: List[int]) -> None:
+        if self.is_operator(now_node) and (
+            self.op_type(now_node) == 'Conv'): # find a source
+
+            # configure concat slots
+            if 'concat_slots' not in self.dicts[now_node]:
+                self.dicts[now_node]['concat_slots'] = {}
+            self.dicts[now_node]['concat_slots'].update(
+                {target: len(marker) for target in targets})
+            
+            # configure block boxes
+            num_ochan = self.dicts[now_node]['conv_num_ochan']
+            box = (sum(marker), sum(marker) + num_ochan)
+            marker.append(num_ochan)
+            for target in targets:
+                if 'block_boxes' not in self.dicts[target]:
+                    self.dicts[target]['block_boxes'] = []
+                self.dicts[target]['block_boxes'].append(box)
+
+            print(f"\nconfiguring concat_slots in '{now_node}'")
+            print(f"concat index: {len(marker)-1}")
+            print(f"concat targets: {targets}")
+            print(f"block box: {box}")
+
+            return
+
+        preds = list(self.graph.predecessors(now_node))
+        if len(preds) > 1:
+            if self.is_operator(now_node): # operator node
+                if self.op_type(now_node) == 'Concat': # normal
+                    for pred in preds:
+                        self._config_concat(pred, targets, marker)
+                    return
+                if self.op_type(now_node) == 'Add': # for Add, only searh its one predecessor
+                    self._config_concat(preds[0], targets, marker)
+                    return
+            raise AssertionError(
+                f"operator {now_node} has multiple predecessors when concat configuring")
+        self._config_concat(preds[0], targets, marker)
+
+    def _format_block_boxes(self) -> None:
+        for node in self.operators:
+            if self.op_type(node) == 'Conv':
+                self.dicts[node]['block_nums'] = []
+                if 'block_boxes' not in self.dicts[node]:
+                    num_ichan = self.dicts[node]['conv_num_ichan']
+                    self.dicts[node]['block_boxes'] = [(0, num_ichan)]
+
+    def connect_concats(self) -> None:
+        '''
+        This method is for concat information configuration, which is a necessary
+        step to construct a valid device graph. For concat operators, the concat 
+        order is critical, the edge order is guaranteed when self-constructing,
+        but the conv operators concerned with the concat operator still know nothing about
+        the concat order, this method writes the concat order information directly 
+        to the related conv operators through to construct complete concat connection. 
+
+        Always make sure to call this method after finishing self-constructing but 
+        before `self.reduce`.
+        '''
+        for node in self.operators:
+            if self.op_type(node) == 'Concat':
+                targets = []
+                if not self._search_concat_targets(node, targets): continue
+                self._config_concat(node, targets, [])
+        self._format_block_boxes()
+
+    def reduce(self, **kwargs) -> OriginGraph:
+        '''
+        The OperatorVariableGraph is naturally a bipartite graph
+        which contains both operator nodes and variable nodes.
+        This method reduces the graph by removing variable nodes.
+
+        The implementation of this method follows two features in 
+        the OperatorVariablGraph graph:
+        1. Operator nodes have at least one inputs and a single output.
+        2. Variable nodes have single input and at least one outputs.
+        '''
+        graph = deepcopy(self.graph)
+        for n in self.variables:
+            inputs = list(graph.predecessors(n))
+            outputs = list(graph.successors(n))
+            graph.remove_node(n)
+            if len(inputs) > 0 and len(outputs) > 0: # not input data nor output data
+                assert len(inputs) == 1, (
+                    f"error: data node {n} has multiple inputs") # feature 2
+                for output in outputs:
+                    graph.add_edge(inputs[0], output)
+
+        return OriginGraph(graph, deepcopy(self.dicts), kwargs['quantize'])
+
+    def print_dict(self) -> None:
+        for v in self.dicts.values():
+            print('\n'+'-'*20)
+            print(f"op_type:{v['op_type']}")
+            for k1 in v.keys():
+                if k1 != 'op_type':
+                    print(k1)
