@@ -50,11 +50,11 @@ class B():
         self._var = value
     
 
-b = B()
-print(b.var)
-b.var = 1
-print(b.var)
+import networkx as nx
 
-a = '11223344-55'
-a = a.replace('sa', '')
-print(a)
+g = nx.MultiDiGraph()
+
+g.add_node(1, color='red')
+
+print(g.nodes[1])
+

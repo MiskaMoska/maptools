@@ -16,6 +16,8 @@ __all__ = [
     'DeviceGraph'
 ]
 
+# class BipartiteGraph(nx.MultiDiGraph)
+
 class OperatorGraph(object):
 
     def __init__(
@@ -24,7 +26,7 @@ class OperatorGraph(object):
         dicts: Dict[str, OperatorConfig], 
         arch: NNModelArch,
         quantize: bool
-        ) -> None:
+    ) -> None:
         self.graph = deepcopy(graph)
         self.dicts = deepcopy(dicts)
         self.arch = arch
@@ -132,7 +134,7 @@ class OriginGraph(OperatorGraph):
             if self.op_type(node) in TRUNCATE_OPS:
                 if graph.in_degree(current_node) > 1 or graph.out_degree(node) > 1:
                     raise AssertionError(
-                        f"truncate node {node} must has one-to-one connection with its successor {current_node}")
+                        f"truncate node {node} must have one-to-one connection with its successor {current_node}")
                 graph.remove_edge(node, current_node)
                 return
         
@@ -180,8 +182,9 @@ class DeviceGraph(OperatorGraph):
             return head_quant_config, tail_quant_config
         
     def _fuse_config(self, snode: str, dnode: str) -> None:
-        # Fuse one operator to another
+        # Fuse one operator's config to another
         tmp = deepcopy(self.dicts[snode])
+        tmp.pop('name')
         tmp.pop('op_type')
         self.dicts[dnode].update(tmp)
 
@@ -328,5 +331,4 @@ class DeviceGraph(OperatorGraph):
         # Regularize remain pools
         for n in self.graph.nodes:
             if self.op_type(n) in {'MaxPool', 'AveragePool', 'GlobalAveragePool'}:
-                print("existing remain pools")
-                sys.exit()
+                raise RuntimeError("existing remain pools")

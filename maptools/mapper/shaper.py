@@ -6,14 +6,14 @@ from typing import Callable
 from maptools.core import DeviceGraph, NNModelArch
 
 __all__ = [
-    'BaseShaper',
-    'ResNetShaper',
-    'GoogleNetShaper',
-    'YOLOV3Shaper',
+    'BaseGraphShaper',
+    'ResnetGraphShaper',
+    'GooglenetGraphShaper',
+    'Yolov3GraphShaper',
     '__SHAPER_ACCESS_TABLE__'
 ]
 
-class BaseShaper(Callable, metaclass=ABCMeta):
+class BaseGraphShaper(Callable, metaclass=ABCMeta):
     
     def __call__(self, graph: DeviceGraph) -> None:
         if not isinstance(graph, DeviceGraph):
@@ -24,7 +24,7 @@ class BaseShaper(Callable, metaclass=ABCMeta):
     def process(self, graph: DeviceGraph) -> None: ...
 
 
-class ResNetShaper(BaseShaper):
+class ResnetGraphShaper(BaseGraphShaper):
 
     def process(self, graph: DeviceGraph) -> None:
         graph.fuse_act() 
@@ -33,7 +33,7 @@ class ResNetShaper(BaseShaper):
         graph.fuse_add()
 
 
-class GoogleNetShaper(BaseShaper):
+class GooglenetGraphShaper(BaseGraphShaper):
 
     def process(self, graph: DeviceGraph) -> None:
         graph.fuse_act()
@@ -43,7 +43,7 @@ class GoogleNetShaper(BaseShaper):
         graph.remove_concat()
 
 
-class YOLOV3Shaper(BaseShaper):
+class Yolov3GraphShaper(BaseGraphShaper):
 
     def process(self, graph: DeviceGraph) -> None:
         graph.fuse_act()
@@ -52,8 +52,8 @@ class YOLOV3Shaper(BaseShaper):
 
 
 __SHAPER_ACCESS_TABLE__ = {
-    NNModelArch.VGG         : ResNetShaper,
-    NNModelArch.RESNET      : ResNetShaper,
-    NNModelArch.GOOGLENET   : GoogleNetShaper,
-    NNModelArch.YOLO_V3     : YOLOV3Shaper
+    NNModelArch.VGG         : ResnetGraphShaper,
+    NNModelArch.RESNET      : ResnetGraphShaper,
+    NNModelArch.GOOGLENET   : GooglenetGraphShaper,
+    NNModelArch.YOLO_V3     : Yolov3GraphShaper
 }

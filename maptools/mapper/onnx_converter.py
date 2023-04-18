@@ -137,8 +137,7 @@ class OnnxConverter(object):
         for var in self._model.graph.initializer:
             if var.name == name:
                 return var
-        print(f"cannot find variable named {name}")
-        sys.exit()
+        raise RuntimeError(f"cannot find variable named {name}")
 
     def _verify_op_type(self, node: onnx.NodeProto) -> None:
         assert node.op_type in VALID_OPS, f"unsupported op type: {node.op_type}"
@@ -229,30 +228,68 @@ class OnnxConverter(object):
         assert scales[0] * scales[1] == 1, f"resize scales on batch and channels must be 1, but got {scales}"
         d['resize_scales'] = scales
 
-    def _get_raw_config(self, node: onnx.NodeProto) -> OperatorConfig:
-        config = dict()
+    def _get_raw_config(self, node: onnx.NodeProto, name: str) -> OperatorConfig:
+        config = {}
+        config['name'] = node.name
         config['op_type'] = node.op_type
 
         if self._is_conv(node.op_type):
             self._complete_conv_config(node, config)
-
         elif self._is_pool(node.op_type): 
             self._complete_pool_config(node, config)
-
         elif self._is_gemm(node.op_type):
             self._complete_gemm_config(node, config)
-
         elif self._is_act(node.op_type):
             self._complete_act_config(node, config)
-
         elif self._is_resize(node.op_type):
             self._complete_resize_config(node, config)
 
         return config
 
-    def _remove_data_nodes(self) -> None:
+    def _construct_raw_graph(self) -> None:
+        for i, n in enumerate(self._model.graph.node):
+            node_name = n.name if n.name != '' else f'{n.op_type}_{i}'
+            self._operator_nodes.append(node_name)
+            self._verify_op_type(n) # verify if the op type is supported
+
+            if self._is_merge_node(n): # multi inputs
+                # this step is for adding merge edges whose source nodes are variables
+                # and destination node is an operator, it will guarantee the order of 
+                # the merge variables, which is necessary for operators like Concat.
+                for pred_node in n.input:
+                    self._variable_nodes.append(pred_node+'_d')
+                    self._raw_graph.add_edge(pred_node+'_d',node_name)
+    
+            else: # only one input
+                self._variable_nodes.append(n.input[0]+'_d')
+                self._raw_graph.add_edge(n.input[0]+'_d', node_name)
+
+            succ_node = n.output[0] # there is always a unique output
+            self._variable_nodes.append(succ_node+'_d')
+            self._raw_graph.add_edge(node_name, succ_node+'_d')
+            self._raw_dicts[node_name] = self._get_raw_config(n, node_name)
+
+    def _get_concat_target(self, current_node: str, ) -> List[str]: ...
+
+
+    def _construct_concat_conenction(self) -> None:
         '''
-        This constructed raw graph is naturally a bipartite graph
+        This method is for concat information configuration, which is a necessary
+        step to construct a valid device graph. For concat operators, the concat 
+        order is critical, the edge order is guaranteed when constructing `self._raw_graph`,
+        but the conv operators concerned with the concat operator still know nothing about
+        the concat order, this method writes through the concat order information directly 
+        to the related conv operators to construct complete concat connection. 
+
+        Always make sure to call this method after `self._construct_raw_graph` but 
+        before `self._remove_varible_nodes`.
+        '''
+        pass
+
+
+    def _remove_variable_nodes(self) -> None:
+        '''
+        The constructed raw graph is naturally a bipartite graph
         which contains both operator nodes and variable nodes.
         This method simplifies the raw graph by removes variable nodes in it.
 
@@ -268,7 +305,7 @@ class OnnxConverter(object):
             if len(inputs) > 0 and len(outputs) > 0: # not input data nor output data
                 assert len(inputs) == 1, f"error: data node {n} has multiple inputs" # feature 2
                 for output in outputs:
-                    self._raw_graph.add_edge(inputs[0],output)
+                    self._raw_graph.add_edge(inputs[0], output)
 
     def _insert_quant_info(self) -> None:
         '''
@@ -280,26 +317,9 @@ class OnnxConverter(object):
         load_quant_to_graph(quantinfo_path, self.origin_graph)
 
     def construct_origin_graph(self) -> None:
-        for i, n in enumerate(self._model.graph.node):
-            now_node = n.name if n.name != '' else f'{n.op_type}_{i}'
-            self._operator_nodes.append(now_node)
-            self._verify_op_type(n) # verify if the op type is supported
-
-            if self._is_merge_node(n): # multi inputs
-                for pred_node in n.input:
-                    self._variable_nodes.append(pred_node+'_d')
-                    self._raw_graph.add_edge(pred_node+'_d',now_node)
-    
-            else: # only one input
-                self._variable_nodes.append(n.input[0]+'_d')
-                self._raw_graph.add_edge(n.input[0]+'_d', now_node)
-
-            succ_node = n.output[0] # there is always one output
-            self._variable_nodes.append(succ_node+'_d')
-            self._raw_graph.add_edge(now_node, succ_node+'_d')
-            self._raw_dicts[now_node] = self._get_raw_config(n)
-
-        self._remove_data_nodes()
+        self._construct_raw_graph()
+        self._construct_concat_conenction()
+        self._remove_variable_nodes()
         self.origin_graph = OriginGraph(
             self._raw_graph, 
             self._raw_dicts, 

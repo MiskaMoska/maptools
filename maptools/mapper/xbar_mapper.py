@@ -98,8 +98,8 @@ class XbarMapper(object):
             if layer_index == 0:
                 self._assert_first_layer(n_ichan * kernel_size[0] * kernel_size[1], n_ochan)
 
-            pes_o = math.ceil(n_ochan / self.w) 
-            for region_index in range(pes_o):
+            regions_split = math.ceil(n_ochan / self.w) 
+            for region_index in range(regions_split):
                 map_info.append([]) # add a new region
 
                 # output vector mapping
@@ -109,9 +109,9 @@ class XbarMapper(object):
                 else: end_ochan_index = (region_index + 1) * self.w
                 
                 # input vector mapping
-                slices_splited = math.ceil(n_ichan / self.w) # how many slices a channel vector is divided to
+                blocks_split = math.ceil(n_ichan / self.w) # how many slices a channel vector is divided to
                 # get slice length, each slice is shorter than Xbar width
-                for block_index in range(slices_splited):
+                for block_index in range(blocks_split):
                     map_info[region_index].append(0) # add a new block
 
                     if (block_index + 1) * self.w > n_ichan:
@@ -121,9 +121,9 @@ class XbarMapper(object):
                     start_ichan_index = block_index * self.w 
                     end_ichan_index = block_index * self.w + slice_len
                     slices_per_tile = (self.h // slice_len) # max slices per tile
-                    pes_i = math.ceil((kernel_size[0] * kernel_size[1]) / slices_per_tile)
+                    tiles_per_block = math.ceil((kernel_size[0] * kernel_size[1]) / slices_per_tile)
                     
-                    for tile_index in range(pes_i):
+                    for tile_index in range(tiles_per_block):
                         icfg = []
                         if (tile_index + 1) * slices_per_tile > kernel_size[0] * kernel_size[1]:
                             slices_now_tile = kernel_size[0] * kernel_size[1] % slices_per_tile
