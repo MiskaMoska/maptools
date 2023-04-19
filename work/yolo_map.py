@@ -18,10 +18,22 @@ mapname = 'yolo'
 model = os.path.join(root_dir, 'onnx_models', 'simp-yolo.onnx')
 # img = get_input('work/test8.png')
 
+m = onnx.load(model)
+oc = OnnxConverter(m, arch=NNModelArch.YOLO_V3)
+oc.run_conversion()
+
+hg = oc.host_graph
+
+for node in hg.nodes:
+    if hg.op_type(node) == 'Concat':
+        for n in hg.preds(node):
+            print(n)
+
+
 routine = MapRoutine(   
     mapname=mapname,
     arch=NNModelArch.YOLO_V3,
-    noc_map=True,
+    noc_map=False,
     calcusim=False,
     save_results=True,
     save_cfginfo=True,
@@ -33,11 +45,11 @@ routine = MapRoutine(
     show_cast_path=True,
     show_merge_path=True,
     show_gather_path=True,
-    toksim=False,
+    toksim=True,
     toksim_latency = 4,
     quantize=False,
     physical=False
 )
 
-ctg = routine.run()
+# ctg = routine.run()
 

@@ -3,7 +3,7 @@
 # // TODO need to support multi-style paddings in inception (there is no Pads any more in onnx-simplified model)
 TODO need to support reduce mean in mnasnet
 TODO need to support sigmoid in efficientnet
-TODO need to support global average pool and fc layer
+TODO need to support global average pool and gemm layer
 '''
 import os
 import sys
@@ -16,7 +16,8 @@ from typing import Any, List, Dict, Tuple, Optional, Generator
 from maptools.utils import load_quant_to_graph, regularize_pad_sizes
 from maptools.mapper.shaper import *
 from maptools.core import (
-    OperatorVariableGraph, OperatorGraph, OriginGraph, HostGraph, DeviceGraph, NNModelArch,
+    OperatorVariableGraph, OperatorGraph, OriginGraph, 
+    HostGraph, DeviceGraph, NNModelArch,
     VALID_OPS, MERGE_OPS, ROOT_DIR, OperatorConfig, DeviceParams
 )
 
@@ -81,23 +82,16 @@ class OnnxConverter(object):
 
         self.param_dict: DeviceParams = dict()
         self.shaper: BaseGraphShaper = self._get_shaper()
-        self.raw_graph = OperatorVariableGraph()
+
+        self.raw_graph: OperatorVariableGraph
         self.origin_graph: OriginGraph
         self.host_graph: HostGraph
         self.device_graph: DeviceGraph
 
+        self.raw_graph = OperatorVariableGraph()
+
     def _get_shaper(self) -> None:
         return __SHAPER_ACCESS_TABLE__[self.arch]()
-
-    @staticmethod
-    def _is_merge_node(node: onnx.NodeProto) -> bool:
-        return True if node.op_type in MERGE_OPS else False
-
-    @staticmethod
-    def _get_node_attr(node: onnx.NodeProto, name: str) -> Optional[onnx.AttributeProto]:
-        for at in node.attribute:
-            if at.name == name:
-                return at
 
     @staticmethod
     def _get_data_dims(name: str, graph: onnx.GraphProto) -> List[int]:
@@ -127,17 +121,24 @@ class OnnxConverter(object):
     @staticmethod
     def _is_resize(type: str) -> bool:
         return True if type in {'Resize'} else False
+    
+    @staticmethod
+    def _is_flatten(type: str) -> bool:
+        return True if type in {'Flatten'} else False
+    
+    @staticmethod
+    def _is_reshape(type: str) -> bool:
+        return True if type in {'Reshape'} else False
+    
+    @staticmethod
+    def _is_transpose(type: str) -> bool:
+        return True if type in {'Transpose'} else False
 
     def _get_variable(self, name: str) -> onnx.TensorProto:
         for var in self._model.graph.initializer:
             if var.name == name:
                 return var
         raise RuntimeError(f"cannot find variable named {name}")
-
-    def _verify_op_type(self, node: onnx.NodeProto) -> None:
-        assert node.op_type in VALID_OPS, f"unsupported op type: {node.op_type}"
-        if node.op_type in {'Concat, Flatten'}:
-            assert self._get_node_attr(node,'axis') == 1, f"axis must be 1 for op_type: {node.op_type}" 
 
     def _get_io_size(self, node: onnx.NodeProto) -> Tuple[List[int], List[int]]:
         # get input and output size
@@ -206,10 +207,10 @@ class OnnxConverter(object):
             bias = onh.to_array(self._get_variable(node.input[2])) # input[2] should be weight
         else: bias = np.zeros(weight.dims[0])
 
-        d['fc_weight'] = weight
-        d['fc_bias'] = bias
-        d['fc_len_inv'] = weight.shape[1] # input vector length
-        d['fc_len_outv'] = weight.shape[0] # output vector length
+        d['gemm_weight'] = weight
+        d['gemm_bias'] = bias
+        d['gemm_len_inv'] = weight.shape[1] # input vector length
+        d['gemm_len_outv'] = weight.shape[0] # output vector length
 
     def _complete_act_config(self, node: onnx.NodeProto, d: Dict) -> None:
         d['act_mode'] = node.op_type 
@@ -219,11 +220,30 @@ class OnnxConverter(object):
 
     def _complete_resize_config(self, node: onnx.NodeProto, d: Dict) -> None:
         scales = onh.to_array(self._get_variable(node.input[1]))
-        assert scales.shape[0] == 4, f"resize scales must be a 4-element array"
-        assert scales[0] * scales[1] == 1, f"resize scales on batch and channels must be 1, but got {scales}"
-        d['resize_scales'] = scales
+        assert scales.shape[0] == 4, (f"resize scales must be a 4-element array")
+        assert scales[0] * scales[1] == 1, (
+            f"resize scales on batch and channels must be 1, but got {scales}")
+        assert scales[2].is_integer() and scales[3].is_integer(), (
+            f"resize scales[2:4] must be int, but got {type(scales[2])}, {type(scales[3])}")
+        assert scales[2] * scales[3] >= 1, (
+            f"resize portion must be no less than 1, but got: {scales[2] * scales[3]}")
+        d['resize_scales'] = scales.astype(np.int8)
 
-    def _get_raw_config(self, node: onnx.NodeProto, name: str) -> OperatorConfig:
+    def _complete_flatten_config(self, node: onnx.NodeProto, d: Dict) -> None:
+        for at in node.attribute:
+            if at.name == 'axis':
+                d['flatten_axis'] = at.i
+
+    def _complete_reshape_config(self, node: onnx.NodeProto, d: Dict) -> None:
+        shape = self._get_variable(node.input[1])
+        d['reshape_shape'] = onh.to_array(shape).tolist()
+
+    def _complete_transpose_config(self, node: onnx.NodeProto, d: Dict) -> None:
+        for at in node.attribute:
+            if at.name == 'perm':
+                d['transpose_perm'] = list(at.ints)
+
+    def _get_raw_config(self, node: onnx.NodeProto) -> OperatorConfig:
         config = {}
         config['name'] = node.name
         config['op_type'] = node.op_type
@@ -238,16 +258,33 @@ class OnnxConverter(object):
             self._complete_act_config(node, config)
         elif self._is_resize(node.op_type):
             self._complete_resize_config(node, config)
+        elif self._is_flatten(node.op_type):
+            self._complete_flatten_config(node, config)
+        elif self._is_reshape(node.op_type):
+            self._complete_reshape_config(node, config)
+        elif self._is_transpose(node.op_type):
+            self._complete_transpose_config(node, config)
 
         return config
+
+    def _assert_node(self, node: onnx.NodeProto) -> None:
+        assert node.op_type in VALID_OPS, f"unsupported op type: {node.op_type}"
+        if node.op_type in {'Concat'}:
+            for at in node.attribute:
+                if at.name == 'axis':
+                    assert at.i == 1, f"axis must be 1 for op_type: {node.op_type}" 
+
+        if node.op_type in {'Add', 'Mul'}:
+            assert len(node.input) == 2, (
+                f"input number of Add and Mul operations must be 2, but got {len(node.input)}")
 
     def _construct_raw_graph(self) -> None:
         for i, n in enumerate(self._model.graph.node):
             node_name = n.name if n.name != '' else f'{n.op_type}_{i}'
             self.raw_graph.add_operator_node(node_name)
-            self._verify_op_type(n) # verify if the op type is supported
+            self._assert_node(n)
 
-            if self._is_merge_node(n): # multi inputs
+            if n.op_type in MERGE_OPS: # multi inputs
                 # this step is for adding merge edges whose source nodes are variables
                 # and destination node is an operator, it will guarantee the order of 
                 # the merge variables, which is necessary for operators like Concat.
@@ -264,7 +301,7 @@ class OnnxConverter(object):
             self.raw_graph.add_edge(node_name, succ_node+'_d')
             self.raw_graph.set_operator_config(
                 node_name, 
-                self._get_raw_config(n, node_name)
+                self._get_raw_config(n)
             )
 
     def insert_quant_info(self) -> None:

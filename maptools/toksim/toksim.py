@@ -199,8 +199,7 @@ class _Xbar(object):
             when False, the window slides as much as possible in each iteration.
         '''
         self.__dict__.update(config)
-        assert 'Conv' in self.__dict__['op_type'], \
-            f"Xbar must perform convolution, now op_type: {self.__dict__['op_type']}"
+        self._assert_op_type()
         self.is_merge = is_merge
         self.is_gather = is_gather
         self.conv_buf = _WindowBuf(
@@ -233,6 +232,12 @@ class _Xbar(object):
         self.max_inter_buf = 0 # maximum inter buffer occupied
         self.max_merge_buf = 0 # maximum merge buffer occupied
         self.max_gather_buf = 0 # maximum gather buffer occupied
+
+    def _assert_op_type(self) -> None:
+        if 'Conv' not in self.op_type:
+            raise AssertionError(f"Xbar must perform convolution, now op_type: {self.op_type}")
+        if 'Rsz' in self.op_type and 'Pool' in self.op_type:
+            raise AssertionError(f"Rsz and Pool cannot appear simultaneously, now op_type: {self.op_type}")
 
     def _update_max_buf(self, buf_name: str) -> None:
         max_buf_name = 'max_' + buf_name
@@ -267,32 +272,36 @@ class _Xbar(object):
         if not self.is_merge and not self.is_gather: # no merge and no gather
             if 'Pool' in self.op_type: # has pooling
                 self.pool_buf.add_token(self.inter_buf)
-                self.inter_buf = 0 
                 token = self.pool_buf.try_slide()
                 self.done = self.pool_buf.done
             else: # no pooling
                 token = self.inter_buf
-                self.inter_buf = 0
-            return token
+            
+            # clear intermediate buffer
+            self.inter_buf = 0
+        
+        else: # has merge or gather
+            cmp_list = [self.inter_buf]
+            if self.is_merge:
+                cmp_list.append(self.merge_buf)
+            if self.is_gather:
+                cmp_list.append(self.gather_buf)
+            token = min(cmp_list)
+            self.inter_buf -= token
+            self.merge_buf -= (token if self.is_merge else 0)
+            self.gather_buf -= (token if self.is_gather else 0)
 
-        cmp_list = [self.inter_buf]
-        if self.is_merge:
-            cmp_list.append(self.merge_buf)
-        if self.is_gather:
-            cmp_list.append(self.gather_buf)
-        token = min(cmp_list)
-        self.inter_buf -= token
-        self.merge_buf -= (token if self.is_merge else 0)
-        self.gather_buf -= (token if self.is_gather else 0)
+            # update max buf
+            for name in ['inter_buf', 'merge_buf', 'gather_buf']:
+                self._update_max_buf(name)
 
-        # update max buf
-        for name in ['inter_buf', 'merge_buf', 'gather_buf']:
-            self._update_max_buf(name)
+            if 'Pool' in self.op_type: # has pooling
+                self.pool_buf.add_token(token)
+                token = self.pool_buf.try_slide()
+                self.done = self.pool_buf.done
 
-        if 'Pool' in self.op_type: # has pooling
-            self.pool_buf.add_token(token)
-            token = self.pool_buf.try_slide()
-            self.done = self.pool_buf.done
+        if 'Rsz' in self.op_type: # has resize
+            token *= self.resize_scales[2] * self.resize_scales[3]
 
         return token
 
@@ -406,8 +415,8 @@ class TokSim(object):
         
         Examples
         --------
-        >>> inf = TokSim(ctg)
-        >>> inf.run()
+        >>> tsim = TokSim(ctg)
+        >>> tsim.run()
 
         Parameters
         ----------

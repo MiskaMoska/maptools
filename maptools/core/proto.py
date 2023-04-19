@@ -18,8 +18,8 @@ class QuantConfig(object):
 
 
 class NNModelArch(Enum):
-    VGG             = 0
-    RESNET          = 1
-    GOOGLENET       = 2
-    YOLO_V3         = 3
+    VGG            = 0
+    RESNET         = 1
+    GOOGLENET      = 2
+    YOLO_V3        = 3
 
