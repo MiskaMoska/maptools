@@ -82,7 +82,7 @@ class OnnxConverter(object):
         assert isinstance(self.arch, NNModelArch), f"unsupported model arch: {self.arch}"
 
         self.param_dict: DeviceParams = dict()
-        self.shaper = __SHAPER_ACCESS_TABLE__[self.arch]()
+        self.shaper: BaseGraphShaper = self._get_shaper()
 
         self.raw_graph: OperatorVariableGraph
         self.origin_graph: OriginGraph
@@ -90,6 +90,159 @@ class OnnxConverter(object):
         self.device_graph: DeviceGraph
 
         self.raw_graph = OperatorVariableGraph()
+
+    def _get_shaper(self) -> None:
+        return __SHAPER_ACCESS_TABLE__[self.arch]()
+
+    # @staticmethod
+    # def _get_data_dims(name: str, graph: onnx.GraphProto) -> List[int]:
+    #     for tensor in graph.value_info:
+    #         if tensor.name == name:
+    #             dim = tensor.type.tensor_type.shape.dim
+    #             return [d.dim_value for d in dim]
+    #     dim = graph.input[0].type.tensor_type.shape.dim # not found in value_info, then it must be input
+    #     return [d.dim_value for d in dim]
+    
+    # @staticmethod
+    # def _is_conv(type: str) -> bool:
+    #     return True if type in {'Conv'} else False
+
+    # @staticmethod
+    # def _is_gemm(type: str) -> bool:
+    #     return True if type in {'Gemm'} else False
+
+    # @staticmethod
+    # def _is_pool(type: str) -> bool:
+    #     return True if type in {'MaxPool','AveragePool','GlobalAveragePool'} else False
+
+    # @staticmethod
+    # def _is_act(type: str) -> bool:
+    #     return True if type in {'Relu','PRelu','HardSigmoid'} else False
+    
+    # @staticmethod
+    # def _is_resize(type: str) -> bool:
+    #     return True if type in {'Resize'} else False
+    
+    # @staticmethod
+    # def _is_flatten(type: str) -> bool:
+    #     return True if type in {'Flatten'} else False
+    
+    # @staticmethod
+    # def _is_reshape(type: str) -> bool:
+    #     return True if type in {'Reshape'} else False
+    
+    # @staticmethod
+    # def _is_transpose(type: str) -> bool:
+    #     return True if type in {'Transpose'} else False
+
+    # def _get_variable(self, name: str) -> onnx.TensorProto:
+    #     for var in self._model.graph.initializer:
+    #         if var.name == name:
+    #             return var
+    #     raise RuntimeError(f"cannot find variable named {name}")
+
+    # def _get_io_size(self, node: onnx.NodeProto) -> Tuple[List[int], List[int]]:
+    #     # get input and output size
+    #     name = node.input[0]
+    #     i_dims = self._get_data_dims(name,self._model.graph)
+    #     name = node.output[0]
+    #     o_dims = self._get_data_dims(name,self._model.graph)
+    #     return list(i_dims[-2:]), list(o_dims[-2:])
+
+    # def _complete_conv_config(self, node: onnx.NodeProto, d: Dict) -> None:
+    #     size_i, size_o = self._get_io_size(node)
+    #     d['conv_input_size'] = size_i
+    #     d['conv_output_size'] = size_o
+    #     d['conv_pads'] = [0]*4 # some conv operators have no conv_pads
+
+    #     for at in node.attribute:
+    #         if at.name == 'dilations':
+    #             assert list(at.ints) == [1, 1], (
+    #                 f"conv_dilations must be [1, 1], but got {at.ints}")
+    #         elif at.name == 'group':
+    #             assert at.i == 1, f"conv_group must be 1, but got {at.i}"
+    #         elif at.name == 'kernel_shape':
+    #             d['conv_kernel_size'] = list(at.ints)
+    #         elif at.name == 'pads':
+    #             d['conv_pads'] = list(at.ints)
+    #         elif at.name == 'strides':
+    #             d['conv_strides'] = list(at.ints)
+
+    #     weight = self._get_variable(node.input[1]) # input[1] should be weight
+    #     bias = None
+    #     if len(node.input) > 2: # if has bias
+    #         bias = self._get_variable(node.input[2]) # input[2] should be weight
+
+    #     # save convolution weights
+    #     name = node.name + '_conv_weight'
+    #     d['conv_weight'] = name
+    #     self.param_dict[name] = onh.to_array(weight)
+
+    #     # save convolution bias
+    #     name = node.name + '_conv_bias'
+    #     d['conv_bias'] = name
+    #     self.param_dict[name] = None if bias is None else onh.to_array(bias)
+
+    #     d['conv_num_ichan'] = weight.dims[1] # input channel number
+    #     d['conv_num_ochan'] = weight.dims[0] # output channel number
+
+    # def _complete_pool_config(self, node: onnx.NodeProto, d: Dict) -> None:
+    #     size_i, size_o = self._get_io_size(node)
+    #     d['pool_input_size'] = size_i
+    #     d['pool_output_size'] = size_o
+    #     d['pool_mode'] = node.op_type
+
+    #     for at in node.attribute:
+    #         if at.name == 'ceil_mode':
+    #             d['pool_ceil_mode'] = at.i
+    #         elif at.name == 'kernel_shape':
+    #             d['pool_kernel_size'] = list(at.ints)
+    #         elif at.name == 'pads':
+    #             d['pool_pads'] = list(at.ints)
+    #         elif at.name == 'strides':
+    #             d['pool_strides'] = list(at.ints)
+
+    # def _complete_gemm_config(self, node: onnx.NodeProto, d: Dict) -> None:
+    #     weight = onh.to_array(self._get_variable(node.input[1])) # input[1] should be weight
+    #     if len(node.input[2]): # if has bias
+    #         bias = onh.to_array(self._get_variable(node.input[2])) # input[2] should be weight
+    #     else: bias = np.zeros(weight.dims[0])
+
+    #     d['gemm_weight'] = weight
+    #     d['gemm_bias'] = bias
+    #     d['gemm_len_inv'] = weight.shape[1] # input vector length
+    #     d['gemm_len_outv'] = weight.shape[0] # output vector length
+
+    # def _complete_act_config(self, node: onnx.NodeProto, d: Dict) -> None:
+    #     d['act_mode'] = node.op_type 
+    #     for at in node.attribute:
+    #         if at.name == 'alpha':
+    #             d['act_alpha'] = at.f
+
+    # def _complete_resize_config(self, node: onnx.NodeProto, d: Dict) -> None:
+    #     scales = onh.to_array(self._get_variable(node.input[1]))
+    #     assert scales.shape[0] == 4, (f"resize scales must be a 4-element array")
+    #     assert scales[0] * scales[1] == 1, (
+    #         f"resize scales on batch and channels must be 1, but got {scales}")
+    #     assert scales[2].is_integer() and scales[3].is_integer(), (
+    #         f"resize scales[2:4] must be int, but got {type(scales[2])}, {type(scales[3])}")
+    #     assert scales[2] * scales[3] >= 1, (
+    #         f"resize portion must be no less than 1, but got: {scales[2] * scales[3]}")
+    #     d['resize_scales'] = scales.astype(np.int8)
+
+    # def _complete_flatten_config(self, node: onnx.NodeProto, d: Dict) -> None:
+    #     for at in node.attribute:
+    #         if at.name == 'axis':
+    #             d['flatten_axis'] = at.i
+
+    # def _complete_reshape_config(self, node: onnx.NodeProto, d: Dict) -> None:
+    #     shape = self._get_variable(node.input[1])
+    #     d['reshape_shape'] = onh.to_array(shape).tolist()
+
+    # def _complete_transpose_config(self, node: onnx.NodeProto, d: Dict) -> None:
+    #     for at in node.attribute:
+    #         if at.name == 'perm':
+    #             d['transpose_perm'] = list(at.ints)
 
     def _assert_node(self, node: onnx.NodeProto) -> None:
         assert node.op_type in VALID_OPS, f"unsupported op type: {node.op_type}"
