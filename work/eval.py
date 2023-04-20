@@ -6,7 +6,7 @@ import torchvision.transforms as transforms
 from torchvision.models import resnet18, resnet50
 from torch.utils.data import DataLoader
 from typing import List, Tuple, Dict
-from maptools import OnnxConverter, XbarMapper
+from maptools import OnnxConverter, TileMapper
 from maptools.calcusim import CalcuSim
 from maptools import read_quantparams
 import onnx
@@ -24,14 +24,14 @@ model = onnx.load(ONNXDIR)
 oc = OnnxConverter(model, mapname=MAPNAME, quantize=QUANTIZE)
 oc.run_conversion()
 
-xm = XbarMapper(
+xm = TileMapper(
     oc.device_graph, 
     256, 
     256*5, 
     mapname=MAPNAME
 )
 xm.run_map()
-params = read_quantparams(MAPNAME) if QUANTIZE else oc.param_dict
+params = read_quantparams(MAPNAME) if QUANTIZE else oc.params
 model = CalcuSim(xm.ctg, oc.host_graph, params, mapname=MAPNAME, quantize=QUANTIZE, physical=PHYSICAL)
 ########################## CalcuSim Model End ############################################
 

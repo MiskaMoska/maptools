@@ -3,9 +3,9 @@ import numpy as np
 from typing import List, Dict, Tuple, Any
 from maptools.core import DeviceGraph, CTG
 
-__all__ = ['XbarMapper']
+__all__ = ['TileMapper']
 
-class XbarMapper(object):
+class TileMapper(object):
 
     def __init__(
         self, 
@@ -42,13 +42,13 @@ class XbarMapper(object):
             np.array([[2, 2], [2, 2], [2, 2]]),
             ...]
             Where each numpy array represent one layer's mapping information.
-            Each element in the numpy array represents a block in current layer mapped xbars.
-            The value of each element in the numpy array is the number of xbars the block contains.
+            Each element in the numpy array represents a block in current layer mapped tiles.
+            The value of each element in the numpy array is the number of tiles the block contains.
 
         self.map_dict : Dict[Tuple[int, int, int, int], Dict[str, Any]]
-            A look-up-table for each mapped xbar to get the corresponding configuration information.
+            A look-up-table for each mapped tile to get the corresponding configuration information.
             The Tuple key is organized as (layer_idx, region_idx, block_idx, idx_in_block).
-            For example, to get the configuration information of the second xbar in region 1, 
+            For example, to get the configuration information of the second tile in region 1, 
             block 2 of the first layer, use:
             >>> key = (0, 1, 2, 1)
             >>> config_info = self.map_dict[key]
@@ -127,15 +127,14 @@ class XbarMapper(object):
                             slice_len = box_vector_len % self.w
                         else: slice_len = self.w
 
-                        _start_ichan_index = box[0] + box_block_index * self.w # box[0] is the base # ichannel
-                        _end_ichan_index = _start_ichan_index + slice_len
-                        start_ichan_index, end_ichan_index = _start_ichan_index - box[0], _end_ichan_index - box[0]
+                        start_ichan_index = box[0] + box_block_index * self.w # box[0] is the base # ichannel
+                        end_ichan_index = start_ichan_index + slice_len
 
                         slices_per_tile = self.h // slice_len # max slices per tile
                         tiles_per_block = math.ceil((kernel_size[0] * kernel_size[1]) / slices_per_tile)
                     
                         for tile_index in range(tiles_per_block):
-                            icfg, real_icfg = [], []
+                            icfg = []
                             if (tile_index + 1) * slices_per_tile > kernel_size[0] * kernel_size[1]:
                                 slices_now_tile = kernel_size[0] * kernel_size[1] % slices_per_tile
                             else: slices_now_tile = slices_per_tile
@@ -143,22 +142,20 @@ class XbarMapper(object):
                             for k in range(slices_now_tile):
                                 winpos_idx = tile_index * slices_per_tile + k
                                 icfg.append((winpos_idx, start_ichan_index, end_ichan_index))
-                                real_icfg.append((winpos_idx, _start_ichan_index, _end_ichan_index))
                                 
-                            xbar_dict = {
+                            tile_dict = {
                                 'xbar_icfg': icfg, 
                                 'xbar_ocfg': (start_ochan_index, end_ochan_index),
-                                'xbar_real_icfg': real_icfg,
                                 'xbar_num_ichan': end_ichan_index - start_ichan_index, 
                                 'xbar_num_ochan': end_ochan_index - start_ochan_index,
                                 'box_idx': box_index
                             }
-                            xbar_dict.update(layer_config)
+                            tile_dict.update(layer_config)
 
                             is_merge_tile = (block_index == 0 and tile_index == 0)
-                            self._regularize_op_type(xbar_dict, is_merge_tile)
+                            self._regularize_op_type(tile_dict, is_merge_tile)
 
-                            self.map_dict[(layer_index, region_index, block_index, tile_index)] = xbar_dict
+                            self.map_dict[(layer_index, region_index, block_index, tile_index)] = tile_dict
                             map_info[region_index][block_index] += 1
 
                     # for each box, the `block_base_index` accumulate
@@ -166,17 +163,17 @@ class XbarMapper(object):
 
             self.map_list.append(np.array(map_info))
 
-    def _regularize_op_type(self, xbar_dict: Dict, is_merge_tile: bool) -> None:
+    def _regularize_op_type(self, tile_dict: Dict, is_merge_tile: bool) -> None:
         '''
         This method regularizes tile op_type
         cause only merge tile can have [add, act, pool, bias, resize]
         '''
         if is_merge_tile:
-            if 'conv_bias' in xbar_dict:
-                xbar_dict['op_type'] += '-Bias'
+            if 'conv_bias' in tile_dict:
+                tile_dict['op_type'] += '-Bias'
         else:
             for ops in {'Pool', 'Act', 'Add', 'Rsz'}:
-                xbar_dict['op_type'] = xbar_dict['op_type'].replace('-'+ops, '')
+                tile_dict['op_type'] = tile_dict['op_type'].replace('-'+ops, '')
 
     def run_map(self) -> None: 
         self._map_for_all()
@@ -192,22 +189,22 @@ class XbarMapper(object):
         )
 
     @property
-    def xbar_config(self) -> Dict:
+    def tile_config(self) -> Dict:
         '''
-        A dictionary with logical xbar as keys and configuration info as values.
+        A dictionary with logical tile as keys and configuration info as values.
         '''
         return self.map_dict
 
     def print_config(self) -> None:
         '''
-        Print xbar configs
+        Print tile configs
         '''
         total = 0
         for i, mtx in enumerate(self.map_list):
             sum = np.sum(mtx)
             total += sum
-            print(f"layer{i}: #region-{mtx.shape[0]}, #block-{mtx.shape[1]}, #xbar-{sum}")
+            print(f"layer{i}: #region-{mtx.shape[0]}, #block-{mtx.shape[1]}, #tile-{sum}")
         print("-"*70)
-        print(f"total #xbar-{total}")
-        self.total_xbar = total
+        print(f"total #tile-{total}")
+        self.total_tile = total
 

@@ -67,7 +67,7 @@ class OnnxConverter(object):
 
         Key Members
         -----------
-        self.param_dict : ModelParams
+        self.params : ModelParams
             A dictionary with tensor name as keys and numpy array as values.
             Stores the parameters of the model.
         '''
@@ -78,7 +78,7 @@ class OnnxConverter(object):
         self.__dict__.update(kwargs)
         assert isinstance(self.arch, NNModelArch), f"unsupported model arch: {self.arch}"
 
-        self.param_dict: ModelParams = dict()
+        self.params: ModelParams = dict()
         self.shaper = __SHAPER_ACCESS_TABLE__[self.arch]()
 
         self.raw_graph: OperatorVariableGraph
@@ -121,7 +121,7 @@ class OnnxConverter(object):
             self.raw_graph.add_variable_node(succ_node+'_d')
             self.raw_graph.add_edge(node_name, succ_node+'_d')
 
-            parser = __PARSER_ACCESS_TABLE__[n.op_type](n, self._model.graph, self.param_dict)
+            parser = __PARSER_ACCESS_TABLE__[n.op_type](n, self._model.graph, self.params)
             self.raw_graph.set_operator_config(node_name, parser())
 
     def insert_quant_info(self) -> None:
@@ -159,7 +159,7 @@ class OnnxConverter(object):
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
         with open(file_dir, 'wb') as f:
-            pickle.dump(self.param_dict, f)
+            pickle.dump(self.params, f)
         print(f"parameters of the model has been written to: {file_dir}")
 
     def print_raw_dict(self) -> None:

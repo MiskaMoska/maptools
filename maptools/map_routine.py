@@ -8,7 +8,7 @@ from maptools.hardware import NocConfig
 from maptools.utils import read_quantparams
 from maptools.core import CTG, NNModelArch, ROOT_DIR
 from maptools.drawing import MapPlotter
-from maptools.mapper import OnnxConverter, XbarMapper, NocMapper
+from maptools.mapper import OnnxConverter, TileMapper, NocMapper
 from maptools.calcusim import CalcuSim
 
 __all__ = ['MapRoutine']
@@ -68,7 +68,7 @@ class MapRoutine(object):
         if self.show_device_graph: oc.plot_device_graph()
         if self.save_params: oc.save_params()
 
-        xm = XbarMapper(
+        xm = TileMapper(
             oc.device_graph, 
             self.xbar_size[0], 
             self.xbar_size[1], 
@@ -94,7 +94,7 @@ class MapRoutine(object):
             assert isinstance(self.input, torch.Tensor), f"input must be {torch.Tensor}, but got {type(self.input)}"
             assert len(self.input.shape) == 4, f"input dimension must be 4 [N, C, H, W], but got {len(self.input.shape)}"
 
-            params = read_quantparams(self.mapname) if self.quantize else oc.param_dict
+            params = read_quantparams(self.mapname) if self.quantize else oc.params
             csim = CalcuSim(
                 ctg, 
                 oc.host_graph, 
@@ -111,8 +111,8 @@ class MapRoutine(object):
                 csim.save_results(file_name='quantres' if self.quantize else 'res')
 
         if self.noc_map:
-            assert xm.total_xbar <= self.noc_size[0] * self.noc_size[1],\
-                f"Need larger networks, number of total xbars: {xm.total_xbar}"
+            assert xm.total_tile <= self.noc_size[0] * self.noc_size[1],\
+                f"Need larger networks, number of total tiles: {xm.total_tile}"
             nm = NocMapper(
                 ctg, 
                 self.noc_size[0],

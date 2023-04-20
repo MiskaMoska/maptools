@@ -10,7 +10,8 @@ __all__ = ['save_quantization']
 ACTIVE_OPTYPE = {
     'Conv',
     'Add',
-    'Relu'
+    'Relu',
+    'Gemm'
 }
 
 def quant_operation_assertion(op: QuantableOperation) -> bool:
@@ -74,7 +75,7 @@ def save_quantization(
     Save quantization configuration and quantized parameters
     '''
     config_dict = {}
-    params_dict = {}
+    params = {}
     for op in graph.operations.values():
         quant_operation_assertion(op)
         if isinstance(op, QuantableOperation) and op._type in ACTIVE_OPTYPE:
@@ -96,7 +97,8 @@ def save_quantization(
                     op.inputs[1].value,
                     weight_config
                 )
-                params_dict[op.name + '_conv_weight'] = weight_tensor.cpu().numpy()
+                params[op.name + '_conv_weight'] = weight_tensor.cpu().numpy()
+                params[op.name + '_conv_bias'] = None
 
                 if len(op.inputs) > 2: # has bias
                     bias_tensor = get_quantized_conv_bias(
@@ -105,11 +107,18 @@ def save_quantization(
                         input_config,
                         weight_config
                     )
-                    params_dict[op.name + '_conv_bias'] = bias_tensor.cpu().numpy()
-            
+                    params[op.name + '_conv_bias'] = bias_tensor.cpu().numpy()
+
+            elif op._type == 'Gemm':
+                params[op.name + '_gemm_weight'] = op.inputs[1].value.cpu().numpy()
+                params[op.name + '_gemm_bias'] = None
+                if len(op.inputs) > 2: # has bias
+                    params[op.name + '_gemm_bias'] = op.inputs[-1].value.cpu().numpy()
+
             elif op._type == 'Add': ...
             elif op._type == 'Relu': ...
             elif op._type in {'MaxPool', 'AveragePool'}: ...
+
             else:
                 assert True, f"op_type {op._type} not supported yet"
 
@@ -120,5 +129,5 @@ def save_quantization(
     print(f"quantization information has been written to: {quantinfo_save_path}")
 
     with open(quantparam_save_path, 'wb') as f:
-        pickle.dump(params_dict, f)
+        pickle.dump(params, f)
     print(f"quantized parameters has been written to: {quantparam_save_path}")

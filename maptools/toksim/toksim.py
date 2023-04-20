@@ -1,6 +1,6 @@
 '''
 To use TokSim to perform evaluation, the precondition is that the bottlenck does not happen at communication.
-In other words, the rate the communication link transports data matches the rate the Xbar produces data.  
+In other words, the rate the communication link transports data matches the rate the Tile produces data.  
 TODO support finite bandwidth
 TODO support linear layer
 '''
@@ -170,7 +170,7 @@ class _WindowBuf(object):
         return token
 
 
-class _Xbar(object):
+class _Tile(object):
 
     def __init__(
         self, 
@@ -181,12 +181,12 @@ class _Xbar(object):
         **kwargs: Any
     ) -> None:
         '''
-        Xbar abstract model designed for TokSim
+        Tile abstract model designed for TokSim
         
         Parameters
         ----------
         config : Dict
-            xbar config dictionary
+            tile config dictionary
         
         is_merge : bool
             whether is a merge destination node
@@ -235,7 +235,7 @@ class _Xbar(object):
 
     def _assert_op_type(self) -> None:
         if 'Conv' not in self.op_type:
-            raise AssertionError(f"Xbar must perform convolution, now op_type: {self.op_type}")
+            raise AssertionError(f"Tile must perform convolution, now op_type: {self.op_type}")
         if 'Rsz' in self.op_type and 'Pool' in self.op_type:
             raise AssertionError(f"Rsz and Pool cannot appear simultaneously, now op_type: {self.op_type}")
 
@@ -408,7 +408,7 @@ class TokSim(object):
         Besides, for synchronous data flow graph containing merge-in branches, especially bypass-structured
         branches in NVCIM, the token unbalance between different branches can lead to larger buffer need.
         `TokSim` is an inference-based simulator, it gives designers a simulated value of the lower bound
-        of the buffer size that should be allocated for each xbar.
+        of the buffer size that should be allocated for each tile.
 
         Besides, `TokSim` helps designers to evaluate the communication load on each connection,
         this is valuable for network bandwidth allocation while running network mapping.
@@ -421,8 +421,8 @@ class TokSim(object):
         Parameters
         ----------
         ctg : CTG
-            the communication trace graph that contains the xbars and communication relationship
-            run xbar mapping to get the CTG
+            the communication trace graph that contains the tiles and communication relationship
+            run tile mapping to get the CTG
 
         slide_once : bool
             when True, the window slides only once in each iteration,
@@ -440,7 +440,7 @@ class TokSim(object):
         Key Members
         -----------
         self.obj_dict : Dict
-            A dictionary with key = [CTG.graph.nodes] and value = [_Xbar, _Comm, _MergeComm]
+            A dictionary with key = [CTG.graph.nodes] and value = [_Tile, _Comm, _MergeComm]
             Stores all the objects in `TokSim`.
 
         self.execu_dict : Dict
@@ -461,7 +461,7 @@ class TokSim(object):
             if self.ctg.is_comm(node): # comm
                 preds = list(self.ctg.preds(node))
                 pred = preds[0]
-                cfg = self.ctg.get_xbar_config(pred)
+                cfg = self.ctg.get_tile_config(pred)
                 if self.ctg.is_merge_comm(node): # merge comm
                     self.obj_dict[node] = _MergeComm(
                         cfg['xbar_num_ochan'], 
@@ -473,8 +473,8 @@ class TokSim(object):
                         cfg['xbar_num_ochan'],
                         latency=self.latency
                     )
-            elif self.ctg.is_xbar(node): # xbar
-                config = self.ctg.get_xbar_config(node)
+            elif self.ctg.is_tile(node): # tile
+                config = self.ctg.get_tile_config(node)
                 is_merge = False
                 is_gather = False
                 for pred in self.ctg.preds(node):
@@ -482,7 +482,7 @@ class TokSim(object):
                         is_merge = True
                     if self.ctg.is_gather_comm(pred):
                         is_gather = True
-                self.obj_dict[node] = _Xbar(
+                self.obj_dict[node] = _Tile(
                     config, 
                     is_merge, 
                     is_gather, 
@@ -493,8 +493,8 @@ class TokSim(object):
     def iter(self) -> bool:
         done_cnt = 0
         for node in self.ctg.node_names:
-            if self.ctg.is_xbar(node): # xbar
-                if self.ctg.is_head_xbar(node): # head xbar
+            if self.ctg.is_tile(node): # tile
+                if self.ctg.is_head_tile(node): # head tile
                     self.obj_dict[node].consume_tokens(1, 'Cast')
                 token = self.obj_dict[node].produce_tokens()
                 self.execu_dict[node].append(token) # record executed or not
@@ -502,12 +502,12 @@ class TokSim(object):
                 if self.obj_dict[node].done:
                     done_cnt += 1
 
-                # xbar may have multiple successors typed "comm"
+                # tile may have multiple successors typed "comm"
                 # it may be any one of cast, merge, and gather
                 if token == 0: # produced 0 token
                     continue
                 succs = list(self.ctg.succs(node))
-                if len(succs) == 0: # tail xbar
+                if len(succs) == 0: # tail tile
                     continue
                 for succ in succs:
                     self.obj_dict[succ].consume_tokens(token, node)
@@ -520,11 +520,11 @@ class TokSim(object):
                     pred_type = 'Merge'
                 else:
                     pred_type = 'Gather'
-                for succ in self.ctg.succs(node): # comm successors must be xbar
+                for succ in self.ctg.succs(node): # comm successors must be tile
                     self.obj_dict[succ].consume_tokens(token, pred_type)
 
-        print(f'process: {done_cnt}/{self.ctg.xbar_num} xbars')
-        if done_cnt == self.ctg.xbar_num:
+        print(f'process: {done_cnt}/{self.ctg.tile_num} tiles')
+        if done_cnt == self.ctg.tile_num:
             return True
         return False
 
@@ -541,7 +541,7 @@ class TokSim(object):
     def _write_back(self) -> None:
         '''
         Write back the information about the buffer size and communication load
-        Xbar : {conv_buf, pool_buf, gather_buf}
+        Tile : {conv_buf, pool_buf, gather_buf}
         Comm : {load, load_ratio}
         '''
         # maximum communication load
@@ -551,7 +551,7 @@ class TokSim(object):
         for n in self.ctg.node_names:
             local = dict()
             node = self.obj_dict[n]
-            if self.ctg.is_xbar(n): # xbar node
+            if self.ctg.is_tile(n): # tile node
                 local['conv_buf'] = node.conv_buf.max_buf
                 local['pool_buf'] = 0
                 if 'Pool' in node.op_type:
@@ -562,20 +562,20 @@ class TokSim(object):
                 local['load_ratio'] = local['load'] / self.max_comm_load
             self.ctg.update_dict(n, local)
 
-    def echo_xbar(self) -> str:
+    def echo_tile(self) -> str:
         log = ""
         for node in self.ctg.node_names:
-            if self.ctg.is_xbar(node):
-                xbar = self.obj_dict[node]
-                conv_buf = xbar.conv_buf.max_buf
+            if self.ctg.is_tile(node):
+                tile = self.obj_dict[node]
+                conv_buf = tile.conv_buf.max_buf
                 pool_buf = '--'
-                if 'Pool' in xbar.op_type:
-                    pool_buf = xbar.pool_buf.max_buf
-                inter_buf = xbar.max_inter_buf
-                merge_buf = xbar.max_merge_buf
-                gather_buf = xbar.max_gather_buf
+                if 'Pool' in tile.op_type:
+                    pool_buf = tile.pool_buf.max_buf
+                inter_buf = tile.max_inter_buf
+                merge_buf = tile.max_merge_buf
+                gather_buf = tile.max_gather_buf
                 log += '%-5s%-20s%-9s%-20s%-9s%-20s%-10s%-20s%-10s%-20s%-11s%-20s\n' % (
-                    'xbar:', node,
+                    'tile:', node,
                     'conv_buf:', conv_buf,
                     'pool_buf:', pool_buf,
                     'inter_buf:', inter_buf,
@@ -609,7 +609,7 @@ class TokSim(object):
 
         # save buffer log
         file_dir = os.path.join(save_dir, 'buffer.log')
-        log = self.echo_xbar() + "\n\n" + self.echo_comm()
+        log = self.echo_tile() + "\n\n" + self.echo_comm()
         with open(file_dir, 'w') as f:
             f.write(log)
         print(f"\nbuffer log written to {file_dir}")

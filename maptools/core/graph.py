@@ -187,6 +187,25 @@ class HostGraph(OperatorGraph): ...
 class DeviceGraph(OperatorGraph):
 
     @cached_property
+    def iqc(self) -> QuantConfig:
+        config = self.config(self.unique_input)
+        return config['conv_quant_config']
+    
+    @cached_property
+    def oqc(self) -> List[QuantConfig]:
+        oqc = [0] * self.output_num
+        for node in self.nodes:
+            if self.is_output(node):
+                config = self.config(node)
+                name = 'conv_'
+                if 'Act' in self.op_type(node):
+                    name = 'add_'
+                elif 'Add' in self.op_type(node):
+                    name = 'relu_'
+                bidx = config['bridge_idx']
+                oqc[bidx] = config[name + 'quant_config']
+        return oqc
+
     def input_output_quant_config(self) -> Optional[Tuple[QuantConfig, QuantConfig]]:
         nodes = list(self.nodes)
         head_node, tail_node = nodes[0], nodes[-1]

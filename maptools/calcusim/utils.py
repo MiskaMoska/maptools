@@ -7,18 +7,8 @@ from typing import List, Tuple, Dict
 from maptools.core import ModelParams, TileConfig
 
 __all__ = [
-    'rebuild_pads',
-    'get_xbar_kwargs'
+    'get_tile_kwargs'
 ]
-
-def rebuild_pads(pads: List) -> None:
-    if pads is not None:
-        _pads = pads.copy()
-        pads[0] = _pads[3]
-        pads[1] = _pads[1]
-        pads[2] = _pads[0]
-        pads[3] = _pads[2]
-
 
 def rebuild_conv_weight(icfg: List[Tuple], ocfg: Tuple, weight: torch.Tensor) -> torch.Tensor:
     '''
@@ -47,12 +37,15 @@ def rebuild_conv_bias(ocfg: Tuple, bias: torch.Tensor) -> torch.Tensor:
     return deepcopy(bias[ocfg[0]:ocfg[1]])
 
 
-def get_xbar_kwargs(cfg: TileConfig, params: ModelParams) -> Dict:
+def get_tile_kwargs(cfg: TileConfig, params: ModelParams) -> Dict:
     kwargs = dict()
-    kwargs['conv_pads'] = cfg['conv_pads'].copy()
-    weight_ptr = cfg['conv_weight']
+
+    # get conv pads
+    pads = cfg['conv_pads'].copy()
+    kwargs['conv_pads'] = [pads[3], pads[1], pads[0], pads[2]]
 
     # get conv weight
+    weight_ptr = cfg['conv_weight']
     weight = rebuild_conv_weight(
         cfg['xbar_icfg'], cfg['xbar_ocfg'], 
         torch.tensor(params[weight_ptr]).float()
@@ -68,20 +61,27 @@ def get_xbar_kwargs(cfg: TileConfig, params: ModelParams) -> Dict:
         )
         kwargs['conv_bias'] = bias
     
+    # get conv strides
     kwargs['conv_strides'] = cfg['conv_strides'].copy()
+
+    # get pool config
     if 'Pool' in cfg['op_type']:
         kwargs['is_pool'] = True
         kwargs['pool_mode'] = deepcopy(cfg['pool_mode'])
-        kwargs['pool_pads'] = cfg['pool_pads'].copy()
+        pads = cfg['pool_pads'].copy()
+        kwargs['pool_pads'] = [pads[3], pads[1], pads[0], pads[2]]
         kwargs['pool_kernel_size'] = cfg['pool_kernel_size'].copy()
         kwargs['pool_strides'] = cfg['pool_strides'].copy()
+
+    # get act config
     if 'Act' in cfg['op_type']:
         kwargs['is_act'] = True
         kwargs['act_mode'] = deepcopy(cfg['act_mode'])
     
-    # output channel range
+    # get output channel range
     kwargs['ochan_range'] = cfg['xbar_ocfg']
 
+    # get quant config
     config_names = {
         'conv_quant_config', 
         'add_quant_config',
@@ -91,6 +91,7 @@ def get_xbar_kwargs(cfg: TileConfig, params: ModelParams) -> Dict:
         if name in cfg:
             kwargs[name] = cfg[name]
 
+    # get connection attributes
     if not cfg['merge_out']:
         kwargs['merge_node'] = True
     return kwargs

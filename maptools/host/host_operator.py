@@ -45,8 +45,6 @@ class Resize(nn.Module):
     def __init__(self) -> None:
         super().__init__()
 
-torch.reshape()
-
 
 class GlobalAveragePool(nn.Module):
 

@@ -48,13 +48,13 @@ class CTG(object):
             np.array([[2, 2], [2, 2], [2, 2]]),
             ...]
             Where each numpy array represent one layer's mapping information.
-            Each element in the numpy array represents a block in current layer mapped xbars.
-            The value of each element in the numpy array is the number of xbars the block contains.
+            Each element in the numpy array represents a block in current layer mapped tiles.
+            The value of each element in the numpy array is the number of tiles the block contains.
 
         map_dict : Dict[Tuple[int, int, int, int], Dict[str, Any]]
-            A look-up-table for each mapped xbar to get the corresponding configuration information.
+            A look-up-table for each mapped tile to get the corresponding configuration information.
             The Tuple key is organized as (layer_idx, region_idx, block_idx, idx_in_block).
-            For example, to get the configuration information of the second xbar in region 1, 
+            For example, to get the configuration information of the second tile in region 1, 
             block 2 of the first layer, use:
             >>> key = (0, 1, 2, 1)
             >>> config_info = self.map_dict[key]
@@ -75,7 +75,7 @@ class CTG(object):
         self.output_num = device_graph.output_num 
 
         # graph nodes
-        self.xbar_nodes: List[Tuple[int, int, int, int]] = []
+        self.tile_nodes: List[Tuple[int, int, int, int]] = []
         self.cast_comms: List[str] = []
         self.merge_comms: List[str] = []
         self.gather_comms: List[str] = []
@@ -85,7 +85,9 @@ class CTG(object):
 
         # complete attributes
         if self.quantize:
-            self._complete_quant_attrs(device_graph)
+            self.iqc = device_graph.iqc
+            self.oqc = device_graph.oqc
+
         self._complete_connection_attrs()
 
     @cached_property
@@ -93,8 +95,8 @@ class CTG(object):
         return list(nx.topological_sort(self.graph))
     
     @cached_property
-    def xbars(self) -> List[Tuple]:
-        return [n for n in self.node_names if self.is_xbar(n)]
+    def tiles(self) -> List[Tuple]:
+        return [n for n in self.node_names if self.is_tile(n)]
 
     @property
     def comms(self) -> List[str]:
@@ -112,8 +114,8 @@ class CTG(object):
     def is_comm(self, node: Any) -> bool:
         return node in self.comms
 
-    def is_xbar(self, node: Any) -> bool:
-        return node in self.xbar_nodes
+    def is_tile(self, node: Any) -> bool:
+        return node in self.tile_nodes
     
     def preds(self, node: Any) -> Generator:
         yield from self.graph.predecessors(node)
@@ -121,14 +123,14 @@ class CTG(object):
     def succs(self, node: Any) -> Generator:
         yield from self.graph.successors(node)
 
-    def get_xbar_config(self, node: Any) -> TileConfig:
-        assert self.is_xbar(node), "not a xbar node, cannot get config"
+    def get_tile_config(self, node: Any) -> TileConfig:
+        assert self.is_tile(node), "not a tile node, cannot get config"
         return self.dicts[node]
 
-    def is_head_xbar(self, node: Any) -> bool:
+    def is_head_tile(self, node: Any) -> bool:
         return self.graph.in_degree(node) == 0
     
-    def is_tail_xbar(self, node: Any) -> bool:
+    def is_tail_tile(self, node: Any) -> bool:
         return self.graph.out_degree(node) == 0
     
     def has_cast_in(self, node: Tuple) -> bool:
@@ -174,8 +176,8 @@ class CTG(object):
         return None
 
     @cached_property
-    def xbar_num(self) -> int:
-        return len(self.xbar_nodes)
+    def tile_num(self) -> int:
+        return len(self.tile_nodes)
 
     @cached_property
     def cast_num(self) -> int:
@@ -204,7 +206,7 @@ class CTG(object):
     def regions(self) -> Generator:
         '''
         Returns all regions in turn
-        A region is a set of xbars that execute the same range of output channels in Conv layer
+        A region is a set of tiles that execute the same range of output channels in Conv layer
         '''
         idx = 0
         base_idx = 0
@@ -221,8 +223,8 @@ class CTG(object):
 
     def _build_ctg(self, device_graph: DeviceGraph) -> None:
         self.graph = nx.MultiDiGraph()
-        self.xbar_nodes = list(self.dicts.keys())
-        self.graph.add_nodes_from(self.xbar_nodes)
+        self.tile_nodes = list(self.dicts.keys())
+        self.graph.add_nodes_from(self.tile_nodes)
         self._construct_connections(device_graph)
 
     def _construct_connections(self, device_graph: DeviceGraph) -> None: 
@@ -240,14 +242,14 @@ class CTG(object):
                     "#regions not match for gather communication")
                     
                 for i in range(p_mtx.shape[0]): # for each region in the last layer
-                    src_xbar = (p_lid, i, 0, 0) # source node of the gather path
-                    dst_xbar = (s_lid, i, 0, 0) # dst node of the gather path
-                    comm_name = 'gather_from_'+str(src_xbar)
+                    src_tile = (p_lid, i, 0, 0) # source node of the gather path
+                    dst_tile = (s_lid, i, 0, 0) # dst node of the gather path
+                    comm_name = 'gather_from_'+str(src_tile)
 
                     self.graph.add_node(comm_name)
                     self.gather_comms.append(comm_name)
-                    self.graph.add_edge(src_xbar, comm_name)
-                    self.graph.add_edge(comm_name, dst_xbar)
+                    self.graph.add_edge(src_tile, comm_name)
+                    self.graph.add_edge(comm_name, dst_tile)
 
             else: # add cast comms
                 if device_graph.in_degree(e[1]) > 1 and (
@@ -263,12 +265,12 @@ class CTG(object):
                     base_block_idx = 0
 
                 for i in range(p_mtx.shape[0]):
-                    src_xbar = (p_lid, i, 0, 0)
-                    comm_name = 'cast_from_' + str(src_xbar)
+                    src_tile = (p_lid, i, 0, 0)
+                    comm_name = 'cast_from_' + str(src_tile)
 
                     if comm_name not in self.cast_comms:
                         self.graph.add_node(comm_name)
-                        self.graph.add_edge(src_xbar, comm_name)
+                        self.graph.add_edge(src_tile, comm_name)
                         self.cast_comms.append(comm_name)
 
                     for j in range(s_mtx.shape[0]):
@@ -278,24 +280,19 @@ class CTG(object):
         # add merge comms
         for lid, mtx in enumerate(self.map_list):
             for i in range(mtx.shape[0]): # for each region in the current layer
-                if np.sum(mtx[i]) > 1: # there are more than 1 xbar in the current region
-                    dst_xbar = (lid, i, 0, 0) # root node of the merge tree
-                    comm_name = 'merge_to_'+str(dst_xbar)
+                if np.sum(mtx[i]) > 1: # there are more than 1 tile in the current region
+                    dst_tile = (lid, i, 0, 0) # root node of the merge tree
+                    comm_name = 'merge_to_'+str(dst_tile)
                     
                     self.graph.add_node(comm_name)
-                    self.graph.add_edge(comm_name, dst_xbar)
+                    self.graph.add_edge(comm_name, dst_tile)
                     self.merge_comms.append(comm_name)
                     
                     for j in range(mtx.shape[1]):
                         for k in range(mtx[i, j]):
                             node = (lid, i, j, k)
-                            if node != dst_xbar:
+                            if node != dst_tile:
                                 self.graph.add_edge(node, comm_name)
-
-    def _complete_quant_attrs(self, device_graph: DeviceGraph) -> None:
-        io_quant_config = device_graph.input_output_quant_config
-        self.input_quant_config = io_quant_config[0]
-        self.output_quant_config = io_quant_config[1]
 
     def _complete_connection_attrs(self) -> None:
         '''
@@ -303,7 +300,7 @@ class CTG(object):
         This step is performed after building CTG rather than in-time with 
         building CTG to achieve procedure decoupling and safety.
         '''
-        for xbar in self.xbar_nodes:
+        for tile in self.tile_nodes:
             is_head, is_tail = False, False
 
             cast_in, merge_in, gather_in = False, False, False
@@ -312,7 +309,7 @@ class CTG(object):
             cast_out, merge_out, gather_out = False, False, False
             cast_succ_comm, merge_succ_comm, gather_succ_comm = None, None, None
 
-            for pred in self.graph.predecessors(xbar):
+            for pred in self.graph.predecessors(tile):
                 if pred in self.cast_comms:
                     cast_in, cast_pred_comm = True, pred
                 if pred in self.merge_comms:
@@ -320,7 +317,7 @@ class CTG(object):
                 if pred in self.gather_comms:
                     gather_in, gather_pred_comm = True, pred
 
-            for succ in self.graph.successors(xbar):
+            for succ in self.graph.successors(tile):
                 if succ in self.cast_comms:
                     cast_out, cast_succ_comm = True, succ
                 if succ in self.merge_comms:
@@ -328,15 +325,15 @@ class CTG(object):
                 if succ in self.gather_comms:
                     gather_out, gather_succ_comm = True, succ
 
-            if self.is_head_xbar(xbar):
+            if self.is_head_tile(tile):
                 is_head = True
-                cast_in = True # head xbar receives cast in but has no cast predecessors
+                cast_in = True # head tile receives cast in but has no cast predecessors
 
-            if self.is_tail_xbar(xbar):
+            if self.is_tail_tile(tile):
                 is_tail = True
-                cast_out = True # tail xbar generates cast out but has no cast successors
+                cast_out = True # tail tile generates cast out but has no cast successors
 
-            self.dicts[xbar].update({
+            self.dicts[tile].update({
                 'is_head': is_head,
                 'is_tail': is_tail,
 
@@ -423,10 +420,9 @@ class CTG(object):
             ]:
                 if key in local:
                     _label += f'\n{key} : {local[key]}'
-            if self.is_xbar(n): # xbar
+            if self.is_tile(n): # tile
                 config = self.dicts[n]
                 icfg = config['xbar_icfg'][0]
-                ricfg = config['xbar_real_icfg'][0]
                 ocfg = config['xbar_ocfg']
                 box_idx = config['box_idx']
                 shape = 'rectangle'
@@ -436,7 +432,6 @@ class CTG(object):
                     label += '\nphy: ' + str(match_dict[n])
                 label += f'\nop_type: {config["op_type"]}'
                 label += f'\nichan: {(icfg[1], icfg[2])}'
-                label += f'\nreal_ichan: {(ricfg[1], ricfg[2])}'
                 label += f'\nochan: {ocfg}'
                 label += f'\nbox_idx: {box_idx}'
                 label += _label

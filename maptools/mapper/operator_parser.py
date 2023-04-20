@@ -13,7 +13,7 @@ class BaseOperatorParser(object):
         self, 
         node: onnx.NodeProto, 
         graph: onnx.GraphProto, 
-        param_dict: ModelParams
+        params: ModelParams
     ) -> None:
         if not isinstance(node, onnx.NodeProto):
             raise TypeError(
@@ -23,7 +23,7 @@ class BaseOperatorParser(object):
                 f"shaper need a {onnx.GraphProto} to proccess, but got a {type(graph)}")
         self.node = node
         self.graph = graph
-        self.param_dict = param_dict
+        self.params = params
 
     def __call__(self) -> OperatorConfig:
         return self.process()
@@ -88,12 +88,12 @@ class ConvParser(BaseOperatorParser):
         # save convolution weights
         name = self.node.name + '_conv_weight'
         self.config['conv_weight'] = name
-        self.param_dict[name] = onh.to_array(weight)
+        self.params[name] = onh.to_array(weight)
 
         # save convolution bias
         name = self.node.name + '_conv_bias'
         self.config['conv_bias'] = name
-        self.param_dict[name] = None if bias is None else onh.to_array(bias)
+        self.params[name] = None if bias is None else onh.to_array(bias)
 
         self.config['conv_num_ichan'] = weight.dims[1] # input channel number
         self.config['conv_num_ochan'] = weight.dims[0] # output channel number
@@ -135,12 +135,12 @@ class GemmParser(BaseOperatorParser):
         # save gemm weights
         name = self.node.name + '_gemm_weight'
         self.config['gemm_weight'] = name
-        self.param_dict[name] = onh.to_array(weight)
+        self.params[name] = onh.to_array(weight)
 
         # save gemm bias
         name = self.node.name + '_gemm_bias'
         self.config['gemm_bias'] = name
-        self.param_dict[name] = None if bias is None else onh.to_array(bias)
+        self.params[name] = None if bias is None else onh.to_array(bias)
 
         self.config['gemm_len_inv'] = weight.dims[1] # input vector length
         self.config['gemm_len_outv'] = weight.dims[0] # output vector length

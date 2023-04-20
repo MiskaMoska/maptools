@@ -79,7 +79,7 @@ class ConvUnit(nn.Module):
         return self.func(x, self.weight, bias=self.bias, stride=self.strides)
 
 
-class _Xbar(nn.Module):
+class _Tile(nn.Module):
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__()
@@ -106,15 +106,13 @@ class _Xbar(nn.Module):
         self.merge_node: bool = False
         self.quantize: bool = False
         self.physical: bool = False
-        self.ochan_range: Tuple[int, int] = (0, 0) 
+        self.ochan_range: Tuple[int, int] = (0, 0)
+
         self._init_quant_config()
         self.__dict__.update(kwargs)
         if self.quantize: self._init_for_quantization()
         if self.observe: self._init_observe_vars()
         self._init_conv_module()
-
-        rebuild_pads(self.conv_pads)
-        rebuild_pads(self.pool_pads)
 
     def _init_conv_module(self) -> None:
         self._conv = ConvUnit(
@@ -242,7 +240,7 @@ class _Xbar(nn.Module):
                 f"got x's shape = {x.shape} but gather's shape = {self.gather_in.shape}, cannot gather")
             x = torch.add(x, self.gather_in)
 
-            # only for xbar with gather in dataflow
+            # only for tile with gather in dataflow
             # add quantization converting from input to output, return a int8
             if self.quantize:
                 x = torch.round(x * self.ai_scale / self.ao_scale)
@@ -253,7 +251,7 @@ class _Xbar(nn.Module):
                 f"activation mode must be Relu, but got {self.act_mode}")
             x = F.relu(x)
 
-            # only for xbar with activation (relu)
+            # only for tile with activation (relu)
             # add quantization converting from input to output, return a int8
             if self.quantize:
                 x = torch.round(x * self.ri_scale / self.ro_scale)
@@ -330,11 +328,11 @@ class CalcuSim(nn.Module):
         Parameters
         ----------
         ctg : CTG
-            communication trace graph, obtained from `XbarMapper.ctg`
+            communication trace graph, obtained from `TileMapper.ctg`
         
         params : ModelParams
             device param dictionary, with operator name as keys and the parameters as
-            values, obtained from `OnnxConverter.param_dict`.
+            values, obtained from `OnnxConverter.params`.
 
         kwargs : Dict
             mapname : str = 'newmap'
@@ -342,13 +340,13 @@ class CalcuSim(nn.Module):
 
         Key Members
         -----------
-        self.obj_dict : Dict[Union[PhysicalTile, str], Union[_Xbar, torch.Tensor]]
+        self.obj_dict : Dict[Union[PhysicalTile, str], Union[_Tile, torch.Tensor]]
             A dictionary with physical tile id as keys and its corrensponding tile
             executors and values. The tile executors are the submodules of CalcuSim.
 
         self.res_dict : Dict[Union[str, Tuple], Dict[str, Optional[torch.Tensor]]]
-            Stores the intermediate results of each xbar.
-            A dictionary with logical xbar as keys and result dictionary as values
+            Stores the intermediate results of each tile.
+            A dictionary with logical tile as keys and result dictionary as values
             Where the result dictionary has keys in `OBSERVE_VARS`.
         '''
         super().__init__()
@@ -375,9 +373,9 @@ class CalcuSim(nn.Module):
             if self.ctg.is_comm(node): # is comm
                 self.obj_dict[node] = 0
                 
-            else: # is xbar
-                cfg = self.ctg.get_xbar_config(node)
-                kwargs = get_xbar_kwargs(cfg, self.params)
+            else: # is tile
+                cfg = self.ctg.get_tile_config(node)
+                kwargs = get_tile_kwargs(cfg, self.params)
                 is_merge = False
                 is_gather = False
                 for pred in self.ctg.preds(node):
@@ -385,7 +383,7 @@ class CalcuSim(nn.Module):
                         is_merge = True
                     if self.ctg.is_gather_comm(pred):
                         is_gather = True
-                self.obj_dict[node] = _Xbar(
+                self.obj_dict[node] = _Tile(
                     is_merge=is_merge, 
                     is_gather=is_gather,
                     quantize=self.quantize,
@@ -404,7 +402,7 @@ class CalcuSim(nn.Module):
     def cuda(self) -> None:
         self.host_task.cuda()
         for node in self.obj_dict.keys():
-            if self.ctg.is_xbar(node):
+            if self.ctg.is_tile(node):
                 self.obj_dict[node].cuda()
 
     def empty_device_buffer(func: Callable) -> Callable:
@@ -432,14 +430,14 @@ class CalcuSim(nn.Module):
 
         #quantizing before performing device task
         if self.quantize:
-            x = torch.round(torch.divide(x, self.ctg.input_quant_config.input_scale))
+            x = torch.round(torch.divide(x, self.ctg.iqc.input_scale))
             x = torch.clamp(x, -128, 127)
 
         # device task
-        for node in self.ctg.xbars:
+        for node in self.ctg.tiles:
             # get input data
             cast_in, merge_in, gather_in = None, None, None
-            if self.ctg.is_head_xbar(node):
+            if self.ctg.is_head_tile(node):
                 cast_in = x
             else:
                 if self.ctg.has_cast_in(node):
@@ -449,11 +447,11 @@ class CalcuSim(nn.Module):
                 if self.ctg.has_gather_in(node):
                     gather_in = self.obj_dict[self.ctg.gather_pred_comm(node)]
             
-            # perform xbar execution
+            # perform tile execution
             temp_y = self.obj_dict[node](cast_in, merge_in, gather_in)
             
             # store output data
-            if self.ctg.is_tail_xbar(node):
+            if self.ctg.is_tail_tile(node):
                 bridge_idx = self.ctg.dicts[node]['bridge_idx']
                 output_list[bridge_idx].append((node[1], temp_y))
 
@@ -478,7 +476,7 @@ class CalcuSim(nn.Module):
 
         # dequantizing before performing host task
         if self.quantize:
-            device_output = torch.mul(device_output, self.ctg.output_quant_config.output_scale)
+            device_output = [torch.mul(y, self.ctg.oqc[i].output_scale) for i, y in enumerate(device_output)]
         print('Finished Device Task')
         return device_output
 

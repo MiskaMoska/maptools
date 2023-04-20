@@ -19,5 +19,7 @@ def load_quant_to_graph(quantinfo_path: str, graph: OperatorGraph) -> None:
         assert isinstance(config, QuantConfig), (
             f"the items in quantinfo file should be instances of {QuantConfig}, but got {type(config)}")
         if node in graph.dicts:
-            name = QUANT_NAME_TABLE[graph.op_type(node)]
-            graph.add_attr_to_node(node, name + '_quant_config', config)
+            op_type = graph.op_type(node)
+            if op_type in QUANT_NAME_TABLE:
+                name = QUANT_NAME_TABLE[graph.op_type(node)]
+                graph.add_attr_to_node(node, name + '_quant_config', config)

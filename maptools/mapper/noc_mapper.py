@@ -9,7 +9,7 @@ from random import shuffle
 from copy import deepcopy
 from typing import List, Dict, Tuple, Any, Optional, Generator
 from functools import cached_property
-from maptools.mapper.xbar_mapper import XbarMapper
+from maptools.mapper.tile_mapper import TileMapper
 from maptools.core import CTG, ROOT_DIR
 
 __all__ = ['NocMapper']
@@ -42,8 +42,8 @@ class NocMapper(object):
         Key Members
         -----------
         self.match_dict : Dict[Tuple[int, int, int, int], Tuple[int, int]]
-            A dictionary with logical xbar as keys and physical xbar as values
-            Map the logical xbar (4-element tuple) to the physical xbar (2-element tuple).
+            A dictionary with logical tile as keys and physical tile as values
+            Map the logical tile (4-element tuple) to the physical tile (2-element tuple).
 
         self.xxx_paths : Dict[str, Dict[str, Any]]
             xxx can be any of [cast, merge, gather].
@@ -59,7 +59,7 @@ class NocMapper(object):
         self.mapname = 'newmap'
         self.__dict__.update(kwargs)
 
-        # mapping from logical xbars to physical xbars
+        # mapping from logical tiles to physical tiles
         self.match_dict: Dict[Tuple[int, int, int, int], Tuple[int, int]] = dict()
 
         # network routing paths
@@ -79,27 +79,27 @@ class NocMapper(object):
                 rs_path.append((idx % w, idx // w))
         return rs_path
     
-    def _map_xbars(self) -> None:
+    def _map_tiles(self) -> None:
         '''
-        Map the xbars to the xbar array following reverse-s path
+        Map the tiles to the tile array following reverse-s path
         '''
         rs_path = self._gen_reverse_s(self.w, self.h)
         for idx, region in self.ctg.regions:
-            merge_xbar = region[0]
+            merge_tile = region[0]
             while True:
                 valid = True
                 shuffle(region) # random mapping
-                merge_idx = region.index(merge_xbar) # find the merge xbar
+                merge_idx = region.index(merge_tile) # find the merge tile
                 y_pos_merge = rs_path[idx+merge_idx]
                 for i in range(merge_idx, len(region)):
-                    if rs_path[idx+i] > y_pos_merge: # larger y_pos than merge xbar
+                    if rs_path[idx+i] > y_pos_merge: # larger y_pos than merge tile
                         valid = False
                         break
                 if not valid: # begin next loop
                     continue
 
-                for i, xbar in enumerate(region):
-                    self.match_dict[xbar] = rs_path[idx+i] # record map
+                for i, tile in enumerate(region):
+                    self.match_dict[tile] = rs_path[idx+i] # record map
                 break
 
     @staticmethod
@@ -207,7 +207,7 @@ class NocMapper(object):
     def _cast_plan(self) -> None:
         '''
         Planning cast routing paths
-        Make sure to call this method after `self._map_xbars()`
+        Make sure to call this method after `self._map_tiles()`
         '''
         # cast tree number
         cast_num = self.ctg.cast_num
@@ -234,7 +234,7 @@ class NocMapper(object):
     def _merge_plan(self) -> None:
         '''
         Planning merge routing paths
-        Make sure to call this method after `self._map_xbars()`
+        Make sure to call this method after `self._map_tiles()`
         '''
         # merge tree number
         merge_num = self.ctg.merge_num  
@@ -283,7 +283,7 @@ class NocMapper(object):
     def _gather_plan(self) -> None:
         '''
         Planning gather routing paths
-        Make sure to call this method after calling `self._map_xbars`
+        Make sure to call this method after calling `self._map_tiles`
         '''
         # gather pair  number
         gather_num = self.ctg.gather_num
@@ -305,19 +305,19 @@ class NocMapper(object):
             self.gather_paths[name]['load_ratio'] = self.ctg.get_attr(name, 'load_ratio')
 
     def run_map(self) -> None:
-        self._map_xbars()
+        self._map_tiles()
         self._cast_plan()
         self._merge_plan()
         self._gather_plan()
 
     @cached_property
-    def xbar_config(self) -> Dict:
+    def tile_config(self) -> Dict:
         '''
-        A dictionary with physical xbar as keys and configuration info as values.
-        Xbar configuration information for system simulation.
+        A dictionary with physical tile as keys and configuration info as values.
+        Tile configuration information for system simulation.
         Always call this method after calling `self.run_map`.
         '''
-        return {self.match_dict[k] : self.ctg.dicts[k] for k in self.ctg.xbar_nodes}
+        return {self.match_dict[k] : self.ctg.dicts[k] for k in self.ctg.tile_nodes}
 
     @property 
     def p2p_casts(self) -> Generator:
@@ -347,16 +347,16 @@ class NocMapper(object):
             yield (self.match_dict[src_node], self.match_dict[dst_node])
 
     @cached_property
-    def tail_xbars(self) -> List[Tuple]:
+    def tail_tiles(self) -> List[Tuple]:
         '''
-        tail xbars information for concatenating outputs
+        tail tiles information for concatenating outputs
         [(x1, y1), (x2, y2), (...), (...), ...]
         following tensor slice orders
         '''
         tails = []
-        for xbar in self.ctg.xbar_nodes:
-            if self.ctg.is_tail_xbar(xbar):
-                tails.append(xbar)
+        for tile in self.ctg.tile_nodes:
+            if self.ctg.is_tail_tile(tile):
+                tails.append(tile)
         tails.sort(key=lambda tup:tup[1])
         return [self.match_dict[x] for x in tails]
 
@@ -376,7 +376,7 @@ class NocMapper(object):
 
         # write noc mapping info
         info_dict['match_dict'] = self.match_dict
-        info_dict['xbar_config'] = self.xbar_config
+        info_dict['tile_config'] = self.tile_config
 
         # write network config info
         info_dict['cast_paths'] = self.cast_paths
@@ -388,7 +388,7 @@ class NocMapper(object):
         info_dict['p2p_merges'] = list(self.p2p_merges)
         info_dict['p2p_gathers'] = list(self.p2p_gathers)
 
-        info_dict['tail_xbars'] = self.tail_xbars
+        info_dict['tail_tiles'] = self.tail_tiles
 
         with open(file_dir, 'wb') as f:
             pickle.dump(info_dict, f)
@@ -396,6 +396,6 @@ class NocMapper(object):
 
     def plot_ctg(self) -> None:
         '''
-        Added physical xbar information than `CTG.plot_ctg()`
+        Added physical tile information than `CTG.plot_ctg()`
         '''
         self.ctg.plot_ctg(match_dict=self.match_dict)
