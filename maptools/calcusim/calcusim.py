@@ -9,7 +9,7 @@ from typing import List, Dict, Optional, Tuple, Any, Union, Callable
 from functools import wraps, cached_property
 from maptools.core import (
     CTG, HostGraph, QuantConfig, 
-    DeviceParams, ROOT_DIR, PhysicalTile
+    ModelParams, ROOT_DIR, PhysicalTile
 )
 from maptools.calcusim.utils import *
 from maptools.host import HostTask
@@ -287,7 +287,7 @@ class CalcuSim(nn.Module):
         self, 
         ctg: CTG, 
         host_graph: HostGraph, 
-        params: DeviceParams,
+        params: ModelParams,
         **kwargs: Any
     ) -> None:
         '''
@@ -332,7 +332,7 @@ class CalcuSim(nn.Module):
         ctg : CTG
             communication trace graph, obtained from `XbarMapper.ctg`
         
-        params : DeviceParams
+        params : ModelParams
             device param dictionary, with operator name as keys and the parameters as
             values, obtained from `OnnxConverter.param_dict`.
 
@@ -353,6 +353,7 @@ class CalcuSim(nn.Module):
         '''
         super().__init__()
         self.ctg = ctg
+        self.host_graph = host_graph
         self.params = params
         self.mapname: str = 'newmap'
         self.quantize: bool = False
@@ -367,12 +368,10 @@ class CalcuSim(nn.Module):
         self.res_dict: Dict[Union[PhysicalTile, str], Dict[str, Optional[torch.Tensor]]] = dict()
 
         self._build_device_task()
-        self._build_host_task(host_graph)
-
+        self._build_host_task()
 
     def _build_device_task(self) -> None:
         for node in self.ctg.node_names:
-
             if self.ctg.is_comm(node): # is comm
                 self.obj_dict[node] = 0
                 
@@ -395,8 +394,8 @@ class CalcuSim(nn.Module):
                     **kwargs
                 )
 
-    def _build_host_task(self, host_graph: HostGraph) -> None:
-        self.host_task = HostTask(host_graph)
+    def _build_host_task(self) -> None:
+        self.host_task = HostTask(self.host_graph, self.params)
 
     def _arrage_output(self, y: List[Tuple]) -> torch.Tensor:
         y.sort(key=lambda x : x[0])
@@ -408,7 +407,7 @@ class CalcuSim(nn.Module):
             if self.ctg.is_xbar(node):
                 self.obj_dict[node].cuda()
 
-    def empty_data_cache(func: Callable) -> Callable:
+    def empty_device_buffer(func: Callable) -> Callable:
         @wraps(func)
         def wrapper(self, *args, **kwargs):
             for comm in self.ctg.comms:
@@ -416,13 +415,20 @@ class CalcuSim(nn.Module):
             return func(self, *args, **kwargs)
         return wrapper
 
-    @empty_data_cache
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    @empty_device_buffer
+    def _forward_device_task(self, x: torch.Tensor) -> List[torch.Tensor]:
         assert isinstance(x, torch.Tensor), f"input should be torch.Tensor, but got {type(x)}"
         assert len(x.shape) == 4, f"input dimension should be 4 [N, C, H, W], but got {len(x.shape)}"
         print('Launching CalcuSim ....')
         print('Quantization ' + ('Enabled' if self.quantize else 'Disabled'))
-        y = []
+
+        # to store the raw output
+        # the length of `output_list` equals the number of output layers in device task
+        # each sublist of `output_list` stores the output of all tiles in one output layer
+        # the arrangement of the sublists follows the order of bridge index
+        # each member of the sublist is a tuple with the tile output tensor as the second 
+        # element and the corresponding region index of the tile as the first element
+        output_list = [[]] * self.ctg.output_num
 
         #quantizing before performing device task
         if self.quantize:
@@ -448,7 +454,8 @@ class CalcuSim(nn.Module):
             
             # store output data
             if self.ctg.is_tail_xbar(node):
-                y.append((node[1], temp_y))
+                bridge_idx = self.ctg.dicts[node]['bridge_idx']
+                output_list[bridge_idx].append((node[1], temp_y))
 
             else:
                 if self.ctg.has_cast_out(node):
@@ -466,20 +473,24 @@ class CalcuSim(nn.Module):
                     res[name] = self.obj_dict[node].__dict__[name]
                 self.res_dict[node] = res
 
-        device_output = self._arrage_output(y)
+        device_output = [self._arrage_output(y) for y in output_list]
         self.res_dict['output'] = device_output # the output of device task
 
         # dequantizing before performing host task
         if self.quantize:
             device_output = torch.mul(device_output, self.ctg.output_quant_config.output_scale)
         print('Finished Device Task')
+        return device_output
 
-        # host task
-        host_output = self.host_task(device_output)
+    def _forward_host_task(self, x: List[torch.Tensor]) -> torch.Tensor:
+        host_output = self.host_task(x)
         print('Finished Host Task')
         print('Finished CalcuSim')
         return host_output
-    
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        return self._forward_host_task(self._forward_device_task(x))
+
     def save_results(self, file_name: str = 'results'):
         save_dir = os.path.join(ROOT_DIR, 'mapsave', self.mapname, 'calcusim')
         if not os.path.exists(save_dir):

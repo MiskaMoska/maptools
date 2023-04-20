@@ -28,8 +28,8 @@ routine = MapRoutine(
     toksim=False,
     toksim_latency = 4,
     input=img,
-    quantize=True,
-    physical=True
+    quantize=False,
+    physical=False
 )
 
 ctg = routine.run()

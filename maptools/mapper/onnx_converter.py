@@ -9,9 +9,6 @@ import os
 import sys
 import pickle
 import onnx
-import onnx.numpy_helper as onh
-import numpy as np
-import networkx as nx
 from typing import Any, List, Dict, Tuple, Optional, Generator
 from maptools.utils import load_quant_to_graph, regularize_pad_sizes
 from maptools.mapper.graph_shaper import *
@@ -19,7 +16,7 @@ from maptools.mapper.operator_parser import *
 from maptools.core import (
     OperatorVariableGraph, OperatorGraph, OriginGraph, 
     HostGraph, DeviceGraph, NNModelArch,
-    VALID_OPS, MERGE_OPS, ROOT_DIR, OperatorConfig, DeviceParams
+    VALID_OPS, MERGE_OPS, ROOT_DIR, OperatorConfig, ModelParams
 )
 
 __all__ = ['OnnxConverter']
@@ -70,7 +67,7 @@ class OnnxConverter(object):
 
         Key Members
         -----------
-        self.param_dict : DeviceParams
+        self.param_dict : ModelParams
             A dictionary with tensor name as keys and numpy array as values.
             Stores the parameters of the model.
         '''
@@ -81,7 +78,7 @@ class OnnxConverter(object):
         self.__dict__.update(kwargs)
         assert isinstance(self.arch, NNModelArch), f"unsupported model arch: {self.arch}"
 
-        self.param_dict: DeviceParams = dict()
+        self.param_dict: ModelParams = dict()
         self.shaper = __SHAPER_ACCESS_TABLE__[self.arch]()
 
         self.raw_graph: OperatorVariableGraph

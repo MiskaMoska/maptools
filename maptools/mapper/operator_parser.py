@@ -2,7 +2,7 @@ import onnx
 import numpy as np
 from abc import ABCMeta, abstractmethod
 from typing import Dict, List, Tuple
-from maptools.core import OperatorConfig, DeviceParams
+from maptools.core import OperatorConfig, ModelParams
 import onnx.numpy_helper as onh
 
 __all__ = ['__PARSER_ACCESS_TABLE__']
@@ -13,7 +13,7 @@ class BaseOperatorParser(object):
         self, 
         node: onnx.NodeProto, 
         graph: onnx.GraphProto, 
-        param_dict: DeviceParams
+        param_dict: ModelParams
     ) -> None:
         if not isinstance(node, onnx.NodeProto):
             raise TypeError(
@@ -127,15 +127,23 @@ class GemmParser(BaseOperatorParser):
 
     def process(self) -> OperatorConfig:
         super().process()
-        weight = onh.to_array(self._get_variable(self.node.input[1])) # input[1] should be weight
+        weight = self._get_variable(self.node.input[1]) # input[1] should be weight
         if len(self.node.input[2]): # if has bias
-            bias = onh.to_array(self._get_variable(self.node.input[2])) # input[2] should be weight
+            bias = self._get_variable(self.node.input[2]) # input[2] should be weight
         else: bias = np.zeros(weight.dims[0])
 
-        self.config['gemm_weight'] = weight
-        self.config['gemm_bias'] = bias
-        self.config['gemm_len_inv'] = weight.shape[1] # input vector length
-        self.config['gemm_len_outv'] = weight.shape[0] # output vector length
+        # save gemm weights
+        name = self.node.name + '_gemm_weight'
+        self.config['gemm_weight'] = name
+        self.param_dict[name] = onh.to_array(weight)
+
+        # save gemm bias
+        name = self.node.name + '_gemm_bias'
+        self.config['gemm_bias'] = name
+        self.param_dict[name] = None if bias is None else onh.to_array(bias)
+
+        self.config['gemm_len_inv'] = weight.dims[1] # input vector length
+        self.config['gemm_len_outv'] = weight.dims[0] # output vector length
 
         return self.config
 

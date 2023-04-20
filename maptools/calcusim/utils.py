@@ -4,7 +4,7 @@ from PIL import Image
 from typing import Tuple
 from copy import deepcopy
 from typing import List, Tuple, Dict
-from maptools.core import DeviceParams, TileConfig
+from maptools.core import ModelParams, TileConfig
 
 __all__ = [
     'rebuild_pads',
@@ -47,7 +47,7 @@ def rebuild_conv_bias(ocfg: Tuple, bias: torch.Tensor) -> torch.Tensor:
     return deepcopy(bias[ocfg[0]:ocfg[1]])
 
 
-def get_xbar_kwargs(cfg: TileConfig, params: DeviceParams) -> Dict:
+def get_xbar_kwargs(cfg: TileConfig, params: ModelParams) -> Dict:
     kwargs = dict()
     kwargs['conv_pads'] = cfg['conv_pads'].copy()
     weight_ptr = cfg['conv_weight']

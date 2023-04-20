@@ -82,7 +82,7 @@ class OnnxConverter(object):
         assert isinstance(self.arch, NNModelArch), f"unsupported model arch: {self.arch}"
 
         self.param_dict: DeviceParams = dict()
-        self.shaper: BaseGraphShaper = self._get_shaper()
+        self.shaper = self._get_shaper()
 
         self.raw_graph: OperatorVariableGraph
         self.origin_graph: OriginGraph

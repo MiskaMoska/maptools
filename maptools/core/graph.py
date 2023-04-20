@@ -57,7 +57,17 @@ class OperatorGraph(object):
     @property
     def unique_output(self) -> str:
         return self.trunk[-1]
-    
+
+    @cached_property
+    def input_num(self) -> int:
+        return len([node for node in \
+            self.graph.nodes if self.is_input(node)])
+
+    @cached_property
+    def output_num(self) -> int:
+        return len([node for node in \
+            self.graph.nodes if self.is_output(node)])
+
     def is_input(self, node: str) -> bool:
         return self.graph.in_degree(node) == 0
     

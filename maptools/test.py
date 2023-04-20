@@ -50,11 +50,10 @@ class B():
         self._var = value
     
 
-import networkx as nx
+# import networkx as nx
 
-g = nx.MultiDiGraph()
+# g = nx.MultiDiGraph()
 
-g.add_node(1, color='red')
+# g.add_node(1, color='red')
 
-print(g.nodes[1])
-
+# print(g.nodes[1])

@@ -59,7 +59,7 @@ class MapRoutine(object):
             f"mapname should be {str}, but got {type(self.mapname)}"
 
     def run(self) -> CTG:
-        model = onnx.load(self.model_dir)
+        model = onnx.load_model(self.model_dir)
         oc = OnnxConverter(model, **self.config)
         oc.run_conversion()
 

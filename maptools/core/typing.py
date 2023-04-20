@@ -1,5 +1,5 @@
 import numpy as np
-from typing import Tuple, List, Dict, Any, Literal
+from typing import Tuple, List, Dict, Any, Literal, TypeVar
 
 __all__ = [
     'LogicalTile',
@@ -8,10 +8,10 @@ __all__ = [
     'Paths',
     'TileConfig',
     'OperatorConfig',
-    'DeviceParams'
+    'ModelParams'
 ]
 
-LogicalTile = Tuple[int, int, int, int]
+LogicalTile = TypeVar('LogicalTile', bound=Tuple[int, int, int, int])
 PhysicalTile = Tuple[int, int]
 
 Path = Tuple[PhysicalTile, PhysicalTile]
@@ -19,4 +19,4 @@ Paths = List[Path]
 
 TileConfig = Dict[str, Any]
 OperatorConfig = Dict[str, Any]
-DeviceParams = Dict[str, np.ndarray]
+ModelParams = Dict[str, np.ndarray]

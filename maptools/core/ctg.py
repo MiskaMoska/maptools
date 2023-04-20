@@ -71,6 +71,10 @@ class CTG(object):
         self.quantize = device_graph.quantize
         self.__dict__.update(kwargs)
 
+        # number of output layers
+        self.output_num = device_graph.output_num 
+
+        # graph nodes
         self.xbar_nodes: List[Tuple[int, int, int, int]] = []
         self.cast_comms: List[str] = []
         self.merge_comms: List[str] = []
@@ -422,6 +426,7 @@ class CTG(object):
             if self.is_xbar(n): # xbar
                 config = self.dicts[n]
                 icfg = config['xbar_icfg'][0]
+                ricfg = config['xbar_real_icfg'][0]
                 ocfg = config['xbar_ocfg']
                 box_idx = config['box_idx']
                 shape = 'rectangle'
@@ -431,6 +436,7 @@ class CTG(object):
                     label += '\nphy: ' + str(match_dict[n])
                 label += f'\nop_type: {config["op_type"]}'
                 label += f'\nichan: {(icfg[1], icfg[2])}'
+                label += f'\nreal_ichan: {(ricfg[1], ricfg[2])}'
                 label += f'\nochan: {ocfg}'
                 label += f'\nbox_idx: {box_idx}'
                 label += _label

@@ -5,7 +5,7 @@ import logging
 from PIL import Image
 from typing import Tuple, Dict
 from torchvision import transforms as transforms
-from maptools.core import ROOT_DIR
+from maptools.core import ROOT_DIR, ModelParams
 
 __all__ = [
     'get_input',
@@ -29,13 +29,13 @@ def get_input(img_path: str, resize: Tuple = (224, 224)) -> torch.Tensor:
     img = trans(img)
     return torch.unsqueeze(img, dim=0)
 
-def read_params(mapname: str) -> Dict:
+def read_params(mapname: str) -> ModelParams:
     file_dir = os.path.join(ROOT_DIR, 'mapsave', mapname, 'params.pkl')
     with open(file_dir, 'rb') as f:
         params = pickle.load(f)
     return params
 
-def read_quantparams(mapname: str) -> Dict:
+def read_quantparams(mapname: str) -> ModelParams:
     file_dir = os.path.join(ROOT_DIR, 'mapsave', mapname, 'quantparams.pkl')
     with open(file_dir, 'rb') as f:
         params = pickle.load(f)

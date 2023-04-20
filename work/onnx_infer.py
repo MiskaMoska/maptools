@@ -10,11 +10,11 @@ import torchvision as tv
 # 使用onnxruntime进行推理
 
 import torch.onnx as ox
-from maptools.calcusim import get_input
+from maptools import get_input
 
-def onnx_infer(input):
+def onnx_infer(input: torch.Tensor):
     input = input.numpy()
-    sess = rt.InferenceSession("onnx_models/simp-resnet18.onnx", None)
+    sess = rt.InferenceSession("onnx_models/my-yolo.onnx", None)
     #  sess = rt.InferenceSession(onnx_sim, providers=['CUDAExecutionProvider'])  # providers=[CPUExecutionProvider,'CUDAExecutionProvider']
     #  providers=[CPUExecutionProvider,'CUDAExecutionProvider']
 
@@ -24,7 +24,10 @@ def onnx_infer(input):
     pred_onx = sess.run([out_name], {input_name: input}) 
     print('-'*50)
     print('onnx infer results')
-    print(np.argmax(pred_onx[0]))
+    print(pred_onx[0])
+    # print(np.argmax(pred_onx[0]))
 
+import onnxsim
+import onnxruntime
 if __name__ == "__main__":
-    onnx_infer(get_input('work/test2.png'))
+    onnx_infer(get_input('work/test2.png', resize=(768, 768)))

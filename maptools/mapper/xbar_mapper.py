@@ -127,22 +127,28 @@ class XbarMapper(object):
                             slice_len = box_vector_len % self.w
                         else: slice_len = self.w
 
-                        start_ichan_index = box[0] + box_block_index * self.w # box[0] is the base # ichannel
-                        end_ichan_index = start_ichan_index + slice_len
+                        _start_ichan_index = box[0] + box_block_index * self.w # box[0] is the base # ichannel
+                        _end_ichan_index = _start_ichan_index + slice_len
+                        start_ichan_index, end_ichan_index = _start_ichan_index - box[0], _end_ichan_index - box[0]
+
                         slices_per_tile = self.h // slice_len # max slices per tile
                         tiles_per_block = math.ceil((kernel_size[0] * kernel_size[1]) / slices_per_tile)
                     
                         for tile_index in range(tiles_per_block):
-                            icfg = []
+                            icfg, real_icfg = [], []
                             if (tile_index + 1) * slices_per_tile > kernel_size[0] * kernel_size[1]:
                                 slices_now_tile = kernel_size[0] * kernel_size[1] % slices_per_tile
                             else: slices_now_tile = slices_per_tile
                             
                             for k in range(slices_now_tile):
-                                icfg.append((tile_index * slices_per_tile + k, start_ichan_index, end_ichan_index))
+                                winpos_idx = tile_index * slices_per_tile + k
+                                icfg.append((winpos_idx, start_ichan_index, end_ichan_index))
+                                real_icfg.append((winpos_idx, _start_ichan_index, _end_ichan_index))
+                                
                             xbar_dict = {
                                 'xbar_icfg': icfg, 
                                 'xbar_ocfg': (start_ochan_index, end_ochan_index),
+                                'xbar_real_icfg': real_icfg,
                                 'xbar_num_ichan': end_ichan_index - start_ichan_index, 
                                 'xbar_num_ochan': end_ochan_index - start_ochan_index,
                                 'box_idx': box_index
