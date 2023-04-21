@@ -118,9 +118,10 @@ class OperatorGraph(object):
         shape = 'box3d'
         labelloc = None
         for n in self.graph.nodes:
+            containt = self.dicts[n]['op_type'] + '\n'+self.dicts[n]['name']
             dot.node(
                 n,
-                self.dicts[n]['op_type'], 
+                containt, 
                 shape=shape,
                 labelloc=labelloc,
                 fontname='Arial'

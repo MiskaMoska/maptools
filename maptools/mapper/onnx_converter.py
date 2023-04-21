@@ -10,7 +10,7 @@ import sys
 import pickle
 import onnx
 from typing import Any, List, Dict, Tuple, Optional, Generator
-from maptools.utils import load_quant_to_graph, regularize_pad_sizes
+from maptools.utils import load_quant_to_graph, regularize_pads, recheck_pads
 from maptools.mapper.graph_shaper import *
 from maptools.mapper.operator_parser import *
 from maptools.core import (
@@ -137,7 +137,7 @@ class OnnxConverter(object):
         self._construct_raw_graph()
         self.raw_graph.connect_concats()
         self.origin_graph = self.raw_graph.reduce(quantize=self.quantize)
-
+        regularize_pads(self.origin_graph)
         if self.quantize:
             self.insert_quant_info()
 
@@ -146,7 +146,7 @@ class OnnxConverter(object):
 
     def construct_device_graph(self) -> None:
         self.shaper(self.device_graph)
-        regularize_pad_sizes(self.device_graph)
+        recheck_pads(self.device_graph)
 
     def run_conversion(self) -> None:
         self.construct_origin_graph()

@@ -9,6 +9,8 @@ __all__ = ['__PARSER_ACCESS_TABLE__']
 
 class BaseOperatorParser(object):
 
+    processed_nodes = 0 
+
     def __init__(
         self, 
         node: onnx.NodeProto, 
@@ -53,8 +55,12 @@ class BaseOperatorParser(object):
 
     def process(self) -> OperatorConfig:
         self.config = {}
-        self.config['name'] = self.node.name
+        name = self.node.name
+        if name == '':
+            name = f"{self.node.op_type}_{self.processed_nodes}"
+        self.config['name'] = name
         self.config['op_type'] = self.node.op_type
+        self.processed_nodes += 1
         return self.config
 
 
@@ -135,7 +141,7 @@ class GemmParser(BaseOperatorParser):
         # save gemm weights
         name = self.node.name + '_gemm_weight'
         self.config['gemm_weight'] = name
-        self.params[name] = onh.to_array(weight)
+        self.params[name] = onh.to_array(weight) 
 
         # save gemm bias
         name = self.node.name + '_gemm_bias'
@@ -152,6 +158,8 @@ class ActParser(BaseOperatorParser):
 
     def process(self) -> OperatorConfig:
         super().process()
+        size_i, _ = self._get_io_size(self.node)
+        self.config['act_input_size'] = size_i
         self.config['act_mode'] = self.node.op_type 
         for at in self.node.attribute:
             if at.name == 'alpha':
