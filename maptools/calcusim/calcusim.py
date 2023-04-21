@@ -299,6 +299,19 @@ class CalcuSim(nn.Module):
         The host task is reconstructed as a `HostTask` according to `HostGraph`.
         The device task is reconstructed by multiple tiles executors according to `CTG`.
 
+        Parameters
+        ----------
+        ctg : CTG
+            communication trace graph, obtained from `TileMapper.ctg`
+        
+        params : ModelParams
+            device param dictionary, with operator name as keys and the parameters as
+            values, obtained from `OnnxConverter.params`.
+
+        kwargs : Dict
+            mapname : str = 'newmap'
+                map name
+
         Examples
         --------
         Users can treat `CalcuSim` as a complete replacement of the torch model.
@@ -324,19 +337,6 @@ class CalcuSim(nn.Module):
 
         >>> csim.cuda()
         >>> y = csim(x)
-
-        Parameters
-        ----------
-        ctg : CTG
-            communication trace graph, obtained from `TileMapper.ctg`
-        
-        params : ModelParams
-            device param dictionary, with operator name as keys and the parameters as
-            values, obtained from `OnnxConverter.params`.
-
-        kwargs : Dict
-            mapname : str = 'newmap'
-                map name
 
         Key Members
         -----------
