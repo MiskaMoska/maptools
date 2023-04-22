@@ -1,6 +1,4 @@
 import torch
-from torchvision import transforms
-from PIL import Image
 from typing import Tuple
 from copy import deepcopy
 from typing import List, Tuple, Dict
@@ -55,11 +53,13 @@ def get_tile_kwargs(cfg: TileConfig, params: ModelParams) -> Dict:
     # get conv bias
     if 'Bias' in cfg['op_type']:
         bias_ptr = cfg['conv_bias']
-        bias = rebuild_conv_bias(
-            cfg['xbar_ocfg'],
-            torch.tensor(params[bias_ptr]).float()
-        )
-        kwargs['conv_bias'] = bias
+        if params[bias_ptr] is None:
+            kwargs['conv_bias'] = None
+        else:
+            kwargs['conv_bias'] = rebuild_conv_bias(
+                cfg['xbar_ocfg'],
+                torch.tensor(params[bias_ptr]).float()
+            )
     
     # get conv strides
     kwargs['conv_strides'] = cfg['conv_strides'].copy()
@@ -77,6 +77,11 @@ def get_tile_kwargs(cfg: TileConfig, params: ModelParams) -> Dict:
     if 'Act' in cfg['op_type']:
         kwargs['is_act'] = True
         kwargs['act_mode'] = deepcopy(cfg['act_mode'])
+
+    # get resize config
+    if 'Rsz' in cfg['op_type']:
+        kwargs['is_resize'] = True
+        kwargs['resize_scales'] = deepcopy(cfg['resize_scales'])
     
     # get output channel range
     kwargs['ochan_range'] = cfg['xbar_ocfg']

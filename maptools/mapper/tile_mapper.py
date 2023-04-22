@@ -169,11 +169,10 @@ class TileMapper(object):
         cause only merge tile can have [add, act, pool, bias, resize]
         '''
         if is_merge_tile:
-            if 'conv_bias' in tile_dict:
-                tile_dict['op_type'] += '-Bias'
-        else:
-            for ops in {'Pool', 'Act', 'Add', 'Rsz'}:
-                tile_dict['op_type'] = tile_dict['op_type'].replace('-'+ops, '')
+            tile_dict['op_type'] += '-Bias'
+            return
+        for ops in {'Pool', 'Act', 'Add', 'Rsz'}:
+            tile_dict['op_type'] = tile_dict['op_type'].replace('-'+ops, '')
 
     def run_map(self) -> None: 
         self._map_for_all()

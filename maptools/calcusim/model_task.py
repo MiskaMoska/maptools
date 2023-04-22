@@ -1,8 +1,8 @@
 import torch
 import torch.nn as nn
-from typing import Dict, List, Tuple, Iterator
+from typing import Dict
 from maptools.core import ModelParams, OriginGraph
-from maptools.host.host_operator import HostOperator
+from maptools.calcusim.host import HostOperator
 
 __all__ = ['ModelTask']    
 
@@ -37,3 +37,7 @@ class ModelTask(nn.Module):
                 if self.origin_graph.is_output(n):
                     return res
                 self._buffers[n] = res
+
+    def cuda(self) -> None:
+        for module in self._modules.values():
+            module.cuda()

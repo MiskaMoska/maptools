@@ -53,6 +53,25 @@ class Conv(nn.Module):
         self.bias = self.bias.cuda()
 
 
+class Gemm(nn.Linear): 
+
+    @record_name
+    def __init__(self, config: OperatorConfig, params: ModelParams) -> None:
+        super().__init__(config['gemm_len_inv'], config['gemm_len_outv'])
+
+        weight_ptr = config['gemm_weight']
+        self.weight.data = torch.tensor(params[weight_ptr])
+
+        bias_ptr = config['gemm_bias']
+        if params[bias_ptr] is None:
+            self.bias.data = torch.zeros(self.out_features)
+        else: self.bias.data = torch.tensor(params[bias_ptr])
+
+    @echo_input
+    def forward(self, x: List[torch.Tensor]) -> torch.Tensor:
+        return super().forward(x[0])
+
+
 class Relu(nn.ReLU):
 
     @record_name
@@ -62,6 +81,26 @@ class Relu(nn.ReLU):
     @echo_input
     def forward(self, x: List[torch.Tensor]) -> torch.Tensor:
         return super().forward(x[0])
+
+
+class MaxPool(nn.Module):
+
+    @record_name
+    def __init__(self, config: OperatorConfig, params: ModelParams) -> None:
+        super().__init__()
+        self.kernel_size = config['pool_kernel_size']
+        self.strides = config['pool_strides']
+        pads = config['pool_pads']
+        self.pads = [pads[3], pads[1], pads[0], pads[2]]
+
+    @echo_input
+    def forward(self, x: List[torch.Tensor]) -> torch.Tensor:
+        x = F.pad(x[0], self.pads)
+        return F.max_pool2d(
+            x, 
+            kernel_size = tuple(self.kernel_size),
+            stride = tuple(self.strides)
+        )
 
 
 class Resize(nn.Module):
@@ -91,25 +130,6 @@ class Flatten(nn.Flatten):
     @record_name
     def __init__(self, *args) -> None:
         super().__init__()
-
-    @echo_input
-    def forward(self, x: List[torch.Tensor]) -> torch.Tensor:
-        return super().forward(x[0])
-
-
-class Gemm(nn.Linear): 
-
-    @record_name
-    def __init__(self, config: OperatorConfig, params: ModelParams) -> None:
-        super().__init__(config['gemm_len_inv'], config['gemm_len_outv'])
-
-        weight_ptr = config['gemm_weight']
-        self.weight.data = torch.tensor(params[weight_ptr])
-
-        bias_ptr = config['gemm_bias']
-        if params[bias_ptr] is None:
-            self.bias.data = torch.zeros(self.out_features)
-        else: self.bias.data = torch.tensor(params[bias_ptr])
 
     @echo_input
     def forward(self, x: List[torch.Tensor]) -> torch.Tensor:
@@ -195,11 +215,14 @@ class HostOperator(nn.Module):
         super().__init__()
         self.op_type = config['op_type']
         assert self.op_type in VALID_OPS, (
-            f"unsupported op_type {self.op_type} when building host operation")
-        self.operation = __HOST_OPERATOR_ACCESS_TABLE__[self.op_type](config, params)
+            f"unsupported op_type {self.op_type} when building host operator")
+        self.operator = __HOST_OPERATOR_ACCESS_TABLE__[self.op_type](config, params)
 
     def forward(self, x: List[torch.Tensor]) -> torch.Tensor:
-        return self.operation(x)
+        return self.operator(x)
+    
+    def cuda(self) -> None:
+        self.operator.cuda()
 
 
 __HOST_OPERATOR_ACCESS_TABLE__ = {
@@ -207,6 +230,7 @@ __HOST_OPERATOR_ACCESS_TABLE__ = {
     'Flatten'                   : Flatten,
     'Conv'                      : Conv,
     'Relu'                      : Relu,
+    'MaxPool'                   : MaxPool,
     'Gemm'                      : Gemm,
     'Add'                       : Add,
     'Mul'                       : Mul,

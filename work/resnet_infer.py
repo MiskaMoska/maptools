@@ -16,30 +16,30 @@ from maptools import read_cfginfo, read_mapinfo, get_input
 import os
 
 root_dir = os.environ.get('NVCIM_HOME')
-mapname = 'yolo'
-model = os.path.join(root_dir, 'onnx_models', 'simp-yolo.onnx')
+mapname = 'resnet18'
+model = os.path.join(root_dir, 'onnx_models', 'simp-resnet18.onnx')
 imgs = []
 # for i in range(16):
 #     imgs.append(get_input('work/test8.png', resize=(768, 768)))
 # img = torch.cat(imgs, dim=0)
-img = get_input('work/test8.png', resize=(768, 768))
+img = get_input('work/test8.png', resize=(224, 224))
 
 m = onnx.load(model)
-oc = OnnxConverter(m, arch=NNModelArch.YOLO_V3)
+oc = OnnxConverter(m, arch=NNModelArch.RESNET)
 oc.run_conversion()
-# oc.origin_graph.plot_graph()
+oc.device_graph.plot_graph()
 
 
-tm = TileMapper(oc.device_graph, 128, 256)
+tm = TileMapper(oc.device_graph, 256, 256*5)
 tm.run_map()
 
-csim = CalcuSim(tm.ctg, oc.host_graph, oc.params, observe=True, mapname=mapname)
+csim = CalcuSim(tm.ctg, oc.host_graph, oc.params)
 y = csim(img)
-csim.save_results()
 print(y)
 
 task = ModelTask(oc.origin_graph, oc.params)
+# img = img.cuda()
 # task.cuda()
 m = task(img)
-print(m)
-
+print(torch.argmax(y))
+print(torch.argmax(m))

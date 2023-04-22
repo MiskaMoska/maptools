@@ -1,8 +1,8 @@
 import torch
 import torch.nn as nn
-from typing import Dict, List, Tuple, Iterator
+from typing import Dict, List
 from maptools.core import HostGraph, ModelParams
-from maptools.host.host_operator import HostOperator
+from maptools.calcusim.host.host_operator import HostOperator
 
 __all__ = ['HostTask']
 
@@ -38,3 +38,7 @@ class HostTask(nn.Module):
                 if self.host_graph.is_output(n): # output operator
                     return res
                 self._buffers[n] = res
+    
+    def cuda(self) -> None:
+        for module in self._modules.values():
+            module.cuda()

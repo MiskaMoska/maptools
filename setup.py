@@ -6,10 +6,11 @@ setup(
     packages = [
         'maptools',
         'maptools.calcusim',
+        'maptools.calcusim.host',
+        'maptools.calcusim.device',
         'maptools.core',
         'maptools.drawing',
         'maptools.hardware',
-        'maptools.host',
         'maptools.mapper',
         'maptools.quantization',
         'maptools.toksim',
