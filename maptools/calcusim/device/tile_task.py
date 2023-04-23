@@ -37,8 +37,8 @@ def cimu_conv2d(
             weight,
             stride=stride
         )
-        print("max:%-15dmin:%-15davg_abs:%d"%(int(torch.max(_y)), int(torch.min(_y)), float(torch.mean(torch.abs(_y)))))
-        # _y = torch.clamp(_y, -1024, 1023)
+        # print("max:%-15dmin:%-15davg_abs:%d"%(int(torch.max(_y)), int(torch.min(_y)), float(torch.mean(torch.abs(_y)))))
+        _y = torch.clamp(_y, -128, 127)
         if i == 7: # sign bit
             y += _y*(-pow(2, 7))
         else: # non sign bit
@@ -137,8 +137,6 @@ class TileTask(nn.Module):
         if self.is_gather:
             assert self.add_quant_config is not None, (
                 f"quantize enabled but got no add_quant_config")
-            assert self.co_scale == self.ai_scale, (
-                f"conv output scale ({self.co_scale}) not add input scale ({self.ai_scale})")
         if self.is_act:
             assert self.relu_quant_config is not None, (
                 f"quantize enabled but got no relu_quant_config")
@@ -165,7 +163,7 @@ class TileTask(nn.Module):
         return self.conv_quant_config.output_scale
     
     @property
-    def ai_scale(self) -> float: # should be equal to `self.co_scale`
+    def ai_scale(self) -> float:
         return self.add_quant_config.input_scale
 
     @property

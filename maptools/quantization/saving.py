@@ -27,8 +27,10 @@ def quant_operation_assertion(op: QuantableOperation) -> bool:
         scales = set([i.scale for i in op.input_quant_config])
         assert len(scales) == 1, (
             f"the input tensors of the Add operation {op.name} have different quantization info")
+        
     input_config = op.input_quant_config[0]
     output_config = op.output_quant_config[0]
+    
     assert float(input_config.offset) == 0, (
         f"the input offset must be 0, but got {float(input_config.offset)}")
     assert float(output_config.offset) == 0, (
@@ -68,6 +70,7 @@ def get_quantized_conv_bias(
 
 def save_quantization(
     graph: BaseGraph,
+    weight_scale_factor: float,
     quantinfo_save_path: str,
     quantparam_save_path: str
 ) -> None:
@@ -93,10 +96,12 @@ def save_quantization(
                 weight_config = op.input_quant_config[1]
                 config_kwargs['weight_bits'] = int(weight_config.num_of_bits)
                 config_kwargs['weight_scale'] = weight_config.scale.cpu()
+                config_kwargs['output_scale'] *= weight_scale_factor
                 weight_tensor = get_quantized_conv_weight(
                     op.inputs[1].value,
                     weight_config
                 )
+                weight_tensor = torch.round(weight_tensor * weight_scale_factor)
                 params[op.name + '_conv_weight'] = weight_tensor.cpu().numpy()
                 params[op.name + '_conv_bias'] = None
 
@@ -107,6 +112,7 @@ def save_quantization(
                         input_config,
                         weight_config
                     )
+                    bias_tensor = torch.round(bias_tensor * weight_scale_factor)
                     params[op.name + '_conv_bias'] = bias_tensor.cpu().numpy()
 
             elif op._type == 'Gemm':

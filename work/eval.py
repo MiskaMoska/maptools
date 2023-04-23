@@ -17,7 +17,7 @@ ONNXDIR = 'onnx_models/simp-resnet18.onnx'
 QUANTIZE = True
 DEVICE = 'cuda'
 BATCHSIZE = 32
-PHYSICAL = False
+PHYSICAL = True
 
 ########################## CalcuSim Model Begin ############################################
 model = onnx.load(ONNXDIR)
