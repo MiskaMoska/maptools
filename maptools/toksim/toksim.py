@@ -93,8 +93,10 @@ class _WindowBuf(object):
         return np.sum(self.buf[sy:dy, sx:dx]) * self.ni
     
     def _update_max_buf(self) -> None:
-        if self.now_buf > self.max_buf:
-            self.max_buf = self.now_buf
+        # needed_buf = self.now_buf + (self.strides[0]*self.strides[1]) * self.ni
+        needed_buf = self.now_buf
+        if needed_buf > self.max_buf:
+            self.max_buf = needed_buf
 
     def add_token(self, token: int) -> None:
         if token == 0:

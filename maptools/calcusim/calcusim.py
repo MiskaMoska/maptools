@@ -95,7 +95,7 @@ class CalcuSim(nn.Module):
             self.ctg, 
             self.params,
             mapname=self.mapname,
-            quanize=self.quantize,
+            quantize=self.quantize,
             observe=self.observe,
             physical=self.physical
         )

@@ -30,12 +30,12 @@ oc.run_conversion()
 # oc.origin_graph.plot_graph()
 
 
-tm = TileMapper(oc.device_graph, 128, 256)
+tm = TileMapper(oc.device_graph, 32, 64)
 tm.run_map()
+tm.ctg.plot_ctg()
 
-csim = CalcuSim(tm.ctg, oc.host_graph, oc.params, observe=True, mapname=mapname)
+csim = CalcuSim(tm.ctg, oc.host_graph, oc.params, physical=False, mapname=mapname)
 y = csim(img)
-csim.save_results()
 print(y)
 
 task = ModelTask(oc.origin_graph, oc.params)

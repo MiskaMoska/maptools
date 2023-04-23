@@ -5,7 +5,6 @@ from maptools.core import *
 from maptools.calcusim import *
 from maptools.drawing import *
 from maptools.hardware import *
-from maptools.host import *
 from maptools.mapper import *
 from maptools.toksim import *
 from maptools.utils import *

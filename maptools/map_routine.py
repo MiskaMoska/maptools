@@ -81,7 +81,7 @@ class MapRoutine(object):
         if self.toksim:
             tsim = TokSim(
                 ctg,
-                slide_once=False,
+                slide_once=True,
                 latency=self.toksim_latency, 
                 **self.config
             )

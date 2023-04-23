@@ -37,7 +37,7 @@ def cimu_conv2d(
             weight,
             stride=stride
         )
-        # print("max:%-15dmin:%-15davg_abs:%d"%(int(torch.max(_y)), int(torch.min(_y)), float(torch.mean(torch.abs(_y)))))
+        print("max:%-15dmin:%-15davg_abs:%d"%(int(torch.max(_y)), int(torch.min(_y)), float(torch.mean(torch.abs(_y)))))
         # _y = torch.clamp(_y, -1024, 1023)
         if i == 7: # sign bit
             y += _y*(-pow(2, 7))

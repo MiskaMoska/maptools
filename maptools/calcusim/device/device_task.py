@@ -141,7 +141,8 @@ class DeviceTask(nn.Module):
         # dequantizing before performing host task
         if self.quantize:
             device_output = [torch.mul(y, self.ctg.oqc[i].output_scale) for i, y in enumerate(device_output)]
-        print('Finished Device Task')
+            device_output = [torch.clamp(y, -128, 127) for y in device_output]
+
         return device_output
 
     def save_results(self, file_name: str = 'results'):
