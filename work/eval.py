@@ -7,7 +7,7 @@ from torchvision.models import resnet18, resnet50
 from torch.utils.data import DataLoader
 from typing import List, Tuple, Dict
 from maptools import OnnxConverter, TileMapper
-from maptools.calcusim import CalcuSim
+from maptools.calcusim import CalcuSim, ModelTask
 from maptools import read_quantparams
 import onnx
 
@@ -17,7 +17,7 @@ ONNXDIR = 'onnx_models/simp-resnet18.onnx'
 QUANTIZE = True
 DEVICE = 'cuda'
 BATCHSIZE = 32
-PHYSICAL = True
+PHYSICAL = False
 
 ########################## CalcuSim Model Begin ############################################
 model = onnx.load(ONNXDIR)
@@ -28,7 +28,8 @@ xm = TileMapper(
     oc.device_graph, 
     256, 
     256*5, 
-    mapname=MAPNAME
+    mapname=MAPNAME,
+    quantize=QUANTIZE
 )
 xm.run_map()
 params = read_quantparams(MAPNAME) if QUANTIZE else oc.params
@@ -38,8 +39,10 @@ model = CalcuSim(xm.ctg, oc.host_graph, params, mapname=MAPNAME, quantize=QUANTI
 
 ########################## Pytorch Model Begin ############################################
 # model = resnet18(pretrained=True)
-model.eval()
+# model.eval()
 ########################## Pytorch Model End ############################################
+
+# model = ModelTask(oc.origin_graph, oc.params)
 
 device = torch.device(DEVICE)
 if DEVICE == 'cuda':

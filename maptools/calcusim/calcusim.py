@@ -89,6 +89,7 @@ class CalcuSim(nn.Module):
         self.quantize: bool = False
         self.observe: bool = False
         self.physical: bool = False
+        self.hardtrans: bool = True
         self.__dict__.update(kwargs)
 
         self.device_task = DeviceTask(
@@ -97,7 +98,8 @@ class CalcuSim(nn.Module):
             mapname=self.mapname,
             quantize=self.quantize,
             observe=self.observe,
-            physical=self.physical
+            physical=self.physical,
+            hardtrans=self.hardtrans
         )
         self.host_task = HostTask(
             self.host_graph, 

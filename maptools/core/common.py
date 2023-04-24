@@ -4,7 +4,9 @@ __all__ = [
     'ROOT_DIR',
     'TRUNCATE_OPS',
     'MERGE_OPS',
-    'VALID_OPS'
+    'VALID_OPS',
+    'QUANT_OP_NAMES',
+    'QUANT_NAME_TABLE'
 ]
 
 # This is the root directory of this project
@@ -33,4 +35,20 @@ VALID_OPS = {
     'Relu', 'PRelu', 'HardSigmoid', 'Softmax',
     'MaxPool', 'AveragePool', 'GlobalAveragePool',
     'Flatten', 'Reshape', 'Resize', 'Transpose'
+}
+
+
+QUANT_OP_NAMES = {
+    'conv', 'sum', 'act','pool'
+}
+
+
+QUANT_NAME_TABLE = {
+    'Conv'          : 'conv',
+    'Relu'          : 'act',
+    'PRelu'         : 'act',
+    'HardSigmoid'   : 'act',
+    'Add'           : 'sum',
+    'MaxPool'       : 'pool',
+    'AveragePool'   : 'pool'
 }

@@ -4,8 +4,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from typing import List, Dict, Optional, Tuple, Any, Callable
-from functools import wraps, cached_property
-from maptools.core import QuantConfig
+from maptools.core import TileQuantConfig
 
 __all__ = ['TileTask']
 
@@ -98,16 +97,15 @@ class TileTask(nn.Module):
         self.observe: bool = False 
 
         # for quantization
-        self.merge_node: bool = False
         self.quantize: bool = False
+        self.tqc: Optional[TileQuantConfig] = None
+        self.merge_node: bool = False
         self.physical: bool = False
-        self.ochan_range: Tuple[int, int] = (0, 0)
+        self.hardtrans: bool = True
 
-        self._init_quant_config()
         self.__dict__.update(kwargs)
-        if self.quantize: self._init_for_quantization()
-        if self.observe: self._init_observe_vars()
         self._init_conv_module()
+        if self.observe: self._init_observe_vars()
         if self.is_resize: self._init_resize_module()
 
     def _init_conv_module(self) -> None:
@@ -122,92 +120,33 @@ class TileTask(nn.Module):
         factor = (self.resize_scales[2], self.resize_scales[3])
         self._resize = nn.Upsample(scale_factor=factor)
 
-    def _init_quant_config(self) -> None:
-        for name in ['conv', 'add', 'relu']:
-            self.__dict__[name + '_quant_config']: Optional[QuantConfig] = None
-
     def _init_observe_vars(self) -> None:
         for name in OBSERVE_VARS:
             self.__dict__[name]: Optional[torch.Tensor] = None
 
-    def _init_for_quantization(self) -> None:
-        if self.merge_node:
-            assert self.conv_quant_config is not None, (
-                f"quantize enabled but got no conv_quant_config")
-        if self.is_gather:
-            assert self.add_quant_config is not None, (
-                f"quantize enabled but got no add_quant_config")
-        if self.is_act:
-            assert self.relu_quant_config is not None, (
-                f"quantize enabled but got no relu_quant_config")
-
     def cuda(self) -> None:
         self._conv.cuda()
         if self.quantize:
-            self.cw_scale = self.cw_scale.cuda()
-
-    @property
-    def cw_scale(self) -> torch.Tensor:
-        return self.conv_quant_config.weight_scale
+            self.tqc.ctrans = self.tqc.ctrans.cuda()
+            self.tqc.ctrans_i = self.tqc.ctrans_i.cuda()
+            self.tqc.ctrans_s = self.tqc.ctrans_s.cuda()
     
-    @cw_scale.setter
-    def cw_scale(self, value: torch.Tensor) -> None:
-        self.conv_quant_config.weight_scale = value
-    
-    @property
-    def ci_scale(self) -> float:
-        return self.conv_quant_config.input_scale
-    
-    @property
-    def co_scale(self) -> float:
-        return self.conv_quant_config.output_scale
-    
-    @property
-    def ai_scale(self) -> float:
-        return self.add_quant_config.input_scale
-
-    @property
-    def ao_scale(self) -> float:
-        return self.add_quant_config.output_scale
-    
-    @property
-    def ri_scale(self) -> float:
-        return self.relu_quant_config.input_scale
-    
-    @property
-    def ro_scale(self) -> float:
-        return self.relu_quant_config.output_scale
-    
-    @cached_property
-    def o_scale(self) -> float:
-        scale = self.co_scale
-        if self.is_act: scale = self.ro_scale
-        elif self.is_gather: scale = self.ao_scale
-        return scale
-    
-    def record_observe_vars(func: Callable) -> Callable:
-        @wraps(func)
-        def wrapper(self, *args, **kwargs):
-            res = func(self, *args, **kwargs)
-            if self.quantize and self.observe:
-                self.cast_in_float = self.cast_in * self.ci_scale
-                if self.is_merge:
-                    self.merge_in_float = self.merge_in * self.ci_scale
-                if self.is_gather:
-                    self.gather_in_float = self.gather_in * self.co_scale
-                if self.is_pool: 
-                    self.before_pool_float = self.before_pool * self.o_scale
-                self.data_out = res
-                self.data_out_float = self.data_out * self.o_scale
-            return res
-        return wrapper
+    def record_observe_vars(self, res: Any) -> None:
+        self.cast_in_float = self.cast_in * self.tqc.i_scale
+        if self.is_merge:
+            self.merge_in_float = self.merge_in * self.tqc.i_scale
+        if self.is_gather:
+            self.gather_in_float = self.gather_in * self.tqc.co_scale
+        if self.is_pool: 
+            self.before_pool_float = self.before_pool * self.tqc.o_scale
+        self.data_out = res
+        self.data_out_float = self.data_out * self.tqc.o_scale
 
     def _absorb(self, *args: Tuple[torch.Tensor]) -> None:
         self.cast_in = args[0]
         self.merge_in = args[1]
         self.gather_in = args[2]
 
-    @record_observe_vars
     def forward(self, *args: Tuple[torch.Tensor]) -> torch.Tensor:
         self._absorb(*args)
         assert self.cast_in is not None, "cast in data got None"
@@ -226,10 +165,12 @@ class TileTask(nn.Module):
         # only for merge node where a complete sum should appear
         # conv quantization converting from input to output, return a int8
         if self.merge_node and self.quantize:
-            weight_scale = self.cw_scale[self.ochan_range[0]:self.ochan_range[1]]
-            weight_scale = weight_scale.view([1, -1, 1, 1])
-            x = torch.round(x * weight_scale * self.ci_scale / self.co_scale)
-            x = torch.clamp(x, -128, 127)
+            if self.hardtrans:
+                ctrans_i = self.tqc.ctrans_i.view([1, -1, 1, 1])
+                ctrans_s = self.tqc.ctrans_s.view([1, -1, 1, 1])
+                mult = ctrans_i / pow(2, -ctrans_s)
+            else: mult = self.tqc.ctrans.view([1, -1, 1, 1])
+            x = torch.clamp(torch.round(x * mult), -128, 127)
 
         if self.is_gather:
             assert self.merge_node, f"this is a gather_in node but is not a merge node"
@@ -241,8 +182,10 @@ class TileTask(nn.Module):
             # only for tile with gather in dataflow
             # add quantization converting from input to output, return a int8
             if self.quantize:
-                x = torch.round(x * self.ai_scale / self.ao_scale)
-                x = torch.clamp(x, -128, 127)
+                if self.hardtrans: 
+                    mult = self.tqc.strans_i / pow(2, -self.tqc.strans_s)
+                else: mult = self.tqc.strans
+                x = torch.clamp(torch.round(x * mult), -128, 127)
 
         if self.is_act:
             assert self.act_mode == 'Relu', (
@@ -252,8 +195,10 @@ class TileTask(nn.Module):
             # only for tile with activation (relu)
             # add quantization converting from input to output, return a int8
             if self.quantize:
-                x = torch.round(x * self.ri_scale / self.ro_scale)
-                x = torch.clamp(x, -128, 127)
+                if self.hardtrans:
+                    mult = self.tqc.atrans_i / pow(2, -self.tqc.atrans_s)
+                else: mult = self.tqc.atrans
+                x = torch.clamp(torch.round(x * mult), -128, 127)
 
         if self.is_resize:
             x = self._resize(x)
@@ -276,5 +221,8 @@ class TileTask(nn.Module):
                     kernel_size = tuple(self.pool_kernel_size),
                     stride = tuple(self.pool_strides)
                 )
+            
+        if self.quantize and self.observe:
+            self.record_observe_vars(x)
 
         return x

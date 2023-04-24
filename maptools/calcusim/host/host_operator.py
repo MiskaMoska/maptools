@@ -32,12 +32,14 @@ class Conv(nn.Module):
     def __init__(self, config: OperatorConfig, params: ModelParams) -> None:
         super().__init__()
         weight_ptr = config['conv_weight']
-        self.weight = torch.tensor(params[weight_ptr])
+        weight = nn.Parameter(torch.tensor(params[weight_ptr]))
+        self.register_parameter('weight', weight)
 
         bias_ptr = config['conv_bias']
         if params[bias_ptr] is None:
-            self.bias = torch.zeros(config['conv_num_ochan'])
-        else: self.bias = torch.tensor(params[bias_ptr])
+            bias = nn.Parameter(torch.zeros(config['conv_num_ochan']))
+        else: bias = nn.Parameter(torch.tensor(params[bias_ptr]))
+        self.register_parameter('bias', bias)
 
         pads = config['conv_pads']
         self.pads = [pads[3], pads[1], pads[0], pads[2]]
@@ -47,10 +49,6 @@ class Conv(nn.Module):
     def forward(self, x: List[torch.Tensor]) -> torch.Tensor:
         x = F.pad(x[0], self.pads)
         return F.conv2d(x, self.weight, bias=self.bias, stride=self.stride)
-
-    def cuda(self) -> None:
-        self.weight = self.weight.cuda()
-        self.bias = self.bias.cuda()
 
 
 class Gemm(nn.Linear): 
@@ -220,9 +218,6 @@ class HostOperator(nn.Module):
 
     def forward(self, x: List[torch.Tensor]) -> torch.Tensor:
         return self.operator(x)
-    
-    def cuda(self) -> None:
-        self.operator.cuda()
 
 
 __HOST_OPERATOR_ACCESS_TABLE__ = {

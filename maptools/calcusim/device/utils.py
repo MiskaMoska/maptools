@@ -1,12 +1,10 @@
 import torch
-from typing import Tuple
+from typing import Tuple, Union
 from copy import deepcopy
 from typing import List, Tuple, Dict
 from maptools.core import ModelParams, TileConfig
 
-__all__ = [
-    'get_tile_kwargs'
-]
+__all__ = ['get_tile_kwargs']
 
 def rebuild_conv_weight(icfg: List[Tuple], ocfg: Tuple, weight: torch.Tensor) -> torch.Tensor:
     '''
@@ -18,13 +16,13 @@ def rebuild_conv_weight(icfg: List[Tuple], ocfg: Tuple, weight: torch.Tensor) ->
     ochan_s = ocfg[0]
     ochan_d = ocfg[1]
     _weight = deepcopy(weight[ochan_s:ochan_d, ichan_s:ichan_d, :, :])
-    _weight_ = torch.zeros_like(_weight)
+    partial_weight = torch.zeros_like(_weight)
     kw = weight.shape[3]
     for i in [m[0] for m in icfg]:
         y = i // kw
         x = i % kw
-        _weight_[:, :, y, x] = _weight[:, :, y, x] # mask
-    return _weight_
+        partial_weight[:, :, y, x] = _weight[:, :, y, x] # mask
+    return partial_weight
 
 
 def rebuild_conv_bias(ocfg: Tuple, bias: torch.Tensor) -> torch.Tensor:
@@ -82,21 +80,9 @@ def get_tile_kwargs(cfg: TileConfig, params: ModelParams) -> Dict:
     if 'Rsz' in cfg['op_type']:
         kwargs['is_resize'] = True
         kwargs['resize_scales'] = deepcopy(cfg['resize_scales'])
-    
-    # get output channel range
-    kwargs['ochan_range'] = cfg['xbar_ocfg']
-
-    # get quant config
-    config_names = {
-        'conv_quant_config', 
-        'add_quant_config',
-        'relu_quant_config'
-    }
-    for name in config_names:
-        if name in cfg:
-            kwargs[name] = cfg[name]
 
     # get connection attributes
     if not cfg['merge_out']:
         kwargs['merge_node'] = True
+
     return kwargs

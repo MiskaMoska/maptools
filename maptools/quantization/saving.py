@@ -3,7 +3,8 @@ import pickle
 from ppq import BaseGraph
 from ppq import QuantableOperation, TensorQuantizationConfig
 from ppq.quantization.qfunction import PPQuantFunction_toInt
-from maptools.core import QuantConfig
+from maptools.core import OperatorQuantConfig
+from maptools.quantization.utils import destruct_scale
 
 __all__ = ['save_quantization']
 
@@ -82,13 +83,15 @@ def save_quantization(
     for op in graph.operations.values():
         quant_operation_assertion(op)
         if isinstance(op, QuantableOperation) and op._type in ACTIVE_OPTYPE:
-            config_kwargs = {} # kwargs to initialize QuantConfig object
+            config_kwargs = {} # kwargs to initialize OperatorQuantConfig object
             config_kwargs['name'] = op.name
             input_config = op.input_quant_config[0]
             output_config = op.output_quant_config[0]
 
+            config_kwargs['op_type'] = op._type
             config_kwargs['input_bits'] = int(input_config.num_of_bits)
             config_kwargs['input_scale'] = float(input_config.scale)
+
             config_kwargs['output_bits'] = int(output_config.num_of_bits)
             config_kwargs['output_scale'] = float(output_config.scale)
 
@@ -96,7 +99,11 @@ def save_quantization(
                 weight_config = op.input_quant_config[1]
                 config_kwargs['weight_bits'] = int(weight_config.num_of_bits)
                 config_kwargs['weight_scale'] = weight_config.scale.cpu()
-                config_kwargs['output_scale'] *= weight_scale_factor
+
+                # rewrite equivalent output scale
+                equiv_output_scale = float(output_config.scale) * weight_scale_factor
+                config_kwargs['output_scale'] = equiv_output_scale
+
                 weight_tensor = get_quantized_conv_weight(
                     op.inputs[1].value,
                     weight_config
@@ -128,7 +135,7 @@ def save_quantization(
             else:
                 assert True, f"op_type {op._type} not supported yet"
 
-            config_dict[op.name] = QuantConfig(**config_kwargs)
+            config_dict[op.name] = OperatorQuantConfig(**config_kwargs)
 
     with open(quantinfo_save_path, 'wb') as f:
         pickle.dump(config_dict, f)

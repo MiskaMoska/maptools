@@ -32,6 +32,7 @@ class MapRoutine(object):
         self.noc_map: bool = True
         self.quantize: bool = True
         self.physical: bool = True
+        self.hardtrans: bool = True
 
         self.show_origin_graph: bool = False
         self.show_host_graph: bool = False
@@ -100,7 +101,8 @@ class MapRoutine(object):
                 oc.host_graph, 
                 params, 
                 observe=self.save_results, 
-                physical=self.physical, 
+                physical=self.physical,
+                hardtrans=self.hardtrans,
                 **self.config
             )
             host_output = csim(self.input)

@@ -17,7 +17,7 @@ routine = MapRoutine(
     calcusim=True,
     save_results=True,
     save_cfginfo=True,
-    show_ctg=True,
+    show_ctg=False,
     show_device_graph=True,
     xbar_size = (256, 256*5),
     noc_size=(5, 10),
@@ -29,7 +29,7 @@ routine = MapRoutine(
     toksim_latency = None,
     input=img,
     quantize=True,
-    physical=True
+    physical=False
 )
 
 ctg = routine.run()

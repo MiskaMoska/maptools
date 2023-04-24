@@ -32,6 +32,6 @@ quantize(
     mapname='resnet18',
     calibset=calibset,
     calib_steps=CALIB_STEPS,
-    weight_scale_factor=0.05
+    weight_scale_factor=1.0
 )
 

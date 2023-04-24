@@ -10,7 +10,7 @@ from graphviz import Digraph as GDG
 from functools import cached_property, wraps
 from typing import Any, List, Dict, Tuple, Optional, Generator, Callable
 from maptools.core.typing import OperatorConfig
-from maptools.core.proto import QuantConfig, NNModelArch
+from maptools.core.proto import OperatorQuantConfig, NNModelArch
 from maptools.core.common import ROOT_DIR, TRUNCATE_OPS
 
 __all__ = [
@@ -187,41 +187,6 @@ class HostGraph(OperatorGraph): ...
 
 class DeviceGraph(OperatorGraph):
 
-    @cached_property
-    def iqc(self) -> QuantConfig:
-        config = self.config(self.unique_input)
-        return config['conv_quant_config']
-    
-    @cached_property
-    def oqc(self) -> List[QuantConfig]:
-        oqc = [0] * self.output_num
-        for node in self.nodes:
-            if self.is_output(node):
-                config = self.config(node)
-                name = 'conv_'
-                if 'Act' in self.op_type(node):
-                    name = 'add_'
-                elif 'Add' in self.op_type(node):
-                    name = 'relu_'
-                bidx = config['bridge_idx']
-                oqc[bidx] = config[name + 'quant_config']
-        return oqc
-
-    def input_output_quant_config(self) -> Optional[Tuple[QuantConfig, QuantConfig]]:
-        nodes = list(self.nodes)
-        head_node, tail_node = nodes[0], nodes[-1]
-        head_config, tail_config = self.config(head_node), self.config(tail_node)
-
-        if self.quantize:
-            head_quant_config = head_config['conv_quant_config']
-            tail_name = 'conv_'
-            if 'Act' in self.op_type(tail_node):
-                tail_name = 'add_'
-            elif 'Add' in self.op_type(tail_node):
-                tail_name = 'relu_'
-            tail_quant_config = tail_config[tail_name + 'quant_config']
-            return head_quant_config, tail_quant_config
-        
     def _fuse_config(self, snode: str, dnode: str) -> None:
         # Fuse one operator's config to another
         tmp = deepcopy(self.dicts[snode])

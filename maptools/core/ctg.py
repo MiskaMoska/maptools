@@ -82,12 +82,6 @@ class CTG(object):
 
         # build ctg
         self._build_ctg(device_graph)
-
-        # complete attributes
-        if self.quantize:
-            self.iqc = device_graph.iqc
-            self.oqc = device_graph.oqc
-
         self._complete_connection_attrs()
 
     @cached_property

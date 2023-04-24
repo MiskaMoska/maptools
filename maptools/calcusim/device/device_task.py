@@ -26,6 +26,7 @@ class DeviceTask(nn.Module):
         self.quantize: bool = False
         self.observe: bool = False
         self.physical: bool = False
+        self.hardtrans: bool = True
         self.__dict__.update(kwargs)
 
         if self.physical and not self.quantize:
@@ -55,8 +56,10 @@ class DeviceTask(nn.Module):
                     is_merge=is_merge, 
                     is_gather=is_gather,
                     quantize=self.quantize,
+                    tqc=cfg['tqc'] if self.quantize else None,
                     physical=self.physical,
-                    observe = self.observe,
+                    observe=self.observe,
+                    hardtrans=self.hardtrans,
                     **kwargs
                 )
 
@@ -92,16 +95,16 @@ class DeviceTask(nn.Module):
         for i in range(self.ctg.output_num):
             output_list.append([])
 
-        #quantizing before performing device task
-        if self.quantize:
-            x = torch.round(torch.divide(x, self.ctg.iqc.input_scale))
-            x = torch.clamp(x, -128, 127)
-
         # device task
         for node in self.ctg.tiles:
             # get input data
             cast_in, merge_in, gather_in = None, None, None
             if self.ctg.is_head_tile(node):
+                # quantizing before the head tile
+                if self.quantize:
+                    i_scale = self.ctg.dicts[node]['tqc'].i_scale
+                    x = torch.round(torch.divide(x, i_scale))
+                    x = torch.clamp(x, -128, 127)
                 cast_in = x
             else:
                 if self.ctg.has_cast_in(node):
@@ -116,6 +119,11 @@ class DeviceTask(nn.Module):
             
             # store output data
             if self.ctg.is_tail_tile(node):
+                # quantizing after the tail tile
+                if self.quantize:
+                    o_scale = self.ctg.dicts[node]['tqc'].o_scale
+                    temp_y *= o_scale
+
                 bridge_idx = self.ctg.dicts[node]['bridge_idx']
                 output_list[bridge_idx].append((node[1], temp_y))
 
@@ -137,11 +145,6 @@ class DeviceTask(nn.Module):
 
         device_output = [self._arrage_output(y) for y in output_list]
         self.res_dict['output'] = device_output # the output of device task
-
-        # dequantizing before performing host task
-        if self.quantize:
-            device_output = [torch.round(y * self.ctg.oqc[i].output_scale) for i, y in enumerate(device_output)]
-            device_output = [torch.clamp(y, -128, 127) for y in device_output]
 
         return device_output
 

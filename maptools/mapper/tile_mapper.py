@@ -1,7 +1,11 @@
 import math
 import numpy as np
 from typing import List, Dict, Tuple, Any
-from maptools.core import DeviceGraph, CTG
+from maptools.core import (
+    DeviceGraph, CTG, TileQuantConfig, OperatorQuantConfig,
+    QUANT_OP_NAMES
+)
+from maptools.utils import destruct_scale
 
 __all__ = ['TileMapper']
 
@@ -58,6 +62,7 @@ class TileMapper(object):
         self.w = w
         self.h = h
         self.mapname = 'newmap'
+        self.quantize = False
         self.__dict__.update(kwargs)
         self.match_dict: Dict[str, int] = dict() 
         self.map_list: List[np.ndarray] = []
@@ -174,8 +179,55 @@ class TileMapper(object):
         for ops in {'Pool', 'Act', 'Add', 'Rsz'}:
             tile_dict['op_type'] = tile_dict['op_type'].replace('-'+ops, '')
 
+    def _build_tile_quant_config(self) -> None:
+        '''
+        This method builds tile quant config (TQC) objects for all tiles
+        according to the operator quant config (OQC) objects in the tile config,
+        and the removes all OQCs from all tiles.
+        Always call this method after calling `self._map_for_all`
+        '''
+        for config in self.map_dict.values():
+            tqc_kwargs = {}
+            tqc_kwargs['op_type'] = config['op_type']
+            conv_qc: OperatorQuantConfig = config['conv_quant_config']
+            tqc_kwargs['ci_scale'] = conv_qc.input_scale
+            tqc_kwargs['co_scale'] = conv_qc.output_scale
+            tqc_kwargs['i_scale'] = conv_qc.input_scale
+            tqc_kwargs['o_scale'] = conv_qc.output_scale
+
+            ocfg = config['xbar_ocfg']
+            weight_scale = conv_qc.weight_scale[ocfg[0]:ocfg[1]]
+            tqc_kwargs['ctrans'] = weight_scale * conv_qc.input_scale / conv_qc.output_scale
+            tqc_kwargs['ctrans_i'], tqc_kwargs['ctrans_s'] = destruct_scale(tqc_kwargs['ctrans'])
+
+            if 'Add' in config['op_type']:
+                sum_qc: OperatorQuantConfig = config['sum_quant_config']
+                tqc_kwargs['si_scale'] = sum_qc.input_scale
+                tqc_kwargs['so_scale'] = sum_qc.output_scale
+                tqc_kwargs['o_scale'] = sum_qc.output_scale
+
+                tqc_kwargs['strans'] = sum_qc.input_scale / sum_qc.output_scale
+                tqc_kwargs['strans_i'], tqc_kwargs['strans_s'] = destruct_scale(tqc_kwargs['strans'])
+
+            if 'Act' in config['op_type']:
+                act_qc: OperatorQuantConfig = config['act_quant_config']
+                tqc_kwargs['ai_scale'] = act_qc.input_scale
+                tqc_kwargs['ao_scale'] = act_qc.output_scale
+                tqc_kwargs['o_scale'] = act_qc.output_scale
+
+                tqc_kwargs['atrans'] = act_qc.input_scale / act_qc.output_scale
+                tqc_kwargs['atrans_i'], tqc_kwargs['atrans_s'] = destruct_scale(tqc_kwargs['atrans'])
+            
+            config['tqc'] = TileQuantConfig(**tqc_kwargs)
+            
+            for name in QUANT_OP_NAMES:
+                key = name + '_quant_config'
+                if key in config: config.pop(key)
+
     def run_map(self) -> None: 
         self._map_for_all()
+        if self.quantize:
+            self._build_tile_quant_config()
 
     @property
     def ctg(self) -> CTG:

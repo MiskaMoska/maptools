@@ -38,7 +38,3 @@ class HostTask(nn.Module):
                 if self.host_graph.is_output(n): # output operator
                     return res
                 self._buffers[n] = res
-    
-    def cuda(self) -> None:
-        for module in self._modules.values():
-            module.cuda()
