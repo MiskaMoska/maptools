@@ -251,10 +251,11 @@ class TileMapper(object):
         Print tile configs
         '''
         total = 0
+        _match_dict = dict(zip(self.match_dict.values(), self.match_dict.keys()))
         for i, mtx in enumerate(self.map_list):
             sum = np.sum(mtx)
             total += sum
-            print(f"layer{i}: #region-{mtx.shape[0]}, #block-{mtx.shape[1]}, #tile-{sum}")
+            print(f"layer{i}({_match_dict[i]}): #region-{mtx.shape[0]}, #block-{mtx.shape[1]}, #tile-{sum}")
         print("-"*70)
         print(f"total #tile-{total}")
         self.total_tile = total

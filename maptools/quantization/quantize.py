@@ -29,8 +29,7 @@ def quantize(
     onnx_path: str,
     mapname = 'newmap',
     calibset: Optional[Iterable[Dict[str, torch.Tensor]]] = None,
-    calib_steps: int = 32,
-    weight_scale_factor: float = 1
+    calib_steps: int = 32
 ) -> None:
     def collate_fn(batch: dict) -> torch.Tensor:
         return {k: v.to(device) for k, v in batch.items()}
@@ -99,7 +98,6 @@ def quantize(
 
     save_quantization(
         quantized,
-        weight_scale_factor,
         quantinfo_save_path,
         quantparam_save_path
     )

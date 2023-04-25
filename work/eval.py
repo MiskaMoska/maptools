@@ -17,7 +17,8 @@ ONNXDIR = 'onnx_models/simp-resnet18.onnx'
 QUANTIZE = True
 DEVICE = 'cuda'
 BATCHSIZE = 32
-PHYSICAL = False
+PHYSICAL = True
+HARDTRANS = True
 
 ########################## CalcuSim Model Begin ############################################
 model = onnx.load(ONNXDIR)
@@ -33,7 +34,7 @@ xm = TileMapper(
 )
 xm.run_map()
 params = read_quantparams(MAPNAME) if QUANTIZE else oc.params
-model = CalcuSim(xm.ctg, oc.host_graph, params, mapname=MAPNAME, quantize=QUANTIZE, physical=PHYSICAL)
+model = CalcuSim(xm.ctg, oc.host_graph, params, mapname=MAPNAME, quantize=QUANTIZE, physical=PHYSICAL, hardtrans=HARDTRANS)
 ########################## CalcuSim Model End ############################################
 
 

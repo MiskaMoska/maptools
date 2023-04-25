@@ -1,5 +1,6 @@
 import torch
 import pickle
+from typing import Optional
 from ppq import BaseGraph
 from ppq import QuantableOperation, TensorQuantizationConfig
 from ppq.quantization.qfunction import PPQuantFunction_toInt
@@ -71,7 +72,6 @@ def get_quantized_conv_bias(
 
 def save_quantization(
     graph: BaseGraph,
-    weight_scale_factor: float,
     quantinfo_save_path: str,
     quantparam_save_path: str
 ) -> None:
@@ -100,15 +100,10 @@ def save_quantization(
                 config_kwargs['weight_bits'] = int(weight_config.num_of_bits)
                 config_kwargs['weight_scale'] = weight_config.scale.cpu()
 
-                # rewrite equivalent output scale
-                equiv_output_scale = float(output_config.scale) * weight_scale_factor
-                config_kwargs['output_scale'] = equiv_output_scale
-
                 weight_tensor = get_quantized_conv_weight(
                     op.inputs[1].value,
                     weight_config
                 )
-                weight_tensor = torch.round(weight_tensor * weight_scale_factor)
                 params[op.name + '_conv_weight'] = weight_tensor.cpu().numpy()
                 params[op.name + '_conv_bias'] = None
 
@@ -119,7 +114,6 @@ def save_quantization(
                         input_config,
                         weight_config
                     )
-                    bias_tensor = torch.round(bias_tensor * weight_scale_factor)
                     params[op.name + '_conv_bias'] = bias_tensor.cpu().numpy()
 
             elif op._type == 'Gemm':
