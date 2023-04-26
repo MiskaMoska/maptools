@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from typing import List, Dict, Optional, Tuple, Any, Callable
-from maptools.core import TileQuantConfig
+from maptools.core import TileQuantConfig, LogicalTile
 
 __all__ = ['TileTask']
 
@@ -25,8 +25,11 @@ def cimu_conv2d(
     x: torch.Tensor,
     weight: torch.Tensor,
     bias: Optional[torch.Tensor] = None,
-    stride: Optional[List[int]] = [1, 1]
+    stride: Optional[List[int]] = [1, 1],
+    factor: float = 1,
+    tile: LogicalTile = None
 ) -> torch.Tensor:
+
     x = torch.clamp(x, -128, 127)
     x = x.type(torch.int8)
     y = 0
@@ -37,13 +40,21 @@ def cimu_conv2d(
             stride=stride
         )
         # print("max:%-15dmin:%-15davg_abs:%d"%(int(torch.max(_y)), int(torch.min(_y)), float(torch.mean(torch.abs(_y)))))
-        _y = torch.clamp(_y, -128, 127)
+
+        # ivc clamping transfer
+        _y = torch.clamp(torch.round(_y / factor), -128, 127)
+
+        # invert transfer
+        _y = torch.round(torch.round(_y * factor))
+
         if i == 7: # sign bit
             y += _y*(-pow(2, 7))
         else: # non sign bit
             y += _y*pow(2, i)
+
     if bias is not None:
         y += bias.view([1, -1, 1, 1])
+    
     return y
 
 
@@ -54,12 +65,25 @@ class ConvUnit(nn.Module):
         weight: torch.Tensor, 
         bias: torch.Tensor, 
         strides: List[int],
-        physical: bool = False
+        physical: bool = False,
+        tile: LogicalTile = None,
+        ivcf: Optional[float] = None,
+        first_layer_ivcf: Optional[float] = None
     ) -> None:
         super().__init__()
         self.weight = weight
         self.bias = bias
         self.strides = strides
+        self.tile = tile
+
+        # determine ivc transfer factor
+        if ivcf is not None:
+            if (first_layer_ivcf is not None) and (self.tile == (0, 0, 0, 0)):
+                self.factor = first_layer_ivcf
+            else:
+                self.factor = ivcf
+        else: self.factor = 1
+
         self.func = cimu_conv2d if physical else F.conv2d
 
     def cuda(self):
@@ -68,7 +92,13 @@ class ConvUnit(nn.Module):
             self.bias = self.bias.cuda()
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        return self.func(x, self.weight, bias=self.bias, stride=self.strides)
+        return self.func(
+            x, self.weight, 
+            bias=self.bias, 
+            stride=self.strides, 
+            factor=self.factor,
+            tile=self.tile
+        )
 
 
 class TileTask(nn.Module):
@@ -76,6 +106,7 @@ class TileTask(nn.Module):
     def __init__(self, **kwargs: Any) -> None:
         super().__init__()
         # for general
+        self.tile: LogicalTile = None
         self.conv_pads: List[int] = None
         self.conv_weight: torch.Tensor = None
         self.conv_bias: Optional[torch.Tensor] = None
@@ -102,6 +133,8 @@ class TileTask(nn.Module):
         self.merge_node: bool = False
         self.physical: bool = False
         self.hardtrans: bool = True
+        self.ivcf: Optional[float] = None
+        self.first_layer_ivcf: Optional[float] = None
 
         self.__dict__.update(kwargs)
         self._init_conv_module()
@@ -113,7 +146,10 @@ class TileTask(nn.Module):
             self.conv_weight, 
             self.conv_bias, 
             self.conv_strides, 
-            physical=self.physical
+            physical=self.physical,
+            tile=self.tile,
+            ivcf=self.ivcf,
+            first_layer_ivcf=self.first_layer_ivcf
         )
 
     def _init_resize_module(self) -> None:

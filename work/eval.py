@@ -19,6 +19,7 @@ DEVICE = 'cuda'
 BATCHSIZE = 32
 PHYSICAL = True
 HARDTRANS = True
+IVCF = 4000/128
 
 ########################## CalcuSim Model Begin ############################################
 model = onnx.load(ONNXDIR)
@@ -34,7 +35,16 @@ xm = TileMapper(
 )
 xm.run_map()
 params = read_quantparams(MAPNAME) if QUANTIZE else oc.params
-model = CalcuSim(xm.ctg, oc.host_graph, params, mapname=MAPNAME, quantize=QUANTIZE, physical=PHYSICAL, hardtrans=HARDTRANS)
+model = CalcuSim(
+    xm.ctg, 
+    oc.host_graph, 
+    params, 
+    mapname=MAPNAME, 
+    quantize=QUANTIZE, 
+    physical=PHYSICAL, 
+    hardtrans=HARDTRANS,
+    ivcf=IVCF
+)
 ########################## CalcuSim Model End ############################################
 
 

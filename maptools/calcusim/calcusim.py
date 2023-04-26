@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from copy import deepcopy
-from typing import Any
+from typing import Any, Optional
 from maptools.core import (
     CTG, HostGraph, ModelParams
 )
@@ -90,6 +90,8 @@ class CalcuSim(nn.Module):
         self.observe: bool = False
         self.physical: bool = False
         self.hardtrans: bool = True
+        self.ivcf: Optional[float] = None
+        self.first_layer_ivcf: Optional[float] = None
         self.__dict__.update(kwargs)
 
         self.device_task = DeviceTask(
@@ -99,7 +101,9 @@ class CalcuSim(nn.Module):
             quantize=self.quantize,
             observe=self.observe,
             physical=self.physical,
-            hardtrans=self.hardtrans
+            hardtrans=self.hardtrans,
+            ivcf=self.ivcf,
+            first_layer_ivcf=self.first_layer_ivcf
         )
         self.host_task = HostTask(
             self.host_graph, 

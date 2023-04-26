@@ -27,6 +27,8 @@ class DeviceTask(nn.Module):
         self.observe: bool = False
         self.physical: bool = False
         self.hardtrans: bool = True
+        self.ivcf: Optional[float] = None
+        self.first_layer_ivcf: Optional[float] = None
         self.__dict__.update(kwargs)
 
         if self.physical and not self.quantize:
@@ -53,6 +55,7 @@ class DeviceTask(nn.Module):
                     if self.ctg.is_gather_comm(pred):
                         is_gather = True
                 self.obj_dict[node] = TileTask(
+                    tile=node,
                     is_merge=is_merge, 
                     is_gather=is_gather,
                     quantize=self.quantize,
@@ -60,6 +63,8 @@ class DeviceTask(nn.Module):
                     physical=self.physical,
                     observe=self.observe,
                     hardtrans=self.hardtrans,
+                    ivcf=self.ivcf,
+                    first_layer_ivcf=self.first_layer_ivcf,
                     **kwargs
                 )
 

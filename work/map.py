@@ -29,7 +29,7 @@ routine = MapRoutine(
     toksim_latency = None,
     input=img,
     quantize=True,
-    physical=False
+    physical=True
 )
 
 ctg = routine.run()
