@@ -39,8 +39,12 @@ maptools/quantization/__init__.py
 maptools/quantization/quantize.py
 maptools/quantization/saving.py
 maptools/toksim/__init__.py
-maptools/toksim/toksim.py
+maptools/toksim/toksim.cpp
 maptools/toksim/utils.py
+maptools/toksim/srcs/c_comm.cpp
+maptools/toksim/srcs/c_tile.cpp
+maptools/toksim/srcs/c_toksim.cpp
+maptools/toksim/srcs/c_windowbuf.cpp
 maptools/utils/__init__.py
 maptools/utils/interface.py
 maptools/utils/io.py

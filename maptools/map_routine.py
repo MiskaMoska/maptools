@@ -41,7 +41,6 @@ class MapRoutine(object):
         self.show_ctg: bool = False
 
         self.toksim: bool = False
-        self.toksim_latency: Optional[int] = None 
         self.calcusim: bool = False
         self.save_results: bool = False
 
@@ -83,9 +82,7 @@ class MapRoutine(object):
         if self.toksim:
             tsim = TokSim(
                 ctg,
-                slide_once=True,
-                latency=self.toksim_latency, 
-                **self.config
+                mapname=self.mapname
             )
             tsim.run()
             tsim.save_execu()
