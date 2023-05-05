@@ -9,4 +9,6 @@ onnx_models/*
 mapsave/*
 inference/*
 build/*
+dist/*
+maptools.egg-info/*
 make.sh
