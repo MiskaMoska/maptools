@@ -18,7 +18,7 @@ namespace toksim{
         
             int ni, rptr, wptr;
             
-            int need_token, buffered, max_buf;
+            int need_token, released_token, max_buf;
             bool close, done;
 
             vector<vector<int>> buf;

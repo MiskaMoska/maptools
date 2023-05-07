@@ -18,7 +18,7 @@ namespace toksim{
         ni(xbar_num_ichan),
         rptr(0),
         wptr(0),
-        buffered(0),
+        released_token(0),
         max_buf(0),
         close(false),
         done(false)
@@ -82,7 +82,11 @@ namespace toksim{
     }
 
     void C_WindowBuf::_update_max_buf(){
-        if(buffered > max_buf) 
+        // bound_wptr is the minimum write pointer 
+        // that is enough to perform the current execution
+        int bound_wptr = get<2>(winpos) * size_i_np[1] + get<3>(winpos);
+        int buffered = bound_wptr - released_token;
+        if(buffered > max_buf)
             this->max_buf = buffered;
     }
 
@@ -97,7 +101,6 @@ namespace toksim{
             pos_x = x + pads[3];
             buf[pos_y][pos_x] = 1;
             wptr++;
-            buffered++;
             if(y + 1 >= size_i_np[0] && x + 1 >= size_i_np[1]){
                 this->close = true;
                 return;
@@ -139,7 +142,7 @@ namespace toksim{
         for(int i=get<0>(winpos); i<get<0>(winpos)+rele_y; i++){
             for(int j=get<1>(winpos); j<get<1>(winpos)+rele_x; j++){
                 buf[i][j] = 0;
-                if(!is_pad(i, j)) buffered--;
+                if(!is_pad(i, j)) released_token++;
             }
         }
     }
@@ -147,22 +150,27 @@ namespace toksim{
     int C_WindowBuf::try_slide(){
         if(done) return 0;
         int token = 0;
-        int sum = 0;
-        this->winpos = this->win_pos();
-        for(int i=get<0>(winpos); i<get<2>(winpos); i++){
-            for(int j=get<1>(winpos); j<get<3>(winpos); j++){
-                sum += buf[i][j];
+        while(true){
+            int sum = 0;
+            this->winpos = this->win_pos();
+            for(int i=get<0>(winpos); i<get<2>(winpos); i++){
+                for(int j=get<1>(winpos); j<get<3>(winpos); j++){
+                    sum += buf[i][j];
+                }
             }
-        }
-        if(sum == need_token){
-            this->_release_data();
-            this->rptr++;
-            if(rptr == size_o[0] * size_o[1]){
-                this->done = true;
+            if(sum == need_token){
+                // each time before sliding, record the max buf
+                this->_update_max_buf();
+                this->_release_data();
+                this->rptr++;
+                if(rptr == size_o[0] * size_o[1]){
+                    this->done = true;
+                }
+                token++;
             }
-            token++;
+            else break;
+            if(done) break;
         }
-        this->_update_max_buf();
         return token;
     }
 

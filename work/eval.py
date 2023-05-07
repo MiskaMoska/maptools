@@ -19,7 +19,7 @@ DEVICE = 'cuda'
 BATCHSIZE = 32
 PHYSICAL = True
 HARDTRANS = True
-IVCF = 4000/128
+IVCF = 2000/32
 
 ########################## CalcuSim Model Begin ############################################
 model = onnx.load(ONNXDIR)
