@@ -14,6 +14,10 @@ namespace toksim{
         CAST, MERGE, GATHER
     };
 
+    enum C_TokenMode{
+        SINGLE, UPSAMPLE
+    };
+
     struct C_TileConfig{
         bool 
             has_conv,
