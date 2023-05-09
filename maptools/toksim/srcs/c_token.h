@@ -12,6 +12,7 @@ namespace toksim{
             C_Token();
             C_Token(int token_num);
             void merge(C_Token token);
+            void pop(C_Token token);
     };
 
 }

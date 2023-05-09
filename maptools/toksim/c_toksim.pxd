@@ -34,6 +34,9 @@ cdef extern from "srcs/c_typing.h" namespace "toksim":
         bint is_gather_comm;
         vector[string] preds, succs;
 
+cdef extern from "srcs/c_token.h" namespace "toksim":
+    cdef cppclass C_Token
+
 cdef extern from "srcs/c_windowbuf.h" namespace "toksim":
     cdef cppclass C_WindowBuf
 

@@ -48,16 +48,17 @@ namespace toksim{
     }
 
     bool C_TokSim::_iter(){
-        int token, done_cnt = 0;
+        C_Token token;
+        int done_cnt = 0;
         for(auto &node : nodes){
             if(is_tile(node)){
                 auto &tile = tile_objects[node];
                 if(is_head_tile(node))
-                    tile.consume_tokens(1, CAST);
+                    tile.consume_tokens(C_Token(1), CAST);
                 token = tile.produce_tokens();
 
                 if(tile.done) done_cnt++;
-                if(!token) continue;
+                if(!token.token_num) continue;
                 if(is_tail_tile(node)) continue;
                 auto succs = get_succs(node);
                 for(auto &succ : succs){

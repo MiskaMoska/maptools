@@ -44,22 +44,22 @@ namespace toksim{
             this->max_gather_buf = gather_buf;
     }
 
-    void C_Tile::_consume_tokens_cast(int token){
-        if(token > 0)
+    void C_Tile::_consume_tokens_cast(C_Token token){
+        if(token.token_num > 0)
             conv_buf.add_token(token);
         auto res = conv_buf.try_slide();
-        this->inter_buf += res;
+        this->inter_buf += res.token_num;
 
         if(!config.has_pool)
             this->done = conv_buf.done;
     }
-    void C_Tile::_consume_tokens_merge(int token){
-        merge_buf += token;
+    void C_Tile::_consume_tokens_merge(C_Token token){
+        merge_buf += token.token_num;
     }
-    void C_Tile::_consume_tokens_gather(int token){
-        gather_buf += token;
+    void C_Tile::_consume_tokens_gather(C_Token token){
+        gather_buf += token.token_num;
     }
-    void C_Tile::consume_tokens(int token, C_PredType pred_type){
+    void C_Tile::consume_tokens(C_Token token, C_PredType pred_type){
         if(pred_type == CAST)
             this->_consume_tokens_cast(token);
         else if(pred_type == MERGE)
@@ -67,12 +67,13 @@ namespace toksim{
         else if(pred_type == GATHER)
             this->_consume_tokens_gather(token);
     }
-    int C_Tile::produce_tokens(){
+    C_Token C_Tile::produce_tokens(){
         int token = 0;
         if(!config.is_merge && !config.is_gather){
             if(config.has_pool){
-                pool_buf.add_token(inter_buf);
-                token = pool_buf.try_slide();
+                pool_buf.add_token(C_Token(inter_buf));
+                auto _token = pool_buf.try_slide();
+                token = _token.token_num;
                 this->done = pool_buf.done;
             }else{
                 token = inter_buf;
@@ -92,8 +93,9 @@ namespace toksim{
             this->_update_max_buf();
 
             if(config.has_pool){
-                pool_buf.add_token(token);
-                token = pool_buf.try_slide();
+                pool_buf.add_token(C_Token(token));
+                auto _token = pool_buf.try_slide();
+                token = _token.token_num;
                 this->done = pool_buf.done;
             }
         }
@@ -101,6 +103,6 @@ namespace toksim{
             token *= (config.resize_scales[2] * config.resize_scales[3]);
         }
 
-        return token;
+        return C_Token(token);
     }
 } 

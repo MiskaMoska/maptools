@@ -90,10 +90,10 @@ namespace toksim{
             this->max_buf = buffered;
     }
 
-    void C_WindowBuf::add_token(int token){
+    void C_WindowBuf::add_token(C_Token token){
         int y, x, pos_y, pos_x;
-        if(!token) return;
-        for(int i=0; i<token; i++){
+        if(!token.token_num) return;
+        for(int i=0; i<token.token_num; i++){
             if(close) return;
             y = wptr / size_i_np[1];
             x = wptr % size_i_np[1];
@@ -147,8 +147,8 @@ namespace toksim{
         }
     }
     
-    int C_WindowBuf::try_slide(){
-        if(done) return 0;
+    C_Token C_WindowBuf::try_slide(){
+        if(done) return C_Token(0);
         int token = 0;
         while(true){
             int sum = 0;
@@ -171,7 +171,7 @@ namespace toksim{
             else break;
             if(done) break;
         }
-        return token;
+        return C_Token(token);
     }
 
     void C_WindowBuf::echo_buf(){

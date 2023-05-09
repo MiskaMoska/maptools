@@ -6,6 +6,7 @@
         "depends": [
             "maptools/toksim/srcs/c_comm.h",
             "maptools/toksim/srcs/c_tile.h",
+            "maptools/toksim/srcs/c_token.h",
             "maptools/toksim/srcs/c_toksim.h",
             "maptools/toksim/srcs/c_typing.h",
             "maptools/toksim/srcs/c_windowbuf.h"
@@ -19,6 +20,7 @@
             "maptools/toksim/toksim.pyx",
             "maptools/toksim/srcs/c_toksim.cpp",
             "maptools/toksim/srcs/c_windowbuf.cpp",
+            "maptools/toksim/srcs/c_token.cpp",
             "maptools/toksim/srcs/c_tile.cpp",
             "maptools/toksim/srcs/c_comm.cpp"
         ]
@@ -1123,6 +1125,7 @@ static CYTHON_INLINE float __PYX_NAN() {
     
 #include <unordered_map>
 #include "srcs/c_typing.h"
+#include "srcs/c_token.h"
 #include "srcs/c_windowbuf.h"
 #include "srcs/c_tile.h"
 #include "srcs/c_comm.h"

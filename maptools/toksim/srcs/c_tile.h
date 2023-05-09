@@ -2,6 +2,7 @@
 # define C_TILE_H
 # include "c_typing.h"
 # include "c_windowbuf.h"
+# include "c_token.h"
 
 using namespace std;
 
@@ -14,16 +15,16 @@ namespace toksim{
             
             int inter_buf, merge_buf, gather_buf;
             int max_inter_buf, max_merge_buf, max_gather_buf;
-            bool done = false;
+            bool done;
             
             C_Tile();
             C_Tile(C_TileConfig config);
             void _update_max_buf();
-            void _consume_tokens_cast(int token);
-            void _consume_tokens_merge(int token);
-            void _consume_tokens_gather(int token);
-            void consume_tokens(int token, C_PredType pred_type);
-            int produce_tokens();
+            void _consume_tokens_cast(C_Token token);
+            void _consume_tokens_merge(C_Token token);
+            void _consume_tokens_gather(C_Token token);
+            void consume_tokens(C_Token token, C_PredType pred_type);
+            C_Token produce_tokens();
     };
 
 }

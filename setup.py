@@ -7,6 +7,7 @@ extension = Extension(
         "maptools/toksim/toksim.pyx", 
         "maptools/toksim/srcs/c_toksim.cpp",
         "maptools/toksim/srcs/c_windowbuf.cpp",
+        "maptools/toksim/srcs/c_token.cpp",
         "maptools/toksim/srcs/c_tile.cpp",
         "maptools/toksim/srcs/c_comm.cpp"
     ],

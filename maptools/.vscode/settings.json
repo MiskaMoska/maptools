@@ -44,7 +44,8 @@
         "random": "cpp",
         "string": "cpp",
         "string_view": "cpp",
-        "unistd.h": "c"
+        "unistd.h": "c",
+        "cinttypes": "cpp"
     },
     "C_Cpp.default.compilerPath": "/usr/bin/g++-9"
 }

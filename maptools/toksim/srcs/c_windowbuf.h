@@ -1,6 +1,7 @@
 # ifndef C_WINDOWBUF_H
 # define C_WINDOWBUF_H
 # include "c_typing.h"
+# include "c_token.h"
 
 using namespace std;
 
@@ -36,11 +37,11 @@ namespace toksim{
 
             void _init_pads();
             void _update_max_buf();
-            void add_token(int token);
+            void add_token(C_Token token);
             tuple<int, int, int, int> win_pos();
             bool is_pad(int buf_y, int buf_x);
             void _release_data();
-            int try_slide();
+            C_Token try_slide();
             void echo_buf();
     };
 
