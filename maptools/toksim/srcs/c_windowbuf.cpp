@@ -1,3 +1,4 @@
+# include <cassert>
 # include "c_windowbuf.h"
 
 namespace toksim{
@@ -18,6 +19,8 @@ namespace toksim{
         ni(xbar_num_ichan),
         rptr(0),
         wptr(0),
+        size_config_flag(true),
+        size_i_before_resize(vector<int>{0, 0}),
         released_token(0),
         max_buf(0),
         close(false),
@@ -107,16 +110,43 @@ namespace toksim{
     }
 
     void C_WindowBuf::add_token(C_Token token){
-        int y, x, pos_y, pos_x;
+        int y, x, pos_y, pos_x, bf_y, bf_x;
         if(!token.token_num) return;
-        for(int i=0; i<token.token_num; i++){
+        for(int k=0; k<token.token_num; k++){
             if(close) return;
-            y = wptr / size_i_np[1];
-            x = wptr % size_i_np[1];
-            pos_y = y + pads[0];
-            pos_x = x + pads[3];
-            buf[pos_y][pos_x] = 1;
+
+            if(token.mode == SINGLE){
+                y = wptr / size_i_np[1];
+                x = wptr % size_i_np[1];
+                pos_y = y + pads[0];
+                pos_x = x + pads[3];
+                buf[pos_y][pos_x] = 1;
+            }
+
+            else{
+                if(size_config_flag){
+                    size_config_flag = false;
+                    size_i_before_resize[0] = size_i_np[0] / token.upsample_h;
+                    size_i_before_resize[1] = size_i_np[1] / token.upsample_w;
+                }
+
+                bf_y = wptr / size_i_before_resize[1];
+                bf_x = wptr % size_i_before_resize[1];
+
+                for(int i=0; i<token.upsample_h; i++){
+                    y = bf_y * token.upsample_h + i;
+                    pos_y = y + pads[0];
+
+                    for(int j=0; j<token.upsample_w; j++){
+                        x = bf_x * token.upsample_w + j;
+                        pos_x = x + pads[3];
+                        buf[pos_y][pos_x] = 1;
+                    }
+                }
+            }
+
             wptr++;
+
             if(y + 1 >= size_i_np[0] && x + 1 >= size_i_np[1]){
                 this->close = true;
                 return;

@@ -53,12 +53,15 @@ namespace toksim{
         if(!config.has_pool)
             this->done = conv_buf.done;
     }
+
     void C_Tile::_consume_tokens_merge(C_Token token){
         merge_buf += token.token_num;
     }
+
     void C_Tile::_consume_tokens_gather(C_Token token){
         gather_buf += token.token_num;
     }
+
     void C_Tile::consume_tokens(C_Token token, C_PredType pred_type){
         if(pred_type == CAST)
             this->_consume_tokens_cast(token);
@@ -67,6 +70,7 @@ namespace toksim{
         else if(pred_type == GATHER)
             this->_consume_tokens_gather(token);
     }
+    
     C_Token C_Tile::produce_tokens(){
         int token = 0;
         if(!config.is_merge && !config.is_gather){
@@ -99,10 +103,15 @@ namespace toksim{
                 this->done = pool_buf.done;
             }
         }
+
+        auto token_obj = C_Token(token);
+
         if(config.has_resize){
-            token *= (config.resize_scales[2] * config.resize_scales[3]);
+            token_obj.set_mode(UPSAMPLE);
+            auto scales = config.resize_scales;
+            token_obj.set_upsample(scales[2], scales[3]);
         }
 
-        return C_Token(token);
+        return token_obj;
     }
 } 

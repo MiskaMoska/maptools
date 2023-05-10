@@ -5,10 +5,10 @@ from maptools import MapPlotter
 from maptools.toksim import TokSim
 
 # 读取onnx模型，注意你自己的路径
-model = onnx.load("onnx_models/simp-yolo.onnx")
+model = onnx.load("onnx_models/simp-resnet18.onnx")
 
 # 创建onnx转换器
-oc = OnnxConverter(model, arch=NNModelArch.YOLO_V3)
+oc = OnnxConverter(model, arch=NNModelArch.RESNET)
 
 # 执行转换
 oc.run_conversion()
@@ -21,7 +21,7 @@ oc.run_conversion()
 og = oc.device_graph
 
 # 创建xbar映射器
-xm = TileMapper(og, 128, 128*5)
+xm = TileMapper(og, 256, 256*5)
 
 # 执行映射
 xm.run_map()

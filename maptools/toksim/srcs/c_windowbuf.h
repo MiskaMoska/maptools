@@ -19,6 +19,9 @@ namespace toksim{
         
             int ni, rptr, wptr;
             
+            bool size_config_flag;
+            vector<int> size_i_before_resize;
+            
             int need_token, released_token, max_buf;
             bool close, done;
 
