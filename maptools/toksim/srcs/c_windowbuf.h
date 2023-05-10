@@ -36,6 +36,7 @@ namespace toksim{
             );
 
             void _init_pads();
+            tuple<int, int> coord_trans(int coord_y, int coord_x);
             void _update_max_buf();
             void add_token(C_Token token);
             tuple<int, int, int, int> win_pos();

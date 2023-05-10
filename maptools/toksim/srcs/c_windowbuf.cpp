@@ -81,13 +81,29 @@ namespace toksim{
         }
     }
 
+    tuple<int, int> C_WindowBuf::coord_trans(int coord_y, int coord_x){
+        int np_coord_y = coord_y <= pads[0]-1 ? 0 : (
+                            coord_y > size_i[0] - pads[2]-1 ? (size_i_np[0]-1) : 
+                            coord_y - pads[0]);
+        
+        int np_coord_x = coord_x <= pads[3]-1 ? 0 : (
+                            coord_x > size_i[1]-pads[1]-1 ? (size_i_np[1]-1) : 
+                            coord_x - pads[3]);
+
+        return make_tuple(np_coord_y, np_coord_x);
+    }
+
     void C_WindowBuf::_update_max_buf(){
-        // bound_wptr is the minimum write pointer 
-        // that is enough to perform the current execution
-        int bound_wptr = get<2>(winpos) * size_i_np[1] + get<3>(winpos);
-        int buffered = bound_wptr - released_token;
-        if(buffered > max_buf)
+        auto np_winstart = coord_trans(get<0>(winpos), get<1>(winpos));
+        auto np_winend = coord_trans(get<2>(winpos)-1, get<3>(winpos)-1);
+
+        int start_ptr = get<0>(np_winstart) * size_i_np[1] + get<1>(np_winstart);
+        int end_ptr = get<0>(np_winend) * size_i_np[1] + get<1>(np_winend);
+        int buffered = end_ptr + 1 - start_ptr;
+        
+        if(buffered > max_buf){
             this->max_buf = buffered;
+        }
     }
 
     void C_WindowBuf::add_token(C_Token token){
