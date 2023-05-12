@@ -74,10 +74,10 @@ cdef class TokSim:
         }
 
     @staticmethod
-    def encode(node: Union[string, LogicalTile]) -> bytes:
+    def encode(node: Union[str, LogicalTile]) -> bytes:
         return bytes(str(node), encoding='utf-8')
 
-    def _cpp_get_node_attr(self, node: Union[string, LogicalTile]) -> Dict[str, Any]:
+    def _cpp_get_node_attr(self, node: Union[str, LogicalTile]) -> Dict[str, Any]:
         attr = {
             'is_tile': self.ctg.is_tile(node),
             'is_head_tile': self.ctg.is_head_tile(node),

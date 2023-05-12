@@ -1,8 +1,8 @@
-from setuptools import Extension, setup
+from distutils.core import Extension, setup
 from Cython.Build import cythonize
 
 extension = Extension(
-    'maptools.toksim',
+    'maptools.toksim.toksim',
     sources=[
         "maptools/toksim/toksim.pyx", 
         "maptools/toksim/srcs/c_toksim.cpp",
@@ -27,7 +27,7 @@ setup(
         'maptools.hardware',
         'maptools.mapper',
         'maptools.quantization',
-        # 'maptools.toksim',
+        'maptools.toksim',
         'maptools.utils'
     ],
     ext_modules=cythonize(extension)

@@ -15,7 +15,7 @@
             "maptools/toksim"
         ],
         "language": "c++",
-        "name": "maptools.toksim",
+        "name": "maptools.toksim.toksim",
         "sources": [
             "maptools/toksim/toksim.pyx",
             "maptools/toksim/srcs/c_toksim.cpp",
@@ -25,7 +25,7 @@
             "maptools/toksim/srcs/c_comm.cpp"
         ]
     },
-    "module_name": "maptools.toksim"
+    "module_name": "maptools.toksim.toksim"
 }
 END: Cython Metadata */
 
@@ -1100,8 +1100,8 @@ static CYTHON_INLINE float __PYX_NAN() {
     #define __PYX_EXTERN_C extern "C++"
 #endif
 
-#define __PYX_HAVE__maptools__toksim
-#define __PYX_HAVE_API__maptools__toksim
+#define __PYX_HAVE__maptools__toksim__toksim
+#define __PYX_HAVE_API__maptools__toksim__toksim
 /* Early includes */
 #include "ios"
 #include "new"
@@ -1389,7 +1389,7 @@ static const char *__pyx_f[] = {
 /* #### Code section: type_declarations ### */
 
 /*--- Type declarations ---*/
-struct __pyx_obj_8maptools_6toksim_TokSim;
+struct __pyx_obj_8maptools_6toksim_6toksim_TokSim;
 
 /* "maptools/toksim/toksim.pyx":6
  * from maptools.core import CTG, ROOT_DIR, LogicalTile
@@ -1398,7 +1398,7 @@ struct __pyx_obj_8maptools_6toksim_TokSim;
  * 
  *     cdef C_TokSim c_toksim
  */
-struct __pyx_obj_8maptools_6toksim_TokSim {
+struct __pyx_obj_8maptools_6toksim_6toksim_TokSim {
   PyObject_HEAD
   toksim::C_TokSim c_toksim;
   PyObject *ctg;
@@ -1926,13 +1926,6 @@ static CYTHON_INLINE PyObject* __Pyx_CallUnboundCMethod1(__Pyx_CachedCFunction* 
 #define __Pyx_CallUnboundCMethod1(cfunc, self, arg)  __Pyx__CallUnboundCMethod1(cfunc, self, arg)
 #endif
 
-/* SetPackagePathFromImportLib.proto */
-#if PY_MAJOR_VERSION >= 3 && !CYTHON_PEP489_MULTI_PHASE_INIT
-static int __Pyx_SetPackagePathFromImportLib(PyObject *module_name);
-#else
-#define __Pyx_SetPackagePathFromImportLib(a) 0
-#endif
-
 /* IncludeStructmemberH.proto */
 #include <structmember.h>
 
@@ -2242,7 +2235,7 @@ static int __Pyx_InitStrings(__Pyx_StringTabEntry *t);
 
 /* Module declarations from "maptools.toksim.c_toksim" */
 
-/* Module declarations from "maptools.toksim" */
+/* Module declarations from "maptools.toksim.toksim" */
 static std::string __pyx_convert_string_from_py_std__in_string(PyObject *); /*proto*/
 static std::vector<std::string>  __pyx_convert_vector_from_py_std_3a__3a_string(PyObject *); /*proto*/
 static struct toksim::C_NodeAttr __pyx_convert__from_py_struct__toksim_3a__3a_C_NodeAttr(PyObject *); /*proto*/
@@ -2259,11 +2252,11 @@ static PyObject *__pyx_convert_unordered_map_to_py_std_3a__3a_string____int(std:
 static PyObject *__pyx_convert_unordered_map_to_py_std_3a__3a_string____std_3a__3a_unordered_map_3c_std_3a__3a_string_2c_int_3e___(std::unordered_map<std::string,std::unordered_map<std::string,int> >  const &); /*proto*/
 /* #### Code section: typeinfo ### */
 /* #### Code section: before_global_var ### */
-#define __Pyx_MODULE_NAME "maptools.toksim"
-extern int __pyx_module_is_main_maptools__toksim;
-int __pyx_module_is_main_maptools__toksim = 0;
+#define __Pyx_MODULE_NAME "maptools.toksim.toksim"
+extern int __pyx_module_is_main_maptools__toksim__toksim;
+int __pyx_module_is_main_maptools__toksim__toksim = 0;
 
-/* Implementation of "maptools.toksim" */
+/* Implementation of "maptools.toksim.toksim" */
 /* #### Code section: global_var ### */
 static PyObject *__pyx_builtin_staticmethod;
 static PyObject *__pyx_builtin_open;
@@ -2404,7 +2397,6 @@ static const char __pyx_k_xbar_num_ichan[] = "xbar_num_ichan";
 static const char __pyx_k_xbar_num_ochan[] = "xbar_num_ochan";
 static const char __pyx_k_TokSim_get_bufs[] = "TokSim.get_bufs";
 static const char __pyx_k_conv_input_size[] = "conv_input_size";
-static const char __pyx_k_maptools_toksim[] = "maptools.toksim";
 static const char __pyx_k_pool_input_size[] = "pool_input_size";
 static const char __pyx_k_setstate_cython[] = "__setstate_cython__";
 static const char __pyx_k_conv_kernel_size[] = "conv_kernel_size";
@@ -2416,11 +2408,12 @@ static const char __pyx_k_cpp_get_node_attr[] = "_cpp_get_node_attr";
 static const char __pyx_k_asyncio_coroutines[] = "asyncio.coroutines";
 static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
 static const char __pyx_k_cpp_get_tile_config[] = "_cpp_get_tile_config";
+static const char __pyx_k_Union_str_LogicalTile[] = "Union[str, LogicalTile]";
 static const char __pyx_k_buffer_log_written_to[] = "\nbuffer log written to ";
 static const char __pyx_k_TokSim___reduce_cython[] = "TokSim.__reduce_cython__";
 static const char __pyx_k_cpp_get_interface_vars[] = "_cpp_get_interface_vars";
+static const char __pyx_k_maptools_toksim_toksim[] = "maptools.toksim.toksim";
 static const char __pyx_k_TokSim___setstate_cython[] = "TokSim.__setstate_cython__";
-static const char __pyx_k_Union_string_LogicalTile[] = "Union[string, LogicalTile]";
 static const char __pyx_k_TokSim__cpp_get_node_attr[] = "TokSim._cpp_get_node_attr";
 static const char __pyx_k_maptools_toksim_toksim_pyx[] = "maptools/toksim/toksim.pyx";
 static const char __pyx_k_TokSim__cpp_get_tile_config[] = "TokSim._cpp_get_tile_config";
@@ -2455,17 +2448,17 @@ static const char __pyx_k_No_value_specified_for_struct_at_25[] = "No value spec
 static const char __pyx_k_No_value_specified_for_struct_at_26[] = "No value specified for struct attribute 'pool_pads'";
 static const char __pyx_k_No_value_specified_for_struct_at_27[] = "No value specified for struct attribute 'resize_scales'";
 /* #### Code section: decls ### */
-static int __pyx_pf_8maptools_6toksim_6TokSim___init__(struct __pyx_obj_8maptools_6toksim_TokSim *__pyx_v_self, PyObject *__pyx_v_ctg, PyObject *__pyx_v_mapname); /* proto */
-static PyObject *__pyx_pf_8maptools_6toksim_6TokSim_2run(struct __pyx_obj_8maptools_6toksim_TokSim *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_8maptools_6toksim_6TokSim_4get_bufs(struct __pyx_obj_8maptools_6toksim_TokSim *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_8maptools_6toksim_6TokSim_6save_execu(struct __pyx_obj_8maptools_6toksim_TokSim *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v_file_name); /* proto */
-static PyObject *__pyx_pf_8maptools_6toksim_6TokSim_8_cpp_get_interface_vars(struct __pyx_obj_8maptools_6toksim_TokSim *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_8maptools_6toksim_6TokSim_10encode(PyObject *__pyx_v_node); /* proto */
-static PyObject *__pyx_pf_8maptools_6toksim_6TokSim_12_cpp_get_node_attr(struct __pyx_obj_8maptools_6toksim_TokSim *__pyx_v_self, PyObject *__pyx_v_node); /* proto */
-static PyObject *__pyx_pf_8maptools_6toksim_6TokSim_14_cpp_get_tile_config(struct __pyx_obj_8maptools_6toksim_TokSim *__pyx_v_self, PyObject *__pyx_v_node); /* proto */
-static PyObject *__pyx_pf_8maptools_6toksim_6TokSim_16__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_8maptools_6toksim_TokSim *__pyx_v_self); /* proto */
-static PyObject *__pyx_pf_8maptools_6toksim_6TokSim_18__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_8maptools_6toksim_TokSim *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state); /* proto */
-static PyObject *__pyx_tp_new_8maptools_6toksim_TokSim(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
+static int __pyx_pf_8maptools_6toksim_6toksim_6TokSim___init__(struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *__pyx_v_self, PyObject *__pyx_v_ctg, PyObject *__pyx_v_mapname); /* proto */
+static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_2run(struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_4get_bufs(struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_6save_execu(struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v_file_name); /* proto */
+static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_8_cpp_get_interface_vars(struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_10encode(PyObject *__pyx_v_node); /* proto */
+static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_12_cpp_get_node_attr(struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *__pyx_v_self, PyObject *__pyx_v_node); /* proto */
+static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_14_cpp_get_tile_config(struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *__pyx_v_self, PyObject *__pyx_v_node); /* proto */
+static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_16__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *__pyx_v_self); /* proto */
+static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_18__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state); /* proto */
+static PyObject *__pyx_tp_new_8maptools_6toksim_6toksim_TokSim(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
 static __Pyx_CachedCFunction __pyx_umethod_PyDict_Type_update = {0, 0, 0, 0, 0};
 /* #### Code section: late_includes ### */
 /* #### Code section: module_state ### */
@@ -2507,9 +2500,9 @@ typedef struct {
   #if CYTHON_USE_MODULE_STATE
   #endif
   #if CYTHON_USE_MODULE_STATE
-  PyObject *__pyx_type_8maptools_6toksim_TokSim;
+  PyObject *__pyx_type_8maptools_6toksim_6toksim_TokSim;
   #endif
-  PyTypeObject *__pyx_ptype_8maptools_6toksim_TokSim;
+  PyTypeObject *__pyx_ptype_8maptools_6toksim_6toksim_TokSim;
   PyObject *__pyx_kp_s_5s_20s_9s_20s_9s_20s_10s_20s_10;
   PyObject *__pyx_n_s_Any;
   PyObject *__pyx_n_s_CTG;
@@ -2563,7 +2556,7 @@ typedef struct {
   PyObject *__pyx_n_s_Tuple;
   PyObject *__pyx_n_s_TypeError;
   PyObject *__pyx_n_s_Union;
-  PyObject *__pyx_kp_s_Union_string_LogicalTile;
+  PyObject *__pyx_kp_s_Union_str_LogicalTile;
   PyObject *__pyx_n_s_ValueError;
   PyObject *__pyx_kp_s__28;
   PyObject *__pyx_n_s__30;
@@ -2635,8 +2628,7 @@ typedef struct {
   PyObject *__pyx_n_s_mapname;
   PyObject *__pyx_n_s_mapsave;
   PyObject *__pyx_n_s_maptools_core;
-  PyObject *__pyx_n_s_maptools_toksim;
-  PyObject *__pyx_kp_u_maptools_toksim;
+  PyObject *__pyx_n_s_maptools_toksim_toksim;
   PyObject *__pyx_kp_s_maptools_toksim_toksim_pyx;
   PyObject *__pyx_kp_s_merge_buf;
   PyObject *__pyx_n_b_merge_buf_2;
@@ -2781,8 +2773,8 @@ static int __pyx_m_clear(PyObject *m) {
   #ifdef __Pyx_FusedFunction_USED
   Py_CLEAR(clear_module_state->__pyx_FusedFunctionType);
   #endif
-  Py_CLEAR(clear_module_state->__pyx_ptype_8maptools_6toksim_TokSim);
-  Py_CLEAR(clear_module_state->__pyx_type_8maptools_6toksim_TokSim);
+  Py_CLEAR(clear_module_state->__pyx_ptype_8maptools_6toksim_6toksim_TokSim);
+  Py_CLEAR(clear_module_state->__pyx_type_8maptools_6toksim_6toksim_TokSim);
   Py_CLEAR(clear_module_state->__pyx_kp_s_5s_20s_9s_20s_9s_20s_10s_20s_10);
   Py_CLEAR(clear_module_state->__pyx_n_s_Any);
   Py_CLEAR(clear_module_state->__pyx_n_s_CTG);
@@ -2836,7 +2828,7 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_Tuple);
   Py_CLEAR(clear_module_state->__pyx_n_s_TypeError);
   Py_CLEAR(clear_module_state->__pyx_n_s_Union);
-  Py_CLEAR(clear_module_state->__pyx_kp_s_Union_string_LogicalTile);
+  Py_CLEAR(clear_module_state->__pyx_kp_s_Union_str_LogicalTile);
   Py_CLEAR(clear_module_state->__pyx_n_s_ValueError);
   Py_CLEAR(clear_module_state->__pyx_kp_s__28);
   Py_CLEAR(clear_module_state->__pyx_n_s__30);
@@ -2908,8 +2900,7 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_mapname);
   Py_CLEAR(clear_module_state->__pyx_n_s_mapsave);
   Py_CLEAR(clear_module_state->__pyx_n_s_maptools_core);
-  Py_CLEAR(clear_module_state->__pyx_n_s_maptools_toksim);
-  Py_CLEAR(clear_module_state->__pyx_kp_u_maptools_toksim);
+  Py_CLEAR(clear_module_state->__pyx_n_s_maptools_toksim_toksim);
   Py_CLEAR(clear_module_state->__pyx_kp_s_maptools_toksim_toksim_pyx);
   Py_CLEAR(clear_module_state->__pyx_kp_s_merge_buf);
   Py_CLEAR(clear_module_state->__pyx_n_b_merge_buf_2);
@@ -3032,8 +3023,8 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   #ifdef __Pyx_FusedFunction_USED
   Py_VISIT(traverse_module_state->__pyx_FusedFunctionType);
   #endif
-  Py_VISIT(traverse_module_state->__pyx_ptype_8maptools_6toksim_TokSim);
-  Py_VISIT(traverse_module_state->__pyx_type_8maptools_6toksim_TokSim);
+  Py_VISIT(traverse_module_state->__pyx_ptype_8maptools_6toksim_6toksim_TokSim);
+  Py_VISIT(traverse_module_state->__pyx_type_8maptools_6toksim_6toksim_TokSim);
   Py_VISIT(traverse_module_state->__pyx_kp_s_5s_20s_9s_20s_9s_20s_10s_20s_10);
   Py_VISIT(traverse_module_state->__pyx_n_s_Any);
   Py_VISIT(traverse_module_state->__pyx_n_s_CTG);
@@ -3087,7 +3078,7 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_Tuple);
   Py_VISIT(traverse_module_state->__pyx_n_s_TypeError);
   Py_VISIT(traverse_module_state->__pyx_n_s_Union);
-  Py_VISIT(traverse_module_state->__pyx_kp_s_Union_string_LogicalTile);
+  Py_VISIT(traverse_module_state->__pyx_kp_s_Union_str_LogicalTile);
   Py_VISIT(traverse_module_state->__pyx_n_s_ValueError);
   Py_VISIT(traverse_module_state->__pyx_kp_s__28);
   Py_VISIT(traverse_module_state->__pyx_n_s__30);
@@ -3159,8 +3150,7 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_mapname);
   Py_VISIT(traverse_module_state->__pyx_n_s_mapsave);
   Py_VISIT(traverse_module_state->__pyx_n_s_maptools_core);
-  Py_VISIT(traverse_module_state->__pyx_n_s_maptools_toksim);
-  Py_VISIT(traverse_module_state->__pyx_kp_u_maptools_toksim);
+  Py_VISIT(traverse_module_state->__pyx_n_s_maptools_toksim_toksim);
   Py_VISIT(traverse_module_state->__pyx_kp_s_maptools_toksim_toksim_pyx);
   Py_VISIT(traverse_module_state->__pyx_kp_s_merge_buf);
   Py_VISIT(traverse_module_state->__pyx_n_b_merge_buf_2);
@@ -3304,9 +3294,9 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #if CYTHON_USE_MODULE_STATE
 #endif
 #if CYTHON_USE_MODULE_STATE
-#define __pyx_type_8maptools_6toksim_TokSim __pyx_mstate_global->__pyx_type_8maptools_6toksim_TokSim
+#define __pyx_type_8maptools_6toksim_6toksim_TokSim __pyx_mstate_global->__pyx_type_8maptools_6toksim_6toksim_TokSim
 #endif
-#define __pyx_ptype_8maptools_6toksim_TokSim __pyx_mstate_global->__pyx_ptype_8maptools_6toksim_TokSim
+#define __pyx_ptype_8maptools_6toksim_6toksim_TokSim __pyx_mstate_global->__pyx_ptype_8maptools_6toksim_6toksim_TokSim
 #define __pyx_kp_s_5s_20s_9s_20s_9s_20s_10s_20s_10 __pyx_mstate_global->__pyx_kp_s_5s_20s_9s_20s_9s_20s_10s_20s_10
 #define __pyx_n_s_Any __pyx_mstate_global->__pyx_n_s_Any
 #define __pyx_n_s_CTG __pyx_mstate_global->__pyx_n_s_CTG
@@ -3360,7 +3350,7 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_Tuple __pyx_mstate_global->__pyx_n_s_Tuple
 #define __pyx_n_s_TypeError __pyx_mstate_global->__pyx_n_s_TypeError
 #define __pyx_n_s_Union __pyx_mstate_global->__pyx_n_s_Union
-#define __pyx_kp_s_Union_string_LogicalTile __pyx_mstate_global->__pyx_kp_s_Union_string_LogicalTile
+#define __pyx_kp_s_Union_str_LogicalTile __pyx_mstate_global->__pyx_kp_s_Union_str_LogicalTile
 #define __pyx_n_s_ValueError __pyx_mstate_global->__pyx_n_s_ValueError
 #define __pyx_kp_s__28 __pyx_mstate_global->__pyx_kp_s__28
 #define __pyx_n_s__30 __pyx_mstate_global->__pyx_n_s__30
@@ -3432,8 +3422,7 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_mapname __pyx_mstate_global->__pyx_n_s_mapname
 #define __pyx_n_s_mapsave __pyx_mstate_global->__pyx_n_s_mapsave
 #define __pyx_n_s_maptools_core __pyx_mstate_global->__pyx_n_s_maptools_core
-#define __pyx_n_s_maptools_toksim __pyx_mstate_global->__pyx_n_s_maptools_toksim
-#define __pyx_kp_u_maptools_toksim __pyx_mstate_global->__pyx_kp_u_maptools_toksim
+#define __pyx_n_s_maptools_toksim_toksim __pyx_mstate_global->__pyx_n_s_maptools_toksim_toksim
 #define __pyx_kp_s_maptools_toksim_toksim_pyx __pyx_mstate_global->__pyx_kp_s_maptools_toksim_toksim_pyx
 #define __pyx_kp_s_merge_buf __pyx_mstate_global->__pyx_kp_s_merge_buf
 #define __pyx_n_b_merge_buf_2 __pyx_mstate_global->__pyx_n_b_merge_buf_2
@@ -7658,8 +7647,8 @@ static PyObject *__pyx_convert_unordered_map_to_py_std_3a__3a_string____std_3a__
  */
 
 /* Python wrapper */
-static int __pyx_pw_8maptools_6toksim_6TokSim_1__init__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static int __pyx_pw_8maptools_6toksim_6TokSim_1__init__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static int __pyx_pw_8maptools_6toksim_6toksim_6TokSim_1__init__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static int __pyx_pw_8maptools_6toksim_6toksim_6TokSim_1__init__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_ctg = 0;
   PyObject *__pyx_v_mapname = 0;
   CYTHON_UNUSED const Py_ssize_t __pyx_nargs = PyTuple_GET_SIZE(__pyx_args);
@@ -7718,12 +7707,12 @@ static int __pyx_pw_8maptools_6toksim_6TokSim_1__init__(PyObject *__pyx_v_self, 
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("__init__", 0, 1, 2, __pyx_nargs); __PYX_ERR(0, 20, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("maptools.toksim.TokSim.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("maptools.toksim.toksim.TokSim.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return -1;
   __pyx_L4_argument_unpacking_done:;
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_mapname), (&PyString_Type), 0, "mapname", 1))) __PYX_ERR(0, 20, __pyx_L1_error)
-  __pyx_r = __pyx_pf_8maptools_6toksim_6TokSim___init__(((struct __pyx_obj_8maptools_6toksim_TokSim *)__pyx_v_self), __pyx_v_ctg, __pyx_v_mapname);
+  __pyx_r = __pyx_pf_8maptools_6toksim_6toksim_6TokSim___init__(((struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *)__pyx_v_self), __pyx_v_ctg, __pyx_v_mapname);
 
   /* function exit code */
   goto __pyx_L0;
@@ -7734,7 +7723,7 @@ static int __pyx_pw_8maptools_6toksim_6TokSim_1__init__(PyObject *__pyx_v_self, 
   return __pyx_r;
 }
 
-static int __pyx_pf_8maptools_6toksim_6TokSim___init__(struct __pyx_obj_8maptools_6toksim_TokSim *__pyx_v_self, PyObject *__pyx_v_ctg, PyObject *__pyx_v_mapname) {
+static int __pyx_pf_8maptools_6toksim_6toksim_6TokSim___init__(struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *__pyx_v_self, PyObject *__pyx_v_ctg, PyObject *__pyx_v_mapname) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -7864,7 +7853,7 @@ static int __pyx_pf_8maptools_6toksim_6TokSim___init__(struct __pyx_obj_8maptool
   __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
-  __Pyx_AddTraceback("maptools.toksim.TokSim.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("maptools.toksim.toksim.TokSim.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = -1;
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();
@@ -7880,15 +7869,15 @@ static int __pyx_pf_8maptools_6toksim_6TokSim___init__(struct __pyx_obj_8maptool
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8maptools_6toksim_6TokSim_3run(PyObject *__pyx_v_self, 
+static PyObject *__pyx_pw_8maptools_6toksim_6toksim_6TokSim_3run(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyMethodDef __pyx_mdef_8maptools_6toksim_6TokSim_3run = {"run", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_8maptools_6toksim_6TokSim_3run, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_8maptools_6toksim_6TokSim_3run(PyObject *__pyx_v_self, 
+static PyMethodDef __pyx_mdef_8maptools_6toksim_6toksim_6TokSim_3run = {"run", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_8maptools_6toksim_6toksim_6TokSim_3run, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_8maptools_6toksim_6toksim_6TokSim_3run(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -7905,14 +7894,14 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   if (unlikely(__pyx_nargs > 0)) {
     __Pyx_RaiseArgtupleInvalid("run", 1, 0, 0, __pyx_nargs); return NULL;}
   if (unlikely(__pyx_kwds) && __Pyx_NumKwargs_FASTCALL(__pyx_kwds) && unlikely(!__Pyx_CheckKeywordStrings(__pyx_kwds, "run", 0))) return NULL;
-  __pyx_r = __pyx_pf_8maptools_6toksim_6TokSim_2run(((struct __pyx_obj_8maptools_6toksim_TokSim *)__pyx_v_self));
+  __pyx_r = __pyx_pf_8maptools_6toksim_6toksim_6TokSim_2run(((struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8maptools_6toksim_6TokSim_2run(struct __pyx_obj_8maptools_6toksim_TokSim *__pyx_v_self) {
+static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_2run(struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -7979,7 +7968,7 @@ static PyObject *__pyx_pf_8maptools_6toksim_6TokSim_2run(struct __pyx_obj_8mapto
   __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
-  __Pyx_AddTraceback("maptools.toksim.TokSim.run", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("maptools.toksim.toksim.TokSim.run", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -7996,15 +7985,15 @@ static PyObject *__pyx_pf_8maptools_6toksim_6TokSim_2run(struct __pyx_obj_8mapto
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8maptools_6toksim_6TokSim_5get_bufs(PyObject *__pyx_v_self, 
+static PyObject *__pyx_pw_8maptools_6toksim_6toksim_6TokSim_5get_bufs(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyMethodDef __pyx_mdef_8maptools_6toksim_6TokSim_5get_bufs = {"get_bufs", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_8maptools_6toksim_6TokSim_5get_bufs, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_8maptools_6toksim_6TokSim_5get_bufs(PyObject *__pyx_v_self, 
+static PyMethodDef __pyx_mdef_8maptools_6toksim_6toksim_6TokSim_5get_bufs = {"get_bufs", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_8maptools_6toksim_6toksim_6TokSim_5get_bufs, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_8maptools_6toksim_6toksim_6TokSim_5get_bufs(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -8021,14 +8010,14 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   if (unlikely(__pyx_nargs > 0)) {
     __Pyx_RaiseArgtupleInvalid("get_bufs", 1, 0, 0, __pyx_nargs); return NULL;}
   if (unlikely(__pyx_kwds) && __Pyx_NumKwargs_FASTCALL(__pyx_kwds) && unlikely(!__Pyx_CheckKeywordStrings(__pyx_kwds, "get_bufs", 0))) return NULL;
-  __pyx_r = __pyx_pf_8maptools_6toksim_6TokSim_4get_bufs(((struct __pyx_obj_8maptools_6toksim_TokSim *)__pyx_v_self));
+  __pyx_r = __pyx_pf_8maptools_6toksim_6toksim_6TokSim_4get_bufs(((struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8maptools_6toksim_6TokSim_4get_bufs(struct __pyx_obj_8maptools_6toksim_TokSim *__pyx_v_self) {
+static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_4get_bufs(struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *__pyx_v_self) {
   PyObject *__pyx_v_log = NULL;
   PyObject *__pyx_v_node = NULL;
   PyObject *__pyx_v_bufs = NULL;
@@ -8288,7 +8277,7 @@ static PyObject *__pyx_pf_8maptools_6toksim_6TokSim_4get_bufs(struct __pyx_obj_8
   __Pyx_XDECREF(__pyx_t_7);
   __Pyx_XDECREF(__pyx_t_8);
   __Pyx_XDECREF(__pyx_t_9);
-  __Pyx_AddTraceback("maptools.toksim.TokSim.get_bufs", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("maptools.toksim.toksim.TokSim.get_bufs", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_log);
@@ -8308,15 +8297,15 @@ static PyObject *__pyx_pf_8maptools_6toksim_6TokSim_4get_bufs(struct __pyx_obj_8
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8maptools_6toksim_6TokSim_7save_execu(PyObject *__pyx_v_self, 
+static PyObject *__pyx_pw_8maptools_6toksim_6toksim_6TokSim_7save_execu(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyMethodDef __pyx_mdef_8maptools_6toksim_6TokSim_7save_execu = {"save_execu", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_8maptools_6toksim_6TokSim_7save_execu, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_8maptools_6toksim_6TokSim_7save_execu(PyObject *__pyx_v_self, 
+static PyMethodDef __pyx_mdef_8maptools_6toksim_6toksim_6TokSim_7save_execu = {"save_execu", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_8maptools_6toksim_6toksim_6TokSim_7save_execu, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_8maptools_6toksim_6toksim_6TokSim_7save_execu(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -8373,12 +8362,12 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("save_execu", 0, 0, 1, __pyx_nargs); __PYX_ERR(0, 50, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("maptools.toksim.TokSim.save_execu", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("maptools.toksim.toksim.TokSim.save_execu", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_file_name), (&PyString_Type), 0, "file_name", 1))) __PYX_ERR(0, 50, __pyx_L1_error)
-  __pyx_r = __pyx_pf_8maptools_6toksim_6TokSim_6save_execu(((struct __pyx_obj_8maptools_6toksim_TokSim *)__pyx_v_self), __pyx_v_file_name);
+  __pyx_r = __pyx_pf_8maptools_6toksim_6toksim_6TokSim_6save_execu(((struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *)__pyx_v_self), __pyx_v_file_name);
 
   /* function exit code */
   goto __pyx_L0;
@@ -8389,7 +8378,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8maptools_6toksim_6TokSim_6save_execu(struct __pyx_obj_8maptools_6toksim_TokSim *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v_file_name) {
+static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_6save_execu(struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v_file_name) {
   PyObject *__pyx_v_save_dir = NULL;
   PyObject *__pyx_v_file_dir = NULL;
   PyObject *__pyx_v_log = NULL;
@@ -8714,7 +8703,7 @@ static PyObject *__pyx_pf_8maptools_6toksim_6TokSim_6save_execu(struct __pyx_obj
         __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
         __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
         /*except:*/ {
-          __Pyx_AddTraceback("maptools.toksim.TokSim.save_execu", __pyx_clineno, __pyx_lineno, __pyx_filename);
+          __Pyx_AddTraceback("maptools.toksim.toksim.TokSim.save_execu", __pyx_clineno, __pyx_lineno, __pyx_filename);
           if (__Pyx_GetException(&__pyx_t_2, &__pyx_t_3, &__pyx_t_1) < 0) __PYX_ERR(0, 58, __pyx_L10_except_error)
           __Pyx_GOTREF(__pyx_t_2);
           __Pyx_GOTREF(__pyx_t_3);
@@ -8810,7 +8799,7 @@ static PyObject *__pyx_pf_8maptools_6toksim_6TokSim_6save_execu(struct __pyx_obj
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
-  __Pyx_AddTraceback("maptools.toksim.TokSim.save_execu", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("maptools.toksim.toksim.TokSim.save_execu", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_save_dir);
@@ -8831,15 +8820,15 @@ static PyObject *__pyx_pf_8maptools_6toksim_6TokSim_6save_execu(struct __pyx_obj
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8maptools_6toksim_6TokSim_9_cpp_get_interface_vars(PyObject *__pyx_v_self, 
+static PyObject *__pyx_pw_8maptools_6toksim_6toksim_6TokSim_9_cpp_get_interface_vars(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyMethodDef __pyx_mdef_8maptools_6toksim_6TokSim_9_cpp_get_interface_vars = {"_cpp_get_interface_vars", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_8maptools_6toksim_6TokSim_9_cpp_get_interface_vars, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_8maptools_6toksim_6TokSim_9_cpp_get_interface_vars(PyObject *__pyx_v_self, 
+static PyMethodDef __pyx_mdef_8maptools_6toksim_6toksim_6TokSim_9_cpp_get_interface_vars = {"_cpp_get_interface_vars", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_8maptools_6toksim_6toksim_6TokSim_9_cpp_get_interface_vars, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_8maptools_6toksim_6toksim_6TokSim_9_cpp_get_interface_vars(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -8856,14 +8845,14 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   if (unlikely(__pyx_nargs > 0)) {
     __Pyx_RaiseArgtupleInvalid("_cpp_get_interface_vars", 1, 0, 0, __pyx_nargs); return NULL;}
   if (unlikely(__pyx_kwds) && __Pyx_NumKwargs_FASTCALL(__pyx_kwds) && unlikely(!__Pyx_CheckKeywordStrings(__pyx_kwds, "_cpp_get_interface_vars", 0))) return NULL;
-  __pyx_r = __pyx_pf_8maptools_6toksim_6TokSim_8_cpp_get_interface_vars(((struct __pyx_obj_8maptools_6toksim_TokSim *)__pyx_v_self));
+  __pyx_r = __pyx_pf_8maptools_6toksim_6toksim_6TokSim_8_cpp_get_interface_vars(((struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8maptools_6toksim_6TokSim_8_cpp_get_interface_vars(struct __pyx_obj_8maptools_6toksim_TokSim *__pyx_v_self) {
+static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_8_cpp_get_interface_vars(struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *__pyx_v_self) {
   PyObject *__pyx_7genexpr__pyx_v_node = NULL;
   PyObject *__pyx_8genexpr1__pyx_v_node = NULL;
   PyObject *__pyx_8genexpr2__pyx_v_node = NULL;
@@ -9322,7 +9311,7 @@ static PyObject *__pyx_pf_8maptools_6toksim_6TokSim_8_cpp_get_interface_vars(str
   __Pyx_XDECREF(__pyx_t_6);
   __Pyx_XDECREF(__pyx_t_7);
   __Pyx_XDECREF(__pyx_t_9);
-  __Pyx_AddTraceback("maptools.toksim.TokSim._cpp_get_interface_vars", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("maptools.toksim.toksim.TokSim._cpp_get_interface_vars", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_7genexpr__pyx_v_node);
@@ -9337,20 +9326,20 @@ static PyObject *__pyx_pf_8maptools_6toksim_6TokSim_8_cpp_get_interface_vars(str
  *         }
  * 
  *     @staticmethod             # <<<<<<<<<<<<<<
- *     def encode(node: Union[string, LogicalTile]) -> bytes:
+ *     def encode(node: Union[str, LogicalTile]) -> bytes:
  *         return bytes(str(node), encoding='utf-8')
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8maptools_6toksim_6TokSim_11encode(CYTHON_UNUSED PyObject *__pyx_self, 
+static PyObject *__pyx_pw_8maptools_6toksim_6toksim_6TokSim_11encode(CYTHON_UNUSED PyObject *__pyx_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyMethodDef __pyx_mdef_8maptools_6toksim_6TokSim_11encode = {"encode", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_8maptools_6toksim_6TokSim_11encode, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_8maptools_6toksim_6TokSim_11encode(CYTHON_UNUSED PyObject *__pyx_self, 
+static PyMethodDef __pyx_mdef_8maptools_6toksim_6toksim_6TokSim_11encode = {"encode", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_8maptools_6toksim_6toksim_6TokSim_11encode, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_8maptools_6toksim_6toksim_6TokSim_11encode(CYTHON_UNUSED PyObject *__pyx_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -9401,18 +9390,18 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("encode", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 76, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("maptools.toksim.TokSim.encode", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("maptools.toksim.toksim.TokSim.encode", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_8maptools_6toksim_6TokSim_10encode(__pyx_v_node);
+  __pyx_r = __pyx_pf_8maptools_6toksim_6toksim_6TokSim_10encode(__pyx_v_node);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8maptools_6toksim_6TokSim_10encode(PyObject *__pyx_v_node) {
+static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_10encode(PyObject *__pyx_v_node) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -9425,10 +9414,10 @@ static PyObject *__pyx_pf_8maptools_6toksim_6TokSim_10encode(PyObject *__pyx_v_n
 
   /* "maptools/toksim/toksim.pyx":78
  *     @staticmethod
- *     def encode(node: Union[string, LogicalTile]) -> bytes:
+ *     def encode(node: Union[str, LogicalTile]) -> bytes:
  *         return bytes(str(node), encoding='utf-8')             # <<<<<<<<<<<<<<
  * 
- *     def _cpp_get_node_attr(self, node: Union[string, LogicalTile]) -> Dict[str, Any]:
+ *     def _cpp_get_node_attr(self, node: Union[str, LogicalTile]) -> Dict[str, Any]:
  */
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1 = __Pyx_PyObject_Str(__pyx_v_node); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 78, __pyx_L1_error)
@@ -9453,7 +9442,7 @@ static PyObject *__pyx_pf_8maptools_6toksim_6TokSim_10encode(PyObject *__pyx_v_n
  *         }
  * 
  *     @staticmethod             # <<<<<<<<<<<<<<
- *     def encode(node: Union[string, LogicalTile]) -> bytes:
+ *     def encode(node: Union[str, LogicalTile]) -> bytes:
  *         return bytes(str(node), encoding='utf-8')
  */
 
@@ -9462,7 +9451,7 @@ static PyObject *__pyx_pf_8maptools_6toksim_6TokSim_10encode(PyObject *__pyx_v_n
   __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
-  __Pyx_AddTraceback("maptools.toksim.TokSim.encode", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("maptools.toksim.toksim.TokSim.encode", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -9473,21 +9462,21 @@ static PyObject *__pyx_pf_8maptools_6toksim_6TokSim_10encode(PyObject *__pyx_v_n
 /* "maptools/toksim/toksim.pyx":80
  *         return bytes(str(node), encoding='utf-8')
  * 
- *     def _cpp_get_node_attr(self, node: Union[string, LogicalTile]) -> Dict[str, Any]:             # <<<<<<<<<<<<<<
+ *     def _cpp_get_node_attr(self, node: Union[str, LogicalTile]) -> Dict[str, Any]:             # <<<<<<<<<<<<<<
  *         attr = {
  *             'is_tile': self.ctg.is_tile(node),
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8maptools_6toksim_6TokSim_13_cpp_get_node_attr(PyObject *__pyx_v_self, 
+static PyObject *__pyx_pw_8maptools_6toksim_6toksim_6TokSim_13_cpp_get_node_attr(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyMethodDef __pyx_mdef_8maptools_6toksim_6TokSim_13_cpp_get_node_attr = {"_cpp_get_node_attr", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_8maptools_6toksim_6TokSim_13_cpp_get_node_attr, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_8maptools_6toksim_6TokSim_13_cpp_get_node_attr(PyObject *__pyx_v_self, 
+static PyMethodDef __pyx_mdef_8maptools_6toksim_6toksim_6TokSim_13_cpp_get_node_attr = {"_cpp_get_node_attr", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_8maptools_6toksim_6toksim_6TokSim_13_cpp_get_node_attr, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_8maptools_6toksim_6toksim_6TokSim_13_cpp_get_node_attr(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -9538,18 +9527,18 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("_cpp_get_node_attr", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 80, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("maptools.toksim.TokSim._cpp_get_node_attr", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("maptools.toksim.toksim.TokSim._cpp_get_node_attr", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_8maptools_6toksim_6TokSim_12_cpp_get_node_attr(((struct __pyx_obj_8maptools_6toksim_TokSim *)__pyx_v_self), __pyx_v_node);
+  __pyx_r = __pyx_pf_8maptools_6toksim_6toksim_6TokSim_12_cpp_get_node_attr(((struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *)__pyx_v_self), __pyx_v_node);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8maptools_6toksim_6TokSim_12_cpp_get_node_attr(struct __pyx_obj_8maptools_6toksim_TokSim *__pyx_v_self, PyObject *__pyx_v_node) {
+static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_12_cpp_get_node_attr(struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *__pyx_v_self, PyObject *__pyx_v_node) {
   PyObject *__pyx_v_attr = NULL;
   PyObject *__pyx_8genexpr3__pyx_v_n = NULL;
   PyObject *__pyx_8genexpr4__pyx_v_n = NULL;
@@ -9570,7 +9559,7 @@ static PyObject *__pyx_pf_8maptools_6toksim_6TokSim_12_cpp_get_node_attr(struct 
   __Pyx_RefNannySetupContext("_cpp_get_node_attr", 0);
 
   /* "maptools/toksim/toksim.pyx":82
- *     def _cpp_get_node_attr(self, node: Union[string, LogicalTile]) -> Dict[str, Any]:
+ *     def _cpp_get_node_attr(self, node: Union[str, LogicalTile]) -> Dict[str, Any]:
  *         attr = {
  *             'is_tile': self.ctg.is_tile(node),             # <<<<<<<<<<<<<<
  *             'is_head_tile': self.ctg.is_head_tile(node),
@@ -10032,7 +10021,7 @@ static PyObject *__pyx_pf_8maptools_6toksim_6TokSim_12_cpp_get_node_attr(struct 
   /* "maptools/toksim/toksim.pyx":80
  *         return bytes(str(node), encoding='utf-8')
  * 
- *     def _cpp_get_node_attr(self, node: Union[string, LogicalTile]) -> Dict[str, Any]:             # <<<<<<<<<<<<<<
+ *     def _cpp_get_node_attr(self, node: Union[str, LogicalTile]) -> Dict[str, Any]:             # <<<<<<<<<<<<<<
  *         attr = {
  *             'is_tile': self.ctg.is_tile(node),
  */
@@ -10045,7 +10034,7 @@ static PyObject *__pyx_pf_8maptools_6toksim_6TokSim_12_cpp_get_node_attr(struct 
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_6);
   __Pyx_XDECREF(__pyx_t_9);
-  __Pyx_AddTraceback("maptools.toksim.TokSim._cpp_get_node_attr", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("maptools.toksim.toksim.TokSim._cpp_get_node_attr", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_attr);
@@ -10065,15 +10054,15 @@ static PyObject *__pyx_pf_8maptools_6toksim_6TokSim_12_cpp_get_node_attr(struct 
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8maptools_6toksim_6TokSim_15_cpp_get_tile_config(PyObject *__pyx_v_self, 
+static PyObject *__pyx_pw_8maptools_6toksim_6toksim_6TokSim_15_cpp_get_tile_config(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyMethodDef __pyx_mdef_8maptools_6toksim_6TokSim_15_cpp_get_tile_config = {"_cpp_get_tile_config", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_8maptools_6toksim_6TokSim_15_cpp_get_tile_config, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_8maptools_6toksim_6TokSim_15_cpp_get_tile_config(PyObject *__pyx_v_self, 
+static PyMethodDef __pyx_mdef_8maptools_6toksim_6toksim_6TokSim_15_cpp_get_tile_config = {"_cpp_get_tile_config", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_8maptools_6toksim_6toksim_6TokSim_15_cpp_get_tile_config, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_8maptools_6toksim_6toksim_6TokSim_15_cpp_get_tile_config(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -10124,18 +10113,18 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("_cpp_get_tile_config", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 94, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("maptools.toksim.TokSim._cpp_get_tile_config", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("maptools.toksim.toksim.TokSim._cpp_get_tile_config", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_8maptools_6toksim_6TokSim_14_cpp_get_tile_config(((struct __pyx_obj_8maptools_6toksim_TokSim *)__pyx_v_self), __pyx_v_node);
+  __pyx_r = __pyx_pf_8maptools_6toksim_6toksim_6TokSim_14_cpp_get_tile_config(((struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *)__pyx_v_self), __pyx_v_node);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8maptools_6toksim_6TokSim_14_cpp_get_tile_config(struct __pyx_obj_8maptools_6toksim_TokSim *__pyx_v_self, PyObject *__pyx_v_node) {
+static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_14_cpp_get_tile_config(struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *__pyx_v_self, PyObject *__pyx_v_node) {
   PyObject *__pyx_v_config = NULL;
   PyObject *__pyx_v_tile_config = NULL;
   PyObject *__pyx_v_conv_names = NULL;
@@ -10723,7 +10712,7 @@ static PyObject *__pyx_pf_8maptools_6toksim_6TokSim_14_cpp_get_tile_config(struc
   __Pyx_XDECREF(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_7);
-  __Pyx_AddTraceback("maptools.toksim.TokSim._cpp_get_tile_config", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("maptools.toksim.toksim.TokSim._cpp_get_tile_config", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_config);
@@ -10748,15 +10737,15 @@ static PyObject *__pyx_pf_8maptools_6toksim_6TokSim_14_cpp_get_tile_config(struc
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8maptools_6toksim_6TokSim_17__reduce_cython__(PyObject *__pyx_v_self, 
+static PyObject *__pyx_pw_8maptools_6toksim_6toksim_6TokSim_17__reduce_cython__(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyMethodDef __pyx_mdef_8maptools_6toksim_6TokSim_17__reduce_cython__ = {"__reduce_cython__", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_8maptools_6toksim_6TokSim_17__reduce_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_8maptools_6toksim_6TokSim_17__reduce_cython__(PyObject *__pyx_v_self, 
+static PyMethodDef __pyx_mdef_8maptools_6toksim_6toksim_6TokSim_17__reduce_cython__ = {"__reduce_cython__", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_8maptools_6toksim_6toksim_6TokSim_17__reduce_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_8maptools_6toksim_6toksim_6TokSim_17__reduce_cython__(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -10773,14 +10762,14 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   if (unlikely(__pyx_nargs > 0)) {
     __Pyx_RaiseArgtupleInvalid("__reduce_cython__", 1, 0, 0, __pyx_nargs); return NULL;}
   if (unlikely(__pyx_kwds) && __Pyx_NumKwargs_FASTCALL(__pyx_kwds) && unlikely(!__Pyx_CheckKeywordStrings(__pyx_kwds, "__reduce_cython__", 0))) return NULL;
-  __pyx_r = __pyx_pf_8maptools_6toksim_6TokSim_16__reduce_cython__(((struct __pyx_obj_8maptools_6toksim_TokSim *)__pyx_v_self));
+  __pyx_r = __pyx_pf_8maptools_6toksim_6toksim_6TokSim_16__reduce_cython__(((struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *)__pyx_v_self));
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8maptools_6toksim_6TokSim_16__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_8maptools_6toksim_TokSim *__pyx_v_self) {
+static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_16__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *__pyx_v_self) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   int __pyx_lineno = 0;
@@ -10805,7 +10794,7 @@ static PyObject *__pyx_pf_8maptools_6toksim_6TokSim_16__reduce_cython__(CYTHON_U
 
   /* function exit code */
   __pyx_L1_error:;
-  __Pyx_AddTraceback("maptools.toksim.TokSim.__reduce_cython__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("maptools.toksim.toksim.TokSim.__reduce_cython__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
@@ -10820,15 +10809,15 @@ static PyObject *__pyx_pf_8maptools_6toksim_6TokSim_16__reduce_cython__(CYTHON_U
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_8maptools_6toksim_6TokSim_19__setstate_cython__(PyObject *__pyx_v_self, 
+static PyObject *__pyx_pw_8maptools_6toksim_6toksim_6TokSim_19__setstate_cython__(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyMethodDef __pyx_mdef_8maptools_6toksim_6TokSim_19__setstate_cython__ = {"__setstate_cython__", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_8maptools_6toksim_6TokSim_19__setstate_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_8maptools_6toksim_6TokSim_19__setstate_cython__(PyObject *__pyx_v_self, 
+static PyMethodDef __pyx_mdef_8maptools_6toksim_6toksim_6TokSim_19__setstate_cython__ = {"__setstate_cython__", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_8maptools_6toksim_6toksim_6TokSim_19__setstate_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_8maptools_6toksim_6toksim_6TokSim_19__setstate_cython__(PyObject *__pyx_v_self, 
 #if CYTHON_METH_FASTCALL
 PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 #else
@@ -10879,18 +10868,18 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("__setstate_cython__", 1, 1, 1, __pyx_nargs); __PYX_ERR(1, 3, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("maptools.toksim.TokSim.__setstate_cython__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("maptools.toksim.toksim.TokSim.__setstate_cython__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_8maptools_6toksim_6TokSim_18__setstate_cython__(((struct __pyx_obj_8maptools_6toksim_TokSim *)__pyx_v_self), __pyx_v___pyx_state);
+  __pyx_r = __pyx_pf_8maptools_6toksim_6toksim_6TokSim_18__setstate_cython__(((struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *)__pyx_v_self), __pyx_v___pyx_state);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_8maptools_6toksim_6TokSim_18__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_8maptools_6toksim_TokSim *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state) {
+static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_18__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   int __pyx_lineno = 0;
@@ -10915,15 +10904,15 @@ static PyObject *__pyx_pf_8maptools_6toksim_6TokSim_18__setstate_cython__(CYTHON
 
   /* function exit code */
   __pyx_L1_error:;
-  __Pyx_AddTraceback("maptools.toksim.TokSim.__setstate_cython__", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("maptools.toksim.toksim.TokSim.__setstate_cython__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_tp_new_8maptools_6toksim_TokSim(PyTypeObject *t, CYTHON_UNUSED PyObject *a, CYTHON_UNUSED PyObject *k) {
-  struct __pyx_obj_8maptools_6toksim_TokSim *p;
+static PyObject *__pyx_tp_new_8maptools_6toksim_6toksim_TokSim(PyTypeObject *t, CYTHON_UNUSED PyObject *a, CYTHON_UNUSED PyObject *k) {
+  struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *p;
   PyObject *o;
   #if CYTHON_COMPILING_IN_LIMITED_API
   allocfunc alloc_func = (allocfunc)PyType_GetSlot(t, Py_tp_alloc);
@@ -10936,7 +10925,7 @@ static PyObject *__pyx_tp_new_8maptools_6toksim_TokSim(PyTypeObject *t, CYTHON_U
   }
   if (unlikely(!o)) return 0;
   #endif
-  p = ((struct __pyx_obj_8maptools_6toksim_TokSim *)o);
+  p = ((struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *)o);
   new((void*)&(p->c_toksim)) toksim::C_TokSim();
   p->ctg = Py_None; Py_INCREF(Py_None);
   p->mapname = ((PyObject*)Py_None); Py_INCREF(Py_None);
@@ -10947,11 +10936,11 @@ static PyObject *__pyx_tp_new_8maptools_6toksim_TokSim(PyTypeObject *t, CYTHON_U
   return o;
 }
 
-static void __pyx_tp_dealloc_8maptools_6toksim_TokSim(PyObject *o) {
-  struct __pyx_obj_8maptools_6toksim_TokSim *p = (struct __pyx_obj_8maptools_6toksim_TokSim *)o;
+static void __pyx_tp_dealloc_8maptools_6toksim_6toksim_TokSim(PyObject *o) {
+  struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *p = (struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *)o;
   #if CYTHON_USE_TP_FINALIZE
   if (unlikely((PY_VERSION_HEX >= 0x03080000 || __Pyx_PyType_HasFeature(Py_TYPE(o), Py_TPFLAGS_HAVE_FINALIZE)) && __Pyx_PyObject_GetSlot(o, tp_finalize, destructor)) && !_PyGC_FINALIZED(o)) {
-    if (__Pyx_PyObject_GetSlot(o, tp_dealloc, destructor) == __pyx_tp_dealloc_8maptools_6toksim_TokSim) {
+    if (__Pyx_PyObject_GetSlot(o, tp_dealloc, destructor) == __pyx_tp_dealloc_8maptools_6toksim_6toksim_TokSim) {
       if (PyObject_CallFinalizerFromDealloc(o)) return;
     }
   }
@@ -10967,9 +10956,9 @@ static void __pyx_tp_dealloc_8maptools_6toksim_TokSim(PyObject *o) {
   (*Py_TYPE(o)->tp_free)(o);
 }
 
-static int __pyx_tp_traverse_8maptools_6toksim_TokSim(PyObject *o, visitproc v, void *a) {
+static int __pyx_tp_traverse_8maptools_6toksim_6toksim_TokSim(PyObject *o, visitproc v, void *a) {
   int e;
-  struct __pyx_obj_8maptools_6toksim_TokSim *p = (struct __pyx_obj_8maptools_6toksim_TokSim *)o;
+  struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *p = (struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *)o;
   if (p->ctg) {
     e = (*v)(p->ctg, a); if (e) return e;
   }
@@ -10988,9 +10977,9 @@ static int __pyx_tp_traverse_8maptools_6toksim_TokSim(PyObject *o, visitproc v, 
   return 0;
 }
 
-static int __pyx_tp_clear_8maptools_6toksim_TokSim(PyObject *o) {
+static int __pyx_tp_clear_8maptools_6toksim_6toksim_TokSim(PyObject *o) {
   PyObject* tmp;
-  struct __pyx_obj_8maptools_6toksim_TokSim *p = (struct __pyx_obj_8maptools_6toksim_TokSim *)o;
+  struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *p = (struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *)o;
   tmp = ((PyObject*)p->ctg);
   p->ctg = Py_None; Py_INCREF(Py_None);
   Py_XDECREF(tmp);
@@ -11009,43 +10998,43 @@ static int __pyx_tp_clear_8maptools_6toksim_TokSim(PyObject *o) {
   return 0;
 }
 
-static PyMethodDef __pyx_methods_8maptools_6toksim_TokSim[] = {
-  {"run", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_8maptools_6toksim_6TokSim_3run, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
-  {"get_bufs", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_8maptools_6toksim_6TokSim_5get_bufs, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
-  {"save_execu", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_8maptools_6toksim_6TokSim_7save_execu, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
-  {"_cpp_get_interface_vars", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_8maptools_6toksim_6TokSim_9_cpp_get_interface_vars, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
-  {"encode", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_8maptools_6toksim_6TokSim_11encode, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
-  {"_cpp_get_node_attr", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_8maptools_6toksim_6TokSim_13_cpp_get_node_attr, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
-  {"_cpp_get_tile_config", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_8maptools_6toksim_6TokSim_15_cpp_get_tile_config, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
-  {"__reduce_cython__", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_8maptools_6toksim_6TokSim_17__reduce_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
-  {"__setstate_cython__", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_8maptools_6toksim_6TokSim_19__setstate_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
+static PyMethodDef __pyx_methods_8maptools_6toksim_6toksim_TokSim[] = {
+  {"run", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_8maptools_6toksim_6toksim_6TokSim_3run, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
+  {"get_bufs", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_8maptools_6toksim_6toksim_6TokSim_5get_bufs, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
+  {"save_execu", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_8maptools_6toksim_6toksim_6TokSim_7save_execu, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
+  {"_cpp_get_interface_vars", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_8maptools_6toksim_6toksim_6TokSim_9_cpp_get_interface_vars, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
+  {"encode", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_8maptools_6toksim_6toksim_6TokSim_11encode, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
+  {"_cpp_get_node_attr", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_8maptools_6toksim_6toksim_6TokSim_13_cpp_get_node_attr, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
+  {"_cpp_get_tile_config", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_8maptools_6toksim_6toksim_6TokSim_15_cpp_get_tile_config, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
+  {"__reduce_cython__", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_8maptools_6toksim_6toksim_6TokSim_17__reduce_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
+  {"__setstate_cython__", (PyCFunction)(void*)(__Pyx_PyCFunction_FastCallWithKeywords)__pyx_pw_8maptools_6toksim_6toksim_6TokSim_19__setstate_cython__, __Pyx_METH_FASTCALL|METH_KEYWORDS, 0},
   {0, 0, 0, 0}
 };
 #if CYTHON_USE_TYPE_SPECS
-static PyType_Slot __pyx_type_8maptools_6toksim_TokSim_slots[] = {
-  {Py_tp_dealloc, (void *)__pyx_tp_dealloc_8maptools_6toksim_TokSim},
-  {Py_tp_traverse, (void *)__pyx_tp_traverse_8maptools_6toksim_TokSim},
-  {Py_tp_clear, (void *)__pyx_tp_clear_8maptools_6toksim_TokSim},
-  {Py_tp_methods, (void *)__pyx_methods_8maptools_6toksim_TokSim},
-  {Py_tp_init, (void *)__pyx_pw_8maptools_6toksim_6TokSim_1__init__},
-  {Py_tp_new, (void *)__pyx_tp_new_8maptools_6toksim_TokSim},
+static PyType_Slot __pyx_type_8maptools_6toksim_6toksim_TokSim_slots[] = {
+  {Py_tp_dealloc, (void *)__pyx_tp_dealloc_8maptools_6toksim_6toksim_TokSim},
+  {Py_tp_traverse, (void *)__pyx_tp_traverse_8maptools_6toksim_6toksim_TokSim},
+  {Py_tp_clear, (void *)__pyx_tp_clear_8maptools_6toksim_6toksim_TokSim},
+  {Py_tp_methods, (void *)__pyx_methods_8maptools_6toksim_6toksim_TokSim},
+  {Py_tp_init, (void *)__pyx_pw_8maptools_6toksim_6toksim_6TokSim_1__init__},
+  {Py_tp_new, (void *)__pyx_tp_new_8maptools_6toksim_6toksim_TokSim},
   {0, 0},
 };
-static PyType_Spec __pyx_type_8maptools_6toksim_TokSim_spec = {
-  "maptools.toksim.TokSim",
-  sizeof(struct __pyx_obj_8maptools_6toksim_TokSim),
+static PyType_Spec __pyx_type_8maptools_6toksim_6toksim_TokSim_spec = {
+  "maptools.toksim.toksim.TokSim",
+  sizeof(struct __pyx_obj_8maptools_6toksim_6toksim_TokSim),
   0,
   Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_HAVE_GC,
-  __pyx_type_8maptools_6toksim_TokSim_slots,
+  __pyx_type_8maptools_6toksim_6toksim_TokSim_slots,
 };
 #else
 
-static PyTypeObject __pyx_type_8maptools_6toksim_TokSim = {
+static PyTypeObject __pyx_type_8maptools_6toksim_6toksim_TokSim = {
   PyVarObject_HEAD_INIT(0, 0)
-  "maptools.toksim.""TokSim", /*tp_name*/
-  sizeof(struct __pyx_obj_8maptools_6toksim_TokSim), /*tp_basicsize*/
+  "maptools.toksim.toksim.""TokSim", /*tp_name*/
+  sizeof(struct __pyx_obj_8maptools_6toksim_6toksim_TokSim), /*tp_basicsize*/
   0, /*tp_itemsize*/
-  __pyx_tp_dealloc_8maptools_6toksim_TokSim, /*tp_dealloc*/
+  __pyx_tp_dealloc_8maptools_6toksim_6toksim_TokSim, /*tp_dealloc*/
   #if PY_VERSION_HEX < 0x030800b4
   0, /*tp_print*/
   #endif
@@ -11072,13 +11061,13 @@ static PyTypeObject __pyx_type_8maptools_6toksim_TokSim = {
   0, /*tp_as_buffer*/
   Py_TPFLAGS_DEFAULT|Py_TPFLAGS_HAVE_VERSION_TAG|Py_TPFLAGS_CHECKTYPES|Py_TPFLAGS_HAVE_NEWBUFFER|Py_TPFLAGS_BASETYPE|Py_TPFLAGS_HAVE_GC, /*tp_flags*/
   0, /*tp_doc*/
-  __pyx_tp_traverse_8maptools_6toksim_TokSim, /*tp_traverse*/
-  __pyx_tp_clear_8maptools_6toksim_TokSim, /*tp_clear*/
+  __pyx_tp_traverse_8maptools_6toksim_6toksim_TokSim, /*tp_traverse*/
+  __pyx_tp_clear_8maptools_6toksim_6toksim_TokSim, /*tp_clear*/
   0, /*tp_richcompare*/
   0, /*tp_weaklistoffset*/
   0, /*tp_iter*/
   0, /*tp_iternext*/
-  __pyx_methods_8maptools_6toksim_TokSim, /*tp_methods*/
+  __pyx_methods_8maptools_6toksim_6toksim_TokSim, /*tp_methods*/
   0, /*tp_members*/
   0, /*tp_getset*/
   0, /*tp_base*/
@@ -11088,9 +11077,9 @@ static PyTypeObject __pyx_type_8maptools_6toksim_TokSim = {
   #if !CYTHON_USE_TYPE_SPECS
   0, /*tp_dictoffset*/
   #endif
-  __pyx_pw_8maptools_6toksim_6TokSim_1__init__, /*tp_init*/
+  __pyx_pw_8maptools_6toksim_6toksim_6TokSim_1__init__, /*tp_init*/
   0, /*tp_alloc*/
-  __pyx_tp_new_8maptools_6toksim_TokSim, /*tp_new*/
+  __pyx_tp_new_8maptools_6toksim_6toksim_TokSim, /*tp_new*/
   0, /*tp_free*/
   0, /*tp_is_gc*/
   0, /*tp_bases*/
@@ -11191,7 +11180,7 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_n_s_Tuple, __pyx_k_Tuple, sizeof(__pyx_k_Tuple), 0, 0, 1, 1},
     {&__pyx_n_s_TypeError, __pyx_k_TypeError, sizeof(__pyx_k_TypeError), 0, 0, 1, 1},
     {&__pyx_n_s_Union, __pyx_k_Union, sizeof(__pyx_k_Union), 0, 0, 1, 1},
-    {&__pyx_kp_s_Union_string_LogicalTile, __pyx_k_Union_string_LogicalTile, sizeof(__pyx_k_Union_string_LogicalTile), 0, 0, 1, 0},
+    {&__pyx_kp_s_Union_str_LogicalTile, __pyx_k_Union_str_LogicalTile, sizeof(__pyx_k_Union_str_LogicalTile), 0, 0, 1, 0},
     {&__pyx_n_s_ValueError, __pyx_k_ValueError, sizeof(__pyx_k_ValueError), 0, 0, 1, 1},
     {&__pyx_kp_s__28, __pyx_k__28, sizeof(__pyx_k__28), 0, 0, 1, 0},
     {&__pyx_n_s__30, __pyx_k__30, sizeof(__pyx_k__30), 0, 0, 1, 1},
@@ -11263,8 +11252,7 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_n_s_mapname, __pyx_k_mapname, sizeof(__pyx_k_mapname), 0, 0, 1, 1},
     {&__pyx_n_s_mapsave, __pyx_k_mapsave, sizeof(__pyx_k_mapsave), 0, 0, 1, 1},
     {&__pyx_n_s_maptools_core, __pyx_k_maptools_core, sizeof(__pyx_k_maptools_core), 0, 0, 1, 1},
-    {&__pyx_n_s_maptools_toksim, __pyx_k_maptools_toksim, sizeof(__pyx_k_maptools_toksim), 0, 0, 1, 1},
-    {&__pyx_kp_u_maptools_toksim, __pyx_k_maptools_toksim, sizeof(__pyx_k_maptools_toksim), 0, 1, 0, 0},
+    {&__pyx_n_s_maptools_toksim_toksim, __pyx_k_maptools_toksim_toksim, sizeof(__pyx_k_maptools_toksim_toksim), 0, 0, 1, 1},
     {&__pyx_kp_s_maptools_toksim_toksim_pyx, __pyx_k_maptools_toksim_toksim_pyx, sizeof(__pyx_k_maptools_toksim_toksim_pyx), 0, 0, 1, 0},
     {&__pyx_kp_s_merge_buf, __pyx_k_merge_buf, sizeof(__pyx_k_merge_buf), 0, 0, 1, 0},
     {&__pyx_n_b_merge_buf_2, __pyx_k_merge_buf_2, sizeof(__pyx_k_merge_buf_2), 0, 0, 0, 1},
@@ -11706,7 +11694,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *         }
  * 
  *     @staticmethod             # <<<<<<<<<<<<<<
- *     def encode(node: Union[string, LogicalTile]) -> bytes:
+ *     def encode(node: Union[str, LogicalTile]) -> bytes:
  *         return bytes(str(node), encoding='utf-8')
  */
   __pyx_tuple__41 = PyTuple_Pack(1, __pyx_n_s_node); if (unlikely(!__pyx_tuple__41)) __PYX_ERR(0, 76, __pyx_L1_error)
@@ -11717,7 +11705,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   /* "maptools/toksim/toksim.pyx":80
  *         return bytes(str(node), encoding='utf-8')
  * 
- *     def _cpp_get_node_attr(self, node: Union[string, LogicalTile]) -> Dict[str, Any]:             # <<<<<<<<<<<<<<
+ *     def _cpp_get_node_attr(self, node: Union[str, LogicalTile]) -> Dict[str, Any]:             # <<<<<<<<<<<<<<
  *         attr = {
  *             'is_tile': self.ctg.is_tile(node),
  */
@@ -11818,27 +11806,27 @@ static int __Pyx_modinit_type_init_code(void) {
   __Pyx_RefNannySetupContext("__Pyx_modinit_type_init_code", 0);
   /*--- Type init code ---*/
   #if CYTHON_USE_TYPE_SPECS
-  __pyx_ptype_8maptools_6toksim_TokSim = (PyTypeObject *) __Pyx_PyType_FromModuleAndSpec(__pyx_m, &__pyx_type_8maptools_6toksim_TokSim_spec, NULL); if (unlikely(!__pyx_ptype_8maptools_6toksim_TokSim)) __PYX_ERR(0, 6, __pyx_L1_error)
-  if (__Pyx_fix_up_extension_type_from_spec(&__pyx_type_8maptools_6toksim_TokSim_spec, __pyx_ptype_8maptools_6toksim_TokSim) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
+  __pyx_ptype_8maptools_6toksim_6toksim_TokSim = (PyTypeObject *) __Pyx_PyType_FromModuleAndSpec(__pyx_m, &__pyx_type_8maptools_6toksim_6toksim_TokSim_spec, NULL); if (unlikely(!__pyx_ptype_8maptools_6toksim_6toksim_TokSim)) __PYX_ERR(0, 6, __pyx_L1_error)
+  if (__Pyx_fix_up_extension_type_from_spec(&__pyx_type_8maptools_6toksim_6toksim_TokSim_spec, __pyx_ptype_8maptools_6toksim_6toksim_TokSim) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
   #else
-  __pyx_ptype_8maptools_6toksim_TokSim = &__pyx_type_8maptools_6toksim_TokSim;
+  __pyx_ptype_8maptools_6toksim_6toksim_TokSim = &__pyx_type_8maptools_6toksim_6toksim_TokSim;
   #endif
   #if !CYTHON_COMPILING_IN_LIMITED_API
   #endif
   #if !CYTHON_USE_TYPE_SPECS
-  if (__Pyx_PyType_Ready(__pyx_ptype_8maptools_6toksim_TokSim) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
+  if (__Pyx_PyType_Ready(__pyx_ptype_8maptools_6toksim_6toksim_TokSim) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
   #endif
   #if PY_MAJOR_VERSION < 3
-  __pyx_ptype_8maptools_6toksim_TokSim->tp_print = 0;
+  __pyx_ptype_8maptools_6toksim_6toksim_TokSim->tp_print = 0;
   #endif
   #if !CYTHON_COMPILING_IN_LIMITED_API
-  if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_ptype_8maptools_6toksim_TokSim->tp_dictoffset && __pyx_ptype_8maptools_6toksim_TokSim->tp_getattro == PyObject_GenericGetAttr)) {
-    __pyx_ptype_8maptools_6toksim_TokSim->tp_getattro = __Pyx_PyObject_GenericGetAttr;
+  if ((CYTHON_USE_TYPE_SLOTS && CYTHON_USE_PYTYPE_LOOKUP) && likely(!__pyx_ptype_8maptools_6toksim_6toksim_TokSim->tp_dictoffset && __pyx_ptype_8maptools_6toksim_6toksim_TokSim->tp_getattro == PyObject_GenericGetAttr)) {
+    __pyx_ptype_8maptools_6toksim_6toksim_TokSim->tp_getattro = __Pyx_PyObject_GenericGetAttr;
   }
   #endif
-  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_TokSim, (PyObject *) __pyx_ptype_8maptools_6toksim_TokSim) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
+  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_TokSim, (PyObject *) __pyx_ptype_8maptools_6toksim_6toksim_TokSim) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
   #if !CYTHON_COMPILING_IN_LIMITED_API
-  if (__Pyx_setup_reduce((PyObject *) __pyx_ptype_8maptools_6toksim_TokSim) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
+  if (__Pyx_setup_reduce((PyObject *) __pyx_ptype_8maptools_6toksim_6toksim_TokSim) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
   #endif
   __Pyx_RefNannyFinishContext();
   return 0;
@@ -11940,15 +11928,9 @@ namespace {
 
 #if PY_MAJOR_VERSION < 3
 __Pyx_PyMODINIT_FUNC inittoksim(void) CYTHON_SMALL_CODE; /*proto*/
-#if !defined(CYTHON_NO_PYINIT_EXPORT) && (defined(_WIN32) || defined(WIN32) || defined(MS_WINDOWS))
-__Pyx_PyMODINIT_FUNC init__init__(void) { inittoksim(); }
-#endif
 __Pyx_PyMODINIT_FUNC inittoksim(void)
 #else
 __Pyx_PyMODINIT_FUNC PyInit_toksim(void) CYTHON_SMALL_CODE; /*proto*/
-#if !defined(CYTHON_NO_PYINIT_EXPORT) && (defined(_WIN32) || defined(WIN32) || defined(MS_WINDOWS))
-__Pyx_PyMODINIT_FUNC PyInit___init__(void) { return PyInit_toksim(); }
-#endif
 __Pyx_PyMODINIT_FUNC PyInit_toksim(void)
 #if CYTHON_PEP489_MULTI_PHASE_INIT
 {
@@ -12130,17 +12112,14 @@ if (!__Pyx_RefNanny) {
   #if PY_MAJOR_VERSION < 3 && (__PYX_DEFAULT_STRING_ENCODING_IS_ASCII || __PYX_DEFAULT_STRING_ENCODING_IS_DEFAULT)
   if (__Pyx_init_sys_getdefaultencoding_params() < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   #endif
-  if (__pyx_module_is_main_maptools__toksim) {
+  if (__pyx_module_is_main_maptools__toksim__toksim) {
     if (PyObject_SetAttr(__pyx_m, __pyx_n_s_name, __pyx_n_s_main) < 0) __PYX_ERR(0, 1, __pyx_L1_error)
-  }
-  if (!CYTHON_PEP489_MULTI_PHASE_INIT) {
-    if (unlikely((__Pyx_SetPackagePathFromImportLib(__pyx_kp_u_maptools_toksim) < 0))) __PYX_ERR(0, 1, __pyx_L1_error)
   }
   #if PY_MAJOR_VERSION >= 3
   {
     PyObject *modules = PyImport_GetModuleDict(); if (unlikely(!modules)) __PYX_ERR(0, 1, __pyx_L1_error)
-    if (!PyDict_GetItemString(modules, "maptools.toksim")) {
-      if (unlikely((PyDict_SetItemString(modules, "maptools.toksim", __pyx_m) < 0))) __PYX_ERR(0, 1, __pyx_L1_error)
+    if (!PyDict_GetItemString(modules, "maptools.toksim.toksim")) {
+      if (unlikely((PyDict_SetItemString(modules, "maptools.toksim.toksim", __pyx_m) < 0))) __PYX_ERR(0, 1, __pyx_L1_error)
     }
   }
   #endif
@@ -12265,13 +12244,13 @@ if (!__Pyx_RefNanny) {
   __pyx_t_2 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 30, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_return, __pyx_n_s_None) < 0) __PYX_ERR(0, 30, __pyx_L1_error)
-  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_8maptools_6toksim_6TokSim_3run, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_TokSim_run, NULL, __pyx_n_s_maptools_toksim, __pyx_d, ((PyObject *)__pyx_codeobj__33)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 30, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_8maptools_6toksim_6toksim_6TokSim_3run, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_TokSim_run, NULL, __pyx_n_s_maptools_toksim_toksim, __pyx_d, ((PyObject *)__pyx_codeobj__33)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 30, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_CyFunction_SetAnnotationsDict(__pyx_t_3, __pyx_t_2);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_8maptools_6toksim_TokSim->tp_dict, __pyx_n_s_run, __pyx_t_3) < 0) __PYX_ERR(0, 30, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_8maptools_6toksim_6toksim_TokSim->tp_dict, __pyx_n_s_run, __pyx_t_3) < 0) __PYX_ERR(0, 30, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  PyType_Modified(__pyx_ptype_8maptools_6toksim_TokSim);
+  PyType_Modified(__pyx_ptype_8maptools_6toksim_6toksim_TokSim);
 
   /* "maptools/toksim/toksim.pyx":34
  *         self.save_execu()
@@ -12283,13 +12262,13 @@ if (!__Pyx_RefNanny) {
   __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 34, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_return, __pyx_n_s_str) < 0) __PYX_ERR(0, 34, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8maptools_6toksim_6TokSim_5get_bufs, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_TokSim_get_bufs, NULL, __pyx_n_s_maptools_toksim, __pyx_d, ((PyObject *)__pyx_codeobj__35)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 34, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8maptools_6toksim_6toksim_6TokSim_5get_bufs, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_TokSim_get_bufs, NULL, __pyx_n_s_maptools_toksim_toksim, __pyx_d, ((PyObject *)__pyx_codeobj__35)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 34, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_CyFunction_SetAnnotationsDict(__pyx_t_2, __pyx_t_3);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_8maptools_6toksim_TokSim->tp_dict, __pyx_n_s_get_bufs, __pyx_t_2) < 0) __PYX_ERR(0, 34, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_8maptools_6toksim_6toksim_TokSim->tp_dict, __pyx_n_s_get_bufs, __pyx_t_2) < 0) __PYX_ERR(0, 34, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  PyType_Modified(__pyx_ptype_8maptools_6toksim_TokSim);
+  PyType_Modified(__pyx_ptype_8maptools_6toksim_6toksim_TokSim);
 
   /* "maptools/toksim/toksim.pyx":50
  *         return log
@@ -12301,14 +12280,14 @@ if (!__Pyx_RefNanny) {
   __pyx_t_2 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 50, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_file_name, __pyx_n_s_str) < 0) __PYX_ERR(0, 50, __pyx_L1_error)
-  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_8maptools_6toksim_6TokSim_7save_execu, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_TokSim_save_execu, NULL, __pyx_n_s_maptools_toksim, __pyx_d, ((PyObject *)__pyx_codeobj__37)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 50, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_8maptools_6toksim_6toksim_6TokSim_7save_execu, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_TokSim_save_execu, NULL, __pyx_n_s_maptools_toksim_toksim, __pyx_d, ((PyObject *)__pyx_codeobj__37)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 50, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_CyFunction_SetDefaultsTuple(__pyx_t_3, __pyx_tuple__38);
   __Pyx_CyFunction_SetAnnotationsDict(__pyx_t_3, __pyx_t_2);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_8maptools_6toksim_TokSim->tp_dict, __pyx_n_s_save_execu, __pyx_t_3) < 0) __PYX_ERR(0, 50, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_8maptools_6toksim_6toksim_TokSim->tp_dict, __pyx_n_s_save_execu, __pyx_t_3) < 0) __PYX_ERR(0, 50, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  PyType_Modified(__pyx_ptype_8maptools_6toksim_TokSim);
+  PyType_Modified(__pyx_ptype_8maptools_6toksim_6toksim_TokSim);
 
   /* "maptools/toksim/toksim.pyx":62
  *         print(f"\nbuffer log written to {file_dir}")
@@ -12320,59 +12299,59 @@ if (!__Pyx_RefNanny) {
   __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 62, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_return, __pyx_n_s_None) < 0) __PYX_ERR(0, 62, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8maptools_6toksim_6TokSim_9_cpp_get_interface_vars, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_TokSim__cpp_get_interface_vars, NULL, __pyx_n_s_maptools_toksim, __pyx_d, ((PyObject *)__pyx_codeobj__40)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 62, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8maptools_6toksim_6toksim_6TokSim_9_cpp_get_interface_vars, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_TokSim__cpp_get_interface_vars, NULL, __pyx_n_s_maptools_toksim_toksim, __pyx_d, ((PyObject *)__pyx_codeobj__40)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 62, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_CyFunction_SetAnnotationsDict(__pyx_t_2, __pyx_t_3);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_8maptools_6toksim_TokSim->tp_dict, __pyx_n_s_cpp_get_interface_vars, __pyx_t_2) < 0) __PYX_ERR(0, 62, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_8maptools_6toksim_6toksim_TokSim->tp_dict, __pyx_n_s_cpp_get_interface_vars, __pyx_t_2) < 0) __PYX_ERR(0, 62, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  PyType_Modified(__pyx_ptype_8maptools_6toksim_TokSim);
+  PyType_Modified(__pyx_ptype_8maptools_6toksim_6toksim_TokSim);
 
   /* "maptools/toksim/toksim.pyx":76
  *         }
  * 
  *     @staticmethod             # <<<<<<<<<<<<<<
- *     def encode(node: Union[string, LogicalTile]) -> bytes:
+ *     def encode(node: Union[str, LogicalTile]) -> bytes:
  *         return bytes(str(node), encoding='utf-8')
  */
   __pyx_t_2 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 76, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_node, __pyx_kp_s_Union_string_LogicalTile) < 0) __PYX_ERR(0, 76, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_node, __pyx_kp_s_Union_str_LogicalTile) < 0) __PYX_ERR(0, 76, __pyx_L1_error)
   if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_return, __pyx_n_s_bytes) < 0) __PYX_ERR(0, 76, __pyx_L1_error)
-  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_8maptools_6toksim_6TokSim_11encode, __Pyx_CYFUNCTION_STATICMETHOD | __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_TokSim_encode, NULL, __pyx_n_s_maptools_toksim, __pyx_d, ((PyObject *)__pyx_codeobj__42)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 76, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_8maptools_6toksim_6toksim_6TokSim_11encode, __Pyx_CYFUNCTION_STATICMETHOD | __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_TokSim_encode, NULL, __pyx_n_s_maptools_toksim_toksim, __pyx_d, ((PyObject *)__pyx_codeobj__42)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 76, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_CyFunction_SetAnnotationsDict(__pyx_t_3, __pyx_t_2);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_8maptools_6toksim_TokSim->tp_dict, __pyx_n_s_encode, __pyx_t_3) < 0) __PYX_ERR(0, 76, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_8maptools_6toksim_6toksim_TokSim->tp_dict, __pyx_n_s_encode, __pyx_t_3) < 0) __PYX_ERR(0, 76, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  PyType_Modified(__pyx_ptype_8maptools_6toksim_TokSim);
-  __Pyx_GetNameInClass(__pyx_t_3, (PyObject *)__pyx_ptype_8maptools_6toksim_TokSim, __pyx_n_s_encode); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 76, __pyx_L1_error)
+  PyType_Modified(__pyx_ptype_8maptools_6toksim_6toksim_TokSim);
+  __Pyx_GetNameInClass(__pyx_t_3, (PyObject *)__pyx_ptype_8maptools_6toksim_6toksim_TokSim, __pyx_n_s_encode); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 76, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_builtin_staticmethod, __pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 76, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_8maptools_6toksim_TokSim->tp_dict, __pyx_n_s_encode, __pyx_t_2) < 0) __PYX_ERR(0, 76, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_8maptools_6toksim_6toksim_TokSim->tp_dict, __pyx_n_s_encode, __pyx_t_2) < 0) __PYX_ERR(0, 76, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  PyType_Modified(__pyx_ptype_8maptools_6toksim_TokSim);
+  PyType_Modified(__pyx_ptype_8maptools_6toksim_6toksim_TokSim);
 
   /* "maptools/toksim/toksim.pyx":80
  *         return bytes(str(node), encoding='utf-8')
  * 
- *     def _cpp_get_node_attr(self, node: Union[string, LogicalTile]) -> Dict[str, Any]:             # <<<<<<<<<<<<<<
+ *     def _cpp_get_node_attr(self, node: Union[str, LogicalTile]) -> Dict[str, Any]:             # <<<<<<<<<<<<<<
  *         attr = {
  *             'is_tile': self.ctg.is_tile(node),
  */
   __pyx_t_2 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 80, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_node, __pyx_kp_s_Union_string_LogicalTile) < 0) __PYX_ERR(0, 80, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_node, __pyx_kp_s_Union_str_LogicalTile) < 0) __PYX_ERR(0, 80, __pyx_L1_error)
   if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_return, __pyx_kp_s_Dict_str_Any) < 0) __PYX_ERR(0, 80, __pyx_L1_error)
-  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_8maptools_6toksim_6TokSim_13_cpp_get_node_attr, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_TokSim__cpp_get_node_attr, NULL, __pyx_n_s_maptools_toksim, __pyx_d, ((PyObject *)__pyx_codeobj__44)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 80, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_8maptools_6toksim_6toksim_6TokSim_13_cpp_get_node_attr, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_TokSim__cpp_get_node_attr, NULL, __pyx_n_s_maptools_toksim_toksim, __pyx_d, ((PyObject *)__pyx_codeobj__44)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 80, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_CyFunction_SetAnnotationsDict(__pyx_t_3, __pyx_t_2);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_8maptools_6toksim_TokSim->tp_dict, __pyx_n_s_cpp_get_node_attr, __pyx_t_3) < 0) __PYX_ERR(0, 80, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_8maptools_6toksim_6toksim_TokSim->tp_dict, __pyx_n_s_cpp_get_node_attr, __pyx_t_3) < 0) __PYX_ERR(0, 80, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  PyType_Modified(__pyx_ptype_8maptools_6toksim_TokSim);
+  PyType_Modified(__pyx_ptype_8maptools_6toksim_6toksim_TokSim);
 
   /* "maptools/toksim/toksim.pyx":94
  *         return attr
@@ -12385,20 +12364,20 @@ if (!__Pyx_RefNanny) {
   __Pyx_GOTREF(__pyx_t_3);
   if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_node, __pyx_n_s_LogicalTile) < 0) __PYX_ERR(0, 94, __pyx_L1_error)
   if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_return, __pyx_kp_s_Dict_str_Any) < 0) __PYX_ERR(0, 94, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8maptools_6toksim_6TokSim_15_cpp_get_tile_config, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_TokSim__cpp_get_tile_config, NULL, __pyx_n_s_maptools_toksim, __pyx_d, ((PyObject *)__pyx_codeobj__46)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 94, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8maptools_6toksim_6toksim_6TokSim_15_cpp_get_tile_config, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_TokSim__cpp_get_tile_config, NULL, __pyx_n_s_maptools_toksim_toksim, __pyx_d, ((PyObject *)__pyx_codeobj__46)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 94, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_CyFunction_SetAnnotationsDict(__pyx_t_2, __pyx_t_3);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_8maptools_6toksim_TokSim->tp_dict, __pyx_n_s_cpp_get_tile_config, __pyx_t_2) < 0) __PYX_ERR(0, 94, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_8maptools_6toksim_6toksim_TokSim->tp_dict, __pyx_n_s_cpp_get_tile_config, __pyx_t_2) < 0) __PYX_ERR(0, 94, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  PyType_Modified(__pyx_ptype_8maptools_6toksim_TokSim);
+  PyType_Modified(__pyx_ptype_8maptools_6toksim_6toksim_TokSim);
 
   /* "(tree fragment)":1
  * def __reduce_cython__(self):             # <<<<<<<<<<<<<<
  *     raise TypeError, "self.c_toksim cannot be converted to a Python object for pickling"
  * def __setstate_cython__(self, __pyx_state):
  */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8maptools_6toksim_6TokSim_17__reduce_cython__, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_TokSim___reduce_cython, NULL, __pyx_n_s_maptools_toksim, __pyx_d, ((PyObject *)__pyx_codeobj__47)); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 1, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8maptools_6toksim_6toksim_6TokSim_17__reduce_cython__, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_TokSim___reduce_cython, NULL, __pyx_n_s_maptools_toksim_toksim, __pyx_d, ((PyObject *)__pyx_codeobj__47)); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 1, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_reduce_cython, __pyx_t_2) < 0) __PYX_ERR(1, 1, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -12409,7 +12388,7 @@ if (!__Pyx_RefNanny) {
  * def __setstate_cython__(self, __pyx_state):             # <<<<<<<<<<<<<<
  *     raise TypeError, "self.c_toksim cannot be converted to a Python object for pickling"
  */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8maptools_6toksim_6TokSim_19__setstate_cython__, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_TokSim___setstate_cython, NULL, __pyx_n_s_maptools_toksim, __pyx_d, ((PyObject *)__pyx_codeobj__49)); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 3, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8maptools_6toksim_6toksim_6TokSim_19__setstate_cython__, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_TokSim___setstate_cython, NULL, __pyx_n_s_maptools_toksim_toksim, __pyx_d, ((PyObject *)__pyx_codeobj__49)); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 3, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_setstate_cython, __pyx_t_2) < 0) __PYX_ERR(1, 3, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -12432,7 +12411,7 @@ if (!__Pyx_RefNanny) {
   __Pyx_XDECREF(__pyx_t_3);
   if (__pyx_m) {
     if (__pyx_d && stringtab_initialized) {
-      __Pyx_AddTraceback("init maptools.toksim", __pyx_clineno, __pyx_lineno, __pyx_filename);
+      __Pyx_AddTraceback("init maptools.toksim.toksim", __pyx_clineno, __pyx_lineno, __pyx_filename);
     }
     #if !CYTHON_USE_MODULE_STATE
     Py_CLEAR(__pyx_m);
@@ -12446,7 +12425,7 @@ if (!__Pyx_RefNanny) {
     }
     #endif
   } else if (!PyErr_Occurred()) {
-    PyErr_SetString(PyExc_ImportError, "init maptools.toksim");
+    PyErr_SetString(PyExc_ImportError, "init maptools.toksim.toksim");
   }
   __pyx_L0:;
   __Pyx_RefNannyFinishContext();
@@ -14401,57 +14380,6 @@ bad:
     Py_XDECREF(args);
     return result;
 }
-
-/* SetPackagePathFromImportLib */
-#if PY_MAJOR_VERSION >= 3 && !CYTHON_PEP489_MULTI_PHASE_INIT
-static int __Pyx_SetPackagePathFromImportLib(PyObject *module_name) {
-    PyObject *importlib, *osmod, *ossep, *parts, *package_path;
-    PyObject *file_path = NULL;
-    int result;
-    PyObject *spec;
-    importlib = PyImport_ImportModule("importlib.util");
-    if (unlikely(!importlib))
-        goto bad;
-    spec = PyObject_CallMethod(importlib, "find_spec", "(O)", module_name);
-    Py_DECREF(importlib);
-    if (unlikely(!spec))
-        goto bad;
-    file_path = PyObject_GetAttrString(spec, "origin");
-    Py_DECREF(spec);
-    if (unlikely(!file_path))
-        goto bad;
-    if (unlikely(PyObject_SetAttrString(__pyx_m, "__file__", file_path) < 0))
-        goto bad;
-    osmod = PyImport_ImportModule("os");
-    if (unlikely(!osmod))
-        goto bad;
-    ossep = PyObject_GetAttrString(osmod, "sep");
-    Py_DECREF(osmod);
-    if (unlikely(!ossep))
-        goto bad;
-    parts = PyObject_CallMethod(file_path, "rsplit", "(Oi)", ossep, 1);
-    Py_DECREF(file_path); file_path = NULL;
-    Py_DECREF(ossep);
-    if (unlikely(!parts))
-        goto bad;
-    package_path = Py_BuildValue("[O]", PyList_GET_ITEM(parts, 0));
-    Py_DECREF(parts);
-    if (unlikely(!package_path))
-        goto bad;
-    goto set_path;
-bad:
-    PyErr_WriteUnraisable(module_name);
-    Py_XDECREF(file_path);
-    PyErr_Clear();
-    package_path = PyList_New(0);
-    if (unlikely(!package_path))
-        return -1;
-set_path:
-    result = PyObject_SetAttrString(__pyx_m, "__path__", package_path);
-    Py_DECREF(package_path);
-    return result;
-}
-#endif
 
 /* FixUpExtensionType */
 #if CYTHON_USE_TYPE_SPECS
