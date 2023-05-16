@@ -132,7 +132,7 @@ class OperatorGraph(object):
             save_dir = os.path.join(ROOT_DIR, 'mapsave', 'operator_graph')
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
-        dot.view(cleanup=True, directory=save_dir)
+        dot.render(cleanup=True, directory=save_dir, view=False)
         print(f"graph saved to {save_dir}")
 
 

@@ -7,7 +7,7 @@ from maptools import read_cfginfo, read_mapinfo, get_input
 import os
 
 root_dir = os.environ.get('NVCIM_HOME')
-mapname = 'resnet18'
+mapname = 'test'
 test = os.path.join(root_dir, 'onnx_models', 'simp-resnet18.onnx')
 img = get_input('work/test8.png')
 
@@ -17,7 +17,7 @@ routine = MapRoutine(
     calcusim=False,
     save_results=False,
     save_cfginfo=False,
-    show_ctg=False,
+    show_ctg=True,
     show_device_graph=False,
     xbar_size=(256, 256*5),
     noc_size=(5, 10),
@@ -28,8 +28,8 @@ routine = MapRoutine(
     toksim=False,
     toksim_latency = None,
     input=img,
-    quantize=True,
-    physical=True
+    quantize=False,
+    physical=False
 )
 
 ctg = routine.run()

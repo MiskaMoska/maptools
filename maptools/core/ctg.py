@@ -451,5 +451,5 @@ class CTG(object):
             elif e[0] in self.gather_comms or e[1] in self.gather_comms:
                 color = 'purple'
             dot.edge(str(e[0]), str(e[1]), color=color)
-        dot.view(cleanup=True, directory=save_dir)
+        dot.render(cleanup=True, directory=save_dir, view=False)
         print(f"ctg save to {save_dir}")
