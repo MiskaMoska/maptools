@@ -11,7 +11,7 @@ __all__ = [
     'ModelParams'
 ]
 
-LogicalTile = TypeVar('LogicalTile', bound=Tuple[int, int, int, int])
+LogicalTile = Tuple[int, int, int, int]
 PhysicalTile = Tuple[int, int]
 
 Path = Tuple[PhysicalTile, PhysicalTile]
