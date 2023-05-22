@@ -214,8 +214,9 @@ namespace toksim{
                 }
                 token++;
             }
-            else break;
-            if(done) break;
+            break;
+            // else break;
+            // if(done) break;
         }
         return C_Token(token);
     }

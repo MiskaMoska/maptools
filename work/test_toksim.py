@@ -5,10 +5,10 @@ from maptools import MapPlotter
 from maptools.toksim import TokSim
 
 # 读取onnx模型，注意你自己的路径
-model = onnx.load("onnx_models/simp-resnet18.onnx")
+model = onnx.load("onnx_models/simp-yolo.onnx")
 
 # 创建onnx转换器
-oc = OnnxConverter(model, arch=NNModelArch.RESNET)
+oc = OnnxConverter(model, arch=NNModelArch.YOLO_V3)
 
 # 执行转换
 oc.run_conversion()
