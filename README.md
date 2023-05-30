@@ -1,4 +1,6 @@
-# NVCIM-COMM
+# NaViM
+
+Toolkits for Non-Volatile In-Memory Computing.
 
 ## Set Up Environments
 

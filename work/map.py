@@ -13,7 +13,7 @@ img = get_input('work/test8.png')
 
 routine = MapRoutine(   
     mapname=mapname,
-    noc_map=False,
+    noc_map=True,
     calcusim=False,
     save_results=False,
     save_cfginfo=False,

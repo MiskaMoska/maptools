@@ -3,7 +3,8 @@ import sys
 import onnx
 import torch
 from typing import Optional, Tuple, Any
-from maptools.toksim import TokSim
+if os.name == 'posix':
+    from maptools.toksim import TokSim
 from maptools.hardware import NocConfig
 from maptools.utils import read_quantparams
 from maptools.core import CTG, NNModelArch, ROOT_DIR
@@ -30,10 +31,10 @@ class MapRoutine(object):
 
         # procedure control
         self.noc_map: bool = True
-        self.quantize: bool = True
-        self.physical: bool = True
-        self.hardtrans: bool = True
-        self.ivcf: Optional[float] = 1000/128
+        self.quantize: bool = False
+        self.physical: bool = False
+        self.hardtrans: bool = False
+        self.ivcf: Optional[float] = None
 
         self.show_origin_graph: bool = False
         self.show_host_graph: bool = False
