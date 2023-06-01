@@ -51,8 +51,8 @@ class TileMapper(object):
 
         self.map_dict : Dict[Tuple[int, int, int, int], Dict[str, Any]]
             A look-up-table for each mapped tile to get the corresponding configuration information.
-            The Tuple key is organized as (layer_idx, region_idx, block_idx, idx_in_block).
-            For example, to get the configuration information of the second tile in region 1, 
+            The Tuple key is organized as (layer_idx, cluster_idx, block_idx, idx_in_block).
+            For example, to get the configuration information of the second tile in cluster 1, 
             block 2 of the first layer, use:
             >>> key = (0, 1, 2, 1)
             >>> config_info = self.map_dict[key]
@@ -96,14 +96,14 @@ class TileMapper(object):
             if layer_index == 0:
                 self._assert_first_layer(n_ichan * kernel_size[0] * kernel_size[1], n_ochan)
 
-            regions_split = math.ceil(n_ochan / self.w) 
-            for region_index in range(regions_split):
-                map_info.append([]) # add a new region
+            clusters_split = math.ceil(n_ochan / self.w) 
+            for cluster_index in range(clusters_split):
+                map_info.append([]) # add a new cluster
 
                 # output vector mapping
-                start_ochan_index = region_index * self.w
-                if (region_index + 1) * self.w > n_ochan: end_ochan_index = n_ochan
-                else: end_ochan_index = (region_index + 1) * self.w
+                start_ochan_index = cluster_index * self.w
+                if (cluster_index + 1) * self.w > n_ochan: end_ochan_index = n_ochan
+                else: end_ochan_index = (cluster_index + 1) * self.w
                 
                 if 'block_boxes' not in layer_config:
                     raise KeyError("cannot find 'block_boxes' when tile mapping")
@@ -122,7 +122,7 @@ class TileMapper(object):
                     # get slice length, each slice is shorter than Xbar width
                     # `box_lock_index` is the block index within the current box
                     for box_block_index in range(box_blocks_split):
-                        map_info[region_index].append(0) # add a new block
+                        map_info[cluster_index].append(0) # add a new block
 
                         # `block_index` is the real index of blocks, spanning multiple boxes
                         block_index = block_base_index + box_block_index
@@ -160,8 +160,8 @@ class TileMapper(object):
                             is_merge_tile = (block_index == 0 and tile_index == 0)
                             self._regularize_op_type(tile_dict, is_merge_tile)
 
-                            self.map_dict[(layer_index, region_index, block_index, tile_index)] = tile_dict
-                            map_info[region_index][block_index] += 1
+                            self.map_dict[(layer_index, cluster_index, block_index, tile_index)] = tile_dict
+                            map_info[cluster_index][block_index] += 1
 
                     # for each box, the `block_base_index` accumulate
                     block_base_index += box_blocks_split
@@ -255,7 +255,7 @@ class TileMapper(object):
         for i, mtx in enumerate(self.map_list):
             sum = np.sum(mtx)
             total += sum
-            print(f"layer{i}({_match_dict[i]}): #region-{mtx.shape[0]}, #block-{mtx.shape[1]}, #tile-{sum}")
+            print(f"layer{i}({_match_dict[i]}): #cluster-{mtx.shape[0]}, #block-{mtx.shape[1]}, #tile-{sum}")
         print("-"*70)
         print(f"total #tile-{total}")
         self.total_tile = total

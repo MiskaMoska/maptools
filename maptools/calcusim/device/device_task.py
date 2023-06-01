@@ -95,7 +95,7 @@ class DeviceTask(nn.Module):
         # each sublist of `output_list` stores the output of all tiles in one output layer
         # the arrangement of the sublists follows the order of bridge index
         # each member of the sublist is a tuple with the tile output tensor as the second 
-        # element and the corresponding region index of the tile as the first element
+        # element and the corresponding cluster index of the tile as the first element
         output_list = []
         for i in range(self.ctg.output_num):
             output_list.append([])

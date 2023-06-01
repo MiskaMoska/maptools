@@ -1,5 +1,5 @@
 '''
-TODO need to provide support for random region division
+TODO need to provide support for random cluster division
 '''
 import os
 import random
@@ -84,21 +84,21 @@ class NocMapper(object):
         Map the tiles to the tile array following reverse-s path
         '''
         rs_path = self._gen_reverse_s(self.w, self.h)
-        for idx, region in self.ctg.regions:
-            merge_tile = region[0]
+        for idx, cluster in self.ctg.clusters:
+            merge_tile = cluster[0]
             while True:
                 valid = True
-                shuffle(region) # random mapping
-                merge_idx = region.index(merge_tile) # find the merge tile
+                shuffle(cluster) # random mapping
+                merge_idx = cluster.index(merge_tile) # find the merge tile
                 y_pos_merge = rs_path[idx+merge_idx]
-                for i in range(merge_idx, len(region)):
+                for i in range(merge_idx, len(cluster)):
                     if rs_path[idx+i] > y_pos_merge: # larger y_pos than merge tile
                         valid = False
                         break
                 if not valid: # begin next loop
                     continue
 
-                for i, tile in enumerate(region):
+                for i, tile in enumerate(cluster):
                     self.match_dict[tile] = rs_path[idx+i] # record map
                 break
 
@@ -163,7 +163,7 @@ class NocMapper(object):
         dx: int, 
         dy: int, 
         path: List[Tuple], 
-        region: Optional[List[Tuple]] = None
+        patch: Optional[List[Tuple]] = None
     ) -> None:
         '''
         Route from (sx, sy) to (dx, dy) following DyXY routing algorithm.
@@ -173,26 +173,26 @@ class NocMapper(object):
         path : List[Tuple]
             Where the routing path results is located after performing this method.
 
-        region : Optional[List[Tuple]]
-            To constraint the routing path in a region.
-            When asserted, the routing path is limited to the nodes in `region`.
+        patch : Optional[List[Tuple]]
+            To constraint the routing path in a patch.
+            When asserted, the routing path is limited to the nodes in `patch`.
         '''
         if sx == dx and sy == dy:
             return
         nxt_sx, nxt_sy = NocMapper._dyxy_once(sx, sy, dx, dy)
 
-        # if constrained routing region considered
-        if not region is None:
-            if (nxt_sx, nxt_sy) not in region:
+        # if constrained routing patch considered
+        if not patch is None:
+            if (nxt_sx, nxt_sy) not in patch:
                 if sy == nxt_sy:
                     nxt_sx = sx
                     nxt_sy = sy + (1 if sy < dy else -1)
                 elif sx == nxt_sx:
                     nxt_sy = sy
                     nxt_sx = sx + (1 if sx < dx else -1)
-            assert (nxt_sx, nxt_sy) in region, "critical error ecountered at merge path"
+            assert (nxt_sx, nxt_sy) in patch, "critical error ecountered at merge path"
         path.append(((sx, sy), (nxt_sx ,nxt_sy)))
-        NocMapper._route_dyxy(nxt_sx, nxt_sy, dx, dy, path, region=region)
+        NocMapper._route_dyxy(nxt_sx, nxt_sy, dx, dy, path, patch=patch)
 
     @staticmethod
     def _get_channel(bias_pos: Tuple, now_pos: Tuple, root_pos: Tuple) -> int:
@@ -242,8 +242,8 @@ class NocMapper(object):
         for sid, (name, src_nodes, root_node) in enumerate(self.ctg.merge_trees, 1):
             root_node = self.match_dict[root_node] # get the mapped node pos
             src_nodes = [self.match_dict[src] for src in src_nodes ] # get the mapped node pos
-            region_nodes = deepcopy(src_nodes)
-            region_nodes.append(root_node)
+            cluster_nodes = deepcopy(src_nodes)
+            cluster_nodes.append(root_node)
             print(f"starting merge plan {sid}/{merge_num} ....")
 
             # needed to be optimized by modified dyxy routing
@@ -260,7 +260,7 @@ class NocMapper(object):
                     path = []
                     self._route_dyxy(src_node[0], src_node[1], 
                                         root_node[0], root_node[1], path, 
-                                        region=region_nodes)
+                                        patch=cluster_nodes)
                     paths.extend(path)
                 paths = list(set(paths))
                 g.add_edges_from(paths)

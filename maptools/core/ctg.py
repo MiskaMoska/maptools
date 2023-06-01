@@ -53,8 +53,8 @@ class CTG(object):
 
         map_dict : Dict[Tuple[int, int, int, int], Dict[str, Any]]
             A look-up-table for each mapped tile to get the corresponding configuration information.
-            The Tuple key is organized as (layer_idx, region_idx, block_idx, idx_in_block).
-            For example, to get the configuration information of the second tile in region 1, 
+            The Tuple key is organized as (layer_idx, cluster_idx, block_idx, idx_in_block).
+            For example, to get the configuration information of the second tile in cluster 1, 
             block 2 of the first layer, use:
             >>> key = (0, 1, 2, 1)
             >>> config_info = self.map_dict[key]
@@ -197,10 +197,10 @@ class CTG(object):
             self.dicts[key] = value
 
     @property
-    def regions(self) -> Generator:
+    def clusters(self) -> Generator:
         '''
-        Returns all regions in turn
-        A region is a set of tiles that execute the same range of output channels in Conv layer
+        Returns all clusters in turn
+        A cluster is a set of tiles that execute the same range of output channels in Conv layer
         '''
         idx = 0
         base_idx = 0
@@ -208,12 +208,12 @@ class CTG(object):
             for j in range(mtx.shape[0]):
                 base_idx += idx
                 idx = 0
-                region = []
+                cluster = []
                 for k in range(mtx.shape[1]):
                     for t in range(mtx[j, k]):
-                        region.append((i, j, k, t))
+                        cluster.append((i, j, k, t))
                         idx += 1
-                yield base_idx, region
+                yield base_idx, cluster
 
     def _build_ctg(self, device_graph: DeviceGraph) -> None:
         self.graph = nx.MultiDiGraph()
@@ -233,9 +233,9 @@ class CTG(object):
                 'Add' in device_graph.dicts[e[1]]['op_type']) and (
                 not is_subseq([e[0], e[1]], device_graph.trunk)): 
                 assert p_mtx.shape[0] == s_mtx.shape[0], (
-                    "#regions not match for gather communication")
+                    "#clusters not match for gather communication")
                     
-                for i in range(p_mtx.shape[0]): # for each region in the last layer
+                for i in range(p_mtx.shape[0]): # for each cluster in the last layer
                     src_tile = (p_lid, i, 0, 0) # source node of the gather path
                     dst_tile = (s_lid, i, 0, 0) # dst node of the gather path
                     comm_name = 'gather_from_'+str(src_tile)
@@ -255,7 +255,7 @@ class CTG(object):
 
                 else: # is not a concat connection
                     assert p_mtx.shape[0] == s_mtx.shape[1], (
-                        "#regions in last layer does not match #blocks in this layer")
+                        "#clusters in last layer does not match #blocks in this layer")
                     base_block_idx = 0
 
                 for i in range(p_mtx.shape[0]):
@@ -273,8 +273,8 @@ class CTG(object):
         
         # add merge comms
         for lid, mtx in enumerate(self.map_list):
-            for i in range(mtx.shape[0]): # for each region in the current layer
-                if np.sum(mtx[i]) > 1: # there are more than 1 tile in the current region
+            for i in range(mtx.shape[0]): # for each cluster in the current layer
+                if np.sum(mtx[i]) > 1: # there are more than 1 tile in the current cluster
                     dst_tile = (lid, i, 0, 0) # root node of the merge tree
                     comm_name = 'merge_to_'+str(dst_tile)
                     
