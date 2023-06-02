@@ -29,9 +29,10 @@ routine = MapRoutine(
     toksim_latency = None,
     input=img,
     quantize=True,
-    physical=False,
+    physical=True,
     hardtrans=False,
-    ivcf=4000/128
+    ivcf=4000/128,
+    stats=True
 )
 
 ctg = routine.run()

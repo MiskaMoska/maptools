@@ -92,6 +92,7 @@ class CalcuSim(nn.Module):
         self.hardtrans: bool = True
         self.ivcf: Optional[float] = None
         self.first_layer_ivcf: Optional[float] = None
+        self.stats: bool = False
         self.__dict__.update(kwargs)
 
         self.device_task = DeviceTask(
@@ -103,7 +104,8 @@ class CalcuSim(nn.Module):
             physical=self.physical,
             hardtrans=self.hardtrans,
             ivcf=self.ivcf,
-            first_layer_ivcf=self.first_layer_ivcf
+            first_layer_ivcf=self.first_layer_ivcf,
+            stats=self.stats
         )
         self.host_task = HostTask(
             self.host_graph, 

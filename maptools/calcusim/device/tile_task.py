@@ -5,6 +5,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from typing import List, Dict, Optional, Tuple, Any, Callable
 from maptools.core import TileQuantConfig, LogicalTile
+from maptools.calcusim.device import ConvUnit
 
 __all__ = ['TileTask']
 
@@ -20,92 +21,6 @@ OBSERVE_VARS = {
     'data_out',
     'data_out_float'
 }
-
-def cimu_conv2d(
-    x: torch.Tensor,
-    weight: torch.Tensor,
-    bias: Optional[torch.Tensor] = None,
-    stride: Optional[List[int]] = [1, 1],
-    factor: float = 1,
-    tile: LogicalTile = None
-) -> torch.Tensor:
-
-    x = torch.clamp(x, -128, 127)
-    x = x.type(torch.int8)
-    y = 0
-    for i in range(8):
-        _y = F.conv2d(
-            ((x >> i) & 1).float(),
-            weight,
-            stride=stride
-        )
-        # print("max:%-15dmin:%-15davg_abs:%d"%(int(torch.max(_y)), int(torch.min(_y)), float(torch.mean(torch.abs(_y)))))
-
-        # ivc clamping transfer
-        _y = torch.clamp(torch.round(_y / factor), -128, 127)
-
-        # invert transfer
-        _y = torch.round(torch.round(_y * factor))
-
-        if i == 7: # sign bit
-            y += _y*(-pow(2, 7))
-        else: # non sign bit
-            y += _y*pow(2, i)
-
-    if bias is not None:
-        y += bias.view([1, -1, 1, 1])
-    
-    return y
-
-
-class ConvUnit(nn.Module):
-
-    def __init__(
-        self, 
-        weight: torch.Tensor, 
-        bias: torch.Tensor, 
-        strides: List[int],
-        physical: bool = False,
-        tile: LogicalTile = None,
-        ivcf: Optional[float] = None,
-        first_layer_ivcf: Optional[float] = None
-    ) -> None:
-        super().__init__()
-        self.weight = weight
-        self.bias = bias
-        self.strides = strides
-        self.tile = tile
-        self.physical = physical
-
-        # determine ivc transfer factor
-        if ivcf is not None:
-            if (first_layer_ivcf is not None) and (self.tile == (0, 0, 0, 0)):
-                self.factor = first_layer_ivcf
-            else:
-                self.factor = ivcf
-        else: self.factor = 1
-
-    def cuda(self):
-        self.weight = self.weight.cuda()
-        if self.bias is not None:
-            self.bias = self.bias.cuda()
-
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        if self.physical: # use physical cimu
-            return cimu_conv2d(
-                x, self.weight, 
-                bias=self.bias, 
-                stride=self.strides, 
-                factor=self.factor,
-                tile=self.tile
-            )
-        else: # use pytorch conv2d
-            return F.conv2d(
-                x, self.weight, 
-                bias=self.bias, 
-                stride=self.strides,                 
-            )
-
 
 class TileTask(nn.Module):
 
@@ -141,6 +56,7 @@ class TileTask(nn.Module):
         self.hardtrans: bool = True
         self.ivcf: Optional[float] = None
         self.first_layer_ivcf: Optional[float] = None
+        self.stats: bool = False
 
         self.__dict__.update(kwargs)
         self._init_conv_module()
@@ -155,7 +71,8 @@ class TileTask(nn.Module):
             physical=self.physical,
             tile=self.tile,
             ivcf=self.ivcf,
-            first_layer_ivcf=self.first_layer_ivcf
+            first_layer_ivcf=self.first_layer_ivcf,
+            stats=self.stats
         )
 
     def _init_resize_module(self) -> None:
@@ -174,14 +91,12 @@ class TileTask(nn.Module):
             self.tqc.ctrans_s = self.tqc.ctrans_s.cuda()
     
     def record_observe_vars(self, res: Any) -> None:
-        self.cast_in_float = self.cast_in * self.tqc.i_scale
-        if self.is_merge:
-            self.merge_in_float = self.merge_in * self.tqc.i_scale
-        if self.is_gather:
-            self.gather_in_float = self.gather_in * self.tqc.co_scale
-        if self.is_pool: 
-            self.before_pool_float = self.before_pool * self.tqc.o_scale
+        if self.is_merge: self.merge_in_float = self.merge_in * self.tqc.i_scale
+        if self.is_gather: self.gather_in_float = self.gather_in * self.tqc.co_scale
+        if self.is_pool: self.before_pool_float = self.before_pool * self.tqc.o_scale
+
         self.data_out = res
+        self.cast_in_float = self.cast_in * self.tqc.i_scale
         self.data_out_float = self.data_out * self.tqc.o_scale
 
     def _absorb(self, *args: Tuple[torch.Tensor]) -> None:

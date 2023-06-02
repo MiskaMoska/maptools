@@ -35,6 +35,7 @@ class MapRoutine(object):
         self.physical: bool = False
         self.hardtrans: bool = False
         self.ivcf: Optional[float] = None
+        self.stats: bool = False
 
         self.show_origin_graph: bool = False
         self.show_host_graph: bool = False
@@ -103,6 +104,7 @@ class MapRoutine(object):
                 physical=self.physical,
                 hardtrans=self.hardtrans,
                 ivcf=self.ivcf,
+                stats=self.stats,
                 **self.config
             )
             _ = csim(self.input)
