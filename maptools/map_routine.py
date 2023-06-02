@@ -105,13 +105,9 @@ class MapRoutine(object):
                 ivcf=self.ivcf,
                 **self.config
             )
-            host_output = csim(self.input)
-            # print('host_output:', host_output)
-            print('\n'+'-'*70)
-            print('\t\tCalcuSim Results')
-            print('-'*70)
-            print('max:', torch.max(host_output))
-            print('index:', torch.argmax(host_output))
+            _ = csim(self.input)
+            csim.report_results()
+            
             if self.save_results:
                 csim.save_results(file_name='quantres' if self.quantize else 'res')
 
