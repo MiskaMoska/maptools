@@ -75,6 +75,7 @@ class ConvUnit(nn.Module):
         self.bias = bias
         self.strides = strides
         self.tile = tile
+        self.physical = physical
 
         # determine ivc transfer factor
         if ivcf is not None:
@@ -84,21 +85,26 @@ class ConvUnit(nn.Module):
                 self.factor = ivcf
         else: self.factor = 1
 
-        self.func = cimu_conv2d if physical else F.conv2d
-
     def cuda(self):
         self.weight = self.weight.cuda()
         if self.bias is not None:
             self.bias = self.bias.cuda()
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        return self.func(
-            x, self.weight, 
-            bias=self.bias, 
-            stride=self.strides, 
-            factor=self.factor,
-            tile=self.tile
-        )
+        if self.physical: # use physical cimu
+            return cimu_conv2d(
+                x, self.weight, 
+                bias=self.bias, 
+                stride=self.strides, 
+                factor=self.factor,
+                tile=self.tile
+            )
+        else: # use pytorch conv2d
+            return F.conv2d(
+                x, self.weight, 
+                bias=self.bias, 
+                stride=self.strides,                 
+            )
 
 
 class TileTask(nn.Module):

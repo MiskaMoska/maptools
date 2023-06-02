@@ -107,6 +107,9 @@ class MapRoutine(object):
             )
             host_output = csim(self.input)
             # print('host_output:', host_output)
+            print('\n'+'-'*70)
+            print('\t\tCalcuSim Results')
+            print('-'*70)
             print('max:', torch.max(host_output))
             print('index:', torch.argmax(host_output))
             if self.save_results:

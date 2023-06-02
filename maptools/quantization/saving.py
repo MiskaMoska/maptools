@@ -5,7 +5,7 @@ from ppq import BaseGraph
 from ppq import QuantableOperation, TensorQuantizationConfig
 from ppq.quantization.qfunction import PPQuantFunction_toInt
 from maptools.core import OperatorQuantConfig
-from maptools.quantization.utils import destruct_scale
+from maptools.utils.tools import destruct_scale
 
 __all__ = ['save_quantization']
 

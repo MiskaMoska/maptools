@@ -1,5 +1,5 @@
 import onnx
-from maptools import OnnxConverter, XbarMapper, NocMapper
+from maptools import OnnxConverter, TileMapper, NocMapper
 from maptools.core import NNModelArch
 from maptools import MapPlotter
 
@@ -20,7 +20,7 @@ oc.run_conversion()
 og = oc.device_graph
 
 # 创建xbar映射器
-xm = XbarMapper(og, 256, 256*5)
+xm = TileMapper(og, 256, 256*5)
 
 # 执行映射
 xm.run_map()

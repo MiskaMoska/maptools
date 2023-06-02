@@ -15,7 +15,7 @@ trans = transforms.Compose([
 ])
 
 print("Preparing calibration dataset ...")
-dataset = tv.datasets.ImageFolder(root=r'C:\Users\wx98\Downloads\calib', transform=trans)
+dataset = tv.datasets.ImageFolder(root='/mnt/c/Users/wx98/Downloads/calib', transform=trans)
 calibset = [{'input': torch.unsqueeze(sample, dim=0)} for sample, _ in dataset]
 print(f"Calibration dataset prepared, number of samples: {len(calibset)}")
 # generate calibration datset end

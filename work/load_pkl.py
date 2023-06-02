@@ -2,18 +2,10 @@
 
 import os
 import pickle
-from maptools import *
+from maptools import read_results
 
 mapname = 'resnet18'
-root_dir = os.environ.get('NVCIM_HOME')
-quantinfo_path = os.path.join(root_dir, 'mapsave', mapname, 'quantinfo.pkl')
-graph_path = os.path.join(root_dir, 'mapsave', mapname, 'quantized_graph.pkl')
+res = read_results('resnet18', quantize=True)
 
-with open(quantinfo_path, 'rb') as f:
-    quantinfo = pickle.load(f)
+print(res[(0,0,0,0)]['data_out'])
 
-for i in quantinfo.values():
-    print(i.__dict__)
-
-# qparams = read_quantparams(mapname)
-# params = read_params(mapname)

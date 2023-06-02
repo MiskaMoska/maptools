@@ -1,6 +1,6 @@
 import os
 import onnx
-from maptools import OnnxConverter, XbarMapper
+from maptools import OnnxConverter, TileMapper
 from maptools.core import ROOT_DIR
 from maptools import NNModelArch
 
@@ -34,7 +34,7 @@ routine = MapRoutine(
     mapname=mapname,
     arch=NNModelArch.YOLO_V3,
     noc_map=False,
-    calcusim=False,
+    calcusim=True,
     save_results=True,
     save_cfginfo=True,
     show_ctg=True,
