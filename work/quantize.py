@@ -25,12 +25,21 @@ CALIB_STEPS      = 128
 DEVICE           = 'cuda'
 ONNX_PATH        = 'onnx_models/simp-resnet18.onnx'
 
+# quantize(
+#     INPUT_SHAPES,
+#     DEVICE,
+#     ONNX_PATH,
+#     mapname='resnet18',
+#     calibset=calibset,
+#     calib_steps=CALIB_STEPS
+# )
+
 quantize(
-    INPUT_SHAPES,
+    {'000_net': [1, 3, 768, 768]},
     DEVICE,
-    ONNX_PATH,
-    mapname='resnet18',
-    calibset=calibset,
-    calib_steps=CALIB_STEPS
+    'onnx_models/simp-yolo.onnx',
+    mapname='yolo',
+    calibset=None,
+    calib_steps=32
 )
 

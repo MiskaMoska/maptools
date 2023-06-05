@@ -16,7 +16,7 @@ import os
 root_dir = os.environ.get('NVCIM_HOME')
 mapname = 'yolo'
 model = os.path.join(root_dir, 'onnx_models', 'simp-yolo.onnx')
-# img = get_input('work/test8.png')
+img = get_input('work/test8.png', resize=(768, 768))
 
 # m = onnx.load(model)
 # oc = OnnxConverter(m, arch=NNModelArch.YOLO_V3)
@@ -34,11 +34,12 @@ routine = MapRoutine(
     mapname=mapname,
     arch=NNModelArch.YOLO_V3,
     noc_map=False,
+    input=img,
     calcusim=True,
-    save_results=True,
-    save_cfginfo=True,
-    show_ctg=True,
-    show_device_graph=True,
+    save_results=False,
+    save_cfginfo=False,
+    show_ctg=False,
+    show_device_graph=False,
     xbar_size = (128, 256),
     noc_size=(8, 10),
     model_dir=model,
@@ -47,8 +48,11 @@ routine = MapRoutine(
     show_gather_path=True,
     toksim=False,
     toksim_latency = 4,
-    quantize=False,
-    physical=False
+    quantize=True,
+    physical=True,
+    hardtrans=False,
+    ivcf=4000/128,
+    stats=True
 )
 
 ctg = routine.run()

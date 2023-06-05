@@ -172,7 +172,7 @@ class ResizeParser(BaseOperatorParser):
 
     def process(self) -> OperatorConfig:
         super().process()
-        scales = onh.to_array(self._get_variable(self.node.input[1]))
+        scales = onh.to_array(self._get_variable(self.node.input[-1]))
         assert scales.shape[0] == 4, (f"resize scales must be a 4-element array")
         assert scales[0] * scales[1] == 1, (
             f"resize scales on batch and channels must be 1, but got {scales}")

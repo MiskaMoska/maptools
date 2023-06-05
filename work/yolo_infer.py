@@ -3,7 +3,7 @@ import onnx
 from maptools import OnnxConverter, TileMapper, CalcuSim
 from maptools.core import ROOT_DIR
 from maptools import NNModelArch
-from maptools.host import ModelTask
+from maptools.calcusim import ModelTask
 
 ONNXDIR = os.path.join(ROOT_DIR, 'onnx_models', 'simp-yolo.onnx')
 MAPNAME = 'yolo'
