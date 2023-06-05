@@ -215,7 +215,7 @@ class NocMapper(object):
         for sid, (name, root_node, dst_nodes) in enumerate(self.ctg.cast_trees,1):
             root_node = self.match_dict[root_node] # get the mapped node pos
             dst_nodes = [self.match_dict[n] for n in dst_nodes] # get the mapped node pos
-            print(f"starting cast plan {sid}/{cast_num} ....")
+            # print(f"starting cast plan {sid}/{cast_num} ....")
 
             if self.cast_method == 'steiner': ... # deprecated
                 # base_g = build_mesh(dst_nodes + [root_node])
@@ -244,7 +244,7 @@ class NocMapper(object):
             src_nodes = [self.match_dict[src] for src in src_nodes ] # get the mapped node pos
             cluster_nodes = deepcopy(src_nodes)
             cluster_nodes.append(root_node)
-            print(f"starting merge plan {sid}/{merge_num} ....")
+            # print(f"starting merge plan {sid}/{merge_num} ....")
 
             # needed to be optimized by modified dyxy routing
             # keep generating the merge tree until it is valid
@@ -291,7 +291,7 @@ class NocMapper(object):
         for sid, (name, src_node, dst_node) in enumerate(self.ctg.gather_pairs,1):
             src_node = self.match_dict[src_node] # get the mapped node pos
             dst_node = self.match_dict[dst_node] # get the mapped node pos
-            print(f"starting gather plan {sid}/{gather_num} ....")
+            # print(f"starting gather plan {sid}/{gather_num} ....")
             # keep generating the gather path until it is valid
             # valid means it has no conflit with existing paths
             path = []
@@ -392,7 +392,7 @@ class NocMapper(object):
 
         with open(file_dir, 'wb') as f:
             pickle.dump(info_dict, f)
-        print(f"noc mapping info has been written to {file_dir}")
+        # print(f"noc mapping info has been written to {file_dir}")
 
     def plot_ctg(self) -> None:
         '''
