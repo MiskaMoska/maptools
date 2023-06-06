@@ -42,7 +42,12 @@ def cimu_conv2d(
         else: # if do distribution statistics, disable adc clamp and analyze results
             res_range = (int(torch.min(_y)), int(torch.max(_y)))
             res_avg = float(torch.mean(torch.abs(_y)))
-            print(f'bit(0 for LSB): {i}\trange: {res_range}\tavg_abs: {res_avg}')
+            
+            print('%-15s%-5s%-8s%-16s%-9s%-10s' % (
+                'bit(0 for LSB):'   , i,
+                'range:'            , res_range,
+                'avg_abs:'          , round(res_avg, 3)    
+            ))
 
         if i == 7: # sign bit
             y += _y*(-pow(2, 7))

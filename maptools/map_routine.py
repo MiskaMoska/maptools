@@ -88,7 +88,7 @@ class MapRoutine(object):
             )
             tsim.run()
             tsim.save_execu()
-            ctg = tsim.ctg
+            # ctg = tsim.ctg
 
         if self.calcusim:
             assert self.input is not None, "calcusim enabled but got input is None"

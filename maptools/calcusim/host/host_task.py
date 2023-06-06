@@ -26,11 +26,15 @@ class HostTask(nn.Module):
             self._modules[n] = HostOperator(config, self.params)
 
     def forward(self, x: List[torch.Tensor]) -> torch.Tensor:
-        for n in self.host_graph.nodes:
+        if len(list(self.host_graph.nodes)) == 1: # only has one operator
+            for n in self.host_graph.nodes:
+                return self._modules[n](x)
+
+        for n in self.host_graph.nodes: # has multiple serial operators
             if self.host_graph.is_input(n): # input operator
                 input = x[self.host_graph.dicts[n]['bridge_idx']]
                 self._buffers[n] = self._modules[n]([input])
-            
+
             else:
                 input_list = [self._buffers[pred] \
                     for pred in self.host_graph.preds(n)]

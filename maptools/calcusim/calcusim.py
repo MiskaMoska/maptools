@@ -117,7 +117,8 @@ class CalcuSim(nn.Module):
         self.device_task.cuda()
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        self.host_output = self.host_task(self.device_task(x)) 
+        self.device_output = self.device_task(x)
+        self.host_output = self.host_task(self.device_output) 
         return self.host_output
 
     def save_results(self, file_name: str = 'results'):
@@ -127,6 +128,7 @@ class CalcuSim(nn.Module):
         print('\n'+'-'*70)
         print('\t\tCalcuSim Results')
         print('-'*70)
+        print('device output shape: ', [v.shape for v in self.device_output])
         print('host output shape: ', self.host_output.shape)
-        print('max: ', torch.max(self.host_output))
-        print('index: ', torch.argmax(self.host_output))
+        print('host output max: ', torch.max(self.host_output))
+        print('host output max index: ', torch.argmax(self.host_output))

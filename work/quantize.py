@@ -35,10 +35,10 @@ ONNX_PATH        = 'onnx_models/simp-resnet18.onnx'
 # )
 
 quantize(
-    {'000_net': [1, 3, 768, 768]},
+    {'input': [1, 3, 32, 32]},
     DEVICE,
-    'onnx_models/simp-yolo.onnx',
-    mapname='yolo',
+    'onnx_models/simp-58.onnx',
+    mapname='58',
     calibset=None,
     calib_steps=32
 )
