@@ -150,7 +150,7 @@ class TileTask(nn.Module):
             x = F.relu(x)
 
             # only for tile with activation (relu)
-            # add quantization converting from input to output, return a int8
+            # act quantization converting from input to output, return a int8
             if self.quantize:
                 if self.hardtrans:
                     mult = self.tqc.atrans_i / pow(2, -self.tqc.atrans_s)

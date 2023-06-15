@@ -15,11 +15,11 @@ K = 3
 MAPNAME = 'resnet18'
 ONNXDIR = 'onnx_models/simp-resnet18.onnx'
 QUANTIZE = True
-DEVICE = 'cuda'
+DEVICE = 'cpu'
 BATCHSIZE = 32
 PHYSICAL = True
 HARDTRANS = True
-IVCF = 2000/32
+IVCF = 4000/32
 
 ########################## CalcuSim Model Begin ############################################
 model = onnx.load(ONNXDIR)
@@ -65,7 +65,7 @@ trans = transforms.Compose([
     transforms.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225))
 ])
 
-testset = tv.datasets.ImageFolder(root=r'C:\Users\wx98\Downloads\val', transform=trans)
+testset = tv.datasets.ImageFolder(root='/mnt/c/Users/wx98/Downloads/val', transform=trans)
 
 test_loader = DataLoader(
     testset,
