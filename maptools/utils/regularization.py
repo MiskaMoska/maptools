@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 from maptools.core import OriginGraph, DeviceGraph
 
 __all__ = [
@@ -11,13 +11,15 @@ def _regu_size(
     ofs: List[int], 
     ks: List[int], 
     pads: List[int], 
-    strs: List[int]
+    strs: List[int],
+    op_name: str = 'NULL'
 ) -> None:
     '''
     pads : List[int]
         `pads` is referenced, after performing this method, 
         `pads` can be modified to accomodate the feature map size
     '''
+
     def regu_one_dim(dim: int) -> None:
         while True:
             remain = ifs[dim] + pads[0+dim] + pads[2+dim]
@@ -29,16 +31,15 @@ def _regu_size(
                 break
             else:
                 print(f'''
-                    calculated output size {size_o} larger than onnx output size {ofs[dim]}
+                    @{op_name}: calculated output size {size_o} larger than onnx output size {ofs[dim]}
                     input_size: {ifs[dim]}, kernel_size: {ks[dim]},
                     strides: {strs[dim]}, pads: {[pads[0+dim], pads[2+dim]]}
                     need to decrease pads
                 ''')
         extra = remain % strs[dim]
         if extra != 0:
-            print('starting correcting one size ....')
-            assert extra <= pads[2-dim], \
-                "extra pixels larger than onnx outside (right and down) pads, cannot perform correction"
+            assert extra <= pads[2-dim], (
+                f"@{op_name}: extra pixels larger than onnx outside (right and down) pads, cannot perform correction")
             for i in range(extra):
                 pads[2-dim] -= 1
 
@@ -66,7 +67,7 @@ def regularize_pads(graph: OriginGraph) -> None:
             cstrs = config['conv_strides']
             cifs = config['conv_input_size']
             cofs = config['conv_output_size']
-            _regu_size(cifs, cofs, cks, cpads, cstrs)
+            _regu_size(cifs, cofs, cks, cpads, cstrs, op_name=config['name'])
             graph.dicts[node]['conv_pads'] = cpads
         
         elif config['op_type'] in {'MaxPool', 'AveragePool'}:
@@ -75,7 +76,7 @@ def regularize_pads(graph: OriginGraph) -> None:
             pstrs = config['pool_strides']
             pifs = config['pool_input_size']
             pofs = config['pool_output_size']
-            _regu_size(pifs, pofs, pks, ppads, pstrs)
+            _regu_size(pifs, pofs, pks, ppads, pstrs, op_name=config['name'])
             graph.dicts[node]['pool_pads'] = ppads
 
 

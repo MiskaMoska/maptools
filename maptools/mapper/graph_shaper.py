@@ -44,10 +44,20 @@ class Yolov3GraphShaper(BaseGraphShaper):
         graph.fuse_resize()
         graph.remove_concat()
 
+class SqueezenetGraphShaper(BaseGraphShaper):
+
+    def process(self, graph: DeviceGraph) -> None:
+        graph.fuse_act()
+        graph.head_pool('Concat')
+        graph.fuse_pool()
+        graph.fuse_resize()
+        graph.remove_concat()
+
 
 __SHAPER_ACCESS_TABLE__ = {
     NNModelArch.VGG         : ResnetGraphShaper,
     NNModelArch.RESNET      : ResnetGraphShaper,
     NNModelArch.GOOGLENET   : GooglenetGraphShaper,
-    NNModelArch.YOLO_V3     : Yolov3GraphShaper
+    NNModelArch.YOLO_V3     : Yolov3GraphShaper,
+    NNModelArch.SQUEEZENET  : SqueezenetGraphShaper
 }

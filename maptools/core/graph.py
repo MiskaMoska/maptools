@@ -244,7 +244,7 @@ class DeviceGraph(OperatorGraph):
                         f"the predecessors of concat must have conv, but got {self.op_type(pred)}")
                     for succ in self.succs(n):
                         assert 'Conv' in self.op_type(succ), (
-                            f"the successors of concat must have conv, but got {self.op_type(pred)}")
+                            f"the successors of concat must have conv, but got {self.op_type(succ)}")
                         es2add.append((pred, succ))
                 ns2rmv.append(n)
         
@@ -280,7 +280,6 @@ class DeviceGraph(OperatorGraph):
             if self.op_type(n) in {'MaxPool', 'AveragePool', 'GlobalAveragePool'}: 
                 pred_type = self.op_type(self.unique_pred(n))
                 if pred_type == head_type: # need to put pool ahead
-                    ns2rmv.append(n)
                     conc = self.unique_pred(n)
                     pool_succs = list(self.succs(n))
                     conc_preds = list(self.preds(conc))

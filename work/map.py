@@ -8,14 +8,14 @@ from maptools import read_cfginfo, read_mapinfo, get_input
 import os
 
 root_dir = os.environ.get('NVCIM_HOME')
-mapname = 'renet18'
-test = os.path.join(root_dir, 'onnx_models', 'simp-resnet18.onnx')
+mapname = 'squeezenet'
+test = os.path.join(root_dir, 'onnx_models', 'simp-squeezenet.onnx')
 img = get_input('work/test8.png', resize=(224, 224))
 
 routine = MapRoutine(   
     mapname=mapname,
-    arch=NNModelArch.RESNET,
-    noc_map=True,
+    arch=NNModelArch.SQUEEZENET,
+    noc_map=False,
     calcusim=False,
     save_results=True,
     save_cfginfo=False,
@@ -23,14 +23,14 @@ routine = MapRoutine(
     show_origin_graph=True,
     show_host_graph=True,
     show_device_graph=True,
-    xbar_size=(256, 256*4),
+    xbar_size=(128, 128*5),
     noc_size=(8, 9),
     model_dir=test,
     show_cast_path=True,
     show_merge_path=True,
     show_gather_path=True,
-    toksim=False,
-    toksim_latency = None,
+    toksim=True,
+    toksim_latency=None,
     input=img,
     quantize=False,
     physical=True,
