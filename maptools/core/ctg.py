@@ -366,7 +366,7 @@ class CTG(object):
     def gather_pairs(self) -> Generator[Tuple, None, None]:
         for g in self.gather_comms:
             src = list(self.graph.predecessors(g))[0]
-            dst = list(self.graph.successors(g))[0]
+            dst = list(self.graph.successors(g))
             yield (g, src, dst)
 
     def comm_load_analysis(self) -> None:
@@ -451,5 +451,6 @@ class CTG(object):
             elif e[0] in self.gather_comms or e[1] in self.gather_comms:
                 color = 'purple'
             dot.edge(str(e[0]), str(e[1]), color=color)
+            
         dot.render(cleanup=True, directory=save_dir, view=False)
-        print(f"ctg save to {save_dir}")
+        print(f"ctg saved to {save_dir}")

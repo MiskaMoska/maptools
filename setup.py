@@ -2,7 +2,6 @@ import os
 from distutils.core import Extension, setup
 from Cython.Build import cythonize
 
-
 extension = Extension(
     'maptools.toksim.toksim',
     sources=[
@@ -18,7 +17,8 @@ extension = Extension(
 
 if os.name == 'posix':
     ext_modules = cythonize(extension)
-else: ext_modules = None
+else: 
+    ext_modules = None
 
 setup(
     name='maptools',
@@ -34,7 +34,8 @@ setup(
         'maptools.mapper',
         'maptools.quantization',
         'maptools.toksim',
-        'maptools.utils'
+        'maptools.utils',
+        'maptools.nlrt'
     ],
     ext_modules=ext_modules
 )

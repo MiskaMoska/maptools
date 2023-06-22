@@ -5,7 +5,9 @@ from typing import Optional
 __all__ = [
     'OperatorQuantConfig',
     'TileQuantConfig',
-    'NNModelArch'
+    'NNModelArch',
+    'DLEMethod',
+    'DREMethod'
 ]
 
 class OperatorQuantConfig(object):
@@ -62,4 +64,14 @@ class NNModelArch(Enum):
     RESNET       = 1
     GOOGLENET    = 2
     YOLO_V3      = 3
+    SQUEEZENET   = 4
 
+
+class DLEMethod(Enum):
+    REVERSE_S = 0
+
+
+class DREMethod(Enum):
+    DYXY = 0
+    RPM = 1
+    OCR = 2

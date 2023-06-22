@@ -1,6 +1,3 @@
-'''
-TODO need to provide support for random cluster division
-'''
 import os
 import random
 import pickle
@@ -10,97 +7,81 @@ from copy import deepcopy
 from typing import List, Dict, Tuple, Any, Optional, Generator
 from functools import cached_property
 from maptools.mapper.tile_mapper import TileMapper
-from maptools.core import CTG, ROOT_DIR
+from maptools.core import CTG, ACG, ROOT_DIR
+from maptools.nlrt import LayoutDesigner, LayoutResult
+from maptools.nlrt import RoutingDesigner, RoutingResult
 
 __all__ = ['NocMapper']
 
 class NocMapper(object):
 
-    def __init__(self, ctg: CTG, w: int, h: int, **kwargs: Any) -> None:
+    def __init__(
+        self, 
+        ctg: CTG, 
+        acg: ACG,
+        **kwargs: Any
+    ) -> None:
         '''
         Map the communication trace graph (CTG) onto network-on-chip (NoC)
 
-        Parameters
-        ----------
-        ctg : CTG
-            communication trace graph
+        Parameter
+        ---------
+        ctg: CTG
+            Communication Trace Graph of the AI task.
 
-        w : int
-            xbar array width
-
-        h : int
-            xbar array height
-
-        kwargs : Dict
-            cast_method : bool = 'dyxy'
-                'dyxy'      : DyXY-routing-based algorithm to run cast routing path plan, random.
-                'steiner'   : minimum steiner-tree-based algorithm to run cast routing path plan, deterministic.
-
-            mapname : str = 'newmap'
-                Map name
+        acg: ACG
+            Architecture Characterization Graph of the NoC.
 
         Key Members
         -----------
-        self.match_dict : Dict[Tuple[int, int, int, int], Tuple[int, int]]
-            A dictionary with logical tile as keys and physical tile as values
-            Map the logical tile (4-element tuple) to the physical tile (2-element tuple).
-
         self.xxx_paths : Dict[str, Dict[str, Any]]
-            xxx can be any of [cast, merge, gather].
+            xxx can be any of [cast, merge].
             Stores the mapped paths and corresponding attributes for each connection type.
             `self.xxx_paths` = {'connection_name' : `path_dict`}
             where `path_dict` = {'sid' : int, 'src' : List[Tuple], 'dst' : List[Tuple], 
                                 'path' : List[Tuple[Tuple]], 'load_ratio' : float, ....}}
         '''
         self.ctg = ctg
-        self.w = w
-        self.h = h
-        self.cast_method = 'dyxy' # steiner tree is harmful
+        self.acg = acg
+        self.w = acg.w
+        self.h = acg.h
+        self.configs = kwargs
+
         self.mapname = 'newmap'
         self.__dict__.update(kwargs)
-
-        # mapping from logical tiles to physical tiles
-        self.match_dict: Dict[Tuple[int, int, int, int], Tuple[int, int]] = dict()
 
         # network routing paths
         self.cast_paths: Dict[str, Dict[str, Any]] = dict()
         self.merge_paths: Dict[str, Dict[str, Any]] = dict()
-        self.gather_paths: Dict[str, Dict[str, Any]] = dict()
 
-    @staticmethod
-    def _gen_reverse_s(w: int, h: int) -> List[Tuple[int, int]]:
-        '''
-        generate reverse-s path
-        '''
-        rs_path = []
-        for i in range(h):
-            for j in range(w):
-                idx = (i+1)*w-j-1 if i % 2 else i*w+j
-                rs_path.append((idx % w, idx // w))
-        return rs_path
-    
-    def _map_tiles(self) -> None:
-        '''
-        Map the tiles to the tile array following reverse-s path
-        '''
-        rs_path = self._gen_reverse_s(self.w, self.h)
-        for idx, cluster in self.ctg.clusters:
-            merge_tile = cluster[0]
-            while True:
-                valid = True
-                shuffle(cluster) # random mapping
-                merge_idx = cluster.index(merge_tile) # find the merge tile
-                y_pos_merge = rs_path[idx+merge_idx]
-                for i in range(merge_idx, len(cluster)):
-                    if rs_path[idx+i] > y_pos_merge: # larger y_pos than merge tile
-                        valid = False
-                        break
-                if not valid: # begin next loop
-                    continue
+    def run_layout(self) -> None:
+        self.layout_designer = LayoutDesigner(
+            self.ctg, self.acg, **self.configs
+        )
+        self.layout_designer.run_layout()
+        self.layout = self.layout_designer.layout_result
 
-                for i, tile in enumerate(cluster):
-                    self.match_dict[tile] = rs_path[idx+i] # record map
-                break
+    def run_routing(self) -> None:
+        self._merge_routing()
+        self.routing_designer = RoutingDesigner(
+            self.ctg, self.acg, self.layout, **self.configs
+        )
+        self.routing_designer.run_routing()
+        self.routing = self.routing_designer.routing_result
+
+        sid = 0
+        for cset in [
+            self.ctg.cast_trees, 
+            self.ctg.gather_pairs
+        ]:
+            for c, src, dst in cset:
+                sid += 1
+                self.cast_paths[c] = {
+                    'sid': sid,
+                    'src': [self.layout[src]],
+                    'dst': [self.layout[d] for d in dst],
+                    'path': self.routing[c]
+                }
 
     @staticmethod
     def _dyxy_once(sx: int, sy: int, dx: int, dy: int) -> Tuple:
@@ -120,41 +101,6 @@ class NocMapper(object):
                 nxt_sy = sy
                 nxt_sx = sx + (1 if sx < dx else -1)
         return nxt_sx, nxt_sy
-
-    @staticmethod
-    def _cast_route_dyxy(sx: int, sy: int,dx: int, dy: int,graph: nx.Graph) -> None:
-        '''
-        Only for cast tree planning.
-        Route from (sx, sy) to (dx, dy) following DyXY routing algorithm.
-
-        Parameters
-        ----------
-        graph : Graph
-            The udirected-tree-graph of the current cast communication.
-        '''
-        if sx == dx and sy == dy:
-            return
-        nxt_sx, nxt_sy = NocMapper._dyxy_once(sx, sy, dx, dy)
-        if (nxt_sx, nxt_sy) in graph.nodes:
-            graph.add_edge((sx, sy), (nxt_sx, nxt_sy))
-            return
-        graph.add_edge((sx, sy), (nxt_sx, nxt_sy))
-        NocMapper._cast_route_dyxy(nxt_sx, nxt_sy, dx, dy, graph)
-    
-    @staticmethod
-    def _build_cast_tree(root_node: Tuple, dst_nodes: List[Tuple]) -> nx.DiGraph:
-        '''
-        Build cast tree according to given root node and destination nodes.
-        Applying DyXY method.
-        '''
-        g = nx.Graph()
-        # if more randomization is need, deepcopy and shuffle the dst_nodes here
-        for d in dst_nodes:
-            if d not in g.nodes:
-                NocMapper._cast_route_dyxy(d[0], d[1], root_node[0], root_node[1], g)
-        assert nx.is_tree(g), f"failed to build cast tree, not a tree: {g.edges}"
-        g = nx.dfs_tree(g, source=root_node)
-        return g
 
     @staticmethod
     def _route_dyxy(
@@ -194,57 +140,20 @@ class NocMapper(object):
         path.append(((sx, sy), (nxt_sx ,nxt_sy)))
         NocMapper._route_dyxy(nxt_sx, nxt_sy, dx, dy, path, patch=patch)
 
-    @staticmethod
-    def _get_channel(bias_pos: Tuple, now_pos: Tuple, root_pos: Tuple) -> int:
-        if bias_pos[0] < now_pos[0]: # west
-            return 1
-        if bias_pos[0] > now_pos[0]: # east
-            return 2
-        if now_pos[0] < root_pos[0]: # vert0
-            return 3
-        return 4 # vert1
-
-    def _cast_plan(self) -> None:
-        '''
-        Planning cast routing paths
-        Make sure to call this method after `self._map_tiles()`
-        '''
-        # cast tree number
-        cast_num = self.ctg.cast_num
-
-        for sid, (name, root_node, dst_nodes) in enumerate(self.ctg.cast_trees,1):
-            root_node = self.match_dict[root_node] # get the mapped node pos
-            dst_nodes = [self.match_dict[n] for n in dst_nodes] # get the mapped node pos
-            # print(f"starting cast plan {sid}/{cast_num} ....")
-
-            if self.cast_method == 'steiner': ... # deprecated
-                # base_g = build_mesh(dst_nodes + [root_node])
-                # g = nx.algorithms.approximation.steiner_tree(base_g, dst_nodes + [root_node])
-                # g = nx.dfs_tree(g, source=root_node)
-            elif self.cast_method == 'dyxy':
-                g = self._build_cast_tree(root_node, dst_nodes)
-
-            self.cast_paths[name] = dict()
-            self.cast_paths[name]['sid'] = sid
-            self.cast_paths[name]['src'] = [root_node]
-            self.cast_paths[name]['dst'] = dst_nodes
-            self.cast_paths[name]['path'] = list(g.edges) # add to cast_paths
-            self.cast_paths[name]['load_ratio'] = self.ctg.get_attr(name, 'load_ratio')
-
-    def _merge_plan(self) -> None:
+    def _merge_routing(self) -> None:
         '''
         Planning merge routing paths
-        Make sure to call this method after `self._map_tiles()`
+        Make sure to call this method after `self.run_layout()`
         '''
         # merge tree number
         merge_num = self.ctg.merge_num  
 
         for sid, (name, src_nodes, root_node) in enumerate(self.ctg.merge_trees, 1):
-            root_node = self.match_dict[root_node] # get the mapped node pos
-            src_nodes = [self.match_dict[src] for src in src_nodes ] # get the mapped node pos
+            root_node = self.layout[root_node] # get the mapped node pos
+            src_nodes = [self.layout[src] for src in src_nodes ] # get the mapped node pos
             cluster_nodes = deepcopy(src_nodes)
             cluster_nodes.append(root_node)
-            # print(f"starting merge plan {sid}/{merge_num} ....")
+            # print(f"starting merge routing {sid}/{merge_num} ....")
 
             # needed to be optimized by modified dyxy routing
             # keep generating the merge tree until it is valid
@@ -273,42 +182,13 @@ class NocMapper(object):
                         break
                 if flag:
                     break
-            self.merge_paths[name] = dict()
-            self.merge_paths[name]['sid'] = sid
-            self.merge_paths[name]['src'] = src_nodes
-            self.merge_paths[name]['dst'] = [root_node]
-            self.merge_paths[name]['path'] = paths # add to merge_paths
-            self.merge_paths[name]['load_ratio'] = self.ctg.get_attr(name, 'load_ratio')
-
-    def _gather_plan(self) -> None:
-        '''
-        Planning gather routing paths
-        Make sure to call this method after calling `self._map_tiles`
-        '''
-        # gather pair  number
-        gather_num = self.ctg.gather_num
-        
-        for sid, (name, src_node, dst_node) in enumerate(self.ctg.gather_pairs,1):
-            src_node = self.match_dict[src_node] # get the mapped node pos
-            dst_node = self.match_dict[dst_node] # get the mapped node pos
-            # print(f"starting gather plan {sid}/{gather_num} ....")
-            # keep generating the gather path until it is valid
-            # valid means it has no conflit with existing paths
-            path = []
-            self._route_dyxy(src_node[0], src_node[1],
-                                dst_node[0], dst_node[1], path)
-            self.gather_paths[name] = dict()
-            self.gather_paths[name]['sid'] = sid
-            self.gather_paths[name]['src'] = [src_node]
-            self.gather_paths[name]['dst'] = [dst_node]
-            self.gather_paths[name]['path'] = path
-            self.gather_paths[name]['load_ratio'] = self.ctg.get_attr(name, 'load_ratio')
-
-    def run_map(self) -> None:
-        self._map_tiles()
-        self._cast_plan()
-        self._merge_plan()
-        self._gather_plan()
+            
+            self.merge_paths[name] = {
+                'sid': sid,
+                'src': src_nodes,
+                'dst': [root_node],
+                'path': paths
+            }
 
     @cached_property
     def tile_config(self) -> Dict:
@@ -317,7 +197,7 @@ class NocMapper(object):
         Tile configuration information for system simulation.
         Always call this method after calling `self.run_map`.
         '''
-        return {self.match_dict[k] : self.ctg.dicts[k] for k in self.ctg.tile_nodes}
+        return {self.layout[k] : self.ctg.dicts[k] for k in self.ctg.tile_nodes}
 
     @property 
     def p2p_casts(self) -> Generator:
@@ -326,7 +206,7 @@ class NocMapper(object):
         Make sure to call this method after calling `self.run_map`.
         '''
         for _, root_node, dst_nodes in self.ctg.cast_trees:
-            yield (self.match_dict[root_node], [self.match_dict[d] for d in dst_nodes])
+            yield (self.layout[root_node], [self.layout[d] for d in dst_nodes])
     
     @property
     def p2p_merges(self) -> Generator:
@@ -335,7 +215,7 @@ class NocMapper(object):
         Make sure to call this method after calling `self.run_map`.
         '''
         for _, src_nodes, root_node in self.ctg.merge_trees:
-            yield ([self.match_dict[s] for s in src_nodes], self.match_dict[root_node])
+            yield ([self.layout[s] for s in src_nodes], self.layout[root_node])
 
     @property
     def p2p_gathers(self) -> Generator:
@@ -344,7 +224,7 @@ class NocMapper(object):
         Make sure to call this method after calling `self.run_map`.
         '''
         for _, src_node, dst_node in self.ctg.gather_pairs:
-            yield (self.match_dict[src_node], self.match_dict[dst_node])
+            yield (self.layout[src_node], self.layout[dst_node])
 
     @cached_property
     def tail_tiles(self) -> List[Tuple]:
@@ -358,7 +238,7 @@ class NocMapper(object):
             if self.ctg.is_tail_tile(tile):
                 tails.append(tile)
         tails.sort(key=lambda tup:tup[1])
-        return [self.match_dict[x] for x in tails]
+        return [self.layout[x] for x in tails]
 
     def save_map(self, file_name: str = 'mapinfo') -> None:
         '''
@@ -375,13 +255,12 @@ class NocMapper(object):
         info_dict['network_height'] = self.h
 
         # write noc mapping info
-        info_dict['match_dict'] = self.match_dict
+        info_dict['match_dict'] = self.layout.l2p_map
         info_dict['tile_config'] = self.tile_config
 
         # write network config info
         info_dict['cast_paths'] = self.cast_paths
         info_dict['merge_paths'] = self.merge_paths
-        info_dict['gather_paths'] = self.gather_paths
 
         # write p2p communication info
         info_dict['p2p_casts'] = list(self.p2p_casts)
@@ -398,4 +277,4 @@ class NocMapper(object):
         '''
         Added physical tile information than `CTG.plot_ctg()`
         '''
-        self.ctg.plot_ctg(match_dict=self.match_dict)
+        self.ctg.plot_ctg(match_dict=self.layout.l2p_map)
