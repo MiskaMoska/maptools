@@ -1,4 +1,5 @@
 import os
+import pickle
 from maptools.toksim.c_toksim cimport C_TokSim
 from typing import Tuple, Dict, List, Union, Any
 from maptools.core import CTG, ROOT_DIR, LogicalTile
@@ -16,6 +17,8 @@ cdef class TokSim:
     _nodes: List[bytes]
     _node_attr_dict: Dict[bytes, Dict[str, Any]]
     _tile_config_dict: Dict[bytes, Dict[str, Any]]
+
+    _token_dict: Dict[bytes, List[int]]
 
     def __init__(self, ctg: CTG, mapname: str = 'newmap') -> None:
         self.ctg = ctg
@@ -37,7 +40,7 @@ cdef class TokSim:
         for node in self._nodes:
             if node in self._need_bufs:
                 bufs = self._need_bufs[node]
-                log += '%-5s%-20s%-9s%-20s%-9s%-20s%-10s%-20s%-10s%-20s%-11s%-20s\n' % (
+                log += '%-5s%-20s%-9s%-18s%-9s%-18s%-10s%-18s%-10s%-18s%-11s%-10s\n' % (
                     'tile:', node,
                     'conv_buf:', bufs[b'conv_buf'],
                     'pool_buf:', bufs[b'pool_buf'],
@@ -45,13 +48,27 @@ cdef class TokSim:
                     'merge_buf:', bufs[b'merge_buf'],
                     'gather_buf:', bufs[b'gather_buf']
                 )
+        print("\n\n"+"-"*70)
+        print("TokSim Buffer Evaluation Report")
+        print("-"*70)
+        print(log)
         return log
 
     def save_execu(self, file_name: str = 'token'):
         save_dir = os.path.join(ROOT_DIR, 'mapsave', self.mapname, 'toksim')
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
-    
+
+        # save token information
+        file_dir = os.path.join(save_dir, 'tokens.pkl')
+        self._token_dict = {
+            t: self.c_toksim.execu_dict[self.encode(t)]
+            for t in self.ctg.tiles
+        }
+        with open(file_dir,'wb') as f:
+            pickle.dump(self._token_dict, f)
+        print(f"\rtoken info written to {file_dir}")
+
         # save buffer log
         file_dir = os.path.join(save_dir, 'buffer.log')
         log = self.get_bufs()
@@ -64,6 +81,7 @@ cdef class TokSim:
             self.encode(node) 
             for node in self.ctg.node_names
         ]
+
         self._node_attr_dict = {
             self.encode(node): self._cpp_get_node_attr(node)
             for node in self.ctg.node_names

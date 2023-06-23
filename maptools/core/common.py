@@ -1,4 +1,5 @@
 import os
+from maptools.core.proto import NNModelArch
 
 __all__ = [
     'ROOT_DIR',
@@ -16,16 +17,36 @@ ROOT_DIR = os.environ.get('NVCIM_HOME')
 # where the original graph will be truncated at the boundary operators
 # and then divided into host graph and device graph.
 TRUNCATE_OPS = {
-    'Conv', 
-    'Relu', 'PRelu', 'HardSigmoid',
-    'MaxPool', 'AveragePool'
+    NNModelArch.VGG: {
+        'MaxPool'
+    },
+
+    NNModelArch.RESNET: {
+        'Conv', 
+        'Relu', 'PRelu', 'HardSigmoid',
+        'MaxPool', 'AveragePool'
+    },
+
+    NNModelArch.YOLO_V3 : {
+        'Conv', 
+        'Relu', 'PRelu', 'HardSigmoid',
+        'MaxPool', 'AveragePool'
+    },
+
+    NNModelArch.SQUEEZENET : {
+        'Conv', 
+        'Relu', 'PRelu', 'HardSigmoid',
+        'MaxPool', 'AveragePool'
+    }
 }
+
 
 # These are the operators that merges data from several branches to
 # one operator, this constant helps to construct raw operator graph
 MERGE_OPS = {
     'Mul','Add','Concat'
 }
+
 
 # Here list all valid operators that are supported by this tool,
 # including valid device operators and valid host operators

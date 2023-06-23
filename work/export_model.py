@@ -16,12 +16,12 @@ import onnx
 # ox.export(ssd,torch.randn(1,3,300,300),"ssd300_vgg16.onnx",opset_version=13)
 
 # model = tv.models.resnet18()
-model = tv.models.squeezenet1_1()
+model = tv.models.vgg16()
 # print(model.get_num_params())
 ox.export(
     model,
-    torch.randn([1,3,223,223]),
-    "onnx_models/squeezenet1_1.onnx",
+    torch.randn([1,3,224,224]),
+    "onnx_models/vgg16.onnx",
     opset_version=11,
     input_names=["input"],
     output_names=["output"]

@@ -142,7 +142,8 @@ class OnnxConverter(object):
             self.insert_quant_info()
 
     def construct_host_graph(self) -> None:
-        self.host_graph, self.device_graph = self.origin_graph.dispatch_graph()
+        self.host_graph, self.device_graph = (
+            self.origin_graph.dispatch_graph(arch=self.arch))
 
     def construct_device_graph(self) -> None:
         self.shaper(self.device_graph)

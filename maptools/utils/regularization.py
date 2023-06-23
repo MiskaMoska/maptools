@@ -70,7 +70,7 @@ def regularize_pads(graph: OriginGraph) -> None:
             _regu_size(cifs, cofs, cks, cpads, cstrs, op_name=config['name'])
             graph.dicts[node]['conv_pads'] = cpads
         
-        elif config['op_type'] in {'MaxPool', 'AveragePool'}:
+        elif config['op_type'] in {'MaxPool'}:
             pks = config['pool_kernel_size']
             ppads = config['pool_pads']
             pstrs = config['pool_strides']

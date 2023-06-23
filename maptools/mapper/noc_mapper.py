@@ -10,6 +10,7 @@ from maptools.mapper.tile_mapper import TileMapper
 from maptools.core import CTG, ACG, ROOT_DIR
 from maptools.nlrt import LayoutDesigner, LayoutResult
 from maptools.nlrt import RoutingDesigner, RoutingResult
+from maptools.drawing import MapPlotter
 
 __all__ = ['NocMapper']
 
@@ -223,8 +224,8 @@ class NocMapper(object):
         gather information for P2P simulation.
         Make sure to call this method after calling `self.run_map`.
         '''
-        for _, src_node, dst_node in self.ctg.gather_pairs:
-            yield (self.layout[src_node], self.layout[dst_node])
+        for _, src_node, dst_nodes in self.ctg.gather_pairs:
+            yield (self.layout[src_node], [self.layout[d] for d in dst_nodes])
 
     @cached_property
     def tail_tiles(self) -> List[Tuple]:
@@ -240,9 +241,31 @@ class NocMapper(object):
         tails.sort(key=lambda tup:tup[1])
         return [self.layout[x] for x in tails]
 
-    def save_map(self, file_name: str = 'mapinfo') -> None:
+    def save_layout(self) -> None:
         '''
-        save the mapping results as pkl sequence
+        Save layout graphs
+        '''
+        self.layout.draw()
+
+    def save_routing(self) -> None:
+        '''
+        Save routing graphs
+        '''
+        self.routing.draw()
+        mplt = MapPlotter(
+            self.w, self.h,
+            self.cast_paths, 
+            self.merge_paths, 
+            self.cast_paths, 
+            show_path=True,
+            **self.configs
+        )
+        mplt.plot_cast_map()
+        mplt.plot_merge_map()
+
+    def save_config(self, file_name: str = 'mapinfo') -> None:
+        '''
+        Save NoC configuration information
         '''
         save_dir = os.path.join(ROOT_DIR, 'mapsave', self.mapname)
         if not os.path.exists(save_dir):

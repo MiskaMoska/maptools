@@ -43,6 +43,7 @@ namespace toksim{
             else if(is_tile(node)){
                 auto cfg = get_tile_config(node);
                 this->tile_objects[node] = C_Tile(cfg);
+                this->execu_dict[node] = vector<int>();
             }
         }
     }
@@ -56,6 +57,7 @@ namespace toksim{
                 if(is_head_tile(node))
                     tile.consume_tokens(C_Token(1), CAST);
                 token = tile.produce_tokens();
+                this->execu_dict[node].push_back(token.token_num);
 
                 if(tile.done) done_cnt++;
                 if(!token.token_num) continue;

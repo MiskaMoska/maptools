@@ -18,6 +18,7 @@ namespace toksim{
 
             unordered_map<string, C_Tile> tile_objects;
             unordered_map<string, C_Comm> comm_objects;
+            map<string, vector<int>> execu_dict;
 
             unordered_map<string, unordered_map<string, int>> need_bufs;
 

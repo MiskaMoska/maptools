@@ -20,10 +20,10 @@ class LayoutResult(object):
         self.__dict__.update(kwargs)
         self._prepare_tile_color()
 
-        self.l2p_map = (
-            {self.log_dict[cir]:  self.phy_dict[self.map[cir]] 
-            for cir in self.map.keys()}
-        )
+        self.l2p_map = {
+            self.log_dict[cir]:  self.phy_dict[self.map[cir]] 
+            for cir in self.map.keys()
+        }
         
     def __getitem__(self, log_tile: LogicalTile) -> PhysicalTile:
         return self.l2p_map[log_tile]

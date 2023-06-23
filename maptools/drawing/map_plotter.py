@@ -296,7 +296,7 @@ class MapPlotter(object):
         return graph, pos
 
     def _get_dir(self, file_name: str) -> str:
-        save_dir = os.path.join(ROOT_DIR, 'mapsave', self.mapname, 'nocpath')
+        save_dir = os.path.join(ROOT_DIR, 'mapsave', self.mapname, 'routing')
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
         return os.path.join(save_dir, file_name+'.png')

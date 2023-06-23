@@ -100,6 +100,9 @@ class LayoutDesigner(object):
         return self.lpc.is_valid
 
     def run_layout(self) -> None:
+        print("\n\n"+"-"*70)
+        print("\t\tLaunching Layout Design")
+        print("-"*70)
         self.lpc = self.layout_engine()
         print(f"layout is valid: {self.lpc.is_valid}")
 

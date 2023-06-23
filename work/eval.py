@@ -11,17 +11,17 @@ from maptools.calcusim import CalcuSim, ModelTask
 from maptools import read_quantparams
 import onnx
 
-K = 3
-MAPNAME = 'resnet18'
+K = 3 # 准确率指标为 K-ACC
+MAPNAME = 'resnet18' 
 ONNXDIR = 'onnx_models/simp-resnet18.onnx'
-QUANTIZE = True
-DEVICE = 'cpu'
-BATCHSIZE = 32
-PHYSICAL = True
-HARDTRANS = True
-IVCF = 4000/32
+QUANTIZE = True # 是否进行量化
+DEVICE = 'cuda' # 是否使用CUDA加速
+BATCHSIZE = 32 # Batch 大小
+PHYSICAL = True # 是否模拟真实的Xbar和ADC计算
+HARDTRANS = True # 是否模拟真实的定点数乘法
+IVCF = 4000/128 # ADC电流-电压转换系数
 
-########################## CalcuSim Model Begin ############################################
+########################## 以下是 CalcuSim 模型 ############################################
 model = onnx.load(ONNXDIR)
 oc = OnnxConverter(model, mapname=MAPNAME, quantize=QUANTIZE)
 oc.run_conversion()
@@ -45,16 +45,21 @@ model = CalcuSim(
     hardtrans=HARDTRANS,
     ivcf=IVCF
 )
-########################## CalcuSim Model End ############################################
+print("-"*70)
+print(" "*25+"Pytorch Inference")
+print("-"*70)
+########################## 以上是 CalcuSim 模型 ############################################
 
 
-########################## Pytorch Model Begin ############################################
-# model = resnet18(pretrained=True)
-# model.eval()
-########################## Pytorch Model End ############################################
 
-# model = ModelTask(oc.origin_graph, oc.params)
+########################## 以下是 Pytorch 原始模型 ############################################
+model = resnet18(pretrained=True)
+model.eval()
+########################## 以上是 Pytorch 原始模型 ############################################
 
+
+
+########################## 以下是 测试集构建 ############################################
 device = torch.device(DEVICE)
 if DEVICE == 'cuda':
     model.cuda()
@@ -73,6 +78,8 @@ test_loader = DataLoader(
     num_workers=0,
     shuffle=False
 )
+########################## 以上是 测试集构建 ############################################
+
 
 loader_len = len(test_loader)
 

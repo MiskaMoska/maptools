@@ -20,7 +20,7 @@ def plot_tokens(mapname: str, start: int = 0, end: int = 1e6) -> None:
     end : int = 0
         ending iteration index.
     '''
-    file_dir = os.path.join(ROOT_DIR, 'mapsave', mapname, 'toksim', 'token.pkl')
+    file_dir = os.path.join(ROOT_DIR, 'mapsave', mapname, 'toksim', 'tokens.pkl')
     assert os.path.exists(file_dir), f"No such file: {file_dir}"
     with open(file_dir, 'rb') as f:
         info_dict = pickle.load(f)

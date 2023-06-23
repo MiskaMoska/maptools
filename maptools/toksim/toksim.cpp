@@ -1124,6 +1124,7 @@ static CYTHON_INLINE float __PYX_NAN() {
     #endif
     
 #include <unordered_map>
+#include <map>
 #include "srcs/c_typing.h"
 #include "srcs/c_token.h"
 #include "srcs/c_windowbuf.h"
@@ -1391,7 +1392,7 @@ static const char *__pyx_f[] = {
 /*--- Type declarations ---*/
 struct __pyx_obj_8maptools_6toksim_6toksim_TokSim;
 
-/* "maptools/toksim/toksim.pyx":6
+/* "maptools/toksim/toksim.pyx":7
  * from maptools.core import CTG, ROOT_DIR, LogicalTile
  * 
  * cdef class TokSim:             # <<<<<<<<<<<<<<
@@ -1407,6 +1408,7 @@ struct __pyx_obj_8maptools_6toksim_6toksim_TokSim {
   PyObject *_nodes;
   PyObject *_node_attr_dict;
   PyObject *_tile_config_dict;
+  PyObject *_token_dict;
 };
 
 /* #### Code section: utility_code_proto ### */
@@ -1794,6 +1796,37 @@ static CYTHON_INLINE PyObject *__Pyx_PyObject_GetItem(PyObject *obj, PyObject *k
 #else
 #define __Pyx_PyObject_GetItem(obj, key)  PyObject_GetItem(obj, key)
 #endif
+
+/* UnicodeConcatInPlace.proto */
+# if CYTHON_COMPILING_IN_CPYTHON && PY_MAJOR_VERSION >= 3
+    #if CYTHON_REFNANNY
+        #define __Pyx_PyUnicode_ConcatInPlace(left, right) __Pyx_PyUnicode_ConcatInPlaceImpl(&left, right, __pyx_refnanny)
+    #else
+        #define __Pyx_PyUnicode_ConcatInPlace(left, right) __Pyx_PyUnicode_ConcatInPlaceImpl(&left, right)
+    #endif
+    static CYTHON_INLINE PyObject *__Pyx_PyUnicode_ConcatInPlaceImpl(PyObject **p_left, PyObject *right
+        #if CYTHON_REFNANNY
+        , void* __pyx_refnanny
+        #endif
+    );
+#else
+#define __Pyx_PyUnicode_ConcatInPlace __Pyx_PyUnicode_Concat
+#endif
+#define __Pyx_PyUnicode_ConcatInPlaceSafe(left, right) ((unlikely((left) == Py_None) || unlikely((right) == Py_None)) ?\
+    PyNumber_InPlaceAdd(left, right) : __Pyx_PyUnicode_ConcatInPlace(left, right))
+
+/* StrConcatInPlace.proto */
+#if PY_MAJOR_VERSION >= 3
+    #define __Pyx_PyStr_Concat __Pyx_PyUnicode_Concat
+    #define __Pyx_PyStr_ConcatInPlace __Pyx_PyUnicode_ConcatInPlace
+#else
+    #define __Pyx_PyStr_Concat PyNumber_Add
+    #define __Pyx_PyStr_ConcatInPlace PyNumber_InPlaceAdd
+#endif
+#define __Pyx_PyStr_ConcatSafe(a, b) ((unlikely((a) == Py_None) || unlikely((b) == Py_None)) ?\
+    PyNumber_Add(a, b) : __Pyx_PyStr_Concat(a, b))
+#define __Pyx_PyStr_ConcatInPlaceSafe(a, b) ((unlikely((a) == Py_None) || unlikely((b) == Py_None)) ?\
+    PyNumber_InPlaceAdd(a, b) : __Pyx_PyStr_ConcatInPlace(a, b))
 
 /* PyDictVersioning.proto */
 #if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_TYPE_SLOTS
@@ -2233,6 +2266,8 @@ static int __Pyx_InitStrings(__Pyx_StringTabEntry *t);
 
 /* Module declarations from "libcpp.unordered_map" */
 
+/* Module declarations from "libcpp.map" */
+
 /* Module declarations from "maptools.toksim.c_toksim" */
 
 /* Module declarations from "maptools.toksim.toksim" */
@@ -2250,6 +2285,7 @@ static CYTHON_INLINE PyObject *__pyx_convert_PyBytes_string_to_py_std__in_string
 static CYTHON_INLINE PyObject *__pyx_convert_PyByteArray_string_to_py_std__in_string(std::string const &); /*proto*/
 static PyObject *__pyx_convert_unordered_map_to_py_std_3a__3a_string____int(std::unordered_map<std::string,int>  const &); /*proto*/
 static PyObject *__pyx_convert_unordered_map_to_py_std_3a__3a_string____std_3a__3a_unordered_map_3c_std_3a__3a_string_2c_int_3e___(std::unordered_map<std::string,std::unordered_map<std::string,int> >  const &); /*proto*/
+static PyObject *__pyx_convert_vector_to_py_int(std::vector<int>  const &); /*proto*/
 /* #### Code section: typeinfo ### */
 /* #### Code section: before_global_var ### */
 #define __Pyx_MODULE_NAME "maptools.toksim.toksim"
@@ -2259,24 +2295,30 @@ int __pyx_module_is_main_maptools__toksim__toksim = 0;
 /* Implementation of "maptools.toksim.toksim" */
 /* #### Code section: global_var ### */
 static PyObject *__pyx_builtin_staticmethod;
-static PyObject *__pyx_builtin_open;
 static PyObject *__pyx_builtin_print;
+static PyObject *__pyx_builtin_open;
 static PyObject *__pyx_builtin_TypeError;
 static PyObject *__pyx_builtin_KeyError;
 static PyObject *__pyx_builtin_ValueError;
+static PyObject *__pyx_builtin_MemoryError;
+static PyObject *__pyx_builtin_range;
 /* #### Code section: string_decls ### */
 static const char __pyx_k_f[] = "f";
 static const char __pyx_k_n[] = "n";
+static const char __pyx_k_t[] = "t";
 static const char __pyx_k_w[] = "w";
 static const char __pyx_k_gc[] = "gc";
 static const char __pyx_k_os[] = "os";
+static const char __pyx_k_wb[] = "wb";
 static const char __pyx_k_Any[] = "Any";
 static const char __pyx_k_CTG[] = "CTG";
 static const char __pyx_k_Rsz[] = "Rsz";
 static const char __pyx_k__28[] = "";
-static const char __pyx_k__30[] = "*";
-static const char __pyx_k__31[] = ".";
-static const char __pyx_k__50[] = "?";
+static const char __pyx_k__29[] = "\n\n";
+static const char __pyx_k__30[] = "----------------------------------------------------------------------";
+static const char __pyx_k__34[] = "*";
+static const char __pyx_k__35[] = ".";
+static const char __pyx_k__54[] = "?";
 static const char __pyx_k_ctg[] = "ctg";
 static const char __pyx_k_log[] = "log";
 static const char __pyx_k_run[] = "run";
@@ -2289,6 +2331,7 @@ static const char __pyx_k_Pool[] = "Pool";
 static const char __pyx_k_attr[] = "attr";
 static const char __pyx_k_bufs[] = "bufs";
 static const char __pyx_k_dict[] = "__dict__";
+static const char __pyx_k_dump[] = "dump";
 static const char __pyx_k_exit[] = "__exit__";
 static const char __pyx_k_join[] = "join";
 static const char __pyx_k_main[] = "__main__";
@@ -2308,6 +2351,7 @@ static const char __pyx_k_enter[] = "__enter__";
 static const char __pyx_k_items[] = "items";
 static const char __pyx_k_preds[] = "preds";
 static const char __pyx_k_print[] = "print";
+static const char __pyx_k_range[] = "range";
 static const char __pyx_k_succs[] = "succs";
 static const char __pyx_k_tiles[] = "tiles";
 static const char __pyx_k_token[] = "token";
@@ -2321,6 +2365,7 @@ static const char __pyx_k_exists[] = "exists";
 static const char __pyx_k_import[] = "__import__";
 static const char __pyx_k_name_2[] = "name";
 static const char __pyx_k_newmap[] = "newmap";
+static const char __pyx_k_pickle[] = "pickle";
 static const char __pyx_k_reduce[] = "__reduce__";
 static const char __pyx_k_return[] = "return";
 static const char __pyx_k_toksim[] = "toksim";
@@ -2370,7 +2415,9 @@ static const char __pyx_k_node_names[] = "node_names";
 static const char __pyx_k_pool_buf_2[] = "pool_buf";
 static const char __pyx_k_pool_names[] = "pool_names";
 static const char __pyx_k_save_execu[] = "save_execu";
+static const char __pyx_k_tokens_pkl[] = "tokens.pkl";
 static const char __pyx_k_LogicalTile[] = "LogicalTile";
+static const char __pyx_k_MemoryError[] = "MemoryError";
 static const char __pyx_k_inter_buf_2[] = "inter_buf";
 static const char __pyx_k_merge_buf_2[] = "merge_buf";
 static const char __pyx_k_tile_config[] = "tile_config";
@@ -2410,6 +2457,7 @@ static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
 static const char __pyx_k_cpp_get_tile_config[] = "_cpp_get_tile_config";
 static const char __pyx_k_Union_str_LogicalTile[] = "Union[str, LogicalTile]";
 static const char __pyx_k_buffer_log_written_to[] = "\nbuffer log written to ";
+static const char __pyx_k_token_info_written_to[] = "\rtoken info written to ";
 static const char __pyx_k_TokSim___reduce_cython[] = "TokSim.__reduce_cython__";
 static const char __pyx_k_cpp_get_interface_vars[] = "_cpp_get_interface_vars";
 static const char __pyx_k_maptools_toksim_toksim[] = "maptools.toksim.toksim";
@@ -2418,7 +2466,8 @@ static const char __pyx_k_TokSim__cpp_get_node_attr[] = "TokSim._cpp_get_node_at
 static const char __pyx_k_maptools_toksim_toksim_pyx[] = "maptools/toksim/toksim.pyx";
 static const char __pyx_k_TokSim__cpp_get_tile_config[] = "TokSim._cpp_get_tile_config";
 static const char __pyx_k_TokSim__cpp_get_interface_vars[] = "TokSim._cpp_get_interface_vars";
-static const char __pyx_k_5s_20s_9s_20s_9s_20s_10s_20s_10[] = "%-5s%-20s%-9s%-20s%-9s%-20s%-10s%-20s%-10s%-20s%-11s%-20s\n";
+static const char __pyx_k_5s_20s_9s_18s_9s_18s_10s_18s_10[] = "%-5s%-20s%-9s%-18s%-9s%-18s%-10s%-18s%-10s%-18s%-11s%-10s\n";
+static const char __pyx_k_TokSim_Buffer_Evaluation_Report[] = "TokSim Buffer Evaluation Report";
 static const char __pyx_k_No_value_specified_for_struct_at[] = "No value specified for struct attribute 'is_tile'";
 static const char __pyx_k_self_c_toksim_cannot_be_converte[] = "self.c_toksim cannot be converted to a Python object for pickling";
 static const char __pyx_k_No_value_specified_for_struct_at_2[] = "No value specified for struct attribute 'is_head_tile'";
@@ -2500,10 +2549,12 @@ typedef struct {
   #if CYTHON_USE_MODULE_STATE
   #endif
   #if CYTHON_USE_MODULE_STATE
+  #endif
+  #if CYTHON_USE_MODULE_STATE
   PyObject *__pyx_type_8maptools_6toksim_6toksim_TokSim;
   #endif
   PyTypeObject *__pyx_ptype_8maptools_6toksim_6toksim_TokSim;
-  PyObject *__pyx_kp_s_5s_20s_9s_20s_9s_20s_10s_20s_10;
+  PyObject *__pyx_kp_s_5s_20s_9s_18s_9s_18s_10s_18s_10;
   PyObject *__pyx_n_s_Any;
   PyObject *__pyx_n_s_CTG;
   PyObject *__pyx_n_s_Conv;
@@ -2512,6 +2563,7 @@ typedef struct {
   PyObject *__pyx_n_s_KeyError;
   PyObject *__pyx_n_s_List;
   PyObject *__pyx_n_s_LogicalTile;
+  PyObject *__pyx_n_s_MemoryError;
   PyObject *__pyx_kp_s_No_value_specified_for_struct_at;
   PyObject *__pyx_kp_s_No_value_specified_for_struct_at_10;
   PyObject *__pyx_kp_s_No_value_specified_for_struct_at_11;
@@ -2544,6 +2596,7 @@ typedef struct {
   PyObject *__pyx_n_s_ROOT_DIR;
   PyObject *__pyx_n_s_Rsz;
   PyObject *__pyx_n_s_TokSim;
+  PyObject *__pyx_kp_s_TokSim_Buffer_Evaluation_Report;
   PyObject *__pyx_n_s_TokSim___reduce_cython;
   PyObject *__pyx_n_s_TokSim___setstate_cython;
   PyObject *__pyx_n_s_TokSim__cpp_get_interface_vars;
@@ -2559,9 +2612,11 @@ typedef struct {
   PyObject *__pyx_kp_s_Union_str_LogicalTile;
   PyObject *__pyx_n_s_ValueError;
   PyObject *__pyx_kp_s__28;
-  PyObject *__pyx_n_s__30;
-  PyObject *__pyx_kp_u__31;
-  PyObject *__pyx_n_s__50;
+  PyObject *__pyx_kp_s__29;
+  PyObject *__pyx_kp_s__30;
+  PyObject *__pyx_n_s__34;
+  PyObject *__pyx_kp_u__35;
+  PyObject *__pyx_n_s__54;
   PyObject *__pyx_n_s_asyncio_coroutines;
   PyObject *__pyx_n_s_attr;
   PyObject *__pyx_kp_s_buffer_log;
@@ -2586,6 +2641,7 @@ typedef struct {
   PyObject *__pyx_n_s_dict;
   PyObject *__pyx_n_s_dicts;
   PyObject *__pyx_kp_u_disable;
+  PyObject *__pyx_n_s_dump;
   PyObject *__pyx_kp_u_enable;
   PyObject *__pyx_n_s_encode;
   PyObject *__pyx_n_s_encoding;
@@ -2643,6 +2699,7 @@ typedef struct {
   PyObject *__pyx_n_s_open;
   PyObject *__pyx_n_s_os;
   PyObject *__pyx_n_s_path;
+  PyObject *__pyx_n_s_pickle;
   PyObject *__pyx_kp_s_pool_buf;
   PyObject *__pyx_n_b_pool_buf_2;
   PyObject *__pyx_n_s_pool_input_size;
@@ -2654,6 +2711,7 @@ typedef struct {
   PyObject *__pyx_n_s_preds;
   PyObject *__pyx_n_s_print;
   PyObject *__pyx_n_s_pyx_state;
+  PyObject *__pyx_n_s_range;
   PyObject *__pyx_n_s_reduce;
   PyObject *__pyx_n_s_reduce_cython;
   PyObject *__pyx_n_s_reduce_ex;
@@ -2672,16 +2730,20 @@ typedef struct {
   PyObject *__pyx_n_s_str;
   PyObject *__pyx_kp_s_stringsource;
   PyObject *__pyx_n_s_succs;
+  PyObject *__pyx_n_s_t;
   PyObject *__pyx_n_s_test;
   PyObject *__pyx_kp_s_tile;
   PyObject *__pyx_n_s_tile_config;
   PyObject *__pyx_n_s_tiles;
   PyObject *__pyx_n_s_token;
+  PyObject *__pyx_kp_u_token_info_written_to;
+  PyObject *__pyx_kp_s_tokens_pkl;
   PyObject *__pyx_n_s_toksim;
   PyObject *__pyx_n_s_typing;
   PyObject *__pyx_n_s_update;
   PyObject *__pyx_kp_s_utf_8;
   PyObject *__pyx_n_s_w;
+  PyObject *__pyx_n_s_wb;
   PyObject *__pyx_n_s_write;
   PyObject *__pyx_n_s_xbar_num_ichan;
   PyObject *__pyx_n_s_xbar_num_ochan;
@@ -2712,25 +2774,27 @@ typedef struct {
   PyObject *__pyx_tuple__25;
   PyObject *__pyx_tuple__26;
   PyObject *__pyx_tuple__27;
-  PyObject *__pyx_tuple__29;
+  PyObject *__pyx_tuple__31;
   PyObject *__pyx_tuple__32;
-  PyObject *__pyx_tuple__34;
+  PyObject *__pyx_tuple__33;
   PyObject *__pyx_tuple__36;
   PyObject *__pyx_tuple__38;
-  PyObject *__pyx_tuple__39;
-  PyObject *__pyx_tuple__41;
+  PyObject *__pyx_tuple__40;
+  PyObject *__pyx_tuple__42;
   PyObject *__pyx_tuple__43;
   PyObject *__pyx_tuple__45;
-  PyObject *__pyx_tuple__48;
-  PyObject *__pyx_codeobj__33;
-  PyObject *__pyx_codeobj__35;
+  PyObject *__pyx_tuple__47;
+  PyObject *__pyx_tuple__49;
+  PyObject *__pyx_tuple__52;
   PyObject *__pyx_codeobj__37;
-  PyObject *__pyx_codeobj__40;
-  PyObject *__pyx_codeobj__42;
+  PyObject *__pyx_codeobj__39;
+  PyObject *__pyx_codeobj__41;
   PyObject *__pyx_codeobj__44;
   PyObject *__pyx_codeobj__46;
-  PyObject *__pyx_codeobj__47;
-  PyObject *__pyx_codeobj__49;
+  PyObject *__pyx_codeobj__48;
+  PyObject *__pyx_codeobj__50;
+  PyObject *__pyx_codeobj__51;
+  PyObject *__pyx_codeobj__53;
 } __pyx_mstate;
 
 #if CYTHON_USE_MODULE_STATE
@@ -2775,7 +2839,7 @@ static int __pyx_m_clear(PyObject *m) {
   #endif
   Py_CLEAR(clear_module_state->__pyx_ptype_8maptools_6toksim_6toksim_TokSim);
   Py_CLEAR(clear_module_state->__pyx_type_8maptools_6toksim_6toksim_TokSim);
-  Py_CLEAR(clear_module_state->__pyx_kp_s_5s_20s_9s_20s_9s_20s_10s_20s_10);
+  Py_CLEAR(clear_module_state->__pyx_kp_s_5s_20s_9s_18s_9s_18s_10s_18s_10);
   Py_CLEAR(clear_module_state->__pyx_n_s_Any);
   Py_CLEAR(clear_module_state->__pyx_n_s_CTG);
   Py_CLEAR(clear_module_state->__pyx_n_s_Conv);
@@ -2784,6 +2848,7 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_KeyError);
   Py_CLEAR(clear_module_state->__pyx_n_s_List);
   Py_CLEAR(clear_module_state->__pyx_n_s_LogicalTile);
+  Py_CLEAR(clear_module_state->__pyx_n_s_MemoryError);
   Py_CLEAR(clear_module_state->__pyx_kp_s_No_value_specified_for_struct_at);
   Py_CLEAR(clear_module_state->__pyx_kp_s_No_value_specified_for_struct_at_10);
   Py_CLEAR(clear_module_state->__pyx_kp_s_No_value_specified_for_struct_at_11);
@@ -2816,6 +2881,7 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_ROOT_DIR);
   Py_CLEAR(clear_module_state->__pyx_n_s_Rsz);
   Py_CLEAR(clear_module_state->__pyx_n_s_TokSim);
+  Py_CLEAR(clear_module_state->__pyx_kp_s_TokSim_Buffer_Evaluation_Report);
   Py_CLEAR(clear_module_state->__pyx_n_s_TokSim___reduce_cython);
   Py_CLEAR(clear_module_state->__pyx_n_s_TokSim___setstate_cython);
   Py_CLEAR(clear_module_state->__pyx_n_s_TokSim__cpp_get_interface_vars);
@@ -2831,9 +2897,11 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_kp_s_Union_str_LogicalTile);
   Py_CLEAR(clear_module_state->__pyx_n_s_ValueError);
   Py_CLEAR(clear_module_state->__pyx_kp_s__28);
-  Py_CLEAR(clear_module_state->__pyx_n_s__30);
-  Py_CLEAR(clear_module_state->__pyx_kp_u__31);
-  Py_CLEAR(clear_module_state->__pyx_n_s__50);
+  Py_CLEAR(clear_module_state->__pyx_kp_s__29);
+  Py_CLEAR(clear_module_state->__pyx_kp_s__30);
+  Py_CLEAR(clear_module_state->__pyx_n_s__34);
+  Py_CLEAR(clear_module_state->__pyx_kp_u__35);
+  Py_CLEAR(clear_module_state->__pyx_n_s__54);
   Py_CLEAR(clear_module_state->__pyx_n_s_asyncio_coroutines);
   Py_CLEAR(clear_module_state->__pyx_n_s_attr);
   Py_CLEAR(clear_module_state->__pyx_kp_s_buffer_log);
@@ -2858,6 +2926,7 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_dict);
   Py_CLEAR(clear_module_state->__pyx_n_s_dicts);
   Py_CLEAR(clear_module_state->__pyx_kp_u_disable);
+  Py_CLEAR(clear_module_state->__pyx_n_s_dump);
   Py_CLEAR(clear_module_state->__pyx_kp_u_enable);
   Py_CLEAR(clear_module_state->__pyx_n_s_encode);
   Py_CLEAR(clear_module_state->__pyx_n_s_encoding);
@@ -2915,6 +2984,7 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_open);
   Py_CLEAR(clear_module_state->__pyx_n_s_os);
   Py_CLEAR(clear_module_state->__pyx_n_s_path);
+  Py_CLEAR(clear_module_state->__pyx_n_s_pickle);
   Py_CLEAR(clear_module_state->__pyx_kp_s_pool_buf);
   Py_CLEAR(clear_module_state->__pyx_n_b_pool_buf_2);
   Py_CLEAR(clear_module_state->__pyx_n_s_pool_input_size);
@@ -2926,6 +2996,7 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_preds);
   Py_CLEAR(clear_module_state->__pyx_n_s_print);
   Py_CLEAR(clear_module_state->__pyx_n_s_pyx_state);
+  Py_CLEAR(clear_module_state->__pyx_n_s_range);
   Py_CLEAR(clear_module_state->__pyx_n_s_reduce);
   Py_CLEAR(clear_module_state->__pyx_n_s_reduce_cython);
   Py_CLEAR(clear_module_state->__pyx_n_s_reduce_ex);
@@ -2944,16 +3015,20 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_str);
   Py_CLEAR(clear_module_state->__pyx_kp_s_stringsource);
   Py_CLEAR(clear_module_state->__pyx_n_s_succs);
+  Py_CLEAR(clear_module_state->__pyx_n_s_t);
   Py_CLEAR(clear_module_state->__pyx_n_s_test);
   Py_CLEAR(clear_module_state->__pyx_kp_s_tile);
   Py_CLEAR(clear_module_state->__pyx_n_s_tile_config);
   Py_CLEAR(clear_module_state->__pyx_n_s_tiles);
   Py_CLEAR(clear_module_state->__pyx_n_s_token);
+  Py_CLEAR(clear_module_state->__pyx_kp_u_token_info_written_to);
+  Py_CLEAR(clear_module_state->__pyx_kp_s_tokens_pkl);
   Py_CLEAR(clear_module_state->__pyx_n_s_toksim);
   Py_CLEAR(clear_module_state->__pyx_n_s_typing);
   Py_CLEAR(clear_module_state->__pyx_n_s_update);
   Py_CLEAR(clear_module_state->__pyx_kp_s_utf_8);
   Py_CLEAR(clear_module_state->__pyx_n_s_w);
+  Py_CLEAR(clear_module_state->__pyx_n_s_wb);
   Py_CLEAR(clear_module_state->__pyx_n_s_write);
   Py_CLEAR(clear_module_state->__pyx_n_s_xbar_num_ichan);
   Py_CLEAR(clear_module_state->__pyx_n_s_xbar_num_ochan);
@@ -2984,25 +3059,27 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_tuple__25);
   Py_CLEAR(clear_module_state->__pyx_tuple__26);
   Py_CLEAR(clear_module_state->__pyx_tuple__27);
-  Py_CLEAR(clear_module_state->__pyx_tuple__29);
+  Py_CLEAR(clear_module_state->__pyx_tuple__31);
   Py_CLEAR(clear_module_state->__pyx_tuple__32);
-  Py_CLEAR(clear_module_state->__pyx_tuple__34);
+  Py_CLEAR(clear_module_state->__pyx_tuple__33);
   Py_CLEAR(clear_module_state->__pyx_tuple__36);
   Py_CLEAR(clear_module_state->__pyx_tuple__38);
-  Py_CLEAR(clear_module_state->__pyx_tuple__39);
-  Py_CLEAR(clear_module_state->__pyx_tuple__41);
+  Py_CLEAR(clear_module_state->__pyx_tuple__40);
+  Py_CLEAR(clear_module_state->__pyx_tuple__42);
   Py_CLEAR(clear_module_state->__pyx_tuple__43);
   Py_CLEAR(clear_module_state->__pyx_tuple__45);
-  Py_CLEAR(clear_module_state->__pyx_tuple__48);
-  Py_CLEAR(clear_module_state->__pyx_codeobj__33);
-  Py_CLEAR(clear_module_state->__pyx_codeobj__35);
+  Py_CLEAR(clear_module_state->__pyx_tuple__47);
+  Py_CLEAR(clear_module_state->__pyx_tuple__49);
+  Py_CLEAR(clear_module_state->__pyx_tuple__52);
   Py_CLEAR(clear_module_state->__pyx_codeobj__37);
-  Py_CLEAR(clear_module_state->__pyx_codeobj__40);
-  Py_CLEAR(clear_module_state->__pyx_codeobj__42);
+  Py_CLEAR(clear_module_state->__pyx_codeobj__39);
+  Py_CLEAR(clear_module_state->__pyx_codeobj__41);
   Py_CLEAR(clear_module_state->__pyx_codeobj__44);
   Py_CLEAR(clear_module_state->__pyx_codeobj__46);
-  Py_CLEAR(clear_module_state->__pyx_codeobj__47);
-  Py_CLEAR(clear_module_state->__pyx_codeobj__49);
+  Py_CLEAR(clear_module_state->__pyx_codeobj__48);
+  Py_CLEAR(clear_module_state->__pyx_codeobj__50);
+  Py_CLEAR(clear_module_state->__pyx_codeobj__51);
+  Py_CLEAR(clear_module_state->__pyx_codeobj__53);
   return 0;
 }
 #endif
@@ -3025,7 +3102,7 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   #endif
   Py_VISIT(traverse_module_state->__pyx_ptype_8maptools_6toksim_6toksim_TokSim);
   Py_VISIT(traverse_module_state->__pyx_type_8maptools_6toksim_6toksim_TokSim);
-  Py_VISIT(traverse_module_state->__pyx_kp_s_5s_20s_9s_20s_9s_20s_10s_20s_10);
+  Py_VISIT(traverse_module_state->__pyx_kp_s_5s_20s_9s_18s_9s_18s_10s_18s_10);
   Py_VISIT(traverse_module_state->__pyx_n_s_Any);
   Py_VISIT(traverse_module_state->__pyx_n_s_CTG);
   Py_VISIT(traverse_module_state->__pyx_n_s_Conv);
@@ -3034,6 +3111,7 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_KeyError);
   Py_VISIT(traverse_module_state->__pyx_n_s_List);
   Py_VISIT(traverse_module_state->__pyx_n_s_LogicalTile);
+  Py_VISIT(traverse_module_state->__pyx_n_s_MemoryError);
   Py_VISIT(traverse_module_state->__pyx_kp_s_No_value_specified_for_struct_at);
   Py_VISIT(traverse_module_state->__pyx_kp_s_No_value_specified_for_struct_at_10);
   Py_VISIT(traverse_module_state->__pyx_kp_s_No_value_specified_for_struct_at_11);
@@ -3066,6 +3144,7 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_ROOT_DIR);
   Py_VISIT(traverse_module_state->__pyx_n_s_Rsz);
   Py_VISIT(traverse_module_state->__pyx_n_s_TokSim);
+  Py_VISIT(traverse_module_state->__pyx_kp_s_TokSim_Buffer_Evaluation_Report);
   Py_VISIT(traverse_module_state->__pyx_n_s_TokSim___reduce_cython);
   Py_VISIT(traverse_module_state->__pyx_n_s_TokSim___setstate_cython);
   Py_VISIT(traverse_module_state->__pyx_n_s_TokSim__cpp_get_interface_vars);
@@ -3081,9 +3160,11 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_kp_s_Union_str_LogicalTile);
   Py_VISIT(traverse_module_state->__pyx_n_s_ValueError);
   Py_VISIT(traverse_module_state->__pyx_kp_s__28);
-  Py_VISIT(traverse_module_state->__pyx_n_s__30);
-  Py_VISIT(traverse_module_state->__pyx_kp_u__31);
-  Py_VISIT(traverse_module_state->__pyx_n_s__50);
+  Py_VISIT(traverse_module_state->__pyx_kp_s__29);
+  Py_VISIT(traverse_module_state->__pyx_kp_s__30);
+  Py_VISIT(traverse_module_state->__pyx_n_s__34);
+  Py_VISIT(traverse_module_state->__pyx_kp_u__35);
+  Py_VISIT(traverse_module_state->__pyx_n_s__54);
   Py_VISIT(traverse_module_state->__pyx_n_s_asyncio_coroutines);
   Py_VISIT(traverse_module_state->__pyx_n_s_attr);
   Py_VISIT(traverse_module_state->__pyx_kp_s_buffer_log);
@@ -3108,6 +3189,7 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_dict);
   Py_VISIT(traverse_module_state->__pyx_n_s_dicts);
   Py_VISIT(traverse_module_state->__pyx_kp_u_disable);
+  Py_VISIT(traverse_module_state->__pyx_n_s_dump);
   Py_VISIT(traverse_module_state->__pyx_kp_u_enable);
   Py_VISIT(traverse_module_state->__pyx_n_s_encode);
   Py_VISIT(traverse_module_state->__pyx_n_s_encoding);
@@ -3165,6 +3247,7 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_open);
   Py_VISIT(traverse_module_state->__pyx_n_s_os);
   Py_VISIT(traverse_module_state->__pyx_n_s_path);
+  Py_VISIT(traverse_module_state->__pyx_n_s_pickle);
   Py_VISIT(traverse_module_state->__pyx_kp_s_pool_buf);
   Py_VISIT(traverse_module_state->__pyx_n_b_pool_buf_2);
   Py_VISIT(traverse_module_state->__pyx_n_s_pool_input_size);
@@ -3176,6 +3259,7 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_preds);
   Py_VISIT(traverse_module_state->__pyx_n_s_print);
   Py_VISIT(traverse_module_state->__pyx_n_s_pyx_state);
+  Py_VISIT(traverse_module_state->__pyx_n_s_range);
   Py_VISIT(traverse_module_state->__pyx_n_s_reduce);
   Py_VISIT(traverse_module_state->__pyx_n_s_reduce_cython);
   Py_VISIT(traverse_module_state->__pyx_n_s_reduce_ex);
@@ -3194,16 +3278,20 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_str);
   Py_VISIT(traverse_module_state->__pyx_kp_s_stringsource);
   Py_VISIT(traverse_module_state->__pyx_n_s_succs);
+  Py_VISIT(traverse_module_state->__pyx_n_s_t);
   Py_VISIT(traverse_module_state->__pyx_n_s_test);
   Py_VISIT(traverse_module_state->__pyx_kp_s_tile);
   Py_VISIT(traverse_module_state->__pyx_n_s_tile_config);
   Py_VISIT(traverse_module_state->__pyx_n_s_tiles);
   Py_VISIT(traverse_module_state->__pyx_n_s_token);
+  Py_VISIT(traverse_module_state->__pyx_kp_u_token_info_written_to);
+  Py_VISIT(traverse_module_state->__pyx_kp_s_tokens_pkl);
   Py_VISIT(traverse_module_state->__pyx_n_s_toksim);
   Py_VISIT(traverse_module_state->__pyx_n_s_typing);
   Py_VISIT(traverse_module_state->__pyx_n_s_update);
   Py_VISIT(traverse_module_state->__pyx_kp_s_utf_8);
   Py_VISIT(traverse_module_state->__pyx_n_s_w);
+  Py_VISIT(traverse_module_state->__pyx_n_s_wb);
   Py_VISIT(traverse_module_state->__pyx_n_s_write);
   Py_VISIT(traverse_module_state->__pyx_n_s_xbar_num_ichan);
   Py_VISIT(traverse_module_state->__pyx_n_s_xbar_num_ochan);
@@ -3234,25 +3322,27 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_tuple__25);
   Py_VISIT(traverse_module_state->__pyx_tuple__26);
   Py_VISIT(traverse_module_state->__pyx_tuple__27);
-  Py_VISIT(traverse_module_state->__pyx_tuple__29);
+  Py_VISIT(traverse_module_state->__pyx_tuple__31);
   Py_VISIT(traverse_module_state->__pyx_tuple__32);
-  Py_VISIT(traverse_module_state->__pyx_tuple__34);
+  Py_VISIT(traverse_module_state->__pyx_tuple__33);
   Py_VISIT(traverse_module_state->__pyx_tuple__36);
   Py_VISIT(traverse_module_state->__pyx_tuple__38);
-  Py_VISIT(traverse_module_state->__pyx_tuple__39);
-  Py_VISIT(traverse_module_state->__pyx_tuple__41);
+  Py_VISIT(traverse_module_state->__pyx_tuple__40);
+  Py_VISIT(traverse_module_state->__pyx_tuple__42);
   Py_VISIT(traverse_module_state->__pyx_tuple__43);
   Py_VISIT(traverse_module_state->__pyx_tuple__45);
-  Py_VISIT(traverse_module_state->__pyx_tuple__48);
-  Py_VISIT(traverse_module_state->__pyx_codeobj__33);
-  Py_VISIT(traverse_module_state->__pyx_codeobj__35);
+  Py_VISIT(traverse_module_state->__pyx_tuple__47);
+  Py_VISIT(traverse_module_state->__pyx_tuple__49);
+  Py_VISIT(traverse_module_state->__pyx_tuple__52);
   Py_VISIT(traverse_module_state->__pyx_codeobj__37);
-  Py_VISIT(traverse_module_state->__pyx_codeobj__40);
-  Py_VISIT(traverse_module_state->__pyx_codeobj__42);
+  Py_VISIT(traverse_module_state->__pyx_codeobj__39);
+  Py_VISIT(traverse_module_state->__pyx_codeobj__41);
   Py_VISIT(traverse_module_state->__pyx_codeobj__44);
   Py_VISIT(traverse_module_state->__pyx_codeobj__46);
-  Py_VISIT(traverse_module_state->__pyx_codeobj__47);
-  Py_VISIT(traverse_module_state->__pyx_codeobj__49);
+  Py_VISIT(traverse_module_state->__pyx_codeobj__48);
+  Py_VISIT(traverse_module_state->__pyx_codeobj__50);
+  Py_VISIT(traverse_module_state->__pyx_codeobj__51);
+  Py_VISIT(traverse_module_state->__pyx_codeobj__53);
   return 0;
 }
 #endif
@@ -3294,10 +3384,12 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #if CYTHON_USE_MODULE_STATE
 #endif
 #if CYTHON_USE_MODULE_STATE
+#endif
+#if CYTHON_USE_MODULE_STATE
 #define __pyx_type_8maptools_6toksim_6toksim_TokSim __pyx_mstate_global->__pyx_type_8maptools_6toksim_6toksim_TokSim
 #endif
 #define __pyx_ptype_8maptools_6toksim_6toksim_TokSim __pyx_mstate_global->__pyx_ptype_8maptools_6toksim_6toksim_TokSim
-#define __pyx_kp_s_5s_20s_9s_20s_9s_20s_10s_20s_10 __pyx_mstate_global->__pyx_kp_s_5s_20s_9s_20s_9s_20s_10s_20s_10
+#define __pyx_kp_s_5s_20s_9s_18s_9s_18s_10s_18s_10 __pyx_mstate_global->__pyx_kp_s_5s_20s_9s_18s_9s_18s_10s_18s_10
 #define __pyx_n_s_Any __pyx_mstate_global->__pyx_n_s_Any
 #define __pyx_n_s_CTG __pyx_mstate_global->__pyx_n_s_CTG
 #define __pyx_n_s_Conv __pyx_mstate_global->__pyx_n_s_Conv
@@ -3306,6 +3398,7 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_KeyError __pyx_mstate_global->__pyx_n_s_KeyError
 #define __pyx_n_s_List __pyx_mstate_global->__pyx_n_s_List
 #define __pyx_n_s_LogicalTile __pyx_mstate_global->__pyx_n_s_LogicalTile
+#define __pyx_n_s_MemoryError __pyx_mstate_global->__pyx_n_s_MemoryError
 #define __pyx_kp_s_No_value_specified_for_struct_at __pyx_mstate_global->__pyx_kp_s_No_value_specified_for_struct_at
 #define __pyx_kp_s_No_value_specified_for_struct_at_10 __pyx_mstate_global->__pyx_kp_s_No_value_specified_for_struct_at_10
 #define __pyx_kp_s_No_value_specified_for_struct_at_11 __pyx_mstate_global->__pyx_kp_s_No_value_specified_for_struct_at_11
@@ -3338,6 +3431,7 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_ROOT_DIR __pyx_mstate_global->__pyx_n_s_ROOT_DIR
 #define __pyx_n_s_Rsz __pyx_mstate_global->__pyx_n_s_Rsz
 #define __pyx_n_s_TokSim __pyx_mstate_global->__pyx_n_s_TokSim
+#define __pyx_kp_s_TokSim_Buffer_Evaluation_Report __pyx_mstate_global->__pyx_kp_s_TokSim_Buffer_Evaluation_Report
 #define __pyx_n_s_TokSim___reduce_cython __pyx_mstate_global->__pyx_n_s_TokSim___reduce_cython
 #define __pyx_n_s_TokSim___setstate_cython __pyx_mstate_global->__pyx_n_s_TokSim___setstate_cython
 #define __pyx_n_s_TokSim__cpp_get_interface_vars __pyx_mstate_global->__pyx_n_s_TokSim__cpp_get_interface_vars
@@ -3353,9 +3447,11 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_kp_s_Union_str_LogicalTile __pyx_mstate_global->__pyx_kp_s_Union_str_LogicalTile
 #define __pyx_n_s_ValueError __pyx_mstate_global->__pyx_n_s_ValueError
 #define __pyx_kp_s__28 __pyx_mstate_global->__pyx_kp_s__28
-#define __pyx_n_s__30 __pyx_mstate_global->__pyx_n_s__30
-#define __pyx_kp_u__31 __pyx_mstate_global->__pyx_kp_u__31
-#define __pyx_n_s__50 __pyx_mstate_global->__pyx_n_s__50
+#define __pyx_kp_s__29 __pyx_mstate_global->__pyx_kp_s__29
+#define __pyx_kp_s__30 __pyx_mstate_global->__pyx_kp_s__30
+#define __pyx_n_s__34 __pyx_mstate_global->__pyx_n_s__34
+#define __pyx_kp_u__35 __pyx_mstate_global->__pyx_kp_u__35
+#define __pyx_n_s__54 __pyx_mstate_global->__pyx_n_s__54
 #define __pyx_n_s_asyncio_coroutines __pyx_mstate_global->__pyx_n_s_asyncio_coroutines
 #define __pyx_n_s_attr __pyx_mstate_global->__pyx_n_s_attr
 #define __pyx_kp_s_buffer_log __pyx_mstate_global->__pyx_kp_s_buffer_log
@@ -3380,6 +3476,7 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_dict __pyx_mstate_global->__pyx_n_s_dict
 #define __pyx_n_s_dicts __pyx_mstate_global->__pyx_n_s_dicts
 #define __pyx_kp_u_disable __pyx_mstate_global->__pyx_kp_u_disable
+#define __pyx_n_s_dump __pyx_mstate_global->__pyx_n_s_dump
 #define __pyx_kp_u_enable __pyx_mstate_global->__pyx_kp_u_enable
 #define __pyx_n_s_encode __pyx_mstate_global->__pyx_n_s_encode
 #define __pyx_n_s_encoding __pyx_mstate_global->__pyx_n_s_encoding
@@ -3437,6 +3534,7 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_open __pyx_mstate_global->__pyx_n_s_open
 #define __pyx_n_s_os __pyx_mstate_global->__pyx_n_s_os
 #define __pyx_n_s_path __pyx_mstate_global->__pyx_n_s_path
+#define __pyx_n_s_pickle __pyx_mstate_global->__pyx_n_s_pickle
 #define __pyx_kp_s_pool_buf __pyx_mstate_global->__pyx_kp_s_pool_buf
 #define __pyx_n_b_pool_buf_2 __pyx_mstate_global->__pyx_n_b_pool_buf_2
 #define __pyx_n_s_pool_input_size __pyx_mstate_global->__pyx_n_s_pool_input_size
@@ -3448,6 +3546,7 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_preds __pyx_mstate_global->__pyx_n_s_preds
 #define __pyx_n_s_print __pyx_mstate_global->__pyx_n_s_print
 #define __pyx_n_s_pyx_state __pyx_mstate_global->__pyx_n_s_pyx_state
+#define __pyx_n_s_range __pyx_mstate_global->__pyx_n_s_range
 #define __pyx_n_s_reduce __pyx_mstate_global->__pyx_n_s_reduce
 #define __pyx_n_s_reduce_cython __pyx_mstate_global->__pyx_n_s_reduce_cython
 #define __pyx_n_s_reduce_ex __pyx_mstate_global->__pyx_n_s_reduce_ex
@@ -3466,16 +3565,20 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_str __pyx_mstate_global->__pyx_n_s_str
 #define __pyx_kp_s_stringsource __pyx_mstate_global->__pyx_kp_s_stringsource
 #define __pyx_n_s_succs __pyx_mstate_global->__pyx_n_s_succs
+#define __pyx_n_s_t __pyx_mstate_global->__pyx_n_s_t
 #define __pyx_n_s_test __pyx_mstate_global->__pyx_n_s_test
 #define __pyx_kp_s_tile __pyx_mstate_global->__pyx_kp_s_tile
 #define __pyx_n_s_tile_config __pyx_mstate_global->__pyx_n_s_tile_config
 #define __pyx_n_s_tiles __pyx_mstate_global->__pyx_n_s_tiles
 #define __pyx_n_s_token __pyx_mstate_global->__pyx_n_s_token
+#define __pyx_kp_u_token_info_written_to __pyx_mstate_global->__pyx_kp_u_token_info_written_to
+#define __pyx_kp_s_tokens_pkl __pyx_mstate_global->__pyx_kp_s_tokens_pkl
 #define __pyx_n_s_toksim __pyx_mstate_global->__pyx_n_s_toksim
 #define __pyx_n_s_typing __pyx_mstate_global->__pyx_n_s_typing
 #define __pyx_n_s_update __pyx_mstate_global->__pyx_n_s_update
 #define __pyx_kp_s_utf_8 __pyx_mstate_global->__pyx_kp_s_utf_8
 #define __pyx_n_s_w __pyx_mstate_global->__pyx_n_s_w
+#define __pyx_n_s_wb __pyx_mstate_global->__pyx_n_s_wb
 #define __pyx_n_s_write __pyx_mstate_global->__pyx_n_s_write
 #define __pyx_n_s_xbar_num_ichan __pyx_mstate_global->__pyx_n_s_xbar_num_ichan
 #define __pyx_n_s_xbar_num_ochan __pyx_mstate_global->__pyx_n_s_xbar_num_ochan
@@ -3506,25 +3609,27 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_tuple__25 __pyx_mstate_global->__pyx_tuple__25
 #define __pyx_tuple__26 __pyx_mstate_global->__pyx_tuple__26
 #define __pyx_tuple__27 __pyx_mstate_global->__pyx_tuple__27
-#define __pyx_tuple__29 __pyx_mstate_global->__pyx_tuple__29
+#define __pyx_tuple__31 __pyx_mstate_global->__pyx_tuple__31
 #define __pyx_tuple__32 __pyx_mstate_global->__pyx_tuple__32
-#define __pyx_tuple__34 __pyx_mstate_global->__pyx_tuple__34
+#define __pyx_tuple__33 __pyx_mstate_global->__pyx_tuple__33
 #define __pyx_tuple__36 __pyx_mstate_global->__pyx_tuple__36
 #define __pyx_tuple__38 __pyx_mstate_global->__pyx_tuple__38
-#define __pyx_tuple__39 __pyx_mstate_global->__pyx_tuple__39
-#define __pyx_tuple__41 __pyx_mstate_global->__pyx_tuple__41
+#define __pyx_tuple__40 __pyx_mstate_global->__pyx_tuple__40
+#define __pyx_tuple__42 __pyx_mstate_global->__pyx_tuple__42
 #define __pyx_tuple__43 __pyx_mstate_global->__pyx_tuple__43
 #define __pyx_tuple__45 __pyx_mstate_global->__pyx_tuple__45
-#define __pyx_tuple__48 __pyx_mstate_global->__pyx_tuple__48
-#define __pyx_codeobj__33 __pyx_mstate_global->__pyx_codeobj__33
-#define __pyx_codeobj__35 __pyx_mstate_global->__pyx_codeobj__35
+#define __pyx_tuple__47 __pyx_mstate_global->__pyx_tuple__47
+#define __pyx_tuple__49 __pyx_mstate_global->__pyx_tuple__49
+#define __pyx_tuple__52 __pyx_mstate_global->__pyx_tuple__52
 #define __pyx_codeobj__37 __pyx_mstate_global->__pyx_codeobj__37
-#define __pyx_codeobj__40 __pyx_mstate_global->__pyx_codeobj__40
-#define __pyx_codeobj__42 __pyx_mstate_global->__pyx_codeobj__42
+#define __pyx_codeobj__39 __pyx_mstate_global->__pyx_codeobj__39
+#define __pyx_codeobj__41 __pyx_mstate_global->__pyx_codeobj__41
 #define __pyx_codeobj__44 __pyx_mstate_global->__pyx_codeobj__44
 #define __pyx_codeobj__46 __pyx_mstate_global->__pyx_codeobj__46
-#define __pyx_codeobj__47 __pyx_mstate_global->__pyx_codeobj__47
-#define __pyx_codeobj__49 __pyx_mstate_global->__pyx_codeobj__49
+#define __pyx_codeobj__48 __pyx_mstate_global->__pyx_codeobj__48
+#define __pyx_codeobj__50 __pyx_mstate_global->__pyx_codeobj__50
+#define __pyx_codeobj__51 __pyx_mstate_global->__pyx_codeobj__51
+#define __pyx_codeobj__53 __pyx_mstate_global->__pyx_codeobj__53
 /* #### Code section: module_code ### */
 
 /* "string.from_py":13
@@ -7638,8 +7743,147 @@ static PyObject *__pyx_convert_unordered_map_to_py_std_3a__3a_string____std_3a__
   return __pyx_r;
 }
 
-/* "maptools/toksim/toksim.pyx":20
- *     _tile_config_dict: Dict[bytes, Dict[str, Any]]
+/* "vector.to_py":66
+ * 
+ * @cname("__pyx_convert_vector_to_py_int")
+ * cdef object __pyx_convert_vector_to_py_int(const vector[X]& v):             # <<<<<<<<<<<<<<
+ *     if v.size() > <size_t> PY_SSIZE_T_MAX:
+ *         raise MemoryError()
+ */
+
+static PyObject *__pyx_convert_vector_to_py_int(std::vector<int>  const &__pyx_v_v) {
+  PyObject *__pyx_v_o = NULL;
+  Py_ssize_t __pyx_v_i;
+  PyObject *__pyx_v_item = 0;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  int __pyx_t_1;
+  PyObject *__pyx_t_2 = NULL;
+  size_t __pyx_t_3;
+  size_t __pyx_t_4;
+  Py_ssize_t __pyx_t_5;
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("__pyx_convert_vector_to_py_int", 0);
+
+  /* "vector.to_py":67
+ * @cname("__pyx_convert_vector_to_py_int")
+ * cdef object __pyx_convert_vector_to_py_int(const vector[X]& v):
+ *     if v.size() > <size_t> PY_SSIZE_T_MAX:             # <<<<<<<<<<<<<<
+ *         raise MemoryError()
+ * 
+ */
+  __pyx_t_1 = (__pyx_v_v.size() > ((size_t)PY_SSIZE_T_MAX));
+  if (unlikely(__pyx_t_1)) {
+
+    /* "vector.to_py":68
+ * cdef object __pyx_convert_vector_to_py_int(const vector[X]& v):
+ *     if v.size() > <size_t> PY_SSIZE_T_MAX:
+ *         raise MemoryError()             # <<<<<<<<<<<<<<
+ * 
+ *     o = PyList_New(<Py_ssize_t> v.size())
+ */
+    PyErr_NoMemory(); __PYX_ERR(1, 68, __pyx_L1_error)
+
+    /* "vector.to_py":67
+ * @cname("__pyx_convert_vector_to_py_int")
+ * cdef object __pyx_convert_vector_to_py_int(const vector[X]& v):
+ *     if v.size() > <size_t> PY_SSIZE_T_MAX:             # <<<<<<<<<<<<<<
+ *         raise MemoryError()
+ * 
+ */
+  }
+
+  /* "vector.to_py":70
+ *         raise MemoryError()
+ * 
+ *     o = PyList_New(<Py_ssize_t> v.size())             # <<<<<<<<<<<<<<
+ * 
+ *     cdef Py_ssize_t i
+ */
+  __pyx_t_2 = PyList_New(((Py_ssize_t)__pyx_v_v.size())); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 70, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_v_o = ((PyObject*)__pyx_t_2);
+  __pyx_t_2 = 0;
+
+  /* "vector.to_py":75
+ *     cdef object item
+ * 
+ *     for i in range(v.size()):             # <<<<<<<<<<<<<<
+ *         item = v[i]
+ *         Py_INCREF(item)
+ */
+  __pyx_t_3 = __pyx_v_v.size();
+  __pyx_t_4 = __pyx_t_3;
+  for (__pyx_t_5 = 0; __pyx_t_5 < __pyx_t_4; __pyx_t_5+=1) {
+    __pyx_v_i = __pyx_t_5;
+
+    /* "vector.to_py":76
+ * 
+ *     for i in range(v.size()):
+ *         item = v[i]             # <<<<<<<<<<<<<<
+ *         Py_INCREF(item)
+ *         PyList_SET_ITEM(o, i, item)
+ */
+    __pyx_t_2 = __Pyx_PyInt_From_int((__pyx_v_v[__pyx_v_i])); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 76, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_XDECREF_SET(__pyx_v_item, __pyx_t_2);
+    __pyx_t_2 = 0;
+
+    /* "vector.to_py":77
+ *     for i in range(v.size()):
+ *         item = v[i]
+ *         Py_INCREF(item)             # <<<<<<<<<<<<<<
+ *         PyList_SET_ITEM(o, i, item)
+ * 
+ */
+    Py_INCREF(__pyx_v_item);
+
+    /* "vector.to_py":78
+ *         item = v[i]
+ *         Py_INCREF(item)
+ *         PyList_SET_ITEM(o, i, item)             # <<<<<<<<<<<<<<
+ * 
+ *     return o
+ */
+    PyList_SET_ITEM(__pyx_v_o, __pyx_v_i, __pyx_v_item);
+  }
+
+  /* "vector.to_py":80
+ *         PyList_SET_ITEM(o, i, item)
+ * 
+ *     return o             # <<<<<<<<<<<<<<
+ * 
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __Pyx_INCREF(__pyx_v_o);
+  __pyx_r = __pyx_v_o;
+  goto __pyx_L0;
+
+  /* "vector.to_py":66
+ * 
+ * @cname("__pyx_convert_vector_to_py_int")
+ * cdef object __pyx_convert_vector_to_py_int(const vector[X]& v):             # <<<<<<<<<<<<<<
+ *     if v.size() > <size_t> PY_SSIZE_T_MAX:
+ *         raise MemoryError()
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_AddTraceback("vector.to_py.__pyx_convert_vector_to_py_int", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = 0;
+  __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v_o);
+  __Pyx_XDECREF(__pyx_v_item);
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "maptools/toksim/toksim.pyx":23
+ *     _token_dict: Dict[bytes, List[int]]
  * 
  *     def __init__(self, ctg: CTG, mapname: str = 'newmap') -> None:             # <<<<<<<<<<<<<<
  *         self.ctg = ctg
@@ -7677,19 +7921,19 @@ static int __pyx_pw_8maptools_6toksim_6toksim_6TokSim_1__init__(PyObject *__pyx_
       switch (__pyx_nargs) {
         case  0:
         if (likely((values[0] = __Pyx_GetKwValue_VARARGS(__pyx_kwds, __pyx_kwvalues, __pyx_n_s_ctg)) != 0)) kw_args--;
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 20, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 23, __pyx_L3_error)
         else goto __pyx_L5_argtuple_error;
         CYTHON_FALLTHROUGH;
         case  1:
         if (kw_args > 0) {
           PyObject* value = __Pyx_GetKwValue_VARARGS(__pyx_kwds, __pyx_kwvalues, __pyx_n_s_mapname);
           if (value) { values[1] = value; kw_args--; }
-          else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 20, __pyx_L3_error)
+          else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 23, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
         const Py_ssize_t kwd_pos_args = __pyx_nargs;
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "__init__") < 0)) __PYX_ERR(0, 20, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "__init__") < 0)) __PYX_ERR(0, 23, __pyx_L3_error)
       }
     } else {
       switch (__pyx_nargs) {
@@ -7705,13 +7949,13 @@ static int __pyx_pw_8maptools_6toksim_6toksim_6TokSim_1__init__(PyObject *__pyx_
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__init__", 0, 1, 2, __pyx_nargs); __PYX_ERR(0, 20, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("__init__", 0, 1, 2, __pyx_nargs); __PYX_ERR(0, 23, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("maptools.toksim.toksim.TokSim.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return -1;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_mapname), (&PyString_Type), 0, "mapname", 1))) __PYX_ERR(0, 20, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_mapname), (&PyString_Type), 0, "mapname", 1))) __PYX_ERR(0, 23, __pyx_L1_error)
   __pyx_r = __pyx_pf_8maptools_6toksim_6toksim_6TokSim___init__(((struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *)__pyx_v_self), __pyx_v_ctg, __pyx_v_mapname);
 
   /* function exit code */
@@ -7739,7 +7983,7 @@ static int __pyx_pf_8maptools_6toksim_6toksim_6TokSim___init__(struct __pyx_obj_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__init__", 0);
 
-  /* "maptools/toksim/toksim.pyx":21
+  /* "maptools/toksim/toksim.pyx":24
  * 
  *     def __init__(self, ctg: CTG, mapname: str = 'newmap') -> None:
  *         self.ctg = ctg             # <<<<<<<<<<<<<<
@@ -7752,7 +7996,7 @@ static int __pyx_pf_8maptools_6toksim_6toksim_6TokSim___init__(struct __pyx_obj_
   __Pyx_DECREF(__pyx_v_self->ctg);
   __pyx_v_self->ctg = __pyx_v_ctg;
 
-  /* "maptools/toksim/toksim.pyx":22
+  /* "maptools/toksim/toksim.pyx":25
  *     def __init__(self, ctg: CTG, mapname: str = 'newmap') -> None:
  *         self.ctg = ctg
  *         self.mapname = mapname             # <<<<<<<<<<<<<<
@@ -7765,14 +8009,14 @@ static int __pyx_pf_8maptools_6toksim_6toksim_6TokSim___init__(struct __pyx_obj_
   __Pyx_DECREF(__pyx_v_self->mapname);
   __pyx_v_self->mapname = __pyx_v_mapname;
 
-  /* "maptools/toksim/toksim.pyx":23
+  /* "maptools/toksim/toksim.pyx":26
  *         self.ctg = ctg
  *         self.mapname = mapname
  *         self._cpp_get_interface_vars()             # <<<<<<<<<<<<<<
  *         self.c_toksim = C_TokSim(
  *             self._nodes,
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_cpp_get_interface_vars); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 23, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_cpp_get_interface_vars); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 26, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   __pyx_t_4 = 0;
@@ -7790,40 +8034,40 @@ static int __pyx_pf_8maptools_6toksim_6toksim_6TokSim___init__(struct __pyx_obj_
     PyObject *__pyx_callargs[1] = {__pyx_t_3, };
     __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_2, __pyx_callargs+1-__pyx_t_4, 0+__pyx_t_4);
     __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 23, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 26, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "maptools/toksim/toksim.pyx":25
+  /* "maptools/toksim/toksim.pyx":28
  *         self._cpp_get_interface_vars()
  *         self.c_toksim = C_TokSim(
  *             self._nodes,             # <<<<<<<<<<<<<<
  *             self._node_attr_dict,
  *             self._tile_config_dict
  */
-  __pyx_t_5 = __pyx_convert_vector_from_py_std_3a__3a_string(__pyx_v_self->_nodes); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 25, __pyx_L1_error)
+  __pyx_t_5 = __pyx_convert_vector_from_py_std_3a__3a_string(__pyx_v_self->_nodes); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 28, __pyx_L1_error)
 
-  /* "maptools/toksim/toksim.pyx":26
+  /* "maptools/toksim/toksim.pyx":29
  *         self.c_toksim = C_TokSim(
  *             self._nodes,
  *             self._node_attr_dict,             # <<<<<<<<<<<<<<
  *             self._tile_config_dict
  *         )
  */
-  __pyx_t_6 = __pyx_convert_unordered_map_from_py_std_3a__3a_string__and_struct__toksim_3a__3a_C_NodeAttr(__pyx_v_self->_node_attr_dict); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 26, __pyx_L1_error)
+  __pyx_t_6 = __pyx_convert_unordered_map_from_py_std_3a__3a_string__and_struct__toksim_3a__3a_C_NodeAttr(__pyx_v_self->_node_attr_dict); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 29, __pyx_L1_error)
 
-  /* "maptools/toksim/toksim.pyx":27
+  /* "maptools/toksim/toksim.pyx":30
  *             self._nodes,
  *             self._node_attr_dict,
  *             self._tile_config_dict             # <<<<<<<<<<<<<<
  *         )
  * 
  */
-  __pyx_t_7 = __pyx_convert_unordered_map_from_py_std_3a__3a_string__and_struct__toksim_3a__3a_C_TileConfig(__pyx_v_self->_tile_config_dict); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 27, __pyx_L1_error)
+  __pyx_t_7 = __pyx_convert_unordered_map_from_py_std_3a__3a_string__and_struct__toksim_3a__3a_C_TileConfig(__pyx_v_self->_tile_config_dict); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 30, __pyx_L1_error)
 
-  /* "maptools/toksim/toksim.pyx":24
+  /* "maptools/toksim/toksim.pyx":27
  *         self.mapname = mapname
  *         self._cpp_get_interface_vars()
  *         self.c_toksim = C_TokSim(             # <<<<<<<<<<<<<<
@@ -7834,12 +8078,12 @@ static int __pyx_pf_8maptools_6toksim_6toksim_6TokSim___init__(struct __pyx_obj_
     __pyx_t_8 = toksim::C_TokSim(__pyx_t_5, __pyx_t_6, __pyx_t_7);
   } catch(...) {
     __Pyx_CppExn2PyErr();
-    __PYX_ERR(0, 24, __pyx_L1_error)
+    __PYX_ERR(0, 27, __pyx_L1_error)
   }
   __pyx_v_self->c_toksim = __PYX_STD_MOVE_IF_SUPPORTED(__pyx_t_8);
 
-  /* "maptools/toksim/toksim.pyx":20
- *     _tile_config_dict: Dict[bytes, Dict[str, Any]]
+  /* "maptools/toksim/toksim.pyx":23
+ *     _token_dict: Dict[bytes, List[int]]
  * 
  *     def __init__(self, ctg: CTG, mapname: str = 'newmap') -> None:             # <<<<<<<<<<<<<<
  *         self.ctg = ctg
@@ -7860,7 +8104,7 @@ static int __pyx_pf_8maptools_6toksim_6toksim_6TokSim___init__(struct __pyx_obj_
   return __pyx_r;
 }
 
-/* "maptools/toksim/toksim.pyx":30
+/* "maptools/toksim/toksim.pyx":33
  *         )
  * 
  *     def run(self) -> None:             # <<<<<<<<<<<<<<
@@ -7913,7 +8157,7 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_2run(struct __pyx_ob
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("run", 0);
 
-  /* "maptools/toksim/toksim.pyx":31
+  /* "maptools/toksim/toksim.pyx":34
  * 
  *     def run(self) -> None:
  *         self.c_toksim.run()             # <<<<<<<<<<<<<<
@@ -7922,14 +8166,14 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_2run(struct __pyx_ob
  */
   __pyx_v_self->c_toksim.run();
 
-  /* "maptools/toksim/toksim.pyx":32
+  /* "maptools/toksim/toksim.pyx":35
  *     def run(self) -> None:
  *         self.c_toksim.run()
  *         self.save_execu()             # <<<<<<<<<<<<<<
  * 
  *     def get_bufs(self) -> str:
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_save_execu); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 32, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_save_execu); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 35, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = NULL;
   __pyx_t_4 = 0;
@@ -7947,13 +8191,13 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_2run(struct __pyx_ob
     PyObject *__pyx_callargs[1] = {__pyx_t_3, };
     __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_2, __pyx_callargs+1-__pyx_t_4, 0+__pyx_t_4);
     __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 32, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 35, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "maptools/toksim/toksim.pyx":30
+  /* "maptools/toksim/toksim.pyx":33
  *         )
  * 
  *     def run(self) -> None:             # <<<<<<<<<<<<<<
@@ -7976,7 +8220,7 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_2run(struct __pyx_ob
   return __pyx_r;
 }
 
-/* "maptools/toksim/toksim.pyx":34
+/* "maptools/toksim/toksim.pyx":37
  *         self.save_execu()
  * 
  *     def get_bufs(self) -> str:             # <<<<<<<<<<<<<<
@@ -8037,23 +8281,23 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_4get_bufs(struct __p
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("get_bufs", 0);
 
-  /* "maptools/toksim/toksim.pyx":35
+  /* "maptools/toksim/toksim.pyx":38
  * 
  *     def get_bufs(self) -> str:
  *         self._need_bufs = self.c_toksim.need_bufs             # <<<<<<<<<<<<<<
  *         log = ""
  *         for node in self._nodes:
  */
-  __pyx_t_1 = __pyx_convert_unordered_map_to_py_std_3a__3a_string____std_3a__3a_unordered_map_3c_std_3a__3a_string_2c_int_3e___(__pyx_v_self->c_toksim.need_bufs); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 35, __pyx_L1_error)
+  __pyx_t_1 = __pyx_convert_unordered_map_to_py_std_3a__3a_string____std_3a__3a_unordered_map_3c_std_3a__3a_string_2c_int_3e___(__pyx_v_self->c_toksim.need_bufs); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 38, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (!(likely(PyDict_CheckExact(__pyx_t_1)) || __Pyx_RaiseUnexpectedTypeError("dict", __pyx_t_1))) __PYX_ERR(0, 35, __pyx_L1_error)
+  if (!(likely(PyDict_CheckExact(__pyx_t_1)) || __Pyx_RaiseUnexpectedTypeError("dict", __pyx_t_1))) __PYX_ERR(0, 38, __pyx_L1_error)
   __Pyx_GIVEREF(__pyx_t_1);
   __Pyx_GOTREF(__pyx_v_self->_need_bufs);
   __Pyx_DECREF(__pyx_v_self->_need_bufs);
   __pyx_v_self->_need_bufs = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "maptools/toksim/toksim.pyx":36
+  /* "maptools/toksim/toksim.pyx":39
  *     def get_bufs(self) -> str:
  *         self._need_bufs = self.c_toksim.need_bufs
  *         log = ""             # <<<<<<<<<<<<<<
@@ -8063,7 +8307,7 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_4get_bufs(struct __p
   __Pyx_INCREF(__pyx_kp_s__28);
   __pyx_v_log = __pyx_kp_s__28;
 
-  /* "maptools/toksim/toksim.pyx":37
+  /* "maptools/toksim/toksim.pyx":40
  *         self._need_bufs = self.c_toksim.need_bufs
  *         log = ""
  *         for node in self._nodes:             # <<<<<<<<<<<<<<
@@ -8072,108 +8316,108 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_4get_bufs(struct __p
  */
   if (unlikely(__pyx_v_self->_nodes == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
-    __PYX_ERR(0, 37, __pyx_L1_error)
+    __PYX_ERR(0, 40, __pyx_L1_error)
   }
   __pyx_t_1 = __pyx_v_self->_nodes; __Pyx_INCREF(__pyx_t_1); __pyx_t_2 = 0;
   for (;;) {
     if (__pyx_t_2 >= PyList_GET_SIZE(__pyx_t_1)) break;
     #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-    __pyx_t_3 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_3); __pyx_t_2++; if (unlikely((0 < 0))) __PYX_ERR(0, 37, __pyx_L1_error)
+    __pyx_t_3 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_2); __Pyx_INCREF(__pyx_t_3); __pyx_t_2++; if (unlikely((0 < 0))) __PYX_ERR(0, 40, __pyx_L1_error)
     #else
-    __pyx_t_3 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 37, __pyx_L1_error)
+    __pyx_t_3 = PySequence_ITEM(__pyx_t_1, __pyx_t_2); __pyx_t_2++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 40, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     #endif
     __Pyx_XDECREF_SET(__pyx_v_node, __pyx_t_3);
     __pyx_t_3 = 0;
 
-    /* "maptools/toksim/toksim.pyx":38
+    /* "maptools/toksim/toksim.pyx":41
  *         log = ""
  *         for node in self._nodes:
  *             if node in self._need_bufs:             # <<<<<<<<<<<<<<
  *                 bufs = self._need_bufs[node]
- *                 log += '%-5s%-20s%-9s%-20s%-9s%-20s%-10s%-20s%-10s%-20s%-11s%-20s\n' % (
+ *                 log += '%-5s%-20s%-9s%-18s%-9s%-18s%-10s%-18s%-10s%-18s%-11s%-10s\n' % (
  */
     if (unlikely(__pyx_v_self->_need_bufs == Py_None)) {
       PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
-      __PYX_ERR(0, 38, __pyx_L1_error)
+      __PYX_ERR(0, 41, __pyx_L1_error)
     }
-    __pyx_t_4 = (__Pyx_PyDict_ContainsTF(__pyx_v_node, __pyx_v_self->_need_bufs, Py_EQ)); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 38, __pyx_L1_error)
+    __pyx_t_4 = (__Pyx_PyDict_ContainsTF(__pyx_v_node, __pyx_v_self->_need_bufs, Py_EQ)); if (unlikely((__pyx_t_4 < 0))) __PYX_ERR(0, 41, __pyx_L1_error)
     if (__pyx_t_4) {
 
-      /* "maptools/toksim/toksim.pyx":39
+      /* "maptools/toksim/toksim.pyx":42
  *         for node in self._nodes:
  *             if node in self._need_bufs:
  *                 bufs = self._need_bufs[node]             # <<<<<<<<<<<<<<
- *                 log += '%-5s%-20s%-9s%-20s%-9s%-20s%-10s%-20s%-10s%-20s%-11s%-20s\n' % (
+ *                 log += '%-5s%-20s%-9s%-18s%-9s%-18s%-10s%-18s%-10s%-18s%-11s%-10s\n' % (
  *                     'tile:', node,
  */
       if (unlikely(__pyx_v_self->_need_bufs == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 39, __pyx_L1_error)
+        __PYX_ERR(0, 42, __pyx_L1_error)
       }
-      __pyx_t_3 = __Pyx_PyDict_GetItem(__pyx_v_self->_need_bufs, __pyx_v_node); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 39, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyDict_GetItem(__pyx_v_self->_need_bufs, __pyx_v_node); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 42, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_XDECREF_SET(__pyx_v_bufs, __pyx_t_3);
       __pyx_t_3 = 0;
 
-      /* "maptools/toksim/toksim.pyx":42
- *                 log += '%-5s%-20s%-9s%-20s%-9s%-20s%-10s%-20s%-10s%-20s%-11s%-20s\n' % (
+      /* "maptools/toksim/toksim.pyx":45
+ *                 log += '%-5s%-20s%-9s%-18s%-9s%-18s%-10s%-18s%-10s%-18s%-11s%-10s\n' % (
  *                     'tile:', node,
  *                     'conv_buf:', bufs[b'conv_buf'],             # <<<<<<<<<<<<<<
  *                     'pool_buf:', bufs[b'pool_buf'],
  *                     'inter_buf:', bufs[b'inter_buf'],
  */
-      __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_v_bufs, __pyx_n_b_conv_buf_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 42, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_v_bufs, __pyx_n_b_conv_buf_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 45, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
 
-      /* "maptools/toksim/toksim.pyx":43
+      /* "maptools/toksim/toksim.pyx":46
  *                     'tile:', node,
  *                     'conv_buf:', bufs[b'conv_buf'],
  *                     'pool_buf:', bufs[b'pool_buf'],             # <<<<<<<<<<<<<<
  *                     'inter_buf:', bufs[b'inter_buf'],
  *                     'merge_buf:', bufs[b'merge_buf'],
  */
-      __pyx_t_5 = __Pyx_PyObject_GetItem(__pyx_v_bufs, __pyx_n_b_pool_buf_2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 43, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyObject_GetItem(__pyx_v_bufs, __pyx_n_b_pool_buf_2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 46, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
 
-      /* "maptools/toksim/toksim.pyx":44
+      /* "maptools/toksim/toksim.pyx":47
  *                     'conv_buf:', bufs[b'conv_buf'],
  *                     'pool_buf:', bufs[b'pool_buf'],
  *                     'inter_buf:', bufs[b'inter_buf'],             # <<<<<<<<<<<<<<
  *                     'merge_buf:', bufs[b'merge_buf'],
  *                     'gather_buf:', bufs[b'gather_buf']
  */
-      __pyx_t_6 = __Pyx_PyObject_GetItem(__pyx_v_bufs, __pyx_n_b_inter_buf_2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 44, __pyx_L1_error)
+      __pyx_t_6 = __Pyx_PyObject_GetItem(__pyx_v_bufs, __pyx_n_b_inter_buf_2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 47, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
 
-      /* "maptools/toksim/toksim.pyx":45
+      /* "maptools/toksim/toksim.pyx":48
  *                     'pool_buf:', bufs[b'pool_buf'],
  *                     'inter_buf:', bufs[b'inter_buf'],
  *                     'merge_buf:', bufs[b'merge_buf'],             # <<<<<<<<<<<<<<
  *                     'gather_buf:', bufs[b'gather_buf']
  *                 )
  */
-      __pyx_t_7 = __Pyx_PyObject_GetItem(__pyx_v_bufs, __pyx_n_b_merge_buf_2); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 45, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_PyObject_GetItem(__pyx_v_bufs, __pyx_n_b_merge_buf_2); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 48, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
 
-      /* "maptools/toksim/toksim.pyx":46
+      /* "maptools/toksim/toksim.pyx":49
  *                     'inter_buf:', bufs[b'inter_buf'],
  *                     'merge_buf:', bufs[b'merge_buf'],
  *                     'gather_buf:', bufs[b'gather_buf']             # <<<<<<<<<<<<<<
  *                 )
- *         return log
+ *         print("\n\n"+"-"*70)
  */
-      __pyx_t_8 = __Pyx_PyObject_GetItem(__pyx_v_bufs, __pyx_n_b_gather_buf_2); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 46, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_PyObject_GetItem(__pyx_v_bufs, __pyx_n_b_gather_buf_2); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 49, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
 
-      /* "maptools/toksim/toksim.pyx":41
+      /* "maptools/toksim/toksim.pyx":44
  *                 bufs = self._need_bufs[node]
- *                 log += '%-5s%-20s%-9s%-20s%-9s%-20s%-10s%-20s%-10s%-20s%-11s%-20s\n' % (
+ *                 log += '%-5s%-20s%-9s%-18s%-9s%-18s%-10s%-18s%-10s%-18s%-11s%-10s\n' % (
  *                     'tile:', node,             # <<<<<<<<<<<<<<
  *                     'conv_buf:', bufs[b'conv_buf'],
  *                     'pool_buf:', bufs[b'pool_buf'],
  */
-      __pyx_t_9 = PyTuple_New(12); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 41, __pyx_L1_error)
+      __pyx_t_9 = PyTuple_New(12); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 44, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_9);
       __Pyx_INCREF(__pyx_kp_s_tile);
       __Pyx_GIVEREF(__pyx_kp_s_tile);
@@ -8212,32 +8456,32 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_4get_bufs(struct __p
       __pyx_t_7 = 0;
       __pyx_t_8 = 0;
 
-      /* "maptools/toksim/toksim.pyx":40
+      /* "maptools/toksim/toksim.pyx":43
  *             if node in self._need_bufs:
  *                 bufs = self._need_bufs[node]
- *                 log += '%-5s%-20s%-9s%-20s%-9s%-20s%-10s%-20s%-10s%-20s%-11s%-20s\n' % (             # <<<<<<<<<<<<<<
+ *                 log += '%-5s%-20s%-9s%-18s%-9s%-18s%-10s%-18s%-10s%-18s%-11s%-10s\n' % (             # <<<<<<<<<<<<<<
  *                     'tile:', node,
  *                     'conv_buf:', bufs[b'conv_buf'],
  */
-      __pyx_t_8 = __Pyx_PyString_Format(__pyx_kp_s_5s_20s_9s_20s_9s_20s_10s_20s_10, __pyx_t_9); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 40, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_PyString_Format(__pyx_kp_s_5s_20s_9s_18s_9s_18s_10s_18s_10, __pyx_t_9); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 43, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-      __pyx_t_9 = PyNumber_InPlaceAdd(__pyx_v_log, __pyx_t_8); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 40, __pyx_L1_error)
+      __pyx_t_9 = PyNumber_InPlaceAdd(__pyx_v_log, __pyx_t_8); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 43, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_9);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
       __Pyx_DECREF_SET(__pyx_v_log, __pyx_t_9);
       __pyx_t_9 = 0;
 
-      /* "maptools/toksim/toksim.pyx":38
+      /* "maptools/toksim/toksim.pyx":41
  *         log = ""
  *         for node in self._nodes:
  *             if node in self._need_bufs:             # <<<<<<<<<<<<<<
  *                 bufs = self._need_bufs[node]
- *                 log += '%-5s%-20s%-9s%-20s%-9s%-20s%-10s%-20s%-10s%-20s%-11s%-20s\n' % (
+ *                 log += '%-5s%-20s%-9s%-18s%-9s%-18s%-10s%-18s%-10s%-18s%-11s%-10s\n' % (
  */
     }
 
-    /* "maptools/toksim/toksim.pyx":37
+    /* "maptools/toksim/toksim.pyx":40
  *         self._need_bufs = self.c_toksim.need_bufs
  *         log = ""
  *         for node in self._nodes:             # <<<<<<<<<<<<<<
@@ -8247,20 +8491,67 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_4get_bufs(struct __p
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "maptools/toksim/toksim.pyx":48
+  /* "maptools/toksim/toksim.pyx":51
  *                     'gather_buf:', bufs[b'gather_buf']
  *                 )
+ *         print("\n\n"+"-"*70)             # <<<<<<<<<<<<<<
+ *         print("TokSim Buffer Evaluation Report")
+ *         print("-"*70)
+ */
+  __pyx_t_1 = __Pyx_PyStr_Concat(__pyx_kp_s__29, __pyx_kp_s__30); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 51, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_9 = __Pyx_PyObject_CallOneArg(__pyx_builtin_print, __pyx_t_1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 51, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_9);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+
+  /* "maptools/toksim/toksim.pyx":52
+ *                 )
+ *         print("\n\n"+"-"*70)
+ *         print("TokSim Buffer Evaluation Report")             # <<<<<<<<<<<<<<
+ *         print("-"*70)
+ *         print(log)
+ */
+  __pyx_t_9 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__31, NULL); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 52, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_9);
+  __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+
+  /* "maptools/toksim/toksim.pyx":53
+ *         print("\n\n"+"-"*70)
+ *         print("TokSim Buffer Evaluation Report")
+ *         print("-"*70)             # <<<<<<<<<<<<<<
+ *         print(log)
+ *         return log
+ */
+  __pyx_t_9 = __Pyx_PyObject_Call(__pyx_builtin_print, __pyx_tuple__32, NULL); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 53, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_9);
+  __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+
+  /* "maptools/toksim/toksim.pyx":54
+ *         print("TokSim Buffer Evaluation Report")
+ *         print("-"*70)
+ *         print(log)             # <<<<<<<<<<<<<<
+ *         return log
+ * 
+ */
+  __pyx_t_9 = __Pyx_PyObject_CallOneArg(__pyx_builtin_print, __pyx_v_log); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 54, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_9);
+  __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+
+  /* "maptools/toksim/toksim.pyx":55
+ *         print("-"*70)
+ *         print(log)
  *         return log             # <<<<<<<<<<<<<<
  * 
  *     def save_execu(self, file_name: str = 'token'):
  */
   __Pyx_XDECREF(__pyx_r);
-  if (!(likely(PyString_CheckExact(__pyx_v_log))||((__pyx_v_log) == Py_None) || __Pyx_RaiseUnexpectedTypeError("str", __pyx_v_log))) __PYX_ERR(0, 48, __pyx_L1_error)
+  if (!(likely(PyString_CheckExact(__pyx_v_log))||((__pyx_v_log) == Py_None) || __Pyx_RaiseUnexpectedTypeError("str", __pyx_v_log))) __PYX_ERR(0, 55, __pyx_L1_error)
   __Pyx_INCREF(__pyx_v_log);
   __pyx_r = ((PyObject*)__pyx_v_log);
   goto __pyx_L0;
 
-  /* "maptools/toksim/toksim.pyx":34
+  /* "maptools/toksim/toksim.pyx":37
  *         self.save_execu()
  * 
  *     def get_bufs(self) -> str:             # <<<<<<<<<<<<<<
@@ -8288,7 +8579,7 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_4get_bufs(struct __p
   return __pyx_r;
 }
 
-/* "maptools/toksim/toksim.pyx":50
+/* "maptools/toksim/toksim.pyx":57
  *         return log
  * 
  *     def save_execu(self, file_name: str = 'token'):             # <<<<<<<<<<<<<<
@@ -8341,12 +8632,12 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
         if (kw_args > 0) {
           PyObject* value = __Pyx_GetKwValue_FASTCALL(__pyx_kwds, __pyx_kwvalues, __pyx_n_s_file_name);
           if (value) { values[0] = value; kw_args--; }
-          else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 50, __pyx_L3_error)
+          else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 57, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
         const Py_ssize_t kwd_pos_args = __pyx_nargs;
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "save_execu") < 0)) __PYX_ERR(0, 50, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "save_execu") < 0)) __PYX_ERR(0, 57, __pyx_L3_error)
       }
     } else {
       switch (__pyx_nargs) {
@@ -8360,13 +8651,13 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("save_execu", 0, 0, 1, __pyx_nargs); __PYX_ERR(0, 50, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("save_execu", 0, 0, 1, __pyx_nargs); __PYX_ERR(0, 57, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("maptools.toksim.toksim.TokSim.save_execu", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_file_name), (&PyString_Type), 0, "file_name", 1))) __PYX_ERR(0, 50, __pyx_L1_error)
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_file_name), (&PyString_Type), 0, "file_name", 1))) __PYX_ERR(0, 57, __pyx_L1_error)
   __pyx_r = __pyx_pf_8maptools_6toksim_6toksim_6TokSim_6save_execu(((struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *)__pyx_v_self), __pyx_v_file_name);
 
   /* function exit code */
@@ -8381,8 +8672,9 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
 static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_6save_execu(struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v_file_name) {
   PyObject *__pyx_v_save_dir = NULL;
   PyObject *__pyx_v_file_dir = NULL;
-  PyObject *__pyx_v_log = NULL;
   PyObject *__pyx_v_f = NULL;
+  PyObject *__pyx_v_log = NULL;
+  PyObject *__pyx_7genexpr__pyx_v_t = NULL;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -8392,32 +8684,36 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_6save_execu(struct _
   int __pyx_t_5;
   int __pyx_t_6;
   int __pyx_t_7;
-  PyObject *__pyx_t_8 = NULL;
-  PyObject *__pyx_t_9 = NULL;
+  Py_ssize_t __pyx_t_8;
+  PyObject *(*__pyx_t_9)(PyObject *);
   PyObject *__pyx_t_10 = NULL;
-  PyObject *__pyx_t_11 = NULL;
+  std::string __pyx_t_11;
   PyObject *__pyx_t_12 = NULL;
+  PyObject *__pyx_t_13 = NULL;
+  PyObject *__pyx_t_14 = NULL;
+  PyObject *__pyx_t_15 = NULL;
+  PyObject *__pyx_t_16 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("save_execu", 0);
 
-  /* "maptools/toksim/toksim.pyx":51
+  /* "maptools/toksim/toksim.pyx":58
  * 
  *     def save_execu(self, file_name: str = 'token'):
  *         save_dir = os.path.join(ROOT_DIR, 'mapsave', self.mapname, 'toksim')             # <<<<<<<<<<<<<<
  *         if not os.path.exists(save_dir):
  *             os.makedirs(save_dir)
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_os); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 51, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_os); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 58, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_path); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 51, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_path); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 58, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_join); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 51, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_join); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 58, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_ROOT_DIR); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 51, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_ROOT_DIR); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 58, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_4 = NULL;
   __pyx_t_5 = 0;
@@ -8436,26 +8732,26 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_6save_execu(struct _
     __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_2, __pyx_callargs+1-__pyx_t_5, 4+__pyx_t_5);
     __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 51, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 58, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   }
   __pyx_v_save_dir = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "maptools/toksim/toksim.pyx":52
+  /* "maptools/toksim/toksim.pyx":59
  *     def save_execu(self, file_name: str = 'token'):
  *         save_dir = os.path.join(ROOT_DIR, 'mapsave', self.mapname, 'toksim')
  *         if not os.path.exists(save_dir):             # <<<<<<<<<<<<<<
  *             os.makedirs(save_dir)
  * 
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_os); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 52, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_os); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 59, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_path); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 52, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_path); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 59, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_exists); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 52, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_exists); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 59, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __pyx_t_3 = NULL;
@@ -8474,25 +8770,25 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_6save_execu(struct _
     PyObject *__pyx_callargs[2] = {__pyx_t_3, __pyx_v_save_dir};
     __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_2, __pyx_callargs+1-__pyx_t_5, 1+__pyx_t_5);
     __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 52, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 59, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   }
-  __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_6 < 0))) __PYX_ERR(0, 52, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_6 < 0))) __PYX_ERR(0, 59, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_t_7 = (!__pyx_t_6);
   if (__pyx_t_7) {
 
-    /* "maptools/toksim/toksim.pyx":53
+    /* "maptools/toksim/toksim.pyx":60
  *         save_dir = os.path.join(ROOT_DIR, 'mapsave', self.mapname, 'toksim')
  *         if not os.path.exists(save_dir):
  *             os.makedirs(save_dir)             # <<<<<<<<<<<<<<
  * 
- *         # save buffer log
+ *         # save token information
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_os); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 53, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_os); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 60, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_makedirs); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 53, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_makedirs); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 60, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __pyx_t_2 = NULL;
@@ -8511,13 +8807,13 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_6save_execu(struct _
       PyObject *__pyx_callargs[2] = {__pyx_t_2, __pyx_v_save_dir};
       __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_5, 1+__pyx_t_5);
       __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 53, __pyx_L1_error)
+      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 60, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     }
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-    /* "maptools/toksim/toksim.pyx":52
+    /* "maptools/toksim/toksim.pyx":59
  *     def save_execu(self, file_name: str = 'token'):
  *         save_dir = os.path.join(ROOT_DIR, 'mapsave', self.mapname, 'toksim')
  *         if not os.path.exists(save_dir):             # <<<<<<<<<<<<<<
@@ -8526,19 +8822,19 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_6save_execu(struct _
  */
   }
 
-  /* "maptools/toksim/toksim.pyx":56
+  /* "maptools/toksim/toksim.pyx":63
  * 
- *         # save buffer log
- *         file_dir = os.path.join(save_dir, 'buffer.log')             # <<<<<<<<<<<<<<
- *         log = self.get_bufs()
- *         with open(file_dir, 'w') as f:
+ *         # save token information
+ *         file_dir = os.path.join(save_dir, 'tokens.pkl')             # <<<<<<<<<<<<<<
+ *         self._token_dict = {
+ *             t: self.c_toksim.execu_dict[self.encode(t)]
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_os); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 56, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_os); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 63, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_path); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 56, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_path); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 63, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_join); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 56, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_join); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 63, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_t_2 = NULL;
@@ -8554,49 +8850,407 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_6save_execu(struct _
     }
   }
   {
-    PyObject *__pyx_callargs[3] = {__pyx_t_2, __pyx_v_save_dir, __pyx_kp_s_buffer_log};
+    PyObject *__pyx_callargs[3] = {__pyx_t_2, __pyx_v_save_dir, __pyx_kp_s_tokens_pkl};
     __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_5, 2+__pyx_t_5);
     __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 56, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 63, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   }
   __pyx_v_file_dir = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "maptools/toksim/toksim.pyx":57
+  /* "maptools/toksim/toksim.pyx":64
+ *         # save token information
+ *         file_dir = os.path.join(save_dir, 'tokens.pkl')
+ *         self._token_dict = {             # <<<<<<<<<<<<<<
+ *             t: self.c_toksim.execu_dict[self.encode(t)]
+ *             for t in self.ctg.tiles
+ */
+  { /* enter inner scope */
+    __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 64, __pyx_L6_error)
+    __Pyx_GOTREF(__pyx_t_1);
+
+    /* "maptools/toksim/toksim.pyx":66
+ *         self._token_dict = {
+ *             t: self.c_toksim.execu_dict[self.encode(t)]
+ *             for t in self.ctg.tiles             # <<<<<<<<<<<<<<
+ *         }
+ *         with open(file_dir,'wb') as f:
+ */
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->ctg, __pyx_n_s_tiles); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 66, __pyx_L6_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    if (likely(PyList_CheckExact(__pyx_t_3)) || PyTuple_CheckExact(__pyx_t_3)) {
+      __pyx_t_2 = __pyx_t_3; __Pyx_INCREF(__pyx_t_2); __pyx_t_8 = 0;
+      __pyx_t_9 = NULL;
+    } else {
+      __pyx_t_8 = -1; __pyx_t_2 = PyObject_GetIter(__pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 66, __pyx_L6_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __pyx_t_9 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_2); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 66, __pyx_L6_error)
+    }
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    for (;;) {
+      if (likely(!__pyx_t_9)) {
+        if (likely(PyList_CheckExact(__pyx_t_2))) {
+          if (__pyx_t_8 >= PyList_GET_SIZE(__pyx_t_2)) break;
+          #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+          __pyx_t_3 = PyList_GET_ITEM(__pyx_t_2, __pyx_t_8); __Pyx_INCREF(__pyx_t_3); __pyx_t_8++; if (unlikely((0 < 0))) __PYX_ERR(0, 66, __pyx_L6_error)
+          #else
+          __pyx_t_3 = PySequence_ITEM(__pyx_t_2, __pyx_t_8); __pyx_t_8++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 66, __pyx_L6_error)
+          __Pyx_GOTREF(__pyx_t_3);
+          #endif
+        } else {
+          if (__pyx_t_8 >= PyTuple_GET_SIZE(__pyx_t_2)) break;
+          #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+          __pyx_t_3 = PyTuple_GET_ITEM(__pyx_t_2, __pyx_t_8); __Pyx_INCREF(__pyx_t_3); __pyx_t_8++; if (unlikely((0 < 0))) __PYX_ERR(0, 66, __pyx_L6_error)
+          #else
+          __pyx_t_3 = PySequence_ITEM(__pyx_t_2, __pyx_t_8); __pyx_t_8++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 66, __pyx_L6_error)
+          __Pyx_GOTREF(__pyx_t_3);
+          #endif
+        }
+      } else {
+        __pyx_t_3 = __pyx_t_9(__pyx_t_2);
+        if (unlikely(!__pyx_t_3)) {
+          PyObject* exc_type = PyErr_Occurred();
+          if (exc_type) {
+            if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
+            else __PYX_ERR(0, 66, __pyx_L6_error)
+          }
+          break;
+        }
+        __Pyx_GOTREF(__pyx_t_3);
+      }
+      __Pyx_XDECREF_SET(__pyx_7genexpr__pyx_v_t, __pyx_t_3);
+      __pyx_t_3 = 0;
+
+      /* "maptools/toksim/toksim.pyx":65
+ *         file_dir = os.path.join(save_dir, 'tokens.pkl')
+ *         self._token_dict = {
+ *             t: self.c_toksim.execu_dict[self.encode(t)]             # <<<<<<<<<<<<<<
+ *             for t in self.ctg.tiles
+ *         }
+ */
+      __pyx_t_4 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_encode); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 65, __pyx_L6_error)
+      __Pyx_GOTREF(__pyx_t_4);
+      __pyx_t_10 = NULL;
+      __pyx_t_5 = 0;
+      if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_4))) {
+        __pyx_t_10 = PyMethod_GET_SELF(__pyx_t_4);
+        if (likely(__pyx_t_10)) {
+          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_4);
+          __Pyx_INCREF(__pyx_t_10);
+          __Pyx_INCREF(function);
+          __Pyx_DECREF_SET(__pyx_t_4, function);
+          __pyx_t_5 = 1;
+        }
+      }
+      {
+        PyObject *__pyx_callargs[2] = {__pyx_t_10, __pyx_7genexpr__pyx_v_t};
+        __pyx_t_3 = __Pyx_PyObject_FastCall(__pyx_t_4, __pyx_callargs+1-__pyx_t_5, 1+__pyx_t_5);
+        __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+        if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 65, __pyx_L6_error)
+        __Pyx_GOTREF(__pyx_t_3);
+        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+      }
+      __pyx_t_11 = __pyx_convert_string_from_py_std__in_string(__pyx_t_3); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 65, __pyx_L6_error)
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      __pyx_t_3 = __pyx_convert_vector_to_py_int((__pyx_v_self->c_toksim.execu_dict[__pyx_t_11])); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 65, __pyx_L6_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      if (unlikely(PyDict_SetItem(__pyx_t_1, (PyObject*)__pyx_7genexpr__pyx_v_t, (PyObject*)__pyx_t_3))) __PYX_ERR(0, 65, __pyx_L6_error)
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+
+      /* "maptools/toksim/toksim.pyx":66
+ *         self._token_dict = {
+ *             t: self.c_toksim.execu_dict[self.encode(t)]
+ *             for t in self.ctg.tiles             # <<<<<<<<<<<<<<
+ *         }
+ *         with open(file_dir,'wb') as f:
+ */
+    }
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __Pyx_XDECREF(__pyx_7genexpr__pyx_v_t); __pyx_7genexpr__pyx_v_t = 0;
+    goto __pyx_L10_exit_scope;
+    __pyx_L6_error:;
+    __Pyx_XDECREF(__pyx_7genexpr__pyx_v_t); __pyx_7genexpr__pyx_v_t = 0;
+    goto __pyx_L1_error;
+    __pyx_L10_exit_scope:;
+  } /* exit inner scope */
+
+  /* "maptools/toksim/toksim.pyx":64
+ *         # save token information
+ *         file_dir = os.path.join(save_dir, 'tokens.pkl')
+ *         self._token_dict = {             # <<<<<<<<<<<<<<
+ *             t: self.c_toksim.execu_dict[self.encode(t)]
+ *             for t in self.ctg.tiles
+ */
+  __Pyx_GIVEREF(__pyx_t_1);
+  __Pyx_GOTREF(__pyx_v_self->_token_dict);
+  __Pyx_DECREF(__pyx_v_self->_token_dict);
+  __pyx_v_self->_token_dict = ((PyObject*)__pyx_t_1);
+  __pyx_t_1 = 0;
+
+  /* "maptools/toksim/toksim.pyx":68
+ *             for t in self.ctg.tiles
+ *         }
+ *         with open(file_dir,'wb') as f:             # <<<<<<<<<<<<<<
+ *             pickle.dump(self._token_dict, f)
+ *         print(f"\rtoken info written to {file_dir}")
+ */
+  /*with:*/ {
+    __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 68, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_INCREF(__pyx_v_file_dir);
+    __Pyx_GIVEREF(__pyx_v_file_dir);
+    PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_v_file_dir);
+    __Pyx_INCREF(__pyx_n_s_wb);
+    __Pyx_GIVEREF(__pyx_n_s_wb);
+    PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_n_s_wb);
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_open, __pyx_t_1, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 68, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __pyx_t_12 = __Pyx_PyObject_LookupSpecial(__pyx_t_2, __pyx_n_s_exit); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 68, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_12);
+    __pyx_t_3 = __Pyx_PyObject_LookupSpecial(__pyx_t_2, __pyx_n_s_enter); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 68, __pyx_L11_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_4 = NULL;
+    __pyx_t_5 = 0;
+    if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
+      __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
+      if (likely(__pyx_t_4)) {
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+        __Pyx_INCREF(__pyx_t_4);
+        __Pyx_INCREF(function);
+        __Pyx_DECREF_SET(__pyx_t_3, function);
+        __pyx_t_5 = 1;
+      }
+    }
+    {
+      PyObject *__pyx_callargs[1] = {__pyx_t_4, };
+      __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_5, 0+__pyx_t_5);
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 68, __pyx_L11_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    }
+    __pyx_t_3 = __pyx_t_1;
+    __pyx_t_1 = 0;
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    /*try:*/ {
+      {
+        __Pyx_PyThreadState_declare
+        __Pyx_PyThreadState_assign
+        __Pyx_ExceptionSave(&__pyx_t_13, &__pyx_t_14, &__pyx_t_15);
+        __Pyx_XGOTREF(__pyx_t_13);
+        __Pyx_XGOTREF(__pyx_t_14);
+        __Pyx_XGOTREF(__pyx_t_15);
+        /*try:*/ {
+          __pyx_v_f = __pyx_t_3;
+          __pyx_t_3 = 0;
+
+          /* "maptools/toksim/toksim.pyx":69
+ *         }
+ *         with open(file_dir,'wb') as f:
+ *             pickle.dump(self._token_dict, f)             # <<<<<<<<<<<<<<
+ *         print(f"\rtoken info written to {file_dir}")
+ * 
+ */
+          __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_pickle); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 69, __pyx_L15_error)
+          __Pyx_GOTREF(__pyx_t_2);
+          __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_dump); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 69, __pyx_L15_error)
+          __Pyx_GOTREF(__pyx_t_1);
+          __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+          __pyx_t_2 = NULL;
+          __pyx_t_5 = 0;
+          if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_1))) {
+            __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_1);
+            if (likely(__pyx_t_2)) {
+              PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
+              __Pyx_INCREF(__pyx_t_2);
+              __Pyx_INCREF(function);
+              __Pyx_DECREF_SET(__pyx_t_1, function);
+              __pyx_t_5 = 1;
+            }
+          }
+          {
+            PyObject *__pyx_callargs[3] = {__pyx_t_2, __pyx_v_self->_token_dict, __pyx_v_f};
+            __pyx_t_3 = __Pyx_PyObject_FastCall(__pyx_t_1, __pyx_callargs+1-__pyx_t_5, 2+__pyx_t_5);
+            __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+            if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 69, __pyx_L15_error)
+            __Pyx_GOTREF(__pyx_t_3);
+            __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+          }
+          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+
+          /* "maptools/toksim/toksim.pyx":68
+ *             for t in self.ctg.tiles
+ *         }
+ *         with open(file_dir,'wb') as f:             # <<<<<<<<<<<<<<
+ *             pickle.dump(self._token_dict, f)
+ *         print(f"\rtoken info written to {file_dir}")
+ */
+        }
+        __Pyx_XDECREF(__pyx_t_13); __pyx_t_13 = 0;
+        __Pyx_XDECREF(__pyx_t_14); __pyx_t_14 = 0;
+        __Pyx_XDECREF(__pyx_t_15); __pyx_t_15 = 0;
+        goto __pyx_L20_try_end;
+        __pyx_L15_error:;
+        __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+        __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
+        __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+        __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+        __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+        /*except:*/ {
+          __Pyx_AddTraceback("maptools.toksim.toksim.TokSim.save_execu", __pyx_clineno, __pyx_lineno, __pyx_filename);
+          if (__Pyx_GetException(&__pyx_t_3, &__pyx_t_1, &__pyx_t_2) < 0) __PYX_ERR(0, 68, __pyx_L17_except_error)
+          __Pyx_GOTREF(__pyx_t_3);
+          __Pyx_GOTREF(__pyx_t_1);
+          __Pyx_GOTREF(__pyx_t_2);
+          __pyx_t_4 = PyTuple_Pack(3, __pyx_t_3, __pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 68, __pyx_L17_except_error)
+          __Pyx_GOTREF(__pyx_t_4);
+          __pyx_t_16 = __Pyx_PyObject_Call(__pyx_t_12, __pyx_t_4, NULL);
+          __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
+          __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+          if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 68, __pyx_L17_except_error)
+          __Pyx_GOTREF(__pyx_t_16);
+          __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_16);
+          __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
+          if (__pyx_t_7 < 0) __PYX_ERR(0, 68, __pyx_L17_except_error)
+          __pyx_t_6 = (!__pyx_t_7);
+          if (unlikely(__pyx_t_6)) {
+            __Pyx_GIVEREF(__pyx_t_3);
+            __Pyx_GIVEREF(__pyx_t_1);
+            __Pyx_XGIVEREF(__pyx_t_2);
+            __Pyx_ErrRestoreWithState(__pyx_t_3, __pyx_t_1, __pyx_t_2);
+            __pyx_t_3 = 0; __pyx_t_1 = 0; __pyx_t_2 = 0; 
+            __PYX_ERR(0, 68, __pyx_L17_except_error)
+          }
+          __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+          __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+          __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+          goto __pyx_L16_exception_handled;
+        }
+        __pyx_L17_except_error:;
+        __Pyx_XGIVEREF(__pyx_t_13);
+        __Pyx_XGIVEREF(__pyx_t_14);
+        __Pyx_XGIVEREF(__pyx_t_15);
+        __Pyx_ExceptionReset(__pyx_t_13, __pyx_t_14, __pyx_t_15);
+        goto __pyx_L1_error;
+        __pyx_L16_exception_handled:;
+        __Pyx_XGIVEREF(__pyx_t_13);
+        __Pyx_XGIVEREF(__pyx_t_14);
+        __Pyx_XGIVEREF(__pyx_t_15);
+        __Pyx_ExceptionReset(__pyx_t_13, __pyx_t_14, __pyx_t_15);
+        __pyx_L20_try_end:;
+      }
+    }
+    /*finally:*/ {
+      /*normal exit:*/{
+        if (__pyx_t_12) {
+          __pyx_t_15 = __Pyx_PyObject_Call(__pyx_t_12, __pyx_tuple__33, NULL);
+          __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
+          if (unlikely(!__pyx_t_15)) __PYX_ERR(0, 68, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_15);
+          __Pyx_DECREF(__pyx_t_15); __pyx_t_15 = 0;
+        }
+        goto __pyx_L14;
+      }
+      __pyx_L14:;
+    }
+    goto __pyx_L24;
+    __pyx_L11_error:;
+    __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
+    goto __pyx_L1_error;
+    __pyx_L24:;
+  }
+
+  /* "maptools/toksim/toksim.pyx":70
+ *         with open(file_dir,'wb') as f:
+ *             pickle.dump(self._token_dict, f)
+ *         print(f"\rtoken info written to {file_dir}")             # <<<<<<<<<<<<<<
+ * 
+ *         # save buffer log
+ */
+  __pyx_t_2 = __Pyx_PyObject_FormatSimple(__pyx_v_file_dir, __pyx_empty_unicode); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 70, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_1 = __Pyx_PyUnicode_Concat(__pyx_kp_u_token_info_written_to, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 70, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_builtin_print, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 70, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+  /* "maptools/toksim/toksim.pyx":73
+ * 
+ *         # save buffer log
+ *         file_dir = os.path.join(save_dir, 'buffer.log')             # <<<<<<<<<<<<<<
+ *         log = self.get_bufs()
+ *         with open(file_dir, 'w') as f:
+ */
+  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_os); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 73, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_path); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 73, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_join); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 73, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  __pyx_t_3 = NULL;
+  __pyx_t_5 = 0;
+  if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_1))) {
+    __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_1);
+    if (likely(__pyx_t_3)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
+      __Pyx_INCREF(__pyx_t_3);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_1, function);
+      __pyx_t_5 = 1;
+    }
+  }
+  {
+    PyObject *__pyx_callargs[3] = {__pyx_t_3, __pyx_v_save_dir, __pyx_kp_s_buffer_log};
+    __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_1, __pyx_callargs+1-__pyx_t_5, 2+__pyx_t_5);
+    __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 73, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  }
+  __Pyx_DECREF_SET(__pyx_v_file_dir, __pyx_t_2);
+  __pyx_t_2 = 0;
+
+  /* "maptools/toksim/toksim.pyx":74
  *         # save buffer log
  *         file_dir = os.path.join(save_dir, 'buffer.log')
  *         log = self.get_bufs()             # <<<<<<<<<<<<<<
  *         with open(file_dir, 'w') as f:
  *             f.write(log)
  */
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_get_bufs); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 57, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_2 = NULL;
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_get_bufs); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 74, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_3 = NULL;
   __pyx_t_5 = 0;
-  if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
-    __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_3);
-    if (likely(__pyx_t_2)) {
-      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
-      __Pyx_INCREF(__pyx_t_2);
+  if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_1))) {
+    __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_1);
+    if (likely(__pyx_t_3)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
+      __Pyx_INCREF(__pyx_t_3);
       __Pyx_INCREF(function);
-      __Pyx_DECREF_SET(__pyx_t_3, function);
+      __Pyx_DECREF_SET(__pyx_t_1, function);
       __pyx_t_5 = 1;
     }
   }
   {
-    PyObject *__pyx_callargs[1] = {__pyx_t_2, };
-    __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_5, 0+__pyx_t_5);
-    __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 57, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    PyObject *__pyx_callargs[1] = {__pyx_t_3, };
+    __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_1, __pyx_callargs+1-__pyx_t_5, 0+__pyx_t_5);
+    __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 74, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
-  __pyx_v_log = __pyx_t_1;
-  __pyx_t_1 = 0;
+  __pyx_v_log = __pyx_t_2;
+  __pyx_t_2 = 0;
 
-  /* "maptools/toksim/toksim.pyx":58
+  /* "maptools/toksim/toksim.pyx":75
  *         file_dir = os.path.join(save_dir, 'buffer.log')
  *         log = self.get_bufs()
  *         with open(file_dir, 'w') as f:             # <<<<<<<<<<<<<<
@@ -8604,88 +9258,88 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_6save_execu(struct _
  *         print(f"\nbuffer log written to {file_dir}")
  */
   /*with:*/ {
-    __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 58, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_2 = PyTuple_New(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 75, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
     __Pyx_INCREF(__pyx_v_file_dir);
     __Pyx_GIVEREF(__pyx_v_file_dir);
-    PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_v_file_dir);
+    PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_v_file_dir);
     __Pyx_INCREF(__pyx_n_s_w);
     __Pyx_GIVEREF(__pyx_n_s_w);
-    PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_n_s_w);
-    __pyx_t_3 = __Pyx_PyObject_Call(__pyx_builtin_open, __pyx_t_1, NULL); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 58, __pyx_L1_error)
+    PyTuple_SET_ITEM(__pyx_t_2, 1, __pyx_n_s_w);
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_open, __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 75, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __pyx_t_12 = __Pyx_PyObject_LookupSpecial(__pyx_t_1, __pyx_n_s_exit); if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 75, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_12);
+    __pyx_t_3 = __Pyx_PyObject_LookupSpecial(__pyx_t_1, __pyx_n_s_enter); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 75, __pyx_L25_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_8 = __Pyx_PyObject_LookupSpecial(__pyx_t_3, __pyx_n_s_exit); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 58, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_8);
-    __pyx_t_2 = __Pyx_PyObject_LookupSpecial(__pyx_t_3, __pyx_n_s_enter); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 58, __pyx_L4_error)
-    __Pyx_GOTREF(__pyx_t_2);
     __pyx_t_4 = NULL;
     __pyx_t_5 = 0;
-    if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
-      __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_2);
+    if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
+      __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_3);
       if (likely(__pyx_t_4)) {
-        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
         __Pyx_INCREF(__pyx_t_4);
         __Pyx_INCREF(function);
-        __Pyx_DECREF_SET(__pyx_t_2, function);
+        __Pyx_DECREF_SET(__pyx_t_3, function);
         __pyx_t_5 = 1;
       }
     }
     {
       PyObject *__pyx_callargs[1] = {__pyx_t_4, };
-      __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_2, __pyx_callargs+1-__pyx_t_5, 0+__pyx_t_5);
+      __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_5, 0+__pyx_t_5);
       __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-      if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 58, __pyx_L4_error)
-      __Pyx_GOTREF(__pyx_t_1);
-      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 75, __pyx_L25_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     }
-    __pyx_t_2 = __pyx_t_1;
-    __pyx_t_1 = 0;
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __pyx_t_3 = __pyx_t_2;
+    __pyx_t_2 = 0;
+    __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     /*try:*/ {
       {
         __Pyx_PyThreadState_declare
         __Pyx_PyThreadState_assign
-        __Pyx_ExceptionSave(&__pyx_t_9, &__pyx_t_10, &__pyx_t_11);
-        __Pyx_XGOTREF(__pyx_t_9);
-        __Pyx_XGOTREF(__pyx_t_10);
-        __Pyx_XGOTREF(__pyx_t_11);
+        __Pyx_ExceptionSave(&__pyx_t_15, &__pyx_t_14, &__pyx_t_13);
+        __Pyx_XGOTREF(__pyx_t_15);
+        __Pyx_XGOTREF(__pyx_t_14);
+        __Pyx_XGOTREF(__pyx_t_13);
         /*try:*/ {
-          __pyx_v_f = __pyx_t_2;
-          __pyx_t_2 = 0;
+          __Pyx_XDECREF_SET(__pyx_v_f, __pyx_t_3);
+          __pyx_t_3 = 0;
 
-          /* "maptools/toksim/toksim.pyx":59
+          /* "maptools/toksim/toksim.pyx":76
  *         log = self.get_bufs()
  *         with open(file_dir, 'w') as f:
  *             f.write(log)             # <<<<<<<<<<<<<<
  *         print(f"\nbuffer log written to {file_dir}")
  * 
  */
-          __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_f, __pyx_n_s_write); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 59, __pyx_L8_error)
-          __Pyx_GOTREF(__pyx_t_3);
-          __pyx_t_1 = NULL;
+          __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_f, __pyx_n_s_write); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 76, __pyx_L29_error)
+          __Pyx_GOTREF(__pyx_t_1);
+          __pyx_t_2 = NULL;
           __pyx_t_5 = 0;
-          if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
-            __pyx_t_1 = PyMethod_GET_SELF(__pyx_t_3);
-            if (likely(__pyx_t_1)) {
-              PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
-              __Pyx_INCREF(__pyx_t_1);
+          if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_1))) {
+            __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_1);
+            if (likely(__pyx_t_2)) {
+              PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
+              __Pyx_INCREF(__pyx_t_2);
               __Pyx_INCREF(function);
-              __Pyx_DECREF_SET(__pyx_t_3, function);
+              __Pyx_DECREF_SET(__pyx_t_1, function);
               __pyx_t_5 = 1;
             }
           }
           {
-            PyObject *__pyx_callargs[2] = {__pyx_t_1, __pyx_v_log};
-            __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_5, 1+__pyx_t_5);
-            __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-            if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 59, __pyx_L8_error)
-            __Pyx_GOTREF(__pyx_t_2);
-            __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+            PyObject *__pyx_callargs[2] = {__pyx_t_2, __pyx_v_log};
+            __pyx_t_3 = __Pyx_PyObject_FastCall(__pyx_t_1, __pyx_callargs+1-__pyx_t_5, 1+__pyx_t_5);
+            __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+            if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 76, __pyx_L29_error)
+            __Pyx_GOTREF(__pyx_t_3);
+            __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
           }
-          __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-          /* "maptools/toksim/toksim.pyx":58
+          /* "maptools/toksim/toksim.pyx":75
  *         file_dir = os.path.join(save_dir, 'buffer.log')
  *         log = self.get_bufs()
  *         with open(file_dir, 'w') as f:             # <<<<<<<<<<<<<<
@@ -8693,97 +9347,98 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_6save_execu(struct _
  *         print(f"\nbuffer log written to {file_dir}")
  */
         }
-        __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
-        __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
-        __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
-        goto __pyx_L13_try_end;
-        __pyx_L8_error:;
+        __Pyx_XDECREF(__pyx_t_15); __pyx_t_15 = 0;
+        __Pyx_XDECREF(__pyx_t_14); __pyx_t_14 = 0;
+        __Pyx_XDECREF(__pyx_t_13); __pyx_t_13 = 0;
+        goto __pyx_L34_try_end;
+        __pyx_L29_error:;
         __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
+        __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
         __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
         __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
         __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
         /*except:*/ {
           __Pyx_AddTraceback("maptools.toksim.toksim.TokSim.save_execu", __pyx_clineno, __pyx_lineno, __pyx_filename);
-          if (__Pyx_GetException(&__pyx_t_2, &__pyx_t_3, &__pyx_t_1) < 0) __PYX_ERR(0, 58, __pyx_L10_except_error)
-          __Pyx_GOTREF(__pyx_t_2);
+          if (__Pyx_GetException(&__pyx_t_3, &__pyx_t_1, &__pyx_t_2) < 0) __PYX_ERR(0, 75, __pyx_L31_except_error)
           __Pyx_GOTREF(__pyx_t_3);
           __Pyx_GOTREF(__pyx_t_1);
-          __pyx_t_4 = PyTuple_Pack(3, __pyx_t_2, __pyx_t_3, __pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 58, __pyx_L10_except_error)
+          __Pyx_GOTREF(__pyx_t_2);
+          __pyx_t_4 = PyTuple_Pack(3, __pyx_t_3, __pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 75, __pyx_L31_except_error)
           __Pyx_GOTREF(__pyx_t_4);
-          __pyx_t_12 = __Pyx_PyObject_Call(__pyx_t_8, __pyx_t_4, NULL);
-          __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-          __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-          if (unlikely(!__pyx_t_12)) __PYX_ERR(0, 58, __pyx_L10_except_error)
-          __Pyx_GOTREF(__pyx_t_12);
-          __pyx_t_7 = __Pyx_PyObject_IsTrue(__pyx_t_12);
+          __pyx_t_16 = __Pyx_PyObject_Call(__pyx_t_12, __pyx_t_4, NULL);
           __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-          if (__pyx_t_7 < 0) __PYX_ERR(0, 58, __pyx_L10_except_error)
-          __pyx_t_6 = (!__pyx_t_7);
-          if (unlikely(__pyx_t_6)) {
-            __Pyx_GIVEREF(__pyx_t_2);
+          __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+          if (unlikely(!__pyx_t_16)) __PYX_ERR(0, 75, __pyx_L31_except_error)
+          __Pyx_GOTREF(__pyx_t_16);
+          __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_16);
+          __Pyx_DECREF(__pyx_t_16); __pyx_t_16 = 0;
+          if (__pyx_t_6 < 0) __PYX_ERR(0, 75, __pyx_L31_except_error)
+          __pyx_t_7 = (!__pyx_t_6);
+          if (unlikely(__pyx_t_7)) {
             __Pyx_GIVEREF(__pyx_t_3);
-            __Pyx_XGIVEREF(__pyx_t_1);
-            __Pyx_ErrRestoreWithState(__pyx_t_2, __pyx_t_3, __pyx_t_1);
-            __pyx_t_2 = 0; __pyx_t_3 = 0; __pyx_t_1 = 0; 
-            __PYX_ERR(0, 58, __pyx_L10_except_error)
+            __Pyx_GIVEREF(__pyx_t_1);
+            __Pyx_XGIVEREF(__pyx_t_2);
+            __Pyx_ErrRestoreWithState(__pyx_t_3, __pyx_t_1, __pyx_t_2);
+            __pyx_t_3 = 0; __pyx_t_1 = 0; __pyx_t_2 = 0; 
+            __PYX_ERR(0, 75, __pyx_L31_except_error)
           }
-          __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
           __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
           __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-          goto __pyx_L9_exception_handled;
+          __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
+          goto __pyx_L30_exception_handled;
         }
-        __pyx_L10_except_error:;
-        __Pyx_XGIVEREF(__pyx_t_9);
-        __Pyx_XGIVEREF(__pyx_t_10);
-        __Pyx_XGIVEREF(__pyx_t_11);
-        __Pyx_ExceptionReset(__pyx_t_9, __pyx_t_10, __pyx_t_11);
+        __pyx_L31_except_error:;
+        __Pyx_XGIVEREF(__pyx_t_15);
+        __Pyx_XGIVEREF(__pyx_t_14);
+        __Pyx_XGIVEREF(__pyx_t_13);
+        __Pyx_ExceptionReset(__pyx_t_15, __pyx_t_14, __pyx_t_13);
         goto __pyx_L1_error;
-        __pyx_L9_exception_handled:;
-        __Pyx_XGIVEREF(__pyx_t_9);
-        __Pyx_XGIVEREF(__pyx_t_10);
-        __Pyx_XGIVEREF(__pyx_t_11);
-        __Pyx_ExceptionReset(__pyx_t_9, __pyx_t_10, __pyx_t_11);
-        __pyx_L13_try_end:;
+        __pyx_L30_exception_handled:;
+        __Pyx_XGIVEREF(__pyx_t_15);
+        __Pyx_XGIVEREF(__pyx_t_14);
+        __Pyx_XGIVEREF(__pyx_t_13);
+        __Pyx_ExceptionReset(__pyx_t_15, __pyx_t_14, __pyx_t_13);
+        __pyx_L34_try_end:;
       }
     }
     /*finally:*/ {
       /*normal exit:*/{
-        if (__pyx_t_8) {
-          __pyx_t_11 = __Pyx_PyObject_Call(__pyx_t_8, __pyx_tuple__29, NULL);
-          __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-          if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 58, __pyx_L1_error)
-          __Pyx_GOTREF(__pyx_t_11);
-          __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+        if (__pyx_t_12) {
+          __pyx_t_13 = __Pyx_PyObject_Call(__pyx_t_12, __pyx_tuple__33, NULL);
+          __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
+          if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 75, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_13);
+          __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
         }
-        goto __pyx_L7;
+        goto __pyx_L28;
       }
-      __pyx_L7:;
+      __pyx_L28:;
     }
-    goto __pyx_L17;
-    __pyx_L4_error:;
-    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+    goto __pyx_L38;
+    __pyx_L25_error:;
+    __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
     goto __pyx_L1_error;
-    __pyx_L17:;
+    __pyx_L38:;
   }
 
-  /* "maptools/toksim/toksim.pyx":60
+  /* "maptools/toksim/toksim.pyx":77
  *         with open(file_dir, 'w') as f:
  *             f.write(log)
  *         print(f"\nbuffer log written to {file_dir}")             # <<<<<<<<<<<<<<
  * 
  *     def _cpp_get_interface_vars(self) -> None:
  */
-  __pyx_t_1 = __Pyx_PyObject_FormatSimple(__pyx_v_file_dir, __pyx_empty_unicode); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 60, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_FormatSimple(__pyx_v_file_dir, __pyx_empty_unicode); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 77, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_1 = __Pyx_PyUnicode_Concat(__pyx_kp_u_buffer_log_written_to, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 77, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __Pyx_PyUnicode_Concat(__pyx_kp_u_buffer_log_written_to, __pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 60, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_builtin_print, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 77, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_builtin_print, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 60, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "maptools/toksim/toksim.pyx":50
+  /* "maptools/toksim/toksim.pyx":57
  *         return log
  * 
  *     def save_execu(self, file_name: str = 'token'):             # <<<<<<<<<<<<<<
@@ -8799,19 +9454,21 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_6save_execu(struct _
   __Pyx_XDECREF(__pyx_t_2);
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_10);
   __Pyx_AddTraceback("maptools.toksim.toksim.TokSim.save_execu", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_save_dir);
   __Pyx_XDECREF(__pyx_v_file_dir);
-  __Pyx_XDECREF(__pyx_v_log);
   __Pyx_XDECREF(__pyx_v_f);
+  __Pyx_XDECREF(__pyx_v_log);
+  __Pyx_XDECREF(__pyx_7genexpr__pyx_v_t);
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-/* "maptools/toksim/toksim.pyx":62
+/* "maptools/toksim/toksim.pyx":79
  *         print(f"\nbuffer log written to {file_dir}")
  * 
  *     def _cpp_get_interface_vars(self) -> None:             # <<<<<<<<<<<<<<
@@ -8853,9 +9510,9 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
 }
 
 static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_8_cpp_get_interface_vars(struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *__pyx_v_self) {
-  PyObject *__pyx_7genexpr__pyx_v_node = NULL;
   PyObject *__pyx_8genexpr1__pyx_v_node = NULL;
   PyObject *__pyx_8genexpr2__pyx_v_node = NULL;
+  PyObject *__pyx_8genexpr3__pyx_v_node = NULL;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -8872,7 +9529,7 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_8_cpp_get_interface_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_cpp_get_interface_vars", 0);
 
-  /* "maptools/toksim/toksim.pyx":63
+  /* "maptools/toksim/toksim.pyx":80
  * 
  *     def _cpp_get_interface_vars(self) -> None:
  *         self._nodes = [             # <<<<<<<<<<<<<<
@@ -8880,25 +9537,25 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_8_cpp_get_interface_
  *             for node in self.ctg.node_names
  */
   { /* enter inner scope */
-    __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 63, __pyx_L5_error)
+    __pyx_t_1 = PyList_New(0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 80, __pyx_L5_error)
     __Pyx_GOTREF(__pyx_t_1);
 
-    /* "maptools/toksim/toksim.pyx":65
+    /* "maptools/toksim/toksim.pyx":82
  *         self._nodes = [
  *             self.encode(node)
  *             for node in self.ctg.node_names             # <<<<<<<<<<<<<<
  *         ]
- *         self._node_attr_dict = {
+ * 
  */
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->ctg, __pyx_n_s_node_names); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 65, __pyx_L5_error)
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->ctg, __pyx_n_s_node_names); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 82, __pyx_L5_error)
     __Pyx_GOTREF(__pyx_t_2);
     if (likely(PyList_CheckExact(__pyx_t_2)) || PyTuple_CheckExact(__pyx_t_2)) {
       __pyx_t_3 = __pyx_t_2; __Pyx_INCREF(__pyx_t_3); __pyx_t_4 = 0;
       __pyx_t_5 = NULL;
     } else {
-      __pyx_t_4 = -1; __pyx_t_3 = PyObject_GetIter(__pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 65, __pyx_L5_error)
+      __pyx_t_4 = -1; __pyx_t_3 = PyObject_GetIter(__pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 82, __pyx_L5_error)
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_5 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 65, __pyx_L5_error)
+      __pyx_t_5 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 82, __pyx_L5_error)
     }
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     for (;;) {
@@ -8906,17 +9563,17 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_8_cpp_get_interface_
         if (likely(PyList_CheckExact(__pyx_t_3))) {
           if (__pyx_t_4 >= PyList_GET_SIZE(__pyx_t_3)) break;
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_2 = PyList_GET_ITEM(__pyx_t_3, __pyx_t_4); __Pyx_INCREF(__pyx_t_2); __pyx_t_4++; if (unlikely((0 < 0))) __PYX_ERR(0, 65, __pyx_L5_error)
+          __pyx_t_2 = PyList_GET_ITEM(__pyx_t_3, __pyx_t_4); __Pyx_INCREF(__pyx_t_2); __pyx_t_4++; if (unlikely((0 < 0))) __PYX_ERR(0, 82, __pyx_L5_error)
           #else
-          __pyx_t_2 = PySequence_ITEM(__pyx_t_3, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 65, __pyx_L5_error)
+          __pyx_t_2 = PySequence_ITEM(__pyx_t_3, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 82, __pyx_L5_error)
           __Pyx_GOTREF(__pyx_t_2);
           #endif
         } else {
           if (__pyx_t_4 >= PyTuple_GET_SIZE(__pyx_t_3)) break;
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_2 = PyTuple_GET_ITEM(__pyx_t_3, __pyx_t_4); __Pyx_INCREF(__pyx_t_2); __pyx_t_4++; if (unlikely((0 < 0))) __PYX_ERR(0, 65, __pyx_L5_error)
+          __pyx_t_2 = PyTuple_GET_ITEM(__pyx_t_3, __pyx_t_4); __Pyx_INCREF(__pyx_t_2); __pyx_t_4++; if (unlikely((0 < 0))) __PYX_ERR(0, 82, __pyx_L5_error)
           #else
-          __pyx_t_2 = PySequence_ITEM(__pyx_t_3, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 65, __pyx_L5_error)
+          __pyx_t_2 = PySequence_ITEM(__pyx_t_3, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 82, __pyx_L5_error)
           __Pyx_GOTREF(__pyx_t_2);
           #endif
         }
@@ -8926,148 +9583,23 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_8_cpp_get_interface_
           PyObject* exc_type = PyErr_Occurred();
           if (exc_type) {
             if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-            else __PYX_ERR(0, 65, __pyx_L5_error)
+            else __PYX_ERR(0, 82, __pyx_L5_error)
           }
           break;
         }
         __Pyx_GOTREF(__pyx_t_2);
       }
-      __Pyx_XDECREF_SET(__pyx_7genexpr__pyx_v_node, __pyx_t_2);
+      __Pyx_XDECREF_SET(__pyx_8genexpr1__pyx_v_node, __pyx_t_2);
       __pyx_t_2 = 0;
 
-      /* "maptools/toksim/toksim.pyx":64
+      /* "maptools/toksim/toksim.pyx":81
  *     def _cpp_get_interface_vars(self) -> None:
  *         self._nodes = [
  *             self.encode(node)             # <<<<<<<<<<<<<<
  *             for node in self.ctg.node_names
  *         ]
  */
-      __pyx_t_6 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_encode); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 64, __pyx_L5_error)
-      __Pyx_GOTREF(__pyx_t_6);
-      __pyx_t_7 = NULL;
-      __pyx_t_8 = 0;
-      if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_6))) {
-        __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_6);
-        if (likely(__pyx_t_7)) {
-          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_6);
-          __Pyx_INCREF(__pyx_t_7);
-          __Pyx_INCREF(function);
-          __Pyx_DECREF_SET(__pyx_t_6, function);
-          __pyx_t_8 = 1;
-        }
-      }
-      {
-        PyObject *__pyx_callargs[2] = {__pyx_t_7, __pyx_7genexpr__pyx_v_node};
-        __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_6, __pyx_callargs+1-__pyx_t_8, 1+__pyx_t_8);
-        __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 64, __pyx_L5_error)
-        __Pyx_GOTREF(__pyx_t_2);
-        __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-      }
-      if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_t_2))) __PYX_ERR(0, 63, __pyx_L5_error)
-      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-
-      /* "maptools/toksim/toksim.pyx":65
- *         self._nodes = [
- *             self.encode(node)
- *             for node in self.ctg.node_names             # <<<<<<<<<<<<<<
- *         ]
- *         self._node_attr_dict = {
- */
-    }
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __Pyx_XDECREF(__pyx_7genexpr__pyx_v_node); __pyx_7genexpr__pyx_v_node = 0;
-    goto __pyx_L9_exit_scope;
-    __pyx_L5_error:;
-    __Pyx_XDECREF(__pyx_7genexpr__pyx_v_node); __pyx_7genexpr__pyx_v_node = 0;
-    goto __pyx_L1_error;
-    __pyx_L9_exit_scope:;
-  } /* exit inner scope */
-
-  /* "maptools/toksim/toksim.pyx":63
- * 
- *     def _cpp_get_interface_vars(self) -> None:
- *         self._nodes = [             # <<<<<<<<<<<<<<
- *             self.encode(node)
- *             for node in self.ctg.node_names
- */
-  __Pyx_GIVEREF(__pyx_t_1);
-  __Pyx_GOTREF(__pyx_v_self->_nodes);
-  __Pyx_DECREF(__pyx_v_self->_nodes);
-  __pyx_v_self->_nodes = ((PyObject*)__pyx_t_1);
-  __pyx_t_1 = 0;
-
-  /* "maptools/toksim/toksim.pyx":67
- *             for node in self.ctg.node_names
- *         ]
- *         self._node_attr_dict = {             # <<<<<<<<<<<<<<
- *             self.encode(node): self._cpp_get_node_attr(node)
- *             for node in self.ctg.node_names
- */
-  { /* enter inner scope */
-    __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 67, __pyx_L12_error)
-    __Pyx_GOTREF(__pyx_t_1);
-
-    /* "maptools/toksim/toksim.pyx":69
- *         self._node_attr_dict = {
- *             self.encode(node): self._cpp_get_node_attr(node)
- *             for node in self.ctg.node_names             # <<<<<<<<<<<<<<
- *         }
- *         self._tile_config_dict = {
- */
-    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->ctg, __pyx_n_s_node_names); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 69, __pyx_L12_error)
-    __Pyx_GOTREF(__pyx_t_3);
-    if (likely(PyList_CheckExact(__pyx_t_3)) || PyTuple_CheckExact(__pyx_t_3)) {
-      __pyx_t_2 = __pyx_t_3; __Pyx_INCREF(__pyx_t_2); __pyx_t_4 = 0;
-      __pyx_t_5 = NULL;
-    } else {
-      __pyx_t_4 = -1; __pyx_t_2 = PyObject_GetIter(__pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 69, __pyx_L12_error)
-      __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_5 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 69, __pyx_L12_error)
-    }
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    for (;;) {
-      if (likely(!__pyx_t_5)) {
-        if (likely(PyList_CheckExact(__pyx_t_2))) {
-          if (__pyx_t_4 >= PyList_GET_SIZE(__pyx_t_2)) break;
-          #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_3 = PyList_GET_ITEM(__pyx_t_2, __pyx_t_4); __Pyx_INCREF(__pyx_t_3); __pyx_t_4++; if (unlikely((0 < 0))) __PYX_ERR(0, 69, __pyx_L12_error)
-          #else
-          __pyx_t_3 = PySequence_ITEM(__pyx_t_2, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 69, __pyx_L12_error)
-          __Pyx_GOTREF(__pyx_t_3);
-          #endif
-        } else {
-          if (__pyx_t_4 >= PyTuple_GET_SIZE(__pyx_t_2)) break;
-          #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_3 = PyTuple_GET_ITEM(__pyx_t_2, __pyx_t_4); __Pyx_INCREF(__pyx_t_3); __pyx_t_4++; if (unlikely((0 < 0))) __PYX_ERR(0, 69, __pyx_L12_error)
-          #else
-          __pyx_t_3 = PySequence_ITEM(__pyx_t_2, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 69, __pyx_L12_error)
-          __Pyx_GOTREF(__pyx_t_3);
-          #endif
-        }
-      } else {
-        __pyx_t_3 = __pyx_t_5(__pyx_t_2);
-        if (unlikely(!__pyx_t_3)) {
-          PyObject* exc_type = PyErr_Occurred();
-          if (exc_type) {
-            if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-            else __PYX_ERR(0, 69, __pyx_L12_error)
-          }
-          break;
-        }
-        __Pyx_GOTREF(__pyx_t_3);
-      }
-      __Pyx_XDECREF_SET(__pyx_8genexpr1__pyx_v_node, __pyx_t_3);
-      __pyx_t_3 = 0;
-
-      /* "maptools/toksim/toksim.pyx":68
- *         ]
- *         self._node_attr_dict = {
- *             self.encode(node): self._cpp_get_node_attr(node)             # <<<<<<<<<<<<<<
- *             for node in self.ctg.node_names
- *         }
- */
-      __pyx_t_6 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_encode); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 68, __pyx_L12_error)
+      __pyx_t_6 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_encode); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 81, __pyx_L5_error)
       __Pyx_GOTREF(__pyx_t_6);
       __pyx_t_7 = NULL;
       __pyx_t_8 = 0;
@@ -9083,161 +9615,138 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_8_cpp_get_interface_
       }
       {
         PyObject *__pyx_callargs[2] = {__pyx_t_7, __pyx_8genexpr1__pyx_v_node};
-        __pyx_t_3 = __Pyx_PyObject_FastCall(__pyx_t_6, __pyx_callargs+1-__pyx_t_8, 1+__pyx_t_8);
+        __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_6, __pyx_callargs+1-__pyx_t_8, 1+__pyx_t_8);
         __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-        if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 68, __pyx_L12_error)
-        __Pyx_GOTREF(__pyx_t_3);
+        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 81, __pyx_L5_error)
+        __Pyx_GOTREF(__pyx_t_2);
         __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       }
-      __pyx_t_7 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_cpp_get_node_attr); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 68, __pyx_L12_error)
-      __Pyx_GOTREF(__pyx_t_7);
-      __pyx_t_9 = NULL;
-      __pyx_t_8 = 0;
-      if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_7))) {
-        __pyx_t_9 = PyMethod_GET_SELF(__pyx_t_7);
-        if (likely(__pyx_t_9)) {
-          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_7);
-          __Pyx_INCREF(__pyx_t_9);
-          __Pyx_INCREF(function);
-          __Pyx_DECREF_SET(__pyx_t_7, function);
-          __pyx_t_8 = 1;
-        }
-      }
-      {
-        PyObject *__pyx_callargs[2] = {__pyx_t_9, __pyx_8genexpr1__pyx_v_node};
-        __pyx_t_6 = __Pyx_PyObject_FastCall(__pyx_t_7, __pyx_callargs+1-__pyx_t_8, 1+__pyx_t_8);
-        __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
-        if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 68, __pyx_L12_error)
-        __Pyx_GOTREF(__pyx_t_6);
-        __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-      }
-      if (unlikely(PyDict_SetItem(__pyx_t_1, (PyObject*)__pyx_t_3, (PyObject*)__pyx_t_6))) __PYX_ERR(0, 68, __pyx_L12_error)
-      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+      if (unlikely(__Pyx_ListComp_Append(__pyx_t_1, (PyObject*)__pyx_t_2))) __PYX_ERR(0, 80, __pyx_L5_error)
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-      /* "maptools/toksim/toksim.pyx":69
+      /* "maptools/toksim/toksim.pyx":82
+ *         self._nodes = [
+ *             self.encode(node)
+ *             for node in self.ctg.node_names             # <<<<<<<<<<<<<<
+ *         ]
+ * 
+ */
+    }
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __Pyx_XDECREF(__pyx_8genexpr1__pyx_v_node); __pyx_8genexpr1__pyx_v_node = 0;
+    goto __pyx_L9_exit_scope;
+    __pyx_L5_error:;
+    __Pyx_XDECREF(__pyx_8genexpr1__pyx_v_node); __pyx_8genexpr1__pyx_v_node = 0;
+    goto __pyx_L1_error;
+    __pyx_L9_exit_scope:;
+  } /* exit inner scope */
+
+  /* "maptools/toksim/toksim.pyx":80
+ * 
+ *     def _cpp_get_interface_vars(self) -> None:
+ *         self._nodes = [             # <<<<<<<<<<<<<<
+ *             self.encode(node)
+ *             for node in self.ctg.node_names
+ */
+  __Pyx_GIVEREF(__pyx_t_1);
+  __Pyx_GOTREF(__pyx_v_self->_nodes);
+  __Pyx_DECREF(__pyx_v_self->_nodes);
+  __pyx_v_self->_nodes = ((PyObject*)__pyx_t_1);
+  __pyx_t_1 = 0;
+
+  /* "maptools/toksim/toksim.pyx":85
+ *         ]
+ * 
+ *         self._node_attr_dict = {             # <<<<<<<<<<<<<<
+ *             self.encode(node): self._cpp_get_node_attr(node)
+ *             for node in self.ctg.node_names
+ */
+  { /* enter inner scope */
+    __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 85, __pyx_L12_error)
+    __Pyx_GOTREF(__pyx_t_1);
+
+    /* "maptools/toksim/toksim.pyx":87
  *         self._node_attr_dict = {
  *             self.encode(node): self._cpp_get_node_attr(node)
  *             for node in self.ctg.node_names             # <<<<<<<<<<<<<<
  *         }
  *         self._tile_config_dict = {
  */
-    }
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __Pyx_XDECREF(__pyx_8genexpr1__pyx_v_node); __pyx_8genexpr1__pyx_v_node = 0;
-    goto __pyx_L16_exit_scope;
-    __pyx_L12_error:;
-    __Pyx_XDECREF(__pyx_8genexpr1__pyx_v_node); __pyx_8genexpr1__pyx_v_node = 0;
-    goto __pyx_L1_error;
-    __pyx_L16_exit_scope:;
-  } /* exit inner scope */
-
-  /* "maptools/toksim/toksim.pyx":67
- *             for node in self.ctg.node_names
- *         ]
- *         self._node_attr_dict = {             # <<<<<<<<<<<<<<
- *             self.encode(node): self._cpp_get_node_attr(node)
- *             for node in self.ctg.node_names
- */
-  __Pyx_GIVEREF(__pyx_t_1);
-  __Pyx_GOTREF(__pyx_v_self->_node_attr_dict);
-  __Pyx_DECREF(__pyx_v_self->_node_attr_dict);
-  __pyx_v_self->_node_attr_dict = ((PyObject*)__pyx_t_1);
-  __pyx_t_1 = 0;
-
-  /* "maptools/toksim/toksim.pyx":71
- *             for node in self.ctg.node_names
- *         }
- *         self._tile_config_dict = {             # <<<<<<<<<<<<<<
- *             self.encode(node): self._cpp_get_tile_config(node)
- *             for node in self.ctg.tiles
- */
-  { /* enter inner scope */
-    __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 71, __pyx_L19_error)
-    __Pyx_GOTREF(__pyx_t_1);
-
-    /* "maptools/toksim/toksim.pyx":73
- *         self._tile_config_dict = {
- *             self.encode(node): self._cpp_get_tile_config(node)
- *             for node in self.ctg.tiles             # <<<<<<<<<<<<<<
- *         }
- * 
- */
-    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->ctg, __pyx_n_s_tiles); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 73, __pyx_L19_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    if (likely(PyList_CheckExact(__pyx_t_2)) || PyTuple_CheckExact(__pyx_t_2)) {
-      __pyx_t_6 = __pyx_t_2; __Pyx_INCREF(__pyx_t_6); __pyx_t_4 = 0;
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->ctg, __pyx_n_s_node_names); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 87, __pyx_L12_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    if (likely(PyList_CheckExact(__pyx_t_3)) || PyTuple_CheckExact(__pyx_t_3)) {
+      __pyx_t_2 = __pyx_t_3; __Pyx_INCREF(__pyx_t_2); __pyx_t_4 = 0;
       __pyx_t_5 = NULL;
     } else {
-      __pyx_t_4 = -1; __pyx_t_6 = PyObject_GetIter(__pyx_t_2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 73, __pyx_L19_error)
-      __Pyx_GOTREF(__pyx_t_6);
-      __pyx_t_5 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_6); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 73, __pyx_L19_error)
+      __pyx_t_4 = -1; __pyx_t_2 = PyObject_GetIter(__pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 87, __pyx_L12_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __pyx_t_5 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 87, __pyx_L12_error)
     }
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     for (;;) {
       if (likely(!__pyx_t_5)) {
-        if (likely(PyList_CheckExact(__pyx_t_6))) {
-          if (__pyx_t_4 >= PyList_GET_SIZE(__pyx_t_6)) break;
+        if (likely(PyList_CheckExact(__pyx_t_2))) {
+          if (__pyx_t_4 >= PyList_GET_SIZE(__pyx_t_2)) break;
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_2 = PyList_GET_ITEM(__pyx_t_6, __pyx_t_4); __Pyx_INCREF(__pyx_t_2); __pyx_t_4++; if (unlikely((0 < 0))) __PYX_ERR(0, 73, __pyx_L19_error)
+          __pyx_t_3 = PyList_GET_ITEM(__pyx_t_2, __pyx_t_4); __Pyx_INCREF(__pyx_t_3); __pyx_t_4++; if (unlikely((0 < 0))) __PYX_ERR(0, 87, __pyx_L12_error)
           #else
-          __pyx_t_2 = PySequence_ITEM(__pyx_t_6, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 73, __pyx_L19_error)
-          __Pyx_GOTREF(__pyx_t_2);
+          __pyx_t_3 = PySequence_ITEM(__pyx_t_2, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 87, __pyx_L12_error)
+          __Pyx_GOTREF(__pyx_t_3);
           #endif
         } else {
-          if (__pyx_t_4 >= PyTuple_GET_SIZE(__pyx_t_6)) break;
+          if (__pyx_t_4 >= PyTuple_GET_SIZE(__pyx_t_2)) break;
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_2 = PyTuple_GET_ITEM(__pyx_t_6, __pyx_t_4); __Pyx_INCREF(__pyx_t_2); __pyx_t_4++; if (unlikely((0 < 0))) __PYX_ERR(0, 73, __pyx_L19_error)
+          __pyx_t_3 = PyTuple_GET_ITEM(__pyx_t_2, __pyx_t_4); __Pyx_INCREF(__pyx_t_3); __pyx_t_4++; if (unlikely((0 < 0))) __PYX_ERR(0, 87, __pyx_L12_error)
           #else
-          __pyx_t_2 = PySequence_ITEM(__pyx_t_6, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 73, __pyx_L19_error)
-          __Pyx_GOTREF(__pyx_t_2);
+          __pyx_t_3 = PySequence_ITEM(__pyx_t_2, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 87, __pyx_L12_error)
+          __Pyx_GOTREF(__pyx_t_3);
           #endif
         }
       } else {
-        __pyx_t_2 = __pyx_t_5(__pyx_t_6);
-        if (unlikely(!__pyx_t_2)) {
+        __pyx_t_3 = __pyx_t_5(__pyx_t_2);
+        if (unlikely(!__pyx_t_3)) {
           PyObject* exc_type = PyErr_Occurred();
           if (exc_type) {
             if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-            else __PYX_ERR(0, 73, __pyx_L19_error)
+            else __PYX_ERR(0, 87, __pyx_L12_error)
           }
           break;
         }
-        __Pyx_GOTREF(__pyx_t_2);
+        __Pyx_GOTREF(__pyx_t_3);
       }
-      __Pyx_XDECREF_SET(__pyx_8genexpr2__pyx_v_node, __pyx_t_2);
-      __pyx_t_2 = 0;
+      __Pyx_XDECREF_SET(__pyx_8genexpr2__pyx_v_node, __pyx_t_3);
+      __pyx_t_3 = 0;
 
-      /* "maptools/toksim/toksim.pyx":72
- *         }
- *         self._tile_config_dict = {
- *             self.encode(node): self._cpp_get_tile_config(node)             # <<<<<<<<<<<<<<
- *             for node in self.ctg.tiles
+      /* "maptools/toksim/toksim.pyx":86
+ * 
+ *         self._node_attr_dict = {
+ *             self.encode(node): self._cpp_get_node_attr(node)             # <<<<<<<<<<<<<<
+ *             for node in self.ctg.node_names
  *         }
  */
-      __pyx_t_3 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_encode); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 72, __pyx_L19_error)
-      __Pyx_GOTREF(__pyx_t_3);
+      __pyx_t_6 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_encode); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 86, __pyx_L12_error)
+      __Pyx_GOTREF(__pyx_t_6);
       __pyx_t_7 = NULL;
       __pyx_t_8 = 0;
-      if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
-        __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_3);
+      if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_6))) {
+        __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_6);
         if (likely(__pyx_t_7)) {
-          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_6);
           __Pyx_INCREF(__pyx_t_7);
           __Pyx_INCREF(function);
-          __Pyx_DECREF_SET(__pyx_t_3, function);
+          __Pyx_DECREF_SET(__pyx_t_6, function);
           __pyx_t_8 = 1;
         }
       }
       {
         PyObject *__pyx_callargs[2] = {__pyx_t_7, __pyx_8genexpr2__pyx_v_node};
-        __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_8, 1+__pyx_t_8);
+        __pyx_t_3 = __Pyx_PyObject_FastCall(__pyx_t_6, __pyx_callargs+1-__pyx_t_8, 1+__pyx_t_8);
         __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 72, __pyx_L19_error)
-        __Pyx_GOTREF(__pyx_t_2);
-        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+        if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 86, __pyx_L12_error)
+        __Pyx_GOTREF(__pyx_t_3);
+        __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       }
-      __pyx_t_7 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_cpp_get_tile_config); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 72, __pyx_L19_error)
+      __pyx_t_7 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_cpp_get_node_attr); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 86, __pyx_L12_error)
       __Pyx_GOTREF(__pyx_t_7);
       __pyx_t_9 = NULL;
       __pyx_t_8 = 0;
@@ -9253,17 +9762,165 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_8_cpp_get_interface_
       }
       {
         PyObject *__pyx_callargs[2] = {__pyx_t_9, __pyx_8genexpr2__pyx_v_node};
+        __pyx_t_6 = __Pyx_PyObject_FastCall(__pyx_t_7, __pyx_callargs+1-__pyx_t_8, 1+__pyx_t_8);
+        __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
+        if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 86, __pyx_L12_error)
+        __Pyx_GOTREF(__pyx_t_6);
+        __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+      }
+      if (unlikely(PyDict_SetItem(__pyx_t_1, (PyObject*)__pyx_t_3, (PyObject*)__pyx_t_6))) __PYX_ERR(0, 86, __pyx_L12_error)
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+
+      /* "maptools/toksim/toksim.pyx":87
+ *         self._node_attr_dict = {
+ *             self.encode(node): self._cpp_get_node_attr(node)
+ *             for node in self.ctg.node_names             # <<<<<<<<<<<<<<
+ *         }
+ *         self._tile_config_dict = {
+ */
+    }
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __Pyx_XDECREF(__pyx_8genexpr2__pyx_v_node); __pyx_8genexpr2__pyx_v_node = 0;
+    goto __pyx_L16_exit_scope;
+    __pyx_L12_error:;
+    __Pyx_XDECREF(__pyx_8genexpr2__pyx_v_node); __pyx_8genexpr2__pyx_v_node = 0;
+    goto __pyx_L1_error;
+    __pyx_L16_exit_scope:;
+  } /* exit inner scope */
+
+  /* "maptools/toksim/toksim.pyx":85
+ *         ]
+ * 
+ *         self._node_attr_dict = {             # <<<<<<<<<<<<<<
+ *             self.encode(node): self._cpp_get_node_attr(node)
+ *             for node in self.ctg.node_names
+ */
+  __Pyx_GIVEREF(__pyx_t_1);
+  __Pyx_GOTREF(__pyx_v_self->_node_attr_dict);
+  __Pyx_DECREF(__pyx_v_self->_node_attr_dict);
+  __pyx_v_self->_node_attr_dict = ((PyObject*)__pyx_t_1);
+  __pyx_t_1 = 0;
+
+  /* "maptools/toksim/toksim.pyx":89
+ *             for node in self.ctg.node_names
+ *         }
+ *         self._tile_config_dict = {             # <<<<<<<<<<<<<<
+ *             self.encode(node): self._cpp_get_tile_config(node)
+ *             for node in self.ctg.tiles
+ */
+  { /* enter inner scope */
+    __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 89, __pyx_L19_error)
+    __Pyx_GOTREF(__pyx_t_1);
+
+    /* "maptools/toksim/toksim.pyx":91
+ *         self._tile_config_dict = {
+ *             self.encode(node): self._cpp_get_tile_config(node)
+ *             for node in self.ctg.tiles             # <<<<<<<<<<<<<<
+ *         }
+ * 
+ */
+    __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->ctg, __pyx_n_s_tiles); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 91, __pyx_L19_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    if (likely(PyList_CheckExact(__pyx_t_2)) || PyTuple_CheckExact(__pyx_t_2)) {
+      __pyx_t_6 = __pyx_t_2; __Pyx_INCREF(__pyx_t_6); __pyx_t_4 = 0;
+      __pyx_t_5 = NULL;
+    } else {
+      __pyx_t_4 = -1; __pyx_t_6 = PyObject_GetIter(__pyx_t_2); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 91, __pyx_L19_error)
+      __Pyx_GOTREF(__pyx_t_6);
+      __pyx_t_5 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_6); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 91, __pyx_L19_error)
+    }
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    for (;;) {
+      if (likely(!__pyx_t_5)) {
+        if (likely(PyList_CheckExact(__pyx_t_6))) {
+          if (__pyx_t_4 >= PyList_GET_SIZE(__pyx_t_6)) break;
+          #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+          __pyx_t_2 = PyList_GET_ITEM(__pyx_t_6, __pyx_t_4); __Pyx_INCREF(__pyx_t_2); __pyx_t_4++; if (unlikely((0 < 0))) __PYX_ERR(0, 91, __pyx_L19_error)
+          #else
+          __pyx_t_2 = PySequence_ITEM(__pyx_t_6, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 91, __pyx_L19_error)
+          __Pyx_GOTREF(__pyx_t_2);
+          #endif
+        } else {
+          if (__pyx_t_4 >= PyTuple_GET_SIZE(__pyx_t_6)) break;
+          #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+          __pyx_t_2 = PyTuple_GET_ITEM(__pyx_t_6, __pyx_t_4); __Pyx_INCREF(__pyx_t_2); __pyx_t_4++; if (unlikely((0 < 0))) __PYX_ERR(0, 91, __pyx_L19_error)
+          #else
+          __pyx_t_2 = PySequence_ITEM(__pyx_t_6, __pyx_t_4); __pyx_t_4++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 91, __pyx_L19_error)
+          __Pyx_GOTREF(__pyx_t_2);
+          #endif
+        }
+      } else {
+        __pyx_t_2 = __pyx_t_5(__pyx_t_6);
+        if (unlikely(!__pyx_t_2)) {
+          PyObject* exc_type = PyErr_Occurred();
+          if (exc_type) {
+            if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
+            else __PYX_ERR(0, 91, __pyx_L19_error)
+          }
+          break;
+        }
+        __Pyx_GOTREF(__pyx_t_2);
+      }
+      __Pyx_XDECREF_SET(__pyx_8genexpr3__pyx_v_node, __pyx_t_2);
+      __pyx_t_2 = 0;
+
+      /* "maptools/toksim/toksim.pyx":90
+ *         }
+ *         self._tile_config_dict = {
+ *             self.encode(node): self._cpp_get_tile_config(node)             # <<<<<<<<<<<<<<
+ *             for node in self.ctg.tiles
+ *         }
+ */
+      __pyx_t_3 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_encode); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 90, __pyx_L19_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      __pyx_t_7 = NULL;
+      __pyx_t_8 = 0;
+      if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_3))) {
+        __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_3);
+        if (likely(__pyx_t_7)) {
+          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
+          __Pyx_INCREF(__pyx_t_7);
+          __Pyx_INCREF(function);
+          __Pyx_DECREF_SET(__pyx_t_3, function);
+          __pyx_t_8 = 1;
+        }
+      }
+      {
+        PyObject *__pyx_callargs[2] = {__pyx_t_7, __pyx_8genexpr3__pyx_v_node};
+        __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_8, 1+__pyx_t_8);
+        __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
+        if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 90, __pyx_L19_error)
+        __Pyx_GOTREF(__pyx_t_2);
+        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      }
+      __pyx_t_7 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_cpp_get_tile_config); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 90, __pyx_L19_error)
+      __Pyx_GOTREF(__pyx_t_7);
+      __pyx_t_9 = NULL;
+      __pyx_t_8 = 0;
+      if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_7))) {
+        __pyx_t_9 = PyMethod_GET_SELF(__pyx_t_7);
+        if (likely(__pyx_t_9)) {
+          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_7);
+          __Pyx_INCREF(__pyx_t_9);
+          __Pyx_INCREF(function);
+          __Pyx_DECREF_SET(__pyx_t_7, function);
+          __pyx_t_8 = 1;
+        }
+      }
+      {
+        PyObject *__pyx_callargs[2] = {__pyx_t_9, __pyx_8genexpr3__pyx_v_node};
         __pyx_t_3 = __Pyx_PyObject_FastCall(__pyx_t_7, __pyx_callargs+1-__pyx_t_8, 1+__pyx_t_8);
         __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
-        if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 72, __pyx_L19_error)
+        if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 90, __pyx_L19_error)
         __Pyx_GOTREF(__pyx_t_3);
         __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
       }
-      if (unlikely(PyDict_SetItem(__pyx_t_1, (PyObject*)__pyx_t_2, (PyObject*)__pyx_t_3))) __PYX_ERR(0, 72, __pyx_L19_error)
+      if (unlikely(PyDict_SetItem(__pyx_t_1, (PyObject*)__pyx_t_2, (PyObject*)__pyx_t_3))) __PYX_ERR(0, 90, __pyx_L19_error)
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-      /* "maptools/toksim/toksim.pyx":73
+      /* "maptools/toksim/toksim.pyx":91
  *         self._tile_config_dict = {
  *             self.encode(node): self._cpp_get_tile_config(node)
  *             for node in self.ctg.tiles             # <<<<<<<<<<<<<<
@@ -9272,15 +9929,15 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_8_cpp_get_interface_
  */
     }
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    __Pyx_XDECREF(__pyx_8genexpr2__pyx_v_node); __pyx_8genexpr2__pyx_v_node = 0;
+    __Pyx_XDECREF(__pyx_8genexpr3__pyx_v_node); __pyx_8genexpr3__pyx_v_node = 0;
     goto __pyx_L23_exit_scope;
     __pyx_L19_error:;
-    __Pyx_XDECREF(__pyx_8genexpr2__pyx_v_node); __pyx_8genexpr2__pyx_v_node = 0;
+    __Pyx_XDECREF(__pyx_8genexpr3__pyx_v_node); __pyx_8genexpr3__pyx_v_node = 0;
     goto __pyx_L1_error;
     __pyx_L23_exit_scope:;
   } /* exit inner scope */
 
-  /* "maptools/toksim/toksim.pyx":71
+  /* "maptools/toksim/toksim.pyx":89
  *             for node in self.ctg.node_names
  *         }
  *         self._tile_config_dict = {             # <<<<<<<<<<<<<<
@@ -9293,7 +9950,7 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_8_cpp_get_interface_
   __pyx_v_self->_tile_config_dict = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "maptools/toksim/toksim.pyx":62
+  /* "maptools/toksim/toksim.pyx":79
  *         print(f"\nbuffer log written to {file_dir}")
  * 
  *     def _cpp_get_interface_vars(self) -> None:             # <<<<<<<<<<<<<<
@@ -9314,15 +9971,15 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_8_cpp_get_interface_
   __Pyx_AddTraceback("maptools.toksim.toksim.TokSim._cpp_get_interface_vars", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
-  __Pyx_XDECREF(__pyx_7genexpr__pyx_v_node);
   __Pyx_XDECREF(__pyx_8genexpr1__pyx_v_node);
   __Pyx_XDECREF(__pyx_8genexpr2__pyx_v_node);
+  __Pyx_XDECREF(__pyx_8genexpr3__pyx_v_node);
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-/* "maptools/toksim/toksim.pyx":76
+/* "maptools/toksim/toksim.pyx":94
  *         }
  * 
  *     @staticmethod             # <<<<<<<<<<<<<<
@@ -9372,12 +10029,12 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
       switch (__pyx_nargs) {
         case  0:
         if (likely((values[0] = __Pyx_GetKwValue_FASTCALL(__pyx_kwds, __pyx_kwvalues, __pyx_n_s_node)) != 0)) kw_args--;
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 76, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 94, __pyx_L3_error)
         else goto __pyx_L5_argtuple_error;
       }
       if (unlikely(kw_args > 0)) {
         const Py_ssize_t kwd_pos_args = __pyx_nargs;
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "encode") < 0)) __PYX_ERR(0, 76, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "encode") < 0)) __PYX_ERR(0, 94, __pyx_L3_error)
       }
     } else if (unlikely(__pyx_nargs != 1)) {
       goto __pyx_L5_argtuple_error;
@@ -9388,7 +10045,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("encode", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 76, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("encode", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 94, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("maptools.toksim.toksim.TokSim.encode", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -9412,7 +10069,7 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_10encode(PyObject *_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("encode", 0);
 
-  /* "maptools/toksim/toksim.pyx":78
+  /* "maptools/toksim/toksim.pyx":96
  *     @staticmethod
  *     def encode(node: Union[str, LogicalTile]) -> bytes:
  *         return bytes(str(node), encoding='utf-8')             # <<<<<<<<<<<<<<
@@ -9420,17 +10077,17 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_10encode(PyObject *_
  *     def _cpp_get_node_attr(self, node: Union[str, LogicalTile]) -> Dict[str, Any]:
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyObject_Str(__pyx_v_node); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 78, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Str(__pyx_v_node); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 96, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 78, __pyx_L1_error)
+  __pyx_t_2 = PyTuple_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 96, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_GIVEREF(__pyx_t_1);
   PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_t_1);
   __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 78, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 96, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_encoding, __pyx_kp_s_utf_8) < 0) __PYX_ERR(0, 78, __pyx_L1_error)
-  __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)(&PyBytes_Type)), __pyx_t_2, __pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 78, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_encoding, __pyx_kp_s_utf_8) < 0) __PYX_ERR(0, 96, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_Call(((PyObject *)(&PyBytes_Type)), __pyx_t_2, __pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 96, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -9438,7 +10095,7 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_10encode(PyObject *_
   __pyx_t_3 = 0;
   goto __pyx_L0;
 
-  /* "maptools/toksim/toksim.pyx":76
+  /* "maptools/toksim/toksim.pyx":94
  *         }
  * 
  *     @staticmethod             # <<<<<<<<<<<<<<
@@ -9459,7 +10116,7 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_10encode(PyObject *_
   return __pyx_r;
 }
 
-/* "maptools/toksim/toksim.pyx":80
+/* "maptools/toksim/toksim.pyx":98
  *         return bytes(str(node), encoding='utf-8')
  * 
  *     def _cpp_get_node_attr(self, node: Union[str, LogicalTile]) -> Dict[str, Any]:             # <<<<<<<<<<<<<<
@@ -9509,12 +10166,12 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
       switch (__pyx_nargs) {
         case  0:
         if (likely((values[0] = __Pyx_GetKwValue_FASTCALL(__pyx_kwds, __pyx_kwvalues, __pyx_n_s_node)) != 0)) kw_args--;
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 80, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 98, __pyx_L3_error)
         else goto __pyx_L5_argtuple_error;
       }
       if (unlikely(kw_args > 0)) {
         const Py_ssize_t kwd_pos_args = __pyx_nargs;
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "_cpp_get_node_attr") < 0)) __PYX_ERR(0, 80, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "_cpp_get_node_attr") < 0)) __PYX_ERR(0, 98, __pyx_L3_error)
       }
     } else if (unlikely(__pyx_nargs != 1)) {
       goto __pyx_L5_argtuple_error;
@@ -9525,7 +10182,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("_cpp_get_node_attr", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 80, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("_cpp_get_node_attr", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 98, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("maptools.toksim.toksim.TokSim._cpp_get_node_attr", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -9540,8 +10197,8 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
 
 static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_12_cpp_get_node_attr(struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *__pyx_v_self, PyObject *__pyx_v_node) {
   PyObject *__pyx_v_attr = NULL;
-  PyObject *__pyx_8genexpr3__pyx_v_n = NULL;
   PyObject *__pyx_8genexpr4__pyx_v_n = NULL;
+  PyObject *__pyx_8genexpr5__pyx_v_n = NULL;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -9558,16 +10215,16 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_12_cpp_get_node_attr
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_cpp_get_node_attr", 0);
 
-  /* "maptools/toksim/toksim.pyx":82
+  /* "maptools/toksim/toksim.pyx":100
  *     def _cpp_get_node_attr(self, node: Union[str, LogicalTile]) -> Dict[str, Any]:
  *         attr = {
  *             'is_tile': self.ctg.is_tile(node),             # <<<<<<<<<<<<<<
  *             'is_head_tile': self.ctg.is_head_tile(node),
  *             'is_tail_tile': self.ctg.is_tail_tile(node),
  */
-  __pyx_t_1 = __Pyx_PyDict_NewPresized(9); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 82, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyDict_NewPresized(9); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 100, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->ctg, __pyx_n_s_is_tile); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 82, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->ctg, __pyx_n_s_is_tile); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 100, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_4 = NULL;
   __pyx_t_5 = 0;
@@ -9585,21 +10242,21 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_12_cpp_get_node_attr
     PyObject *__pyx_callargs[2] = {__pyx_t_4, __pyx_v_node};
     __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_5, 1+__pyx_t_5);
     __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 82, __pyx_L1_error)
+    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 100, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   }
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_is_tile, __pyx_t_2) < 0) __PYX_ERR(0, 82, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_is_tile, __pyx_t_2) < 0) __PYX_ERR(0, 100, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "maptools/toksim/toksim.pyx":83
+  /* "maptools/toksim/toksim.pyx":101
  *         attr = {
  *             'is_tile': self.ctg.is_tile(node),
  *             'is_head_tile': self.ctg.is_head_tile(node),             # <<<<<<<<<<<<<<
  *             'is_tail_tile': self.ctg.is_tail_tile(node),
  *             'is_comm': self.ctg.is_comm(node),
  */
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->ctg, __pyx_n_s_is_head_tile); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 83, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->ctg, __pyx_n_s_is_head_tile); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 101, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_4 = NULL;
   __pyx_t_5 = 0;
@@ -9617,21 +10274,21 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_12_cpp_get_node_attr
     PyObject *__pyx_callargs[2] = {__pyx_t_4, __pyx_v_node};
     __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_5, 1+__pyx_t_5);
     __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 83, __pyx_L1_error)
+    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 101, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   }
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_is_head_tile, __pyx_t_2) < 0) __PYX_ERR(0, 82, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_is_head_tile, __pyx_t_2) < 0) __PYX_ERR(0, 100, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "maptools/toksim/toksim.pyx":84
+  /* "maptools/toksim/toksim.pyx":102
  *             'is_tile': self.ctg.is_tile(node),
  *             'is_head_tile': self.ctg.is_head_tile(node),
  *             'is_tail_tile': self.ctg.is_tail_tile(node),             # <<<<<<<<<<<<<<
  *             'is_comm': self.ctg.is_comm(node),
  *             'is_cast_comm': self.ctg.is_cast_comm(node),
  */
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->ctg, __pyx_n_s_is_tail_tile); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 84, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->ctg, __pyx_n_s_is_tail_tile); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 102, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_4 = NULL;
   __pyx_t_5 = 0;
@@ -9649,21 +10306,21 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_12_cpp_get_node_attr
     PyObject *__pyx_callargs[2] = {__pyx_t_4, __pyx_v_node};
     __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_5, 1+__pyx_t_5);
     __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 84, __pyx_L1_error)
+    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 102, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   }
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_is_tail_tile, __pyx_t_2) < 0) __PYX_ERR(0, 82, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_is_tail_tile, __pyx_t_2) < 0) __PYX_ERR(0, 100, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "maptools/toksim/toksim.pyx":85
+  /* "maptools/toksim/toksim.pyx":103
  *             'is_head_tile': self.ctg.is_head_tile(node),
  *             'is_tail_tile': self.ctg.is_tail_tile(node),
  *             'is_comm': self.ctg.is_comm(node),             # <<<<<<<<<<<<<<
  *             'is_cast_comm': self.ctg.is_cast_comm(node),
  *             'is_merge_comm': self.ctg.is_merge_comm(node),
  */
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->ctg, __pyx_n_s_is_comm); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 85, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->ctg, __pyx_n_s_is_comm); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 103, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_4 = NULL;
   __pyx_t_5 = 0;
@@ -9681,21 +10338,21 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_12_cpp_get_node_attr
     PyObject *__pyx_callargs[2] = {__pyx_t_4, __pyx_v_node};
     __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_5, 1+__pyx_t_5);
     __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 85, __pyx_L1_error)
+    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 103, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   }
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_is_comm, __pyx_t_2) < 0) __PYX_ERR(0, 82, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_is_comm, __pyx_t_2) < 0) __PYX_ERR(0, 100, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "maptools/toksim/toksim.pyx":86
+  /* "maptools/toksim/toksim.pyx":104
  *             'is_tail_tile': self.ctg.is_tail_tile(node),
  *             'is_comm': self.ctg.is_comm(node),
  *             'is_cast_comm': self.ctg.is_cast_comm(node),             # <<<<<<<<<<<<<<
  *             'is_merge_comm': self.ctg.is_merge_comm(node),
  *             'is_gather_comm': self.ctg.is_gather_comm(node),
  */
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->ctg, __pyx_n_s_is_cast_comm); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 86, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->ctg, __pyx_n_s_is_cast_comm); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 104, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_4 = NULL;
   __pyx_t_5 = 0;
@@ -9713,21 +10370,21 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_12_cpp_get_node_attr
     PyObject *__pyx_callargs[2] = {__pyx_t_4, __pyx_v_node};
     __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_5, 1+__pyx_t_5);
     __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 86, __pyx_L1_error)
+    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 104, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   }
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_is_cast_comm, __pyx_t_2) < 0) __PYX_ERR(0, 82, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_is_cast_comm, __pyx_t_2) < 0) __PYX_ERR(0, 100, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "maptools/toksim/toksim.pyx":87
+  /* "maptools/toksim/toksim.pyx":105
  *             'is_comm': self.ctg.is_comm(node),
  *             'is_cast_comm': self.ctg.is_cast_comm(node),
  *             'is_merge_comm': self.ctg.is_merge_comm(node),             # <<<<<<<<<<<<<<
  *             'is_gather_comm': self.ctg.is_gather_comm(node),
  *             'preds': [self.encode(n) for n in self.ctg.preds(node)],
  */
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->ctg, __pyx_n_s_is_merge_comm); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 87, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->ctg, __pyx_n_s_is_merge_comm); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 105, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_4 = NULL;
   __pyx_t_5 = 0;
@@ -9745,21 +10402,21 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_12_cpp_get_node_attr
     PyObject *__pyx_callargs[2] = {__pyx_t_4, __pyx_v_node};
     __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_5, 1+__pyx_t_5);
     __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 87, __pyx_L1_error)
+    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 105, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   }
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_is_merge_comm, __pyx_t_2) < 0) __PYX_ERR(0, 82, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_is_merge_comm, __pyx_t_2) < 0) __PYX_ERR(0, 100, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "maptools/toksim/toksim.pyx":88
+  /* "maptools/toksim/toksim.pyx":106
  *             'is_cast_comm': self.ctg.is_cast_comm(node),
  *             'is_merge_comm': self.ctg.is_merge_comm(node),
  *             'is_gather_comm': self.ctg.is_gather_comm(node),             # <<<<<<<<<<<<<<
  *             'preds': [self.encode(n) for n in self.ctg.preds(node)],
  *             'succs': [self.encode(n) for n in self.ctg.succs(node)]
  */
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->ctg, __pyx_n_s_is_gather_comm); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 88, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->ctg, __pyx_n_s_is_gather_comm); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 106, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_4 = NULL;
   __pyx_t_5 = 0;
@@ -9777,24 +10434,24 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_12_cpp_get_node_attr
     PyObject *__pyx_callargs[2] = {__pyx_t_4, __pyx_v_node};
     __pyx_t_2 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_5, 1+__pyx_t_5);
     __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
-    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 88, __pyx_L1_error)
+    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 106, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   }
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_is_gather_comm, __pyx_t_2) < 0) __PYX_ERR(0, 82, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_is_gather_comm, __pyx_t_2) < 0) __PYX_ERR(0, 100, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   { /* enter inner scope */
 
-    /* "maptools/toksim/toksim.pyx":89
+    /* "maptools/toksim/toksim.pyx":107
  *             'is_merge_comm': self.ctg.is_merge_comm(node),
  *             'is_gather_comm': self.ctg.is_gather_comm(node),
  *             'preds': [self.encode(n) for n in self.ctg.preds(node)],             # <<<<<<<<<<<<<<
  *             'succs': [self.encode(n) for n in self.ctg.succs(node)]
  *         }
  */
-    __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 89, __pyx_L5_error)
+    __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 107, __pyx_L5_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->ctg, __pyx_n_s_preds); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 89, __pyx_L5_error)
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->ctg, __pyx_n_s_preds); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 107, __pyx_L5_error)
     __Pyx_GOTREF(__pyx_t_4);
     __pyx_t_6 = NULL;
     __pyx_t_5 = 0;
@@ -9812,7 +10469,7 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_12_cpp_get_node_attr
       PyObject *__pyx_callargs[2] = {__pyx_t_6, __pyx_v_node};
       __pyx_t_3 = __Pyx_PyObject_FastCall(__pyx_t_4, __pyx_callargs+1-__pyx_t_5, 1+__pyx_t_5);
       __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-      if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 89, __pyx_L5_error)
+      if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 107, __pyx_L5_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     }
@@ -9820,9 +10477,9 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_12_cpp_get_node_attr
       __pyx_t_4 = __pyx_t_3; __Pyx_INCREF(__pyx_t_4); __pyx_t_7 = 0;
       __pyx_t_8 = NULL;
     } else {
-      __pyx_t_7 = -1; __pyx_t_4 = PyObject_GetIter(__pyx_t_3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 89, __pyx_L5_error)
+      __pyx_t_7 = -1; __pyx_t_4 = PyObject_GetIter(__pyx_t_3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 107, __pyx_L5_error)
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_8 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_4); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 89, __pyx_L5_error)
+      __pyx_t_8 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_4); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 107, __pyx_L5_error)
     }
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     for (;;) {
@@ -9830,17 +10487,17 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_12_cpp_get_node_attr
         if (likely(PyList_CheckExact(__pyx_t_4))) {
           if (__pyx_t_7 >= PyList_GET_SIZE(__pyx_t_4)) break;
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_3 = PyList_GET_ITEM(__pyx_t_4, __pyx_t_7); __Pyx_INCREF(__pyx_t_3); __pyx_t_7++; if (unlikely((0 < 0))) __PYX_ERR(0, 89, __pyx_L5_error)
+          __pyx_t_3 = PyList_GET_ITEM(__pyx_t_4, __pyx_t_7); __Pyx_INCREF(__pyx_t_3); __pyx_t_7++; if (unlikely((0 < 0))) __PYX_ERR(0, 107, __pyx_L5_error)
           #else
-          __pyx_t_3 = PySequence_ITEM(__pyx_t_4, __pyx_t_7); __pyx_t_7++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 89, __pyx_L5_error)
+          __pyx_t_3 = PySequence_ITEM(__pyx_t_4, __pyx_t_7); __pyx_t_7++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 107, __pyx_L5_error)
           __Pyx_GOTREF(__pyx_t_3);
           #endif
         } else {
           if (__pyx_t_7 >= PyTuple_GET_SIZE(__pyx_t_4)) break;
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_3 = PyTuple_GET_ITEM(__pyx_t_4, __pyx_t_7); __Pyx_INCREF(__pyx_t_3); __pyx_t_7++; if (unlikely((0 < 0))) __PYX_ERR(0, 89, __pyx_L5_error)
+          __pyx_t_3 = PyTuple_GET_ITEM(__pyx_t_4, __pyx_t_7); __Pyx_INCREF(__pyx_t_3); __pyx_t_7++; if (unlikely((0 < 0))) __PYX_ERR(0, 107, __pyx_L5_error)
           #else
-          __pyx_t_3 = PySequence_ITEM(__pyx_t_4, __pyx_t_7); __pyx_t_7++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 89, __pyx_L5_error)
+          __pyx_t_3 = PySequence_ITEM(__pyx_t_4, __pyx_t_7); __pyx_t_7++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 107, __pyx_L5_error)
           __Pyx_GOTREF(__pyx_t_3);
           #endif
         }
@@ -9850,15 +10507,15 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_12_cpp_get_node_attr
           PyObject* exc_type = PyErr_Occurred();
           if (exc_type) {
             if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-            else __PYX_ERR(0, 89, __pyx_L5_error)
+            else __PYX_ERR(0, 107, __pyx_L5_error)
           }
           break;
         }
         __Pyx_GOTREF(__pyx_t_3);
       }
-      __Pyx_XDECREF_SET(__pyx_8genexpr3__pyx_v_n, __pyx_t_3);
+      __Pyx_XDECREF_SET(__pyx_8genexpr4__pyx_v_n, __pyx_t_3);
       __pyx_t_3 = 0;
-      __pyx_t_6 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_encode); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 89, __pyx_L5_error)
+      __pyx_t_6 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_encode); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 107, __pyx_L5_error)
       __Pyx_GOTREF(__pyx_t_6);
       __pyx_t_9 = NULL;
       __pyx_t_5 = 0;
@@ -9873,38 +10530,38 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_12_cpp_get_node_attr
         }
       }
       {
-        PyObject *__pyx_callargs[2] = {__pyx_t_9, __pyx_8genexpr3__pyx_v_n};
+        PyObject *__pyx_callargs[2] = {__pyx_t_9, __pyx_8genexpr4__pyx_v_n};
         __pyx_t_3 = __Pyx_PyObject_FastCall(__pyx_t_6, __pyx_callargs+1-__pyx_t_5, 1+__pyx_t_5);
         __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
-        if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 89, __pyx_L5_error)
+        if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 107, __pyx_L5_error)
         __Pyx_GOTREF(__pyx_t_3);
         __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       }
-      if (unlikely(__Pyx_ListComp_Append(__pyx_t_2, (PyObject*)__pyx_t_3))) __PYX_ERR(0, 89, __pyx_L5_error)
+      if (unlikely(__Pyx_ListComp_Append(__pyx_t_2, (PyObject*)__pyx_t_3))) __PYX_ERR(0, 107, __pyx_L5_error)
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     }
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __Pyx_XDECREF(__pyx_8genexpr3__pyx_v_n); __pyx_8genexpr3__pyx_v_n = 0;
+    __Pyx_XDECREF(__pyx_8genexpr4__pyx_v_n); __pyx_8genexpr4__pyx_v_n = 0;
     goto __pyx_L9_exit_scope;
     __pyx_L5_error:;
-    __Pyx_XDECREF(__pyx_8genexpr3__pyx_v_n); __pyx_8genexpr3__pyx_v_n = 0;
+    __Pyx_XDECREF(__pyx_8genexpr4__pyx_v_n); __pyx_8genexpr4__pyx_v_n = 0;
     goto __pyx_L1_error;
     __pyx_L9_exit_scope:;
   } /* exit inner scope */
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_preds, __pyx_t_2) < 0) __PYX_ERR(0, 82, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_preds, __pyx_t_2) < 0) __PYX_ERR(0, 100, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   { /* enter inner scope */
 
-    /* "maptools/toksim/toksim.pyx":90
+    /* "maptools/toksim/toksim.pyx":108
  *             'is_gather_comm': self.ctg.is_gather_comm(node),
  *             'preds': [self.encode(n) for n in self.ctg.preds(node)],
  *             'succs': [self.encode(n) for n in self.ctg.succs(node)]             # <<<<<<<<<<<<<<
  *         }
  *         return attr
  */
-    __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 90, __pyx_L12_error)
+    __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 108, __pyx_L12_error)
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->ctg, __pyx_n_s_succs); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 90, __pyx_L12_error)
+    __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->ctg, __pyx_n_s_succs); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 108, __pyx_L12_error)
     __Pyx_GOTREF(__pyx_t_3);
     __pyx_t_6 = NULL;
     __pyx_t_5 = 0;
@@ -9922,7 +10579,7 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_12_cpp_get_node_attr
       PyObject *__pyx_callargs[2] = {__pyx_t_6, __pyx_v_node};
       __pyx_t_4 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_5, 1+__pyx_t_5);
       __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-      if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 90, __pyx_L12_error)
+      if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 108, __pyx_L12_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     }
@@ -9930,9 +10587,9 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_12_cpp_get_node_attr
       __pyx_t_3 = __pyx_t_4; __Pyx_INCREF(__pyx_t_3); __pyx_t_7 = 0;
       __pyx_t_8 = NULL;
     } else {
-      __pyx_t_7 = -1; __pyx_t_3 = PyObject_GetIter(__pyx_t_4); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 90, __pyx_L12_error)
+      __pyx_t_7 = -1; __pyx_t_3 = PyObject_GetIter(__pyx_t_4); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 108, __pyx_L12_error)
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_8 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_3); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 90, __pyx_L12_error)
+      __pyx_t_8 = __Pyx_PyObject_GetIterNextFunc(__pyx_t_3); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 108, __pyx_L12_error)
     }
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     for (;;) {
@@ -9940,17 +10597,17 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_12_cpp_get_node_attr
         if (likely(PyList_CheckExact(__pyx_t_3))) {
           if (__pyx_t_7 >= PyList_GET_SIZE(__pyx_t_3)) break;
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_4 = PyList_GET_ITEM(__pyx_t_3, __pyx_t_7); __Pyx_INCREF(__pyx_t_4); __pyx_t_7++; if (unlikely((0 < 0))) __PYX_ERR(0, 90, __pyx_L12_error)
+          __pyx_t_4 = PyList_GET_ITEM(__pyx_t_3, __pyx_t_7); __Pyx_INCREF(__pyx_t_4); __pyx_t_7++; if (unlikely((0 < 0))) __PYX_ERR(0, 108, __pyx_L12_error)
           #else
-          __pyx_t_4 = PySequence_ITEM(__pyx_t_3, __pyx_t_7); __pyx_t_7++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 90, __pyx_L12_error)
+          __pyx_t_4 = PySequence_ITEM(__pyx_t_3, __pyx_t_7); __pyx_t_7++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 108, __pyx_L12_error)
           __Pyx_GOTREF(__pyx_t_4);
           #endif
         } else {
           if (__pyx_t_7 >= PyTuple_GET_SIZE(__pyx_t_3)) break;
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_4 = PyTuple_GET_ITEM(__pyx_t_3, __pyx_t_7); __Pyx_INCREF(__pyx_t_4); __pyx_t_7++; if (unlikely((0 < 0))) __PYX_ERR(0, 90, __pyx_L12_error)
+          __pyx_t_4 = PyTuple_GET_ITEM(__pyx_t_3, __pyx_t_7); __Pyx_INCREF(__pyx_t_4); __pyx_t_7++; if (unlikely((0 < 0))) __PYX_ERR(0, 108, __pyx_L12_error)
           #else
-          __pyx_t_4 = PySequence_ITEM(__pyx_t_3, __pyx_t_7); __pyx_t_7++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 90, __pyx_L12_error)
+          __pyx_t_4 = PySequence_ITEM(__pyx_t_3, __pyx_t_7); __pyx_t_7++; if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 108, __pyx_L12_error)
           __Pyx_GOTREF(__pyx_t_4);
           #endif
         }
@@ -9960,15 +10617,15 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_12_cpp_get_node_attr
           PyObject* exc_type = PyErr_Occurred();
           if (exc_type) {
             if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-            else __PYX_ERR(0, 90, __pyx_L12_error)
+            else __PYX_ERR(0, 108, __pyx_L12_error)
           }
           break;
         }
         __Pyx_GOTREF(__pyx_t_4);
       }
-      __Pyx_XDECREF_SET(__pyx_8genexpr4__pyx_v_n, __pyx_t_4);
+      __Pyx_XDECREF_SET(__pyx_8genexpr5__pyx_v_n, __pyx_t_4);
       __pyx_t_4 = 0;
-      __pyx_t_6 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_encode); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 90, __pyx_L12_error)
+      __pyx_t_6 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_encode); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 108, __pyx_L12_error)
       __Pyx_GOTREF(__pyx_t_6);
       __pyx_t_9 = NULL;
       __pyx_t_5 = 0;
@@ -9983,30 +10640,30 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_12_cpp_get_node_attr
         }
       }
       {
-        PyObject *__pyx_callargs[2] = {__pyx_t_9, __pyx_8genexpr4__pyx_v_n};
+        PyObject *__pyx_callargs[2] = {__pyx_t_9, __pyx_8genexpr5__pyx_v_n};
         __pyx_t_4 = __Pyx_PyObject_FastCall(__pyx_t_6, __pyx_callargs+1-__pyx_t_5, 1+__pyx_t_5);
         __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
-        if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 90, __pyx_L12_error)
+        if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 108, __pyx_L12_error)
         __Pyx_GOTREF(__pyx_t_4);
         __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       }
-      if (unlikely(__Pyx_ListComp_Append(__pyx_t_2, (PyObject*)__pyx_t_4))) __PYX_ERR(0, 90, __pyx_L12_error)
+      if (unlikely(__Pyx_ListComp_Append(__pyx_t_2, (PyObject*)__pyx_t_4))) __PYX_ERR(0, 108, __pyx_L12_error)
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     }
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __Pyx_XDECREF(__pyx_8genexpr4__pyx_v_n); __pyx_8genexpr4__pyx_v_n = 0;
+    __Pyx_XDECREF(__pyx_8genexpr5__pyx_v_n); __pyx_8genexpr5__pyx_v_n = 0;
     goto __pyx_L16_exit_scope;
     __pyx_L12_error:;
-    __Pyx_XDECREF(__pyx_8genexpr4__pyx_v_n); __pyx_8genexpr4__pyx_v_n = 0;
+    __Pyx_XDECREF(__pyx_8genexpr5__pyx_v_n); __pyx_8genexpr5__pyx_v_n = 0;
     goto __pyx_L1_error;
     __pyx_L16_exit_scope:;
   } /* exit inner scope */
-  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_succs, __pyx_t_2) < 0) __PYX_ERR(0, 82, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_1, __pyx_n_s_succs, __pyx_t_2) < 0) __PYX_ERR(0, 100, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_v_attr = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "maptools/toksim/toksim.pyx":92
+  /* "maptools/toksim/toksim.pyx":110
  *             'succs': [self.encode(n) for n in self.ctg.succs(node)]
  *         }
  *         return attr             # <<<<<<<<<<<<<<
@@ -10018,7 +10675,7 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_12_cpp_get_node_attr
   __pyx_r = __pyx_v_attr;
   goto __pyx_L0;
 
-  /* "maptools/toksim/toksim.pyx":80
+  /* "maptools/toksim/toksim.pyx":98
  *         return bytes(str(node), encoding='utf-8')
  * 
  *     def _cpp_get_node_attr(self, node: Union[str, LogicalTile]) -> Dict[str, Any]:             # <<<<<<<<<<<<<<
@@ -10038,14 +10695,14 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_12_cpp_get_node_attr
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_attr);
-  __Pyx_XDECREF(__pyx_8genexpr3__pyx_v_n);
   __Pyx_XDECREF(__pyx_8genexpr4__pyx_v_n);
+  __Pyx_XDECREF(__pyx_8genexpr5__pyx_v_n);
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-/* "maptools/toksim/toksim.pyx":94
+/* "maptools/toksim/toksim.pyx":112
  *         return attr
  * 
  *     def _cpp_get_tile_config(self, node: LogicalTile) -> Dict[str, Any]:             # <<<<<<<<<<<<<<
@@ -10095,12 +10752,12 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
       switch (__pyx_nargs) {
         case  0:
         if (likely((values[0] = __Pyx_GetKwValue_FASTCALL(__pyx_kwds, __pyx_kwvalues, __pyx_n_s_node)) != 0)) kw_args--;
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 94, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 112, __pyx_L3_error)
         else goto __pyx_L5_argtuple_error;
       }
       if (unlikely(kw_args > 0)) {
         const Py_ssize_t kwd_pos_args = __pyx_nargs;
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "_cpp_get_tile_config") < 0)) __PYX_ERR(0, 94, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "_cpp_get_tile_config") < 0)) __PYX_ERR(0, 112, __pyx_L3_error)
       }
     } else if (unlikely(__pyx_nargs != 1)) {
       goto __pyx_L5_argtuple_error;
@@ -10111,7 +10768,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("_cpp_get_tile_config", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 94, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("_cpp_get_tile_config", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 112, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("maptools.toksim.toksim.TokSim._cpp_get_tile_config", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -10130,11 +10787,11 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_14_cpp_get_tile_conf
   PyObject *__pyx_v_conv_names = NULL;
   PyObject *__pyx_v_pool_names = NULL;
   PyObject *__pyx_v_resize_names = NULL;
-  PyObject *__pyx_8genexpr5__pyx_v_name = NULL;
   PyObject *__pyx_8genexpr6__pyx_v_name = NULL;
   PyObject *__pyx_8genexpr7__pyx_v_name = NULL;
   PyObject *__pyx_8genexpr8__pyx_v_name = NULL;
   PyObject *__pyx_8genexpr9__pyx_v_name = NULL;
+  PyObject *__pyx_9genexpr10__pyx_v_name = NULL;
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -10150,169 +10807,169 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_14_cpp_get_tile_conf
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("_cpp_get_tile_config", 0);
 
-  /* "maptools/toksim/toksim.pyx":95
+  /* "maptools/toksim/toksim.pyx":113
  * 
  *     def _cpp_get_tile_config(self, node: LogicalTile) -> Dict[str, Any]:
  *         config = self.ctg.dicts[node]             # <<<<<<<<<<<<<<
  *         tile_config = {
  *             'has_conv': 'Conv' in config['op_type'],
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->ctg, __pyx_n_s_dicts); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 95, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self->ctg, __pyx_n_s_dicts); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 113, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_t_1, __pyx_v_node); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 95, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_t_1, __pyx_v_node); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 113, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_config = __pyx_t_2;
   __pyx_t_2 = 0;
 
-  /* "maptools/toksim/toksim.pyx":97
+  /* "maptools/toksim/toksim.pyx":115
  *         config = self.ctg.dicts[node]
  *         tile_config = {
  *             'has_conv': 'Conv' in config['op_type'],             # <<<<<<<<<<<<<<
  *             'has_pool': 'Pool' in config['op_type'],
  *             'has_resize': 'Rsz' in config['op_type'],
  */
-  __pyx_t_2 = __Pyx_PyDict_NewPresized(7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 97, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyDict_NewPresized(7); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 115, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_v_config, __pyx_n_s_op_type); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 97, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_v_config, __pyx_n_s_op_type); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 115, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = (__Pyx_PySequence_ContainsTF(__pyx_n_s_Conv, __pyx_t_1, Py_EQ)); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 97, __pyx_L1_error)
+  __pyx_t_3 = (__Pyx_PySequence_ContainsTF(__pyx_n_s_Conv, __pyx_t_1, Py_EQ)); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 115, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyBool_FromLong(__pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 97, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyBool_FromLong(__pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 115, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_has_conv, __pyx_t_1) < 0) __PYX_ERR(0, 97, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_has_conv, __pyx_t_1) < 0) __PYX_ERR(0, 115, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "maptools/toksim/toksim.pyx":98
+  /* "maptools/toksim/toksim.pyx":116
  *         tile_config = {
  *             'has_conv': 'Conv' in config['op_type'],
  *             'has_pool': 'Pool' in config['op_type'],             # <<<<<<<<<<<<<<
  *             'has_resize': 'Rsz' in config['op_type'],
  *             'is_merge': config['merge_in'],
  */
-  __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_v_config, __pyx_n_s_op_type); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 98, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_v_config, __pyx_n_s_op_type); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 116, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = (__Pyx_PySequence_ContainsTF(__pyx_n_s_Pool, __pyx_t_1, Py_EQ)); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 98, __pyx_L1_error)
+  __pyx_t_3 = (__Pyx_PySequence_ContainsTF(__pyx_n_s_Pool, __pyx_t_1, Py_EQ)); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 116, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyBool_FromLong(__pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 98, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyBool_FromLong(__pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 116, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_has_pool, __pyx_t_1) < 0) __PYX_ERR(0, 97, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_has_pool, __pyx_t_1) < 0) __PYX_ERR(0, 115, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "maptools/toksim/toksim.pyx":99
+  /* "maptools/toksim/toksim.pyx":117
  *             'has_conv': 'Conv' in config['op_type'],
  *             'has_pool': 'Pool' in config['op_type'],
  *             'has_resize': 'Rsz' in config['op_type'],             # <<<<<<<<<<<<<<
  *             'is_merge': config['merge_in'],
  *             'is_gather': config['gather_in'],
  */
-  __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_v_config, __pyx_n_s_op_type); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 99, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_v_config, __pyx_n_s_op_type); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 117, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = (__Pyx_PySequence_ContainsTF(__pyx_n_s_Rsz, __pyx_t_1, Py_EQ)); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 99, __pyx_L1_error)
+  __pyx_t_3 = (__Pyx_PySequence_ContainsTF(__pyx_n_s_Rsz, __pyx_t_1, Py_EQ)); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 117, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = __Pyx_PyBool_FromLong(__pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 99, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyBool_FromLong(__pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 117, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_has_resize, __pyx_t_1) < 0) __PYX_ERR(0, 97, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_has_resize, __pyx_t_1) < 0) __PYX_ERR(0, 115, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "maptools/toksim/toksim.pyx":100
+  /* "maptools/toksim/toksim.pyx":118
  *             'has_pool': 'Pool' in config['op_type'],
  *             'has_resize': 'Rsz' in config['op_type'],
  *             'is_merge': config['merge_in'],             # <<<<<<<<<<<<<<
  *             'is_gather': config['gather_in'],
  *             'xbar_num_ichan': config['xbar_num_ichan'],
  */
-  __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_v_config, __pyx_n_s_merge_in); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 100, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_v_config, __pyx_n_s_merge_in); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 118, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_is_merge, __pyx_t_1) < 0) __PYX_ERR(0, 97, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_is_merge, __pyx_t_1) < 0) __PYX_ERR(0, 115, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "maptools/toksim/toksim.pyx":101
+  /* "maptools/toksim/toksim.pyx":119
  *             'has_resize': 'Rsz' in config['op_type'],
  *             'is_merge': config['merge_in'],
  *             'is_gather': config['gather_in'],             # <<<<<<<<<<<<<<
  *             'xbar_num_ichan': config['xbar_num_ichan'],
  *             'xbar_num_ochan': config['xbar_num_ochan']
  */
-  __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_v_config, __pyx_n_s_gather_in); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 101, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_v_config, __pyx_n_s_gather_in); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 119, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_is_gather, __pyx_t_1) < 0) __PYX_ERR(0, 97, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_is_gather, __pyx_t_1) < 0) __PYX_ERR(0, 115, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "maptools/toksim/toksim.pyx":102
+  /* "maptools/toksim/toksim.pyx":120
  *             'is_merge': config['merge_in'],
  *             'is_gather': config['gather_in'],
  *             'xbar_num_ichan': config['xbar_num_ichan'],             # <<<<<<<<<<<<<<
  *             'xbar_num_ochan': config['xbar_num_ochan']
  *         }
  */
-  __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_v_config, __pyx_n_s_xbar_num_ichan); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 102, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_v_config, __pyx_n_s_xbar_num_ichan); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 120, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_xbar_num_ichan, __pyx_t_1) < 0) __PYX_ERR(0, 97, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_xbar_num_ichan, __pyx_t_1) < 0) __PYX_ERR(0, 115, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "maptools/toksim/toksim.pyx":103
+  /* "maptools/toksim/toksim.pyx":121
  *             'is_gather': config['gather_in'],
  *             'xbar_num_ichan': config['xbar_num_ichan'],
  *             'xbar_num_ochan': config['xbar_num_ochan']             # <<<<<<<<<<<<<<
  *         }
  * 
  */
-  __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_v_config, __pyx_n_s_xbar_num_ochan); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 103, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_v_config, __pyx_n_s_xbar_num_ochan); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 121, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_xbar_num_ochan, __pyx_t_1) < 0) __PYX_ERR(0, 97, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_xbar_num_ochan, __pyx_t_1) < 0) __PYX_ERR(0, 115, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_tile_config = ((PyObject*)__pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "maptools/toksim/toksim.pyx":107
+  /* "maptools/toksim/toksim.pyx":125
  * 
  *         conv_names = {
  *             'conv_input_size',             # <<<<<<<<<<<<<<
  *             'conv_output_size',
  *             'conv_kernel_size',
  */
-  __pyx_t_2 = PySet_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 107, __pyx_L1_error)
+  __pyx_t_2 = PySet_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 125, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PySet_Add(__pyx_t_2, __pyx_n_s_conv_input_size) < 0) __PYX_ERR(0, 107, __pyx_L1_error)
-  if (PySet_Add(__pyx_t_2, __pyx_n_s_conv_output_size) < 0) __PYX_ERR(0, 107, __pyx_L1_error)
-  if (PySet_Add(__pyx_t_2, __pyx_n_s_conv_kernel_size) < 0) __PYX_ERR(0, 107, __pyx_L1_error)
-  if (PySet_Add(__pyx_t_2, __pyx_n_s_conv_strides) < 0) __PYX_ERR(0, 107, __pyx_L1_error)
-  if (PySet_Add(__pyx_t_2, __pyx_n_s_conv_pads) < 0) __PYX_ERR(0, 107, __pyx_L1_error)
+  if (PySet_Add(__pyx_t_2, __pyx_n_s_conv_input_size) < 0) __PYX_ERR(0, 125, __pyx_L1_error)
+  if (PySet_Add(__pyx_t_2, __pyx_n_s_conv_output_size) < 0) __PYX_ERR(0, 125, __pyx_L1_error)
+  if (PySet_Add(__pyx_t_2, __pyx_n_s_conv_kernel_size) < 0) __PYX_ERR(0, 125, __pyx_L1_error)
+  if (PySet_Add(__pyx_t_2, __pyx_n_s_conv_strides) < 0) __PYX_ERR(0, 125, __pyx_L1_error)
+  if (PySet_Add(__pyx_t_2, __pyx_n_s_conv_pads) < 0) __PYX_ERR(0, 125, __pyx_L1_error)
   __pyx_v_conv_names = ((PyObject*)__pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "maptools/toksim/toksim.pyx":115
+  /* "maptools/toksim/toksim.pyx":133
  * 
  *         pool_names = {
  *             'pool_input_size',             # <<<<<<<<<<<<<<
  *             'pool_output_size',
  *             'pool_kernel_size',
  */
-  __pyx_t_2 = PySet_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 115, __pyx_L1_error)
+  __pyx_t_2 = PySet_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 133, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PySet_Add(__pyx_t_2, __pyx_n_s_pool_input_size) < 0) __PYX_ERR(0, 115, __pyx_L1_error)
-  if (PySet_Add(__pyx_t_2, __pyx_n_s_pool_output_size) < 0) __PYX_ERR(0, 115, __pyx_L1_error)
-  if (PySet_Add(__pyx_t_2, __pyx_n_s_pool_kernel_size) < 0) __PYX_ERR(0, 115, __pyx_L1_error)
-  if (PySet_Add(__pyx_t_2, __pyx_n_s_pool_strides) < 0) __PYX_ERR(0, 115, __pyx_L1_error)
-  if (PySet_Add(__pyx_t_2, __pyx_n_s_pool_pads) < 0) __PYX_ERR(0, 115, __pyx_L1_error)
+  if (PySet_Add(__pyx_t_2, __pyx_n_s_pool_input_size) < 0) __PYX_ERR(0, 133, __pyx_L1_error)
+  if (PySet_Add(__pyx_t_2, __pyx_n_s_pool_output_size) < 0) __PYX_ERR(0, 133, __pyx_L1_error)
+  if (PySet_Add(__pyx_t_2, __pyx_n_s_pool_kernel_size) < 0) __PYX_ERR(0, 133, __pyx_L1_error)
+  if (PySet_Add(__pyx_t_2, __pyx_n_s_pool_strides) < 0) __PYX_ERR(0, 133, __pyx_L1_error)
+  if (PySet_Add(__pyx_t_2, __pyx_n_s_pool_pads) < 0) __PYX_ERR(0, 133, __pyx_L1_error)
   __pyx_v_pool_names = ((PyObject*)__pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "maptools/toksim/toksim.pyx":123
+  /* "maptools/toksim/toksim.pyx":141
  * 
  *         resize_names = {
  *             'resize_scales'             # <<<<<<<<<<<<<<
  *         }
  * 
  */
-  __pyx_t_2 = PySet_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 123, __pyx_L1_error)
+  __pyx_t_2 = PySet_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 141, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PySet_Add(__pyx_t_2, __pyx_n_s_resize_scales) < 0) __PYX_ERR(0, 123, __pyx_L1_error)
+  if (PySet_Add(__pyx_t_2, __pyx_n_s_resize_scales) < 0) __PYX_ERR(0, 141, __pyx_L1_error)
   __pyx_v_resize_names = ((PyObject*)__pyx_t_2);
   __pyx_t_2 = 0;
 
-  /* "maptools/toksim/toksim.pyx":127
+  /* "maptools/toksim/toksim.pyx":145
  * 
  *         # conv configuration
  *         tile_config.update({             # <<<<<<<<<<<<<<
@@ -10320,10 +10977,10 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_14_cpp_get_tile_conf
  *             for name in conv_names
  */
   { /* enter inner scope */
-    __pyx_t_2 = PyDict_New(); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 127, __pyx_L5_error)
+    __pyx_t_2 = PyDict_New(); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 145, __pyx_L5_error)
     __Pyx_GOTREF(__pyx_t_2);
 
-    /* "maptools/toksim/toksim.pyx":129
+    /* "maptools/toksim/toksim.pyx":147
  *         tile_config.update({
  *             name: config[name]
  *             for name in conv_names             # <<<<<<<<<<<<<<
@@ -10331,7 +10988,7 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_14_cpp_get_tile_conf
  * 
  */
     __pyx_t_4 = 0;
-    __pyx_t_7 = __Pyx_set_iterator(__pyx_v_conv_names, 1, (&__pyx_t_5), (&__pyx_t_6)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 129, __pyx_L5_error)
+    __pyx_t_7 = __Pyx_set_iterator(__pyx_v_conv_names, 1, (&__pyx_t_5), (&__pyx_t_6)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 147, __pyx_L5_error)
     __Pyx_GOTREF(__pyx_t_7);
     __Pyx_XDECREF(__pyx_t_1);
     __pyx_t_1 = __pyx_t_7;
@@ -10339,58 +10996,58 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_14_cpp_get_tile_conf
     while (1) {
       __pyx_t_8 = __Pyx_set_iter_next(__pyx_t_1, __pyx_t_5, &__pyx_t_4, &__pyx_t_7, __pyx_t_6);
       if (unlikely(__pyx_t_8 == 0)) break;
-      if (unlikely(__pyx_t_8 == -1)) __PYX_ERR(0, 129, __pyx_L5_error)
+      if (unlikely(__pyx_t_8 == -1)) __PYX_ERR(0, 147, __pyx_L5_error)
       __Pyx_GOTREF(__pyx_t_7);
-      __Pyx_XDECREF_SET(__pyx_8genexpr5__pyx_v_name, __pyx_t_7);
+      __Pyx_XDECREF_SET(__pyx_8genexpr6__pyx_v_name, __pyx_t_7);
       __pyx_t_7 = 0;
 
-      /* "maptools/toksim/toksim.pyx":128
+      /* "maptools/toksim/toksim.pyx":146
  *         # conv configuration
  *         tile_config.update({
  *             name: config[name]             # <<<<<<<<<<<<<<
  *             for name in conv_names
  *         })
  */
-      __pyx_t_7 = __Pyx_PyObject_GetItem(__pyx_v_config, __pyx_8genexpr5__pyx_v_name); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 128, __pyx_L5_error)
+      __pyx_t_7 = __Pyx_PyObject_GetItem(__pyx_v_config, __pyx_8genexpr6__pyx_v_name); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 146, __pyx_L5_error)
       __Pyx_GOTREF(__pyx_t_7);
-      if (unlikely(PyDict_SetItem(__pyx_t_2, (PyObject*)__pyx_8genexpr5__pyx_v_name, (PyObject*)__pyx_t_7))) __PYX_ERR(0, 128, __pyx_L5_error)
+      if (unlikely(PyDict_SetItem(__pyx_t_2, (PyObject*)__pyx_8genexpr6__pyx_v_name, (PyObject*)__pyx_t_7))) __PYX_ERR(0, 146, __pyx_L5_error)
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     }
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __Pyx_XDECREF(__pyx_8genexpr5__pyx_v_name); __pyx_8genexpr5__pyx_v_name = 0;
+    __Pyx_XDECREF(__pyx_8genexpr6__pyx_v_name); __pyx_8genexpr6__pyx_v_name = 0;
     goto __pyx_L8_exit_scope;
     __pyx_L5_error:;
-    __Pyx_XDECREF(__pyx_8genexpr5__pyx_v_name); __pyx_8genexpr5__pyx_v_name = 0;
+    __Pyx_XDECREF(__pyx_8genexpr6__pyx_v_name); __pyx_8genexpr6__pyx_v_name = 0;
     goto __pyx_L1_error;
     __pyx_L8_exit_scope:;
   } /* exit inner scope */
 
-  /* "maptools/toksim/toksim.pyx":127
+  /* "maptools/toksim/toksim.pyx":145
  * 
  *         # conv configuration
  *         tile_config.update({             # <<<<<<<<<<<<<<
  *             name: config[name]
  *             for name in conv_names
  */
-  __pyx_t_1 = __Pyx_CallUnboundCMethod1(&__pyx_umethod_PyDict_Type_update, __pyx_v_tile_config, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 127, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_CallUnboundCMethod1(&__pyx_umethod_PyDict_Type_update, __pyx_v_tile_config, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 145, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "maptools/toksim/toksim.pyx":133
+  /* "maptools/toksim/toksim.pyx":151
  * 
  *         # pool configuration
  *         if 'Pool' in config['op_type']:             # <<<<<<<<<<<<<<
  *             tile_config.update({
  *                 name: config[name]
  */
-  __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_v_config, __pyx_n_s_op_type); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 133, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_v_config, __pyx_n_s_op_type); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 151, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = (__Pyx_PySequence_ContainsTF(__pyx_n_s_Pool, __pyx_t_1, Py_EQ)); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 133, __pyx_L1_error)
+  __pyx_t_3 = (__Pyx_PySequence_ContainsTF(__pyx_n_s_Pool, __pyx_t_1, Py_EQ)); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 151, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   if (__pyx_t_3) {
 
-    /* "maptools/toksim/toksim.pyx":134
+    /* "maptools/toksim/toksim.pyx":152
  *         # pool configuration
  *         if 'Pool' in config['op_type']:
  *             tile_config.update({             # <<<<<<<<<<<<<<
@@ -10398,10 +11055,10 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_14_cpp_get_tile_conf
  *                 for name in pool_names
  */
     { /* enter inner scope */
-      __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 134, __pyx_L12_error)
+      __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 152, __pyx_L12_error)
       __Pyx_GOTREF(__pyx_t_1);
 
-      /* "maptools/toksim/toksim.pyx":136
+      /* "maptools/toksim/toksim.pyx":154
  *             tile_config.update({
  *                 name: config[name]
  *                 for name in pool_names             # <<<<<<<<<<<<<<
@@ -10409,7 +11066,7 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_14_cpp_get_tile_conf
  *         else:
  */
       __pyx_t_5 = 0;
-      __pyx_t_7 = __Pyx_set_iterator(__pyx_v_pool_names, 1, (&__pyx_t_4), (&__pyx_t_6)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 136, __pyx_L12_error)
+      __pyx_t_7 = __Pyx_set_iterator(__pyx_v_pool_names, 1, (&__pyx_t_4), (&__pyx_t_6)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 154, __pyx_L12_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_XDECREF(__pyx_t_2);
       __pyx_t_2 = __pyx_t_7;
@@ -10417,45 +11074,45 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_14_cpp_get_tile_conf
       while (1) {
         __pyx_t_8 = __Pyx_set_iter_next(__pyx_t_2, __pyx_t_4, &__pyx_t_5, &__pyx_t_7, __pyx_t_6);
         if (unlikely(__pyx_t_8 == 0)) break;
-        if (unlikely(__pyx_t_8 == -1)) __PYX_ERR(0, 136, __pyx_L12_error)
+        if (unlikely(__pyx_t_8 == -1)) __PYX_ERR(0, 154, __pyx_L12_error)
         __Pyx_GOTREF(__pyx_t_7);
-        __Pyx_XDECREF_SET(__pyx_8genexpr6__pyx_v_name, __pyx_t_7);
+        __Pyx_XDECREF_SET(__pyx_8genexpr7__pyx_v_name, __pyx_t_7);
         __pyx_t_7 = 0;
 
-        /* "maptools/toksim/toksim.pyx":135
+        /* "maptools/toksim/toksim.pyx":153
  *         if 'Pool' in config['op_type']:
  *             tile_config.update({
  *                 name: config[name]             # <<<<<<<<<<<<<<
  *                 for name in pool_names
  *             })
  */
-        __pyx_t_7 = __Pyx_PyObject_GetItem(__pyx_v_config, __pyx_8genexpr6__pyx_v_name); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 135, __pyx_L12_error)
+        __pyx_t_7 = __Pyx_PyObject_GetItem(__pyx_v_config, __pyx_8genexpr7__pyx_v_name); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 153, __pyx_L12_error)
         __Pyx_GOTREF(__pyx_t_7);
-        if (unlikely(PyDict_SetItem(__pyx_t_1, (PyObject*)__pyx_8genexpr6__pyx_v_name, (PyObject*)__pyx_t_7))) __PYX_ERR(0, 135, __pyx_L12_error)
+        if (unlikely(PyDict_SetItem(__pyx_t_1, (PyObject*)__pyx_8genexpr7__pyx_v_name, (PyObject*)__pyx_t_7))) __PYX_ERR(0, 153, __pyx_L12_error)
         __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
       }
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-      __Pyx_XDECREF(__pyx_8genexpr6__pyx_v_name); __pyx_8genexpr6__pyx_v_name = 0;
+      __Pyx_XDECREF(__pyx_8genexpr7__pyx_v_name); __pyx_8genexpr7__pyx_v_name = 0;
       goto __pyx_L15_exit_scope;
       __pyx_L12_error:;
-      __Pyx_XDECREF(__pyx_8genexpr6__pyx_v_name); __pyx_8genexpr6__pyx_v_name = 0;
+      __Pyx_XDECREF(__pyx_8genexpr7__pyx_v_name); __pyx_8genexpr7__pyx_v_name = 0;
       goto __pyx_L1_error;
       __pyx_L15_exit_scope:;
     } /* exit inner scope */
 
-    /* "maptools/toksim/toksim.pyx":134
+    /* "maptools/toksim/toksim.pyx":152
  *         # pool configuration
  *         if 'Pool' in config['op_type']:
  *             tile_config.update({             # <<<<<<<<<<<<<<
  *                 name: config[name]
  *                 for name in pool_names
  */
-    __pyx_t_2 = __Pyx_CallUnboundCMethod1(&__pyx_umethod_PyDict_Type_update, __pyx_v_tile_config, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 134, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_CallUnboundCMethod1(&__pyx_umethod_PyDict_Type_update, __pyx_v_tile_config, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 152, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-    /* "maptools/toksim/toksim.pyx":133
+    /* "maptools/toksim/toksim.pyx":151
  * 
  *         # pool configuration
  *         if 'Pool' in config['op_type']:             # <<<<<<<<<<<<<<
@@ -10465,7 +11122,7 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_14_cpp_get_tile_conf
     goto __pyx_L9;
   }
 
-  /* "maptools/toksim/toksim.pyx":139
+  /* "maptools/toksim/toksim.pyx":157
  *             })
  *         else:
  *             tile_config.update({             # <<<<<<<<<<<<<<
@@ -10474,10 +11131,10 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_14_cpp_get_tile_conf
  */
   /*else*/ {
     { /* enter inner scope */
-      __pyx_t_2 = PyDict_New(); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 139, __pyx_L18_error)
+      __pyx_t_2 = PyDict_New(); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 157, __pyx_L18_error)
       __Pyx_GOTREF(__pyx_t_2);
 
-      /* "maptools/toksim/toksim.pyx":141
+      /* "maptools/toksim/toksim.pyx":159
  *             tile_config.update({
  *                 name: []
  *                 for name in pool_names             # <<<<<<<<<<<<<<
@@ -10485,7 +11142,7 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_14_cpp_get_tile_conf
  * 
  */
       __pyx_t_4 = 0;
-      __pyx_t_7 = __Pyx_set_iterator(__pyx_v_pool_names, 1, (&__pyx_t_5), (&__pyx_t_6)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 141, __pyx_L18_error)
+      __pyx_t_7 = __Pyx_set_iterator(__pyx_v_pool_names, 1, (&__pyx_t_5), (&__pyx_t_6)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 159, __pyx_L18_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_XDECREF(__pyx_t_1);
       __pyx_t_1 = __pyx_t_7;
@@ -10493,60 +11150,60 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_14_cpp_get_tile_conf
       while (1) {
         __pyx_t_8 = __Pyx_set_iter_next(__pyx_t_1, __pyx_t_5, &__pyx_t_4, &__pyx_t_7, __pyx_t_6);
         if (unlikely(__pyx_t_8 == 0)) break;
-        if (unlikely(__pyx_t_8 == -1)) __PYX_ERR(0, 141, __pyx_L18_error)
+        if (unlikely(__pyx_t_8 == -1)) __PYX_ERR(0, 159, __pyx_L18_error)
         __Pyx_GOTREF(__pyx_t_7);
-        __Pyx_XDECREF_SET(__pyx_8genexpr7__pyx_v_name, __pyx_t_7);
+        __Pyx_XDECREF_SET(__pyx_8genexpr8__pyx_v_name, __pyx_t_7);
         __pyx_t_7 = 0;
 
-        /* "maptools/toksim/toksim.pyx":140
+        /* "maptools/toksim/toksim.pyx":158
  *         else:
  *             tile_config.update({
  *                 name: []             # <<<<<<<<<<<<<<
  *                 for name in pool_names
  *             })
  */
-        __pyx_t_7 = PyList_New(0); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 140, __pyx_L18_error)
+        __pyx_t_7 = PyList_New(0); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 158, __pyx_L18_error)
         __Pyx_GOTREF(__pyx_t_7);
-        if (unlikely(PyDict_SetItem(__pyx_t_2, (PyObject*)__pyx_8genexpr7__pyx_v_name, (PyObject*)__pyx_t_7))) __PYX_ERR(0, 140, __pyx_L18_error)
+        if (unlikely(PyDict_SetItem(__pyx_t_2, (PyObject*)__pyx_8genexpr8__pyx_v_name, (PyObject*)__pyx_t_7))) __PYX_ERR(0, 158, __pyx_L18_error)
         __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
       }
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __Pyx_XDECREF(__pyx_8genexpr7__pyx_v_name); __pyx_8genexpr7__pyx_v_name = 0;
+      __Pyx_XDECREF(__pyx_8genexpr8__pyx_v_name); __pyx_8genexpr8__pyx_v_name = 0;
       goto __pyx_L21_exit_scope;
       __pyx_L18_error:;
-      __Pyx_XDECREF(__pyx_8genexpr7__pyx_v_name); __pyx_8genexpr7__pyx_v_name = 0;
+      __Pyx_XDECREF(__pyx_8genexpr8__pyx_v_name); __pyx_8genexpr8__pyx_v_name = 0;
       goto __pyx_L1_error;
       __pyx_L21_exit_scope:;
     } /* exit inner scope */
 
-    /* "maptools/toksim/toksim.pyx":139
+    /* "maptools/toksim/toksim.pyx":157
  *             })
  *         else:
  *             tile_config.update({             # <<<<<<<<<<<<<<
  *                 name: []
  *                 for name in pool_names
  */
-    __pyx_t_1 = __Pyx_CallUnboundCMethod1(&__pyx_umethod_PyDict_Type_update, __pyx_v_tile_config, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 139, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_CallUnboundCMethod1(&__pyx_umethod_PyDict_Type_update, __pyx_v_tile_config, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 157, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
   __pyx_L9:;
 
-  /* "maptools/toksim/toksim.pyx":145
+  /* "maptools/toksim/toksim.pyx":163
  * 
  *         # resize configuration
  *         if 'Rsz' in config['op_type']:             # <<<<<<<<<<<<<<
  *             tile_config.update({
  *                 name: config[name]
  */
-  __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_v_config, __pyx_n_s_op_type); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 145, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_Dict_GetItem(__pyx_v_config, __pyx_n_s_op_type); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 163, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = (__Pyx_PySequence_ContainsTF(__pyx_n_s_Rsz, __pyx_t_1, Py_EQ)); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 145, __pyx_L1_error)
+  __pyx_t_3 = (__Pyx_PySequence_ContainsTF(__pyx_n_s_Rsz, __pyx_t_1, Py_EQ)); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 163, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   if (__pyx_t_3) {
 
-    /* "maptools/toksim/toksim.pyx":146
+    /* "maptools/toksim/toksim.pyx":164
  *         # resize configuration
  *         if 'Rsz' in config['op_type']:
  *             tile_config.update({             # <<<<<<<<<<<<<<
@@ -10554,10 +11211,10 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_14_cpp_get_tile_conf
  *                 for name in resize_names
  */
     { /* enter inner scope */
-      __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 146, __pyx_L25_error)
+      __pyx_t_1 = PyDict_New(); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 164, __pyx_L25_error)
       __Pyx_GOTREF(__pyx_t_1);
 
-      /* "maptools/toksim/toksim.pyx":148
+      /* "maptools/toksim/toksim.pyx":166
  *             tile_config.update({
  *                 name: config[name]
  *                 for name in resize_names             # <<<<<<<<<<<<<<
@@ -10565,7 +11222,7 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_14_cpp_get_tile_conf
  *         else:
  */
       __pyx_t_5 = 0;
-      __pyx_t_7 = __Pyx_set_iterator(__pyx_v_resize_names, 1, (&__pyx_t_4), (&__pyx_t_6)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 148, __pyx_L25_error)
+      __pyx_t_7 = __Pyx_set_iterator(__pyx_v_resize_names, 1, (&__pyx_t_4), (&__pyx_t_6)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 166, __pyx_L25_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_XDECREF(__pyx_t_2);
       __pyx_t_2 = __pyx_t_7;
@@ -10573,45 +11230,45 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_14_cpp_get_tile_conf
       while (1) {
         __pyx_t_8 = __Pyx_set_iter_next(__pyx_t_2, __pyx_t_4, &__pyx_t_5, &__pyx_t_7, __pyx_t_6);
         if (unlikely(__pyx_t_8 == 0)) break;
-        if (unlikely(__pyx_t_8 == -1)) __PYX_ERR(0, 148, __pyx_L25_error)
+        if (unlikely(__pyx_t_8 == -1)) __PYX_ERR(0, 166, __pyx_L25_error)
         __Pyx_GOTREF(__pyx_t_7);
-        __Pyx_XDECREF_SET(__pyx_8genexpr8__pyx_v_name, __pyx_t_7);
+        __Pyx_XDECREF_SET(__pyx_8genexpr9__pyx_v_name, __pyx_t_7);
         __pyx_t_7 = 0;
 
-        /* "maptools/toksim/toksim.pyx":147
+        /* "maptools/toksim/toksim.pyx":165
  *         if 'Rsz' in config['op_type']:
  *             tile_config.update({
  *                 name: config[name]             # <<<<<<<<<<<<<<
  *                 for name in resize_names
  *             })
  */
-        __pyx_t_7 = __Pyx_PyObject_GetItem(__pyx_v_config, __pyx_8genexpr8__pyx_v_name); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 147, __pyx_L25_error)
+        __pyx_t_7 = __Pyx_PyObject_GetItem(__pyx_v_config, __pyx_8genexpr9__pyx_v_name); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 165, __pyx_L25_error)
         __Pyx_GOTREF(__pyx_t_7);
-        if (unlikely(PyDict_SetItem(__pyx_t_1, (PyObject*)__pyx_8genexpr8__pyx_v_name, (PyObject*)__pyx_t_7))) __PYX_ERR(0, 147, __pyx_L25_error)
+        if (unlikely(PyDict_SetItem(__pyx_t_1, (PyObject*)__pyx_8genexpr9__pyx_v_name, (PyObject*)__pyx_t_7))) __PYX_ERR(0, 165, __pyx_L25_error)
         __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
       }
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-      __Pyx_XDECREF(__pyx_8genexpr8__pyx_v_name); __pyx_8genexpr8__pyx_v_name = 0;
+      __Pyx_XDECREF(__pyx_8genexpr9__pyx_v_name); __pyx_8genexpr9__pyx_v_name = 0;
       goto __pyx_L28_exit_scope;
       __pyx_L25_error:;
-      __Pyx_XDECREF(__pyx_8genexpr8__pyx_v_name); __pyx_8genexpr8__pyx_v_name = 0;
+      __Pyx_XDECREF(__pyx_8genexpr9__pyx_v_name); __pyx_8genexpr9__pyx_v_name = 0;
       goto __pyx_L1_error;
       __pyx_L28_exit_scope:;
     } /* exit inner scope */
 
-    /* "maptools/toksim/toksim.pyx":146
+    /* "maptools/toksim/toksim.pyx":164
  *         # resize configuration
  *         if 'Rsz' in config['op_type']:
  *             tile_config.update({             # <<<<<<<<<<<<<<
  *                 name: config[name]
  *                 for name in resize_names
  */
-    __pyx_t_2 = __Pyx_CallUnboundCMethod1(&__pyx_umethod_PyDict_Type_update, __pyx_v_tile_config, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 146, __pyx_L1_error)
+    __pyx_t_2 = __Pyx_CallUnboundCMethod1(&__pyx_umethod_PyDict_Type_update, __pyx_v_tile_config, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 164, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-    /* "maptools/toksim/toksim.pyx":145
+    /* "maptools/toksim/toksim.pyx":163
  * 
  *         # resize configuration
  *         if 'Rsz' in config['op_type']:             # <<<<<<<<<<<<<<
@@ -10621,7 +11278,7 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_14_cpp_get_tile_conf
     goto __pyx_L22;
   }
 
-  /* "maptools/toksim/toksim.pyx":151
+  /* "maptools/toksim/toksim.pyx":169
  *             })
  *         else:
  *             tile_config.update({             # <<<<<<<<<<<<<<
@@ -10630,10 +11287,10 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_14_cpp_get_tile_conf
  */
   /*else*/ {
     { /* enter inner scope */
-      __pyx_t_2 = PyDict_New(); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 151, __pyx_L31_error)
+      __pyx_t_2 = PyDict_New(); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 169, __pyx_L31_error)
       __Pyx_GOTREF(__pyx_t_2);
 
-      /* "maptools/toksim/toksim.pyx":153
+      /* "maptools/toksim/toksim.pyx":171
  *             tile_config.update({
  *                 name: []
  *                 for name in resize_names             # <<<<<<<<<<<<<<
@@ -10641,7 +11298,7 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_14_cpp_get_tile_conf
  * 
  */
       __pyx_t_4 = 0;
-      __pyx_t_7 = __Pyx_set_iterator(__pyx_v_resize_names, 1, (&__pyx_t_5), (&__pyx_t_6)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 153, __pyx_L31_error)
+      __pyx_t_7 = __Pyx_set_iterator(__pyx_v_resize_names, 1, (&__pyx_t_5), (&__pyx_t_6)); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 171, __pyx_L31_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_XDECREF(__pyx_t_1);
       __pyx_t_1 = __pyx_t_7;
@@ -10649,47 +11306,47 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_14_cpp_get_tile_conf
       while (1) {
         __pyx_t_8 = __Pyx_set_iter_next(__pyx_t_1, __pyx_t_5, &__pyx_t_4, &__pyx_t_7, __pyx_t_6);
         if (unlikely(__pyx_t_8 == 0)) break;
-        if (unlikely(__pyx_t_8 == -1)) __PYX_ERR(0, 153, __pyx_L31_error)
+        if (unlikely(__pyx_t_8 == -1)) __PYX_ERR(0, 171, __pyx_L31_error)
         __Pyx_GOTREF(__pyx_t_7);
-        __Pyx_XDECREF_SET(__pyx_8genexpr9__pyx_v_name, __pyx_t_7);
+        __Pyx_XDECREF_SET(__pyx_9genexpr10__pyx_v_name, __pyx_t_7);
         __pyx_t_7 = 0;
 
-        /* "maptools/toksim/toksim.pyx":152
+        /* "maptools/toksim/toksim.pyx":170
  *         else:
  *             tile_config.update({
  *                 name: []             # <<<<<<<<<<<<<<
  *                 for name in resize_names
  *             })
  */
-        __pyx_t_7 = PyList_New(0); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 152, __pyx_L31_error)
+        __pyx_t_7 = PyList_New(0); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 170, __pyx_L31_error)
         __Pyx_GOTREF(__pyx_t_7);
-        if (unlikely(PyDict_SetItem(__pyx_t_2, (PyObject*)__pyx_8genexpr9__pyx_v_name, (PyObject*)__pyx_t_7))) __PYX_ERR(0, 152, __pyx_L31_error)
+        if (unlikely(PyDict_SetItem(__pyx_t_2, (PyObject*)__pyx_9genexpr10__pyx_v_name, (PyObject*)__pyx_t_7))) __PYX_ERR(0, 170, __pyx_L31_error)
         __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
       }
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __Pyx_XDECREF(__pyx_8genexpr9__pyx_v_name); __pyx_8genexpr9__pyx_v_name = 0;
+      __Pyx_XDECREF(__pyx_9genexpr10__pyx_v_name); __pyx_9genexpr10__pyx_v_name = 0;
       goto __pyx_L34_exit_scope;
       __pyx_L31_error:;
-      __Pyx_XDECREF(__pyx_8genexpr9__pyx_v_name); __pyx_8genexpr9__pyx_v_name = 0;
+      __Pyx_XDECREF(__pyx_9genexpr10__pyx_v_name); __pyx_9genexpr10__pyx_v_name = 0;
       goto __pyx_L1_error;
       __pyx_L34_exit_scope:;
     } /* exit inner scope */
 
-    /* "maptools/toksim/toksim.pyx":151
+    /* "maptools/toksim/toksim.pyx":169
  *             })
  *         else:
  *             tile_config.update({             # <<<<<<<<<<<<<<
  *                 name: []
  *                 for name in resize_names
  */
-    __pyx_t_1 = __Pyx_CallUnboundCMethod1(&__pyx_umethod_PyDict_Type_update, __pyx_v_tile_config, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 151, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_CallUnboundCMethod1(&__pyx_umethod_PyDict_Type_update, __pyx_v_tile_config, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 169, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
   __pyx_L22:;
 
-  /* "maptools/toksim/toksim.pyx":156
+  /* "maptools/toksim/toksim.pyx":174
  *             })
  * 
  *         return tile_config             # <<<<<<<<<<<<<<
@@ -10699,7 +11356,7 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_14_cpp_get_tile_conf
   __pyx_r = __pyx_v_tile_config;
   goto __pyx_L0;
 
-  /* "maptools/toksim/toksim.pyx":94
+  /* "maptools/toksim/toksim.pyx":112
  *         return attr
  * 
  *     def _cpp_get_tile_config(self, node: LogicalTile) -> Dict[str, Any]:             # <<<<<<<<<<<<<<
@@ -10720,11 +11377,11 @@ static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_14_cpp_get_tile_conf
   __Pyx_XDECREF(__pyx_v_conv_names);
   __Pyx_XDECREF(__pyx_v_pool_names);
   __Pyx_XDECREF(__pyx_v_resize_names);
-  __Pyx_XDECREF(__pyx_8genexpr5__pyx_v_name);
   __Pyx_XDECREF(__pyx_8genexpr6__pyx_v_name);
   __Pyx_XDECREF(__pyx_8genexpr7__pyx_v_name);
   __Pyx_XDECREF(__pyx_8genexpr8__pyx_v_name);
   __Pyx_XDECREF(__pyx_8genexpr9__pyx_v_name);
+  __Pyx_XDECREF(__pyx_9genexpr10__pyx_v_name);
   __Pyx_XGIVEREF(__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
@@ -10933,6 +11590,7 @@ static PyObject *__pyx_tp_new_8maptools_6toksim_6toksim_TokSim(PyTypeObject *t, 
   p->_nodes = ((PyObject*)Py_None); Py_INCREF(Py_None);
   p->_node_attr_dict = ((PyObject*)Py_None); Py_INCREF(Py_None);
   p->_tile_config_dict = ((PyObject*)Py_None); Py_INCREF(Py_None);
+  p->_token_dict = ((PyObject*)Py_None); Py_INCREF(Py_None);
   return o;
 }
 
@@ -10953,6 +11611,7 @@ static void __pyx_tp_dealloc_8maptools_6toksim_6toksim_TokSim(PyObject *o) {
   Py_CLEAR(p->_nodes);
   Py_CLEAR(p->_node_attr_dict);
   Py_CLEAR(p->_tile_config_dict);
+  Py_CLEAR(p->_token_dict);
   (*Py_TYPE(o)->tp_free)(o);
 }
 
@@ -10974,6 +11633,9 @@ static int __pyx_tp_traverse_8maptools_6toksim_6toksim_TokSim(PyObject *o, visit
   if (p->_tile_config_dict) {
     e = (*v)(p->_tile_config_dict, a); if (e) return e;
   }
+  if (p->_token_dict) {
+    e = (*v)(p->_token_dict, a); if (e) return e;
+  }
   return 0;
 }
 
@@ -10994,6 +11656,9 @@ static int __pyx_tp_clear_8maptools_6toksim_6toksim_TokSim(PyObject *o) {
   Py_XDECREF(tmp);
   tmp = ((PyObject*)p->_tile_config_dict);
   p->_tile_config_dict = ((PyObject*)Py_None); Py_INCREF(Py_None);
+  Py_XDECREF(tmp);
+  tmp = ((PyObject*)p->_token_dict);
+  p->_token_dict = ((PyObject*)Py_None); Py_INCREF(Py_None);
   Py_XDECREF(tmp);
   return 0;
 }
@@ -11127,7 +11792,7 @@ static PyMethodDef __pyx_methods[] = {
 
 static int __Pyx_CreateStringTabAndInitStrings(void) {
   __Pyx_StringTabEntry __pyx_string_tab[] = {
-    {&__pyx_kp_s_5s_20s_9s_20s_9s_20s_10s_20s_10, __pyx_k_5s_20s_9s_20s_9s_20s_10s_20s_10, sizeof(__pyx_k_5s_20s_9s_20s_9s_20s_10s_20s_10), 0, 0, 1, 0},
+    {&__pyx_kp_s_5s_20s_9s_18s_9s_18s_10s_18s_10, __pyx_k_5s_20s_9s_18s_9s_18s_10s_18s_10, sizeof(__pyx_k_5s_20s_9s_18s_9s_18s_10s_18s_10), 0, 0, 1, 0},
     {&__pyx_n_s_Any, __pyx_k_Any, sizeof(__pyx_k_Any), 0, 0, 1, 1},
     {&__pyx_n_s_CTG, __pyx_k_CTG, sizeof(__pyx_k_CTG), 0, 0, 1, 1},
     {&__pyx_n_s_Conv, __pyx_k_Conv, sizeof(__pyx_k_Conv), 0, 0, 1, 1},
@@ -11136,6 +11801,7 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_n_s_KeyError, __pyx_k_KeyError, sizeof(__pyx_k_KeyError), 0, 0, 1, 1},
     {&__pyx_n_s_List, __pyx_k_List, sizeof(__pyx_k_List), 0, 0, 1, 1},
     {&__pyx_n_s_LogicalTile, __pyx_k_LogicalTile, sizeof(__pyx_k_LogicalTile), 0, 0, 1, 1},
+    {&__pyx_n_s_MemoryError, __pyx_k_MemoryError, sizeof(__pyx_k_MemoryError), 0, 0, 1, 1},
     {&__pyx_kp_s_No_value_specified_for_struct_at, __pyx_k_No_value_specified_for_struct_at, sizeof(__pyx_k_No_value_specified_for_struct_at), 0, 0, 1, 0},
     {&__pyx_kp_s_No_value_specified_for_struct_at_10, __pyx_k_No_value_specified_for_struct_at_10, sizeof(__pyx_k_No_value_specified_for_struct_at_10), 0, 0, 1, 0},
     {&__pyx_kp_s_No_value_specified_for_struct_at_11, __pyx_k_No_value_specified_for_struct_at_11, sizeof(__pyx_k_No_value_specified_for_struct_at_11), 0, 0, 1, 0},
@@ -11168,6 +11834,7 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_n_s_ROOT_DIR, __pyx_k_ROOT_DIR, sizeof(__pyx_k_ROOT_DIR), 0, 0, 1, 1},
     {&__pyx_n_s_Rsz, __pyx_k_Rsz, sizeof(__pyx_k_Rsz), 0, 0, 1, 1},
     {&__pyx_n_s_TokSim, __pyx_k_TokSim, sizeof(__pyx_k_TokSim), 0, 0, 1, 1},
+    {&__pyx_kp_s_TokSim_Buffer_Evaluation_Report, __pyx_k_TokSim_Buffer_Evaluation_Report, sizeof(__pyx_k_TokSim_Buffer_Evaluation_Report), 0, 0, 1, 0},
     {&__pyx_n_s_TokSim___reduce_cython, __pyx_k_TokSim___reduce_cython, sizeof(__pyx_k_TokSim___reduce_cython), 0, 0, 1, 1},
     {&__pyx_n_s_TokSim___setstate_cython, __pyx_k_TokSim___setstate_cython, sizeof(__pyx_k_TokSim___setstate_cython), 0, 0, 1, 1},
     {&__pyx_n_s_TokSim__cpp_get_interface_vars, __pyx_k_TokSim__cpp_get_interface_vars, sizeof(__pyx_k_TokSim__cpp_get_interface_vars), 0, 0, 1, 1},
@@ -11183,9 +11850,11 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_kp_s_Union_str_LogicalTile, __pyx_k_Union_str_LogicalTile, sizeof(__pyx_k_Union_str_LogicalTile), 0, 0, 1, 0},
     {&__pyx_n_s_ValueError, __pyx_k_ValueError, sizeof(__pyx_k_ValueError), 0, 0, 1, 1},
     {&__pyx_kp_s__28, __pyx_k__28, sizeof(__pyx_k__28), 0, 0, 1, 0},
-    {&__pyx_n_s__30, __pyx_k__30, sizeof(__pyx_k__30), 0, 0, 1, 1},
-    {&__pyx_kp_u__31, __pyx_k__31, sizeof(__pyx_k__31), 0, 1, 0, 0},
-    {&__pyx_n_s__50, __pyx_k__50, sizeof(__pyx_k__50), 0, 0, 1, 1},
+    {&__pyx_kp_s__29, __pyx_k__29, sizeof(__pyx_k__29), 0, 0, 1, 0},
+    {&__pyx_kp_s__30, __pyx_k__30, sizeof(__pyx_k__30), 0, 0, 1, 0},
+    {&__pyx_n_s__34, __pyx_k__34, sizeof(__pyx_k__34), 0, 0, 1, 1},
+    {&__pyx_kp_u__35, __pyx_k__35, sizeof(__pyx_k__35), 0, 1, 0, 0},
+    {&__pyx_n_s__54, __pyx_k__54, sizeof(__pyx_k__54), 0, 0, 1, 1},
     {&__pyx_n_s_asyncio_coroutines, __pyx_k_asyncio_coroutines, sizeof(__pyx_k_asyncio_coroutines), 0, 0, 1, 1},
     {&__pyx_n_s_attr, __pyx_k_attr, sizeof(__pyx_k_attr), 0, 0, 1, 1},
     {&__pyx_kp_s_buffer_log, __pyx_k_buffer_log, sizeof(__pyx_k_buffer_log), 0, 0, 1, 0},
@@ -11210,6 +11879,7 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_n_s_dict, __pyx_k_dict, sizeof(__pyx_k_dict), 0, 0, 1, 1},
     {&__pyx_n_s_dicts, __pyx_k_dicts, sizeof(__pyx_k_dicts), 0, 0, 1, 1},
     {&__pyx_kp_u_disable, __pyx_k_disable, sizeof(__pyx_k_disable), 0, 1, 0, 0},
+    {&__pyx_n_s_dump, __pyx_k_dump, sizeof(__pyx_k_dump), 0, 0, 1, 1},
     {&__pyx_kp_u_enable, __pyx_k_enable, sizeof(__pyx_k_enable), 0, 1, 0, 0},
     {&__pyx_n_s_encode, __pyx_k_encode, sizeof(__pyx_k_encode), 0, 0, 1, 1},
     {&__pyx_n_s_encoding, __pyx_k_encoding, sizeof(__pyx_k_encoding), 0, 0, 1, 1},
@@ -11267,6 +11937,7 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_n_s_open, __pyx_k_open, sizeof(__pyx_k_open), 0, 0, 1, 1},
     {&__pyx_n_s_os, __pyx_k_os, sizeof(__pyx_k_os), 0, 0, 1, 1},
     {&__pyx_n_s_path, __pyx_k_path, sizeof(__pyx_k_path), 0, 0, 1, 1},
+    {&__pyx_n_s_pickle, __pyx_k_pickle, sizeof(__pyx_k_pickle), 0, 0, 1, 1},
     {&__pyx_kp_s_pool_buf, __pyx_k_pool_buf, sizeof(__pyx_k_pool_buf), 0, 0, 1, 0},
     {&__pyx_n_b_pool_buf_2, __pyx_k_pool_buf_2, sizeof(__pyx_k_pool_buf_2), 0, 0, 0, 1},
     {&__pyx_n_s_pool_input_size, __pyx_k_pool_input_size, sizeof(__pyx_k_pool_input_size), 0, 0, 1, 1},
@@ -11278,6 +11949,7 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_n_s_preds, __pyx_k_preds, sizeof(__pyx_k_preds), 0, 0, 1, 1},
     {&__pyx_n_s_print, __pyx_k_print, sizeof(__pyx_k_print), 0, 0, 1, 1},
     {&__pyx_n_s_pyx_state, __pyx_k_pyx_state, sizeof(__pyx_k_pyx_state), 0, 0, 1, 1},
+    {&__pyx_n_s_range, __pyx_k_range, sizeof(__pyx_k_range), 0, 0, 1, 1},
     {&__pyx_n_s_reduce, __pyx_k_reduce, sizeof(__pyx_k_reduce), 0, 0, 1, 1},
     {&__pyx_n_s_reduce_cython, __pyx_k_reduce_cython, sizeof(__pyx_k_reduce_cython), 0, 0, 1, 1},
     {&__pyx_n_s_reduce_ex, __pyx_k_reduce_ex, sizeof(__pyx_k_reduce_ex), 0, 0, 1, 1},
@@ -11296,16 +11968,20 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_n_s_str, __pyx_k_str, sizeof(__pyx_k_str), 0, 0, 1, 1},
     {&__pyx_kp_s_stringsource, __pyx_k_stringsource, sizeof(__pyx_k_stringsource), 0, 0, 1, 0},
     {&__pyx_n_s_succs, __pyx_k_succs, sizeof(__pyx_k_succs), 0, 0, 1, 1},
+    {&__pyx_n_s_t, __pyx_k_t, sizeof(__pyx_k_t), 0, 0, 1, 1},
     {&__pyx_n_s_test, __pyx_k_test, sizeof(__pyx_k_test), 0, 0, 1, 1},
     {&__pyx_kp_s_tile, __pyx_k_tile, sizeof(__pyx_k_tile), 0, 0, 1, 0},
     {&__pyx_n_s_tile_config, __pyx_k_tile_config, sizeof(__pyx_k_tile_config), 0, 0, 1, 1},
     {&__pyx_n_s_tiles, __pyx_k_tiles, sizeof(__pyx_k_tiles), 0, 0, 1, 1},
     {&__pyx_n_s_token, __pyx_k_token, sizeof(__pyx_k_token), 0, 0, 1, 1},
+    {&__pyx_kp_u_token_info_written_to, __pyx_k_token_info_written_to, sizeof(__pyx_k_token_info_written_to), 0, 1, 0, 0},
+    {&__pyx_kp_s_tokens_pkl, __pyx_k_tokens_pkl, sizeof(__pyx_k_tokens_pkl), 0, 0, 1, 0},
     {&__pyx_n_s_toksim, __pyx_k_toksim, sizeof(__pyx_k_toksim), 0, 0, 1, 1},
     {&__pyx_n_s_typing, __pyx_k_typing, sizeof(__pyx_k_typing), 0, 0, 1, 1},
     {&__pyx_n_s_update, __pyx_k_update, sizeof(__pyx_k_update), 0, 0, 1, 1},
     {&__pyx_kp_s_utf_8, __pyx_k_utf_8, sizeof(__pyx_k_utf_8), 0, 0, 1, 0},
     {&__pyx_n_s_w, __pyx_k_w, sizeof(__pyx_k_w), 0, 0, 1, 1},
+    {&__pyx_n_s_wb, __pyx_k_wb, sizeof(__pyx_k_wb), 0, 0, 1, 1},
     {&__pyx_n_s_write, __pyx_k_write, sizeof(__pyx_k_write), 0, 0, 1, 1},
     {&__pyx_n_s_xbar_num_ichan, __pyx_k_xbar_num_ichan, sizeof(__pyx_k_xbar_num_ichan), 0, 0, 1, 1},
     {&__pyx_n_s_xbar_num_ochan, __pyx_k_xbar_num_ochan, sizeof(__pyx_k_xbar_num_ochan), 0, 0, 1, 1},
@@ -11315,12 +11991,14 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
 }
 /* #### Code section: cached_builtins ### */
 static CYTHON_SMALL_CODE int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_staticmethod = __Pyx_GetBuiltinName(__pyx_n_s_staticmethod); if (!__pyx_builtin_staticmethod) __PYX_ERR(0, 76, __pyx_L1_error)
-  __pyx_builtin_open = __Pyx_GetBuiltinName(__pyx_n_s_open); if (!__pyx_builtin_open) __PYX_ERR(0, 58, __pyx_L1_error)
-  __pyx_builtin_print = __Pyx_GetBuiltinName(__pyx_n_s_print); if (!__pyx_builtin_print) __PYX_ERR(0, 60, __pyx_L1_error)
+  __pyx_builtin_staticmethod = __Pyx_GetBuiltinName(__pyx_n_s_staticmethod); if (!__pyx_builtin_staticmethod) __PYX_ERR(0, 94, __pyx_L1_error)
+  __pyx_builtin_print = __Pyx_GetBuiltinName(__pyx_n_s_print); if (!__pyx_builtin_print) __PYX_ERR(0, 51, __pyx_L1_error)
+  __pyx_builtin_open = __Pyx_GetBuiltinName(__pyx_n_s_open); if (!__pyx_builtin_open) __PYX_ERR(0, 68, __pyx_L1_error)
   __pyx_builtin_TypeError = __Pyx_GetBuiltinName(__pyx_n_s_TypeError); if (!__pyx_builtin_TypeError) __PYX_ERR(1, 2, __pyx_L1_error)
   __pyx_builtin_KeyError = __Pyx_GetBuiltinName(__pyx_n_s_KeyError); if (!__pyx_builtin_KeyError) __PYX_ERR(1, 19, __pyx_L1_error)
   __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) __PYX_ERR(1, 20, __pyx_L1_error)
+  __pyx_builtin_MemoryError = __Pyx_GetBuiltinName(__pyx_n_s_MemoryError); if (!__pyx_builtin_MemoryError) __PYX_ERR(1, 68, __pyx_L1_error)
+  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(1, 75, __pyx_L1_error)
   return 0;
   __pyx_L1_error:;
   return -1;
@@ -11628,110 +12306,132 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_tuple__27);
   __Pyx_GIVEREF(__pyx_tuple__27);
 
-  /* "maptools/toksim/toksim.pyx":58
- *         file_dir = os.path.join(save_dir, 'buffer.log')
- *         log = self.get_bufs()
- *         with open(file_dir, 'w') as f:             # <<<<<<<<<<<<<<
- *             f.write(log)
- *         print(f"\nbuffer log written to {file_dir}")
+  /* "maptools/toksim/toksim.pyx":52
+ *                 )
+ *         print("\n\n"+"-"*70)
+ *         print("TokSim Buffer Evaluation Report")             # <<<<<<<<<<<<<<
+ *         print("-"*70)
+ *         print(log)
  */
-  __pyx_tuple__29 = PyTuple_Pack(3, Py_None, Py_None, Py_None); if (unlikely(!__pyx_tuple__29)) __PYX_ERR(0, 58, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__29);
-  __Pyx_GIVEREF(__pyx_tuple__29);
+  __pyx_tuple__31 = PyTuple_Pack(1, __pyx_kp_s_TokSim_Buffer_Evaluation_Report); if (unlikely(!__pyx_tuple__31)) __PYX_ERR(0, 52, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__31);
+  __Pyx_GIVEREF(__pyx_tuple__31);
 
-  /* "maptools/toksim/toksim.pyx":30
+  /* "maptools/toksim/toksim.pyx":53
+ *         print("\n\n"+"-"*70)
+ *         print("TokSim Buffer Evaluation Report")
+ *         print("-"*70)             # <<<<<<<<<<<<<<
+ *         print(log)
+ *         return log
+ */
+  __pyx_tuple__32 = PyTuple_Pack(1, __pyx_kp_s__30); if (unlikely(!__pyx_tuple__32)) __PYX_ERR(0, 53, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__32);
+  __Pyx_GIVEREF(__pyx_tuple__32);
+
+  /* "maptools/toksim/toksim.pyx":68
+ *             for t in self.ctg.tiles
+ *         }
+ *         with open(file_dir,'wb') as f:             # <<<<<<<<<<<<<<
+ *             pickle.dump(self._token_dict, f)
+ *         print(f"\rtoken info written to {file_dir}")
+ */
+  __pyx_tuple__33 = PyTuple_Pack(3, Py_None, Py_None, Py_None); if (unlikely(!__pyx_tuple__33)) __PYX_ERR(0, 68, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__33);
+  __Pyx_GIVEREF(__pyx_tuple__33);
+
+  /* "maptools/toksim/toksim.pyx":33
  *         )
  * 
  *     def run(self) -> None:             # <<<<<<<<<<<<<<
  *         self.c_toksim.run()
  *         self.save_execu()
  */
-  __pyx_tuple__32 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__32)) __PYX_ERR(0, 30, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__32);
-  __Pyx_GIVEREF(__pyx_tuple__32);
-  __pyx_codeobj__33 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__32, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_maptools_toksim_toksim_pyx, __pyx_n_s_run, 30, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__33)) __PYX_ERR(0, 30, __pyx_L1_error)
+  __pyx_tuple__36 = PyTuple_Pack(1, __pyx_n_s_self); if (unlikely(!__pyx_tuple__36)) __PYX_ERR(0, 33, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__36);
+  __Pyx_GIVEREF(__pyx_tuple__36);
+  __pyx_codeobj__37 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__36, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_maptools_toksim_toksim_pyx, __pyx_n_s_run, 33, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__37)) __PYX_ERR(0, 33, __pyx_L1_error)
 
-  /* "maptools/toksim/toksim.pyx":34
+  /* "maptools/toksim/toksim.pyx":37
  *         self.save_execu()
  * 
  *     def get_bufs(self) -> str:             # <<<<<<<<<<<<<<
  *         self._need_bufs = self.c_toksim.need_bufs
  *         log = ""
  */
-  __pyx_tuple__34 = PyTuple_Pack(4, __pyx_n_s_self, __pyx_n_s_log, __pyx_n_s_node, __pyx_n_s_bufs); if (unlikely(!__pyx_tuple__34)) __PYX_ERR(0, 34, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__34);
-  __Pyx_GIVEREF(__pyx_tuple__34);
-  __pyx_codeobj__35 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__34, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_maptools_toksim_toksim_pyx, __pyx_n_s_get_bufs, 34, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__35)) __PYX_ERR(0, 34, __pyx_L1_error)
+  __pyx_tuple__38 = PyTuple_Pack(4, __pyx_n_s_self, __pyx_n_s_log, __pyx_n_s_node, __pyx_n_s_bufs); if (unlikely(!__pyx_tuple__38)) __PYX_ERR(0, 37, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__38);
+  __Pyx_GIVEREF(__pyx_tuple__38);
+  __pyx_codeobj__39 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__38, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_maptools_toksim_toksim_pyx, __pyx_n_s_get_bufs, 37, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__39)) __PYX_ERR(0, 37, __pyx_L1_error)
 
-  /* "maptools/toksim/toksim.pyx":50
+  /* "maptools/toksim/toksim.pyx":57
  *         return log
  * 
  *     def save_execu(self, file_name: str = 'token'):             # <<<<<<<<<<<<<<
  *         save_dir = os.path.join(ROOT_DIR, 'mapsave', self.mapname, 'toksim')
  *         if not os.path.exists(save_dir):
  */
-  __pyx_tuple__36 = PyTuple_Pack(6, __pyx_n_s_self, __pyx_n_s_file_name, __pyx_n_s_save_dir, __pyx_n_s_file_dir, __pyx_n_s_log, __pyx_n_s_f); if (unlikely(!__pyx_tuple__36)) __PYX_ERR(0, 50, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__36);
-  __Pyx_GIVEREF(__pyx_tuple__36);
-  __pyx_codeobj__37 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 6, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__36, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_maptools_toksim_toksim_pyx, __pyx_n_s_save_execu, 50, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__37)) __PYX_ERR(0, 50, __pyx_L1_error)
-  __pyx_tuple__38 = PyTuple_Pack(1, __pyx_n_s_token); if (unlikely(!__pyx_tuple__38)) __PYX_ERR(0, 50, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__38);
-  __Pyx_GIVEREF(__pyx_tuple__38);
+  __pyx_tuple__40 = PyTuple_Pack(7, __pyx_n_s_self, __pyx_n_s_file_name, __pyx_n_s_save_dir, __pyx_n_s_file_dir, __pyx_n_s_f, __pyx_n_s_log, __pyx_n_s_t); if (unlikely(!__pyx_tuple__40)) __PYX_ERR(0, 57, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__40);
+  __Pyx_GIVEREF(__pyx_tuple__40);
+  __pyx_codeobj__41 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 7, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__40, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_maptools_toksim_toksim_pyx, __pyx_n_s_save_execu, 57, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__41)) __PYX_ERR(0, 57, __pyx_L1_error)
+  __pyx_tuple__42 = PyTuple_Pack(1, __pyx_n_s_token); if (unlikely(!__pyx_tuple__42)) __PYX_ERR(0, 57, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__42);
+  __Pyx_GIVEREF(__pyx_tuple__42);
 
-  /* "maptools/toksim/toksim.pyx":62
+  /* "maptools/toksim/toksim.pyx":79
  *         print(f"\nbuffer log written to {file_dir}")
  * 
  *     def _cpp_get_interface_vars(self) -> None:             # <<<<<<<<<<<<<<
  *         self._nodes = [
  *             self.encode(node)
  */
-  __pyx_tuple__39 = PyTuple_Pack(4, __pyx_n_s_self, __pyx_n_s_node, __pyx_n_s_node, __pyx_n_s_node); if (unlikely(!__pyx_tuple__39)) __PYX_ERR(0, 62, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__39);
-  __Pyx_GIVEREF(__pyx_tuple__39);
-  __pyx_codeobj__40 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__39, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_maptools_toksim_toksim_pyx, __pyx_n_s_cpp_get_interface_vars, 62, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__40)) __PYX_ERR(0, 62, __pyx_L1_error)
+  __pyx_tuple__43 = PyTuple_Pack(4, __pyx_n_s_self, __pyx_n_s_node, __pyx_n_s_node, __pyx_n_s_node); if (unlikely(!__pyx_tuple__43)) __PYX_ERR(0, 79, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__43);
+  __Pyx_GIVEREF(__pyx_tuple__43);
+  __pyx_codeobj__44 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__43, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_maptools_toksim_toksim_pyx, __pyx_n_s_cpp_get_interface_vars, 79, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__44)) __PYX_ERR(0, 79, __pyx_L1_error)
 
-  /* "maptools/toksim/toksim.pyx":76
+  /* "maptools/toksim/toksim.pyx":94
  *         }
  * 
  *     @staticmethod             # <<<<<<<<<<<<<<
  *     def encode(node: Union[str, LogicalTile]) -> bytes:
  *         return bytes(str(node), encoding='utf-8')
  */
-  __pyx_tuple__41 = PyTuple_Pack(1, __pyx_n_s_node); if (unlikely(!__pyx_tuple__41)) __PYX_ERR(0, 76, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__41);
-  __Pyx_GIVEREF(__pyx_tuple__41);
-  __pyx_codeobj__42 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__41, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_maptools_toksim_toksim_pyx, __pyx_n_s_encode, 76, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__42)) __PYX_ERR(0, 76, __pyx_L1_error)
+  __pyx_tuple__45 = PyTuple_Pack(1, __pyx_n_s_node); if (unlikely(!__pyx_tuple__45)) __PYX_ERR(0, 94, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__45);
+  __Pyx_GIVEREF(__pyx_tuple__45);
+  __pyx_codeobj__46 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__45, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_maptools_toksim_toksim_pyx, __pyx_n_s_encode, 94, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__46)) __PYX_ERR(0, 94, __pyx_L1_error)
 
-  /* "maptools/toksim/toksim.pyx":80
+  /* "maptools/toksim/toksim.pyx":98
  *         return bytes(str(node), encoding='utf-8')
  * 
  *     def _cpp_get_node_attr(self, node: Union[str, LogicalTile]) -> Dict[str, Any]:             # <<<<<<<<<<<<<<
  *         attr = {
  *             'is_tile': self.ctg.is_tile(node),
  */
-  __pyx_tuple__43 = PyTuple_Pack(5, __pyx_n_s_self, __pyx_n_s_node, __pyx_n_s_attr, __pyx_n_s_n, __pyx_n_s_n); if (unlikely(!__pyx_tuple__43)) __PYX_ERR(0, 80, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__43);
-  __Pyx_GIVEREF(__pyx_tuple__43);
-  __pyx_codeobj__44 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__43, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_maptools_toksim_toksim_pyx, __pyx_n_s_cpp_get_node_attr, 80, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__44)) __PYX_ERR(0, 80, __pyx_L1_error)
+  __pyx_tuple__47 = PyTuple_Pack(5, __pyx_n_s_self, __pyx_n_s_node, __pyx_n_s_attr, __pyx_n_s_n, __pyx_n_s_n); if (unlikely(!__pyx_tuple__47)) __PYX_ERR(0, 98, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__47);
+  __Pyx_GIVEREF(__pyx_tuple__47);
+  __pyx_codeobj__48 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 5, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__47, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_maptools_toksim_toksim_pyx, __pyx_n_s_cpp_get_node_attr, 98, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__48)) __PYX_ERR(0, 98, __pyx_L1_error)
 
-  /* "maptools/toksim/toksim.pyx":94
+  /* "maptools/toksim/toksim.pyx":112
  *         return attr
  * 
  *     def _cpp_get_tile_config(self, node: LogicalTile) -> Dict[str, Any]:             # <<<<<<<<<<<<<<
  *         config = self.ctg.dicts[node]
  *         tile_config = {
  */
-  __pyx_tuple__45 = PyTuple_Pack(12, __pyx_n_s_self, __pyx_n_s_node, __pyx_n_s_config, __pyx_n_s_tile_config, __pyx_n_s_conv_names, __pyx_n_s_pool_names, __pyx_n_s_resize_names, __pyx_n_s_name_2, __pyx_n_s_name_2, __pyx_n_s_name_2, __pyx_n_s_name_2, __pyx_n_s_name_2); if (unlikely(!__pyx_tuple__45)) __PYX_ERR(0, 94, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__45);
-  __Pyx_GIVEREF(__pyx_tuple__45);
-  __pyx_codeobj__46 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 12, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__45, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_maptools_toksim_toksim_pyx, __pyx_n_s_cpp_get_tile_config, 94, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__46)) __PYX_ERR(0, 94, __pyx_L1_error)
+  __pyx_tuple__49 = PyTuple_Pack(12, __pyx_n_s_self, __pyx_n_s_node, __pyx_n_s_config, __pyx_n_s_tile_config, __pyx_n_s_conv_names, __pyx_n_s_pool_names, __pyx_n_s_resize_names, __pyx_n_s_name_2, __pyx_n_s_name_2, __pyx_n_s_name_2, __pyx_n_s_name_2, __pyx_n_s_name_2); if (unlikely(!__pyx_tuple__49)) __PYX_ERR(0, 112, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__49);
+  __Pyx_GIVEREF(__pyx_tuple__49);
+  __pyx_codeobj__50 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 12, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__49, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_maptools_toksim_toksim_pyx, __pyx_n_s_cpp_get_tile_config, 112, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__50)) __PYX_ERR(0, 112, __pyx_L1_error)
 
   /* "(tree fragment)":1
  * def __reduce_cython__(self):             # <<<<<<<<<<<<<<
  *     raise TypeError, "self.c_toksim cannot be converted to a Python object for pickling"
  * def __setstate_cython__(self, __pyx_state):
  */
-  __pyx_codeobj__47 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__32, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_stringsource, __pyx_n_s_reduce_cython, 1, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__47)) __PYX_ERR(1, 1, __pyx_L1_error)
+  __pyx_codeobj__51 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 1, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__36, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_stringsource, __pyx_n_s_reduce_cython, 1, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__51)) __PYX_ERR(1, 1, __pyx_L1_error)
 
   /* "(tree fragment)":3
  * def __reduce_cython__(self):
@@ -11739,10 +12439,10 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * def __setstate_cython__(self, __pyx_state):             # <<<<<<<<<<<<<<
  *     raise TypeError, "self.c_toksim cannot be converted to a Python object for pickling"
  */
-  __pyx_tuple__48 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_pyx_state); if (unlikely(!__pyx_tuple__48)) __PYX_ERR(1, 3, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_tuple__48);
-  __Pyx_GIVEREF(__pyx_tuple__48);
-  __pyx_codeobj__49 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__48, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_stringsource, __pyx_n_s_setstate_cython, 3, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__49)) __PYX_ERR(1, 3, __pyx_L1_error)
+  __pyx_tuple__52 = PyTuple_Pack(2, __pyx_n_s_self, __pyx_n_s_pyx_state); if (unlikely(!__pyx_tuple__52)) __PYX_ERR(1, 3, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__52);
+  __Pyx_GIVEREF(__pyx_tuple__52);
+  __pyx_codeobj__53 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__52, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_stringsource, __pyx_n_s_setstate_cython, 3, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__53)) __PYX_ERR(1, 3, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -11806,15 +12506,15 @@ static int __Pyx_modinit_type_init_code(void) {
   __Pyx_RefNannySetupContext("__Pyx_modinit_type_init_code", 0);
   /*--- Type init code ---*/
   #if CYTHON_USE_TYPE_SPECS
-  __pyx_ptype_8maptools_6toksim_6toksim_TokSim = (PyTypeObject *) __Pyx_PyType_FromModuleAndSpec(__pyx_m, &__pyx_type_8maptools_6toksim_6toksim_TokSim_spec, NULL); if (unlikely(!__pyx_ptype_8maptools_6toksim_6toksim_TokSim)) __PYX_ERR(0, 6, __pyx_L1_error)
-  if (__Pyx_fix_up_extension_type_from_spec(&__pyx_type_8maptools_6toksim_6toksim_TokSim_spec, __pyx_ptype_8maptools_6toksim_6toksim_TokSim) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
+  __pyx_ptype_8maptools_6toksim_6toksim_TokSim = (PyTypeObject *) __Pyx_PyType_FromModuleAndSpec(__pyx_m, &__pyx_type_8maptools_6toksim_6toksim_TokSim_spec, NULL); if (unlikely(!__pyx_ptype_8maptools_6toksim_6toksim_TokSim)) __PYX_ERR(0, 7, __pyx_L1_error)
+  if (__Pyx_fix_up_extension_type_from_spec(&__pyx_type_8maptools_6toksim_6toksim_TokSim_spec, __pyx_ptype_8maptools_6toksim_6toksim_TokSim) < 0) __PYX_ERR(0, 7, __pyx_L1_error)
   #else
   __pyx_ptype_8maptools_6toksim_6toksim_TokSim = &__pyx_type_8maptools_6toksim_6toksim_TokSim;
   #endif
   #if !CYTHON_COMPILING_IN_LIMITED_API
   #endif
   #if !CYTHON_USE_TYPE_SPECS
-  if (__Pyx_PyType_Ready(__pyx_ptype_8maptools_6toksim_6toksim_TokSim) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
+  if (__Pyx_PyType_Ready(__pyx_ptype_8maptools_6toksim_6toksim_TokSim) < 0) __PYX_ERR(0, 7, __pyx_L1_error)
   #endif
   #if PY_MAJOR_VERSION < 3
   __pyx_ptype_8maptools_6toksim_6toksim_TokSim->tp_print = 0;
@@ -11824,9 +12524,9 @@ static int __Pyx_modinit_type_init_code(void) {
     __pyx_ptype_8maptools_6toksim_6toksim_TokSim->tp_getattro = __Pyx_PyObject_GenericGetAttr;
   }
   #endif
-  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_TokSim, (PyObject *) __pyx_ptype_8maptools_6toksim_6toksim_TokSim) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
+  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_TokSim, (PyObject *) __pyx_ptype_8maptools_6toksim_6toksim_TokSim) < 0) __PYX_ERR(0, 7, __pyx_L1_error)
   #if !CYTHON_COMPILING_IN_LIMITED_API
-  if (__Pyx_setup_reduce((PyObject *) __pyx_ptype_8maptools_6toksim_6toksim_TokSim) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
+  if (__Pyx_setup_reduce((PyObject *) __pyx_ptype_8maptools_6toksim_6toksim_TokSim) < 0) __PYX_ERR(0, 7, __pyx_L1_error)
   #endif
   __Pyx_RefNannyFinishContext();
   return 0;
@@ -12142,22 +12842,33 @@ if (!__Pyx_RefNanny) {
 
   /* "maptools/toksim/toksim.pyx":1
  * import os             # <<<<<<<<<<<<<<
+ * import pickle
  * from maptools.toksim.c_toksim cimport C_TokSim
- * from typing import Tuple, Dict, List, Union, Any
  */
   __pyx_t_2 = __Pyx_ImportDottedModule(__pyx_n_s_os, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_os, __pyx_t_2) < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "maptools/toksim/toksim.pyx":3
+  /* "maptools/toksim/toksim.pyx":2
  * import os
+ * import pickle             # <<<<<<<<<<<<<<
+ * from maptools.toksim.c_toksim cimport C_TokSim
+ * from typing import Tuple, Dict, List, Union, Any
+ */
+  __pyx_t_2 = __Pyx_ImportDottedModule(__pyx_n_s_pickle, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 2, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_pickle, __pyx_t_2) < 0) __PYX_ERR(0, 2, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+  /* "maptools/toksim/toksim.pyx":4
+ * import pickle
  * from maptools.toksim.c_toksim cimport C_TokSim
  * from typing import Tuple, Dict, List, Union, Any             # <<<<<<<<<<<<<<
  * from maptools.core import CTG, ROOT_DIR, LogicalTile
  * 
  */
-  __pyx_t_2 = PyList_New(5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 3, __pyx_L1_error)
+  __pyx_t_2 = PyList_New(5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 4, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_INCREF(__pyx_n_s_Tuple);
   __Pyx_GIVEREF(__pyx_n_s_Tuple);
@@ -12174,39 +12885,39 @@ if (!__Pyx_RefNanny) {
   __Pyx_INCREF(__pyx_n_s_Any);
   __Pyx_GIVEREF(__pyx_n_s_Any);
   PyList_SET_ITEM(__pyx_t_2, 4, __pyx_n_s_Any);
-  __pyx_t_3 = __Pyx_Import(__pyx_n_s_typing, __pyx_t_2, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 3, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_Import(__pyx_n_s_typing, __pyx_t_2, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 4, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_ImportFrom(__pyx_t_3, __pyx_n_s_Tuple); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 3, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_ImportFrom(__pyx_t_3, __pyx_n_s_Tuple); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 4, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_Tuple, __pyx_t_2) < 0) __PYX_ERR(0, 3, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_Tuple, __pyx_t_2) < 0) __PYX_ERR(0, 4, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_ImportFrom(__pyx_t_3, __pyx_n_s_Dict); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 3, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_ImportFrom(__pyx_t_3, __pyx_n_s_Dict); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 4, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_Dict, __pyx_t_2) < 0) __PYX_ERR(0, 3, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_Dict, __pyx_t_2) < 0) __PYX_ERR(0, 4, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_ImportFrom(__pyx_t_3, __pyx_n_s_List); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 3, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_ImportFrom(__pyx_t_3, __pyx_n_s_List); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 4, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_List, __pyx_t_2) < 0) __PYX_ERR(0, 3, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_List, __pyx_t_2) < 0) __PYX_ERR(0, 4, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_ImportFrom(__pyx_t_3, __pyx_n_s_Union); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 3, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_ImportFrom(__pyx_t_3, __pyx_n_s_Union); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 4, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_Union, __pyx_t_2) < 0) __PYX_ERR(0, 3, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_Union, __pyx_t_2) < 0) __PYX_ERR(0, 4, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_ImportFrom(__pyx_t_3, __pyx_n_s_Any); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 3, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_ImportFrom(__pyx_t_3, __pyx_n_s_Any); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 4, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_Any, __pyx_t_2) < 0) __PYX_ERR(0, 3, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_Any, __pyx_t_2) < 0) __PYX_ERR(0, 4, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "maptools/toksim/toksim.pyx":4
+  /* "maptools/toksim/toksim.pyx":5
  * from maptools.toksim.c_toksim cimport C_TokSim
  * from typing import Tuple, Dict, List, Union, Any
  * from maptools.core import CTG, ROOT_DIR, LogicalTile             # <<<<<<<<<<<<<<
  * 
  * cdef class TokSim:
  */
-  __pyx_t_3 = PyList_New(3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 4, __pyx_L1_error)
+  __pyx_t_3 = PyList_New(3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 5, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_INCREF(__pyx_n_s_CTG);
   __Pyx_GIVEREF(__pyx_n_s_CTG);
@@ -12217,158 +12928,158 @@ if (!__Pyx_RefNanny) {
   __Pyx_INCREF(__pyx_n_s_LogicalTile);
   __Pyx_GIVEREF(__pyx_n_s_LogicalTile);
   PyList_SET_ITEM(__pyx_t_3, 2, __pyx_n_s_LogicalTile);
-  __pyx_t_2 = __Pyx_Import(__pyx_n_s_maptools_core, __pyx_t_3, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 4, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_Import(__pyx_n_s_maptools_core, __pyx_t_3, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 5, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_ImportFrom(__pyx_t_2, __pyx_n_s_CTG); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 4, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_ImportFrom(__pyx_t_2, __pyx_n_s_CTG); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 5, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_CTG, __pyx_t_3) < 0) __PYX_ERR(0, 4, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_CTG, __pyx_t_3) < 0) __PYX_ERR(0, 5, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_ImportFrom(__pyx_t_2, __pyx_n_s_ROOT_DIR); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 4, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_ImportFrom(__pyx_t_2, __pyx_n_s_ROOT_DIR); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 5, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_ROOT_DIR, __pyx_t_3) < 0) __PYX_ERR(0, 4, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_ROOT_DIR, __pyx_t_3) < 0) __PYX_ERR(0, 5, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_ImportFrom(__pyx_t_2, __pyx_n_s_LogicalTile); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 4, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_ImportFrom(__pyx_t_2, __pyx_n_s_LogicalTile); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 5, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_LogicalTile, __pyx_t_3) < 0) __PYX_ERR(0, 4, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_LogicalTile, __pyx_t_3) < 0) __PYX_ERR(0, 5, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "maptools/toksim/toksim.pyx":30
+  /* "maptools/toksim/toksim.pyx":33
  *         )
  * 
  *     def run(self) -> None:             # <<<<<<<<<<<<<<
  *         self.c_toksim.run()
  *         self.save_execu()
  */
-  __pyx_t_2 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 30, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 33, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_return, __pyx_n_s_None) < 0) __PYX_ERR(0, 30, __pyx_L1_error)
-  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_8maptools_6toksim_6toksim_6TokSim_3run, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_TokSim_run, NULL, __pyx_n_s_maptools_toksim_toksim, __pyx_d, ((PyObject *)__pyx_codeobj__33)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 30, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_return, __pyx_n_s_None) < 0) __PYX_ERR(0, 33, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_8maptools_6toksim_6toksim_6TokSim_3run, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_TokSim_run, NULL, __pyx_n_s_maptools_toksim_toksim, __pyx_d, ((PyObject *)__pyx_codeobj__37)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 33, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_CyFunction_SetAnnotationsDict(__pyx_t_3, __pyx_t_2);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_8maptools_6toksim_6toksim_TokSim->tp_dict, __pyx_n_s_run, __pyx_t_3) < 0) __PYX_ERR(0, 30, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_8maptools_6toksim_6toksim_TokSim->tp_dict, __pyx_n_s_run, __pyx_t_3) < 0) __PYX_ERR(0, 33, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   PyType_Modified(__pyx_ptype_8maptools_6toksim_6toksim_TokSim);
 
-  /* "maptools/toksim/toksim.pyx":34
+  /* "maptools/toksim/toksim.pyx":37
  *         self.save_execu()
  * 
  *     def get_bufs(self) -> str:             # <<<<<<<<<<<<<<
  *         self._need_bufs = self.c_toksim.need_bufs
  *         log = ""
  */
-  __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 34, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 37, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_return, __pyx_n_s_str) < 0) __PYX_ERR(0, 34, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8maptools_6toksim_6toksim_6TokSim_5get_bufs, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_TokSim_get_bufs, NULL, __pyx_n_s_maptools_toksim_toksim, __pyx_d, ((PyObject *)__pyx_codeobj__35)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 34, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_return, __pyx_n_s_str) < 0) __PYX_ERR(0, 37, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8maptools_6toksim_6toksim_6TokSim_5get_bufs, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_TokSim_get_bufs, NULL, __pyx_n_s_maptools_toksim_toksim, __pyx_d, ((PyObject *)__pyx_codeobj__39)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 37, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_CyFunction_SetAnnotationsDict(__pyx_t_2, __pyx_t_3);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_8maptools_6toksim_6toksim_TokSim->tp_dict, __pyx_n_s_get_bufs, __pyx_t_2) < 0) __PYX_ERR(0, 34, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_8maptools_6toksim_6toksim_TokSim->tp_dict, __pyx_n_s_get_bufs, __pyx_t_2) < 0) __PYX_ERR(0, 37, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   PyType_Modified(__pyx_ptype_8maptools_6toksim_6toksim_TokSim);
 
-  /* "maptools/toksim/toksim.pyx":50
+  /* "maptools/toksim/toksim.pyx":57
  *         return log
  * 
  *     def save_execu(self, file_name: str = 'token'):             # <<<<<<<<<<<<<<
  *         save_dir = os.path.join(ROOT_DIR, 'mapsave', self.mapname, 'toksim')
  *         if not os.path.exists(save_dir):
  */
-  __pyx_t_2 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 50, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 57, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_file_name, __pyx_n_s_str) < 0) __PYX_ERR(0, 50, __pyx_L1_error)
-  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_8maptools_6toksim_6toksim_6TokSim_7save_execu, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_TokSim_save_execu, NULL, __pyx_n_s_maptools_toksim_toksim, __pyx_d, ((PyObject *)__pyx_codeobj__37)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 50, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_file_name, __pyx_n_s_str) < 0) __PYX_ERR(0, 57, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_8maptools_6toksim_6toksim_6TokSim_7save_execu, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_TokSim_save_execu, NULL, __pyx_n_s_maptools_toksim_toksim, __pyx_d, ((PyObject *)__pyx_codeobj__41)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 57, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __Pyx_CyFunction_SetDefaultsTuple(__pyx_t_3, __pyx_tuple__38);
+  __Pyx_CyFunction_SetDefaultsTuple(__pyx_t_3, __pyx_tuple__42);
   __Pyx_CyFunction_SetAnnotationsDict(__pyx_t_3, __pyx_t_2);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_8maptools_6toksim_6toksim_TokSim->tp_dict, __pyx_n_s_save_execu, __pyx_t_3) < 0) __PYX_ERR(0, 50, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_8maptools_6toksim_6toksim_TokSim->tp_dict, __pyx_n_s_save_execu, __pyx_t_3) < 0) __PYX_ERR(0, 57, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   PyType_Modified(__pyx_ptype_8maptools_6toksim_6toksim_TokSim);
 
-  /* "maptools/toksim/toksim.pyx":62
+  /* "maptools/toksim/toksim.pyx":79
  *         print(f"\nbuffer log written to {file_dir}")
  * 
  *     def _cpp_get_interface_vars(self) -> None:             # <<<<<<<<<<<<<<
  *         self._nodes = [
  *             self.encode(node)
  */
-  __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 62, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 79, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_return, __pyx_n_s_None) < 0) __PYX_ERR(0, 62, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8maptools_6toksim_6toksim_6TokSim_9_cpp_get_interface_vars, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_TokSim__cpp_get_interface_vars, NULL, __pyx_n_s_maptools_toksim_toksim, __pyx_d, ((PyObject *)__pyx_codeobj__40)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 62, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_return, __pyx_n_s_None) < 0) __PYX_ERR(0, 79, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8maptools_6toksim_6toksim_6TokSim_9_cpp_get_interface_vars, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_TokSim__cpp_get_interface_vars, NULL, __pyx_n_s_maptools_toksim_toksim, __pyx_d, ((PyObject *)__pyx_codeobj__44)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 79, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_CyFunction_SetAnnotationsDict(__pyx_t_2, __pyx_t_3);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_8maptools_6toksim_6toksim_TokSim->tp_dict, __pyx_n_s_cpp_get_interface_vars, __pyx_t_2) < 0) __PYX_ERR(0, 62, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_8maptools_6toksim_6toksim_TokSim->tp_dict, __pyx_n_s_cpp_get_interface_vars, __pyx_t_2) < 0) __PYX_ERR(0, 79, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   PyType_Modified(__pyx_ptype_8maptools_6toksim_6toksim_TokSim);
 
-  /* "maptools/toksim/toksim.pyx":76
+  /* "maptools/toksim/toksim.pyx":94
  *         }
  * 
  *     @staticmethod             # <<<<<<<<<<<<<<
  *     def encode(node: Union[str, LogicalTile]) -> bytes:
  *         return bytes(str(node), encoding='utf-8')
  */
-  __pyx_t_2 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 76, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 94, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_node, __pyx_kp_s_Union_str_LogicalTile) < 0) __PYX_ERR(0, 76, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_return, __pyx_n_s_bytes) < 0) __PYX_ERR(0, 76, __pyx_L1_error)
-  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_8maptools_6toksim_6toksim_6TokSim_11encode, __Pyx_CYFUNCTION_STATICMETHOD | __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_TokSim_encode, NULL, __pyx_n_s_maptools_toksim_toksim, __pyx_d, ((PyObject *)__pyx_codeobj__42)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 76, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_node, __pyx_kp_s_Union_str_LogicalTile) < 0) __PYX_ERR(0, 94, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_return, __pyx_n_s_bytes) < 0) __PYX_ERR(0, 94, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_8maptools_6toksim_6toksim_6TokSim_11encode, __Pyx_CYFUNCTION_STATICMETHOD | __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_TokSim_encode, NULL, __pyx_n_s_maptools_toksim_toksim, __pyx_d, ((PyObject *)__pyx_codeobj__46)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 94, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_CyFunction_SetAnnotationsDict(__pyx_t_3, __pyx_t_2);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_8maptools_6toksim_6toksim_TokSim->tp_dict, __pyx_n_s_encode, __pyx_t_3) < 0) __PYX_ERR(0, 76, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_8maptools_6toksim_6toksim_TokSim->tp_dict, __pyx_n_s_encode, __pyx_t_3) < 0) __PYX_ERR(0, 94, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   PyType_Modified(__pyx_ptype_8maptools_6toksim_6toksim_TokSim);
-  __Pyx_GetNameInClass(__pyx_t_3, (PyObject *)__pyx_ptype_8maptools_6toksim_6toksim_TokSim, __pyx_n_s_encode); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 76, __pyx_L1_error)
+  __Pyx_GetNameInClass(__pyx_t_3, (PyObject *)__pyx_ptype_8maptools_6toksim_6toksim_TokSim, __pyx_n_s_encode); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 94, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_builtin_staticmethod, __pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 76, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_builtin_staticmethod, __pyx_t_3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 94, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_8maptools_6toksim_6toksim_TokSim->tp_dict, __pyx_n_s_encode, __pyx_t_2) < 0) __PYX_ERR(0, 76, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_8maptools_6toksim_6toksim_TokSim->tp_dict, __pyx_n_s_encode, __pyx_t_2) < 0) __PYX_ERR(0, 94, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   PyType_Modified(__pyx_ptype_8maptools_6toksim_6toksim_TokSim);
 
-  /* "maptools/toksim/toksim.pyx":80
+  /* "maptools/toksim/toksim.pyx":98
  *         return bytes(str(node), encoding='utf-8')
  * 
  *     def _cpp_get_node_attr(self, node: Union[str, LogicalTile]) -> Dict[str, Any]:             # <<<<<<<<<<<<<<
  *         attr = {
  *             'is_tile': self.ctg.is_tile(node),
  */
-  __pyx_t_2 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 80, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 98, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_node, __pyx_kp_s_Union_str_LogicalTile) < 0) __PYX_ERR(0, 80, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_return, __pyx_kp_s_Dict_str_Any) < 0) __PYX_ERR(0, 80, __pyx_L1_error)
-  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_8maptools_6toksim_6toksim_6TokSim_13_cpp_get_node_attr, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_TokSim__cpp_get_node_attr, NULL, __pyx_n_s_maptools_toksim_toksim, __pyx_d, ((PyObject *)__pyx_codeobj__44)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 80, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_node, __pyx_kp_s_Union_str_LogicalTile) < 0) __PYX_ERR(0, 98, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_2, __pyx_n_s_return, __pyx_kp_s_Dict_str_Any) < 0) __PYX_ERR(0, 98, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_CyFunction_New(&__pyx_mdef_8maptools_6toksim_6toksim_6TokSim_13_cpp_get_node_attr, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_TokSim__cpp_get_node_attr, NULL, __pyx_n_s_maptools_toksim_toksim, __pyx_d, ((PyObject *)__pyx_codeobj__48)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 98, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_CyFunction_SetAnnotationsDict(__pyx_t_3, __pyx_t_2);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_8maptools_6toksim_6toksim_TokSim->tp_dict, __pyx_n_s_cpp_get_node_attr, __pyx_t_3) < 0) __PYX_ERR(0, 80, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_8maptools_6toksim_6toksim_TokSim->tp_dict, __pyx_n_s_cpp_get_node_attr, __pyx_t_3) < 0) __PYX_ERR(0, 98, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   PyType_Modified(__pyx_ptype_8maptools_6toksim_6toksim_TokSim);
 
-  /* "maptools/toksim/toksim.pyx":94
+  /* "maptools/toksim/toksim.pyx":112
  *         return attr
  * 
  *     def _cpp_get_tile_config(self, node: LogicalTile) -> Dict[str, Any]:             # <<<<<<<<<<<<<<
  *         config = self.ctg.dicts[node]
  *         tile_config = {
  */
-  __pyx_t_3 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 94, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyDict_NewPresized(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 112, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_node, __pyx_n_s_LogicalTile) < 0) __PYX_ERR(0, 94, __pyx_L1_error)
-  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_return, __pyx_kp_s_Dict_str_Any) < 0) __PYX_ERR(0, 94, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8maptools_6toksim_6toksim_6TokSim_15_cpp_get_tile_config, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_TokSim__cpp_get_tile_config, NULL, __pyx_n_s_maptools_toksim_toksim, __pyx_d, ((PyObject *)__pyx_codeobj__46)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 94, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_node, __pyx_n_s_LogicalTile) < 0) __PYX_ERR(0, 112, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_return, __pyx_kp_s_Dict_str_Any) < 0) __PYX_ERR(0, 112, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8maptools_6toksim_6toksim_6TokSim_15_cpp_get_tile_config, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_TokSim__cpp_get_tile_config, NULL, __pyx_n_s_maptools_toksim_toksim, __pyx_d, ((PyObject *)__pyx_codeobj__50)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 112, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_CyFunction_SetAnnotationsDict(__pyx_t_2, __pyx_t_3);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (PyDict_SetItem((PyObject *)__pyx_ptype_8maptools_6toksim_6toksim_TokSim->tp_dict, __pyx_n_s_cpp_get_tile_config, __pyx_t_2) < 0) __PYX_ERR(0, 94, __pyx_L1_error)
+  if (PyDict_SetItem((PyObject *)__pyx_ptype_8maptools_6toksim_6toksim_TokSim->tp_dict, __pyx_n_s_cpp_get_tile_config, __pyx_t_2) < 0) __PYX_ERR(0, 112, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   PyType_Modified(__pyx_ptype_8maptools_6toksim_6toksim_TokSim);
 
@@ -12377,7 +13088,7 @@ if (!__Pyx_RefNanny) {
  *     raise TypeError, "self.c_toksim cannot be converted to a Python object for pickling"
  * def __setstate_cython__(self, __pyx_state):
  */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8maptools_6toksim_6toksim_6TokSim_17__reduce_cython__, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_TokSim___reduce_cython, NULL, __pyx_n_s_maptools_toksim_toksim, __pyx_d, ((PyObject *)__pyx_codeobj__47)); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 1, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8maptools_6toksim_6toksim_6TokSim_17__reduce_cython__, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_TokSim___reduce_cython, NULL, __pyx_n_s_maptools_toksim_toksim, __pyx_d, ((PyObject *)__pyx_codeobj__51)); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 1, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_reduce_cython, __pyx_t_2) < 0) __PYX_ERR(1, 1, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
@@ -12388,15 +13099,15 @@ if (!__Pyx_RefNanny) {
  * def __setstate_cython__(self, __pyx_state):             # <<<<<<<<<<<<<<
  *     raise TypeError, "self.c_toksim cannot be converted to a Python object for pickling"
  */
-  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8maptools_6toksim_6toksim_6TokSim_19__setstate_cython__, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_TokSim___setstate_cython, NULL, __pyx_n_s_maptools_toksim_toksim, __pyx_d, ((PyObject *)__pyx_codeobj__49)); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 3, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8maptools_6toksim_6toksim_6TokSim_19__setstate_cython__, __Pyx_CYFUNCTION_CCLASS, __pyx_n_s_TokSim___setstate_cython, NULL, __pyx_n_s_maptools_toksim_toksim, __pyx_d, ((PyObject *)__pyx_codeobj__53)); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 3, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_setstate_cython, __pyx_t_2) < 0) __PYX_ERR(1, 3, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "maptools/toksim/toksim.pyx":1
  * import os             # <<<<<<<<<<<<<<
+ * import pickle
  * from maptools.toksim.c_toksim cimport C_TokSim
- * from typing import Tuple, Dict, List, Union, Any
  */
   __pyx_t_2 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 1, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -14122,6 +14833,64 @@ static PyObject *__Pyx_PyObject_GetItem(PyObject *obj, PyObject *key) {
 }
 #endif
 
+/* UnicodeConcatInPlace */
+# if CYTHON_COMPILING_IN_CPYTHON && PY_MAJOR_VERSION >= 3
+static int
+__Pyx_unicode_modifiable(PyObject *unicode)
+{
+    if (Py_REFCNT(unicode) != 1)
+        return 0;
+    if (!PyUnicode_CheckExact(unicode))
+        return 0;
+    if (PyUnicode_CHECK_INTERNED(unicode))
+        return 0;
+    return 1;
+}
+static CYTHON_INLINE PyObject *__Pyx_PyUnicode_ConcatInPlaceImpl(PyObject **p_left, PyObject *right
+        #if CYTHON_REFNANNY
+        , void* __pyx_refnanny
+        #endif
+    ) {
+    PyObject *left = *p_left;
+    Py_ssize_t left_len, right_len, new_len;
+    if (unlikely(__Pyx_PyUnicode_READY(left) == -1))
+        return NULL;
+    if (unlikely(__Pyx_PyUnicode_READY(right) == -1))
+        return NULL;
+    left_len = PyUnicode_GET_LENGTH(left);
+    if (left_len == 0) {
+        Py_INCREF(right);
+        return right;
+    }
+    right_len = PyUnicode_GET_LENGTH(right);
+    if (right_len == 0) {
+        Py_INCREF(left);
+        return left;
+    }
+    if (unlikely(left_len > PY_SSIZE_T_MAX - right_len)) {
+        PyErr_SetString(PyExc_OverflowError,
+                        "strings are too large to concat");
+        return NULL;
+    }
+    new_len = left_len + right_len;
+    if (__Pyx_unicode_modifiable(left)
+            && PyUnicode_CheckExact(right)
+            && PyUnicode_KIND(right) <= PyUnicode_KIND(left)
+            && !(PyUnicode_IS_ASCII(left) && !PyUnicode_IS_ASCII(right))) {
+        __Pyx_GIVEREF(*p_left);
+        if (unlikely(PyUnicode_Resize(p_left, new_len) != 0)) {
+            __Pyx_GOTREF(*p_left);
+            return NULL;
+        }
+        __Pyx_INCREF(*p_left);
+        _PyUnicode_FastCopyCharacters(*p_left, left_len, right, 0, right_len);
+        return *p_left;
+    } else {
+        return __Pyx_PyUnicode_Concat(left, right);
+    }
+  }
+#endif
+
 /* PyDictVersioning */
 #if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_TYPE_SLOTS
 static CYTHON_INLINE PY_UINT64_T __Pyx_get_tp_dict_version(PyObject *obj) {
@@ -14887,7 +15656,7 @@ static PyObject *__Pyx_ImportDottedModule_WalkParts(PyObject *module, PyObject *
 #endif
 static PyObject *__Pyx__ImportDottedModule(PyObject *name, PyObject *parts_tuple) {
 #if PY_MAJOR_VERSION < 3
-    PyObject *module, *from_list, *star = __pyx_n_s__30;
+    PyObject *module, *from_list, *star = __pyx_n_s__34;
     CYTHON_UNUSED_VAR(parts_tuple);
     from_list = PyList_New(1);
     if (unlikely(!from_list))
@@ -14950,7 +15719,7 @@ static PyObject* __Pyx_ImportFrom(PyObject* module, PyObject* name) {
         if (unlikely(!module_name_str)) { goto modbad; }
         module_name = PyUnicode_FromString(module_name_str);
         if (unlikely(!module_name)) { goto modbad; }
-        module_dot = PyUnicode_Concat(module_name, __pyx_kp_u__31);
+        module_dot = PyUnicode_Concat(module_name, __pyx_kp_u__35);
         if (unlikely(!module_dot)) { goto modbad; }
         full_name = PyUnicode_Concat(module_dot, name);
         if (unlikely(!full_name)) { goto modbad; }
@@ -16568,7 +17337,7 @@ __Pyx_PyType_GetName(PyTypeObject* tp)
                                                __pyx_n_s_name);
     if (unlikely(name == NULL) || unlikely(!PyUnicode_Check(name))) {
         PyErr_Clear();
-        Py_XSETREF(name, __Pyx_NewRef(__pyx_n_s__50));
+        Py_XSETREF(name, __Pyx_NewRef(__pyx_n_s__54));
     }
     return name;
 }

@@ -89,6 +89,9 @@ class RoutingDesigner(object):
         # return max(conflicts)
 
     def run_routing(self) -> None:
+        print("\n\n"+"-"*70)
+        print("\t\tLaunching Routing Design")
+        print("-"*70)
         self.rpc = self.routing_engine()
 
     def reset(self) -> None:

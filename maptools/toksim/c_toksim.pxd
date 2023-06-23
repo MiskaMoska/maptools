@@ -1,6 +1,7 @@
 from libcpp.vector cimport vector
 from libcpp.string cimport string
 from libcpp.unordered_map cimport unordered_map
+from libcpp.map cimport map
 
 cdef extern from "srcs/c_typing.h" namespace "toksim":
     cdef enum C_PredType:
@@ -53,6 +54,7 @@ cdef extern from "srcs/c_toksim.h" namespace "toksim":
 
         unordered_map[string, C_NodeAttr] node_attr_dict;
         unordered_map[string, C_TileConfig] tile_config_dict;
+        map[string, vector[int]] execu_dict;
 
         unordered_map[string, C_Tile] tile_objects;
         unordered_map[string, C_Comm] comm_objects;
