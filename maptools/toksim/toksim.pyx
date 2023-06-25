@@ -1,4 +1,5 @@
 import os
+import csv
 import pickle
 from maptools.toksim.c_toksim cimport C_TokSim
 from typing import Tuple, Dict, List, Union, Any
@@ -34,25 +35,26 @@ cdef class TokSim:
         self.c_toksim.run()
         self.save_execu()
 
-    def get_bufs(self) -> str:
+    def get_bufs(self) -> List[List[Any]]:
+        log, csv_data = "", []
         self._need_bufs = self.c_toksim.need_bufs
-        log = ""
+        csv_data.append(['tile','gbuf','mbuf','pbuf','ibuf','cbuf'])
+
         for node in self._nodes:
             if node in self._need_bufs:
-                bufs = self._need_bufs[node]
-                log += '%-5s%-20s%-9s%-18s%-9s%-18s%-10s%-18s%-10s%-18s%-11s%-10s\n' % (
-                    'tile:', node,
-                    'conv_buf:', bufs[b'conv_buf'],
-                    'pool_buf:', bufs[b'pool_buf'],
-                    'inter_buf:', bufs[b'inter_buf'],
-                    'merge_buf:', bufs[b'merge_buf'],
-                    'gather_buf:', bufs[b'gather_buf']
-                )
+                bufs: Dict[bytes, int] = self._need_bufs[node]
+                keys = ['tile'] + [str(k, 'utf-8') for k in list(bufs.keys())]
+                values = [str(node, 'utf-8')] + list(bufs.values())
+
+                csv_data.append(values)
+                log += '%-5s%-20s%-11s%-18s%-10s%-18s%-9s%-18s%-10s%-18s%-9s%-10s\n' % \
+                    tuple(v for pair in zip(keys, values) for v in pair)
+
         print("\n\n"+"-"*70)
         print("TokSim Buffer Evaluation Report")
         print("-"*70)
         print(log)
-        return log
+        return csv_data
 
     def save_execu(self, file_name: str = 'token'):
         save_dir = os.path.join(ROOT_DIR, 'mapsave', self.mapname, 'toksim')
@@ -70,10 +72,13 @@ cdef class TokSim:
         print(f"\rtoken info written to {file_dir}")
 
         # save buffer log
-        file_dir = os.path.join(save_dir, 'buffer.log')
-        log = self.get_bufs()
-        with open(file_dir, 'w') as f:
-            f.write(log)
+        file_dir = os.path.join(save_dir, 'buffer.csv')
+        csv_data = self.get_bufs()
+
+        with open(file_dir, 'w', newline='') as f:
+            writer = csv.writer(f)
+            for row in csv_data:
+                writer.writerow(row)
         print(f"\nbuffer log written to {file_dir}")
 
     def _cpp_get_interface_vars(self) -> None:

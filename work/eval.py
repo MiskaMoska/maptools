@@ -15,7 +15,7 @@ K = 3 # 准确率指标为 K-ACC
 MAPNAME = 'resnet18' 
 ONNXDIR = 'onnx_models/simp-resnet18.onnx'
 QUANTIZE = True # 是否进行量化
-DEVICE = 'cuda' # 是否使用CUDA加速
+DEVICE = 'cpu' # 是否使用CUDA加速
 BATCHSIZE = 32 # Batch 大小
 PHYSICAL = True # 是否模拟真实的Xbar和ADC计算
 HARDTRANS = True # 是否模拟真实的定点数乘法
@@ -45,16 +45,13 @@ model = CalcuSim(
     hardtrans=HARDTRANS,
     ivcf=IVCF
 )
-print("-"*70)
-print(" "*25+"Pytorch Inference")
-print("-"*70)
 ########################## 以上是 CalcuSim 模型 ############################################
 
 
 
 ########################## 以下是 Pytorch 原始模型 ############################################
-model = resnet18(pretrained=True)
-model.eval()
+# model = resnet18(pretrained=True)
+# model.eval()
 ########################## 以上是 Pytorch 原始模型 ############################################
 
 

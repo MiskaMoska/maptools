@@ -19,10 +19,10 @@ class BaseOperatorParser(object):
     ) -> None:
         if not isinstance(node, onnx.NodeProto):
             raise TypeError(
-                f"shaper need a {onnx.NodeProto} to proccess, but got a {type(node)}")
+                f"parser need a {onnx.NodeProto} to proccess, but got a {type(node)}")
         if not isinstance(graph, onnx.GraphProto):
             raise TypeError(
-                f"shaper need a {onnx.GraphProto} to proccess, but got a {type(graph)}")
+                f"parser need a {onnx.GraphProto} to proccess, but got a {type(graph)}")
         self.node = node
         self.graph = graph
         self.params = params

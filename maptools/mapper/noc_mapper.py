@@ -234,7 +234,7 @@ class NocMapper(object):
         [(x1, y1), (x2, y2), (...), (...), ...]
         following tensor slice orders
         '''
-        tails = []
+        tails = [] 
         for tile in self.ctg.tile_nodes:
             if self.ctg.is_tail_tile(tile):
                 tails.append(tile)

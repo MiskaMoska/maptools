@@ -122,17 +122,17 @@ class MapRoutine(object):
                 self.noc_size[1],
                 **self.config
             )
-            nm.run_map()
+            nm.run_layout()
+            nm.run_routing()
 
-            if self.save_mapinfo: nm.save_map()
-
+            if self.save_mapinfo: nm.save_config()
             if self.show_cast_path or self.show_gather_path:
                 plt = MapPlotter(
                     self.noc_size[0], 
                     self.noc_size[1], 
                     nm.cast_paths, 
                     nm.merge_paths, 
-                    nm.gather_paths, 
+                    nm.cast_paths, 
                     show_path=True,
                     **self.config
                 )
@@ -147,7 +147,7 @@ class MapRoutine(object):
                     self.noc_size[1],
                     nm.cast_paths,
                     nm.merge_paths,
-                    nm.gather_paths,
+                    nm.cast_paths,
                     **self.config
                 )
                 nc.run_config()

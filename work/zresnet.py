@@ -33,21 +33,26 @@ xm.print_config()
 
 # 获得映射得到的CTG
 ctg = xm.ctg
-ctg.plot_ctg()
+ctg.plot_ctg(direction='UD')
 
-# 创建Tile阵列拓扑图，设置阵列规模
-acg = ACG(8, 9)
+# # 创建Tile阵列拓扑图，设置阵列规模
+# acg = ACG(8, 9)
 
-# 创建物理映射器
-nm = NocMapper(ctg, acg, **config)
+# # 创建物理映射器
+# nm = NocMapper(ctg, acg, **config)
 
-# 执行智能布局布线
-nm.run_layout()
-nm.run_routing()
+# # 执行智能布局布线
+# nm.run_layout()
+# nm.run_routing()
 
-# 保存布局布线图
-nm.save_layout()
-nm.save_routing()
+# # 保存布局布线图
+# nm.save_layout()
+# nm.save_routing()
 
-# 保存硬件配置信息
-nm.save_config()
+# # 保存硬件配置信息
+# nm.save_config()
+
+toksim = TokSim(ctg, **config)
+toksim.run()
+
+plot_tokens(config['mapname'])

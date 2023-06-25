@@ -7,7 +7,10 @@ import numpy as np
 import networkx as nx
 from graphviz import Digraph
 from functools import cached_property
-from typing import List, Dict, Tuple, Any, Generator, Optional
+from typing import (
+    List, Dict, Tuple, Any, 
+    Generator, Optional, Literal
+)
 from maptools.core.graph import DeviceGraph
 from maptools.core.utils import is_subseq
 from maptools.core.typing import TileConfig
@@ -393,13 +396,17 @@ class CTG(object):
                 load = dict1[n]
                 self.update_dict(n, {'load': load, 'load_ratio': load / max_load})
 
-    def plot_ctg(self, match_dict: Optional[Dict] = None) -> None:
+    def plot_ctg(
+        self, 
+        match_dict: Optional[Dict] = None, 
+        direction: Literal['LR', 'UD'] = 'LR'
+    ) -> None:
         save_dir = os.path.join(ROOT_DIR, 'mapsave', self.mapname, 'ctg')
         if not os.path.exists(save_dir):
             os.makedirs(save_dir)
 
         dot = Digraph('graph', format='svg')
-        dot.attr(rankdir='LR')
+        dot.attr(rankdir=direction)
 
         # plot nodes
         for n in self.graph.nodes:

@@ -1,8 +1,7 @@
 import torch
+import itertools as it
 
-a = torch.tensor([1,2,3,4])
-b = torch.tensor([1,1,2,2])
-print(a * pow(2, b))
+a = b'231322'
 
-
+print(str(a, 'utf-8'))
 
