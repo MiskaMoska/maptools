@@ -3,7 +3,7 @@ import numpy as np
 from typing import List, Dict, Tuple, Any
 from maptools.core import (
     DeviceGraph, CTG, TileQuantConfig, OperatorQuantConfig,
-    QUANT_OP_NAMES
+    LogicalTile, OperatorConfig, QUANT_OP_NAMES
 )
 from maptools.utils import destruct_scale
 
@@ -66,7 +66,7 @@ class TileMapper(object):
         self.__dict__.update(kwargs)
         self.match_dict: Dict[str, int] = dict() 
         self.map_list: List[np.ndarray] = []
-        self.map_dict: Dict[Tuple[int, int, int, int], Dict[str, Any]] = dict() 
+        self.map_dict: Dict[LogicalTile, OperatorConfig] = dict() 
 
     def _assert_first_layer(self, in_len: int, out_len: int) -> None:
         '''

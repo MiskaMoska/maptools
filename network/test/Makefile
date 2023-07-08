@@ -1,6 +1,6 @@
 # VCS
 COMPILER = vcs -full64 -cc gcc-4.8 -cpp g++-4.8 -LDFLAGS -Wl,-no-as-needed
-TOP_MODLE = -top top_tb
+TOP_MODULE = -top top_tb
 TIMESCALE = -timescale=1ns/1ps
 INCDIR = +incdir+../config/network_config
 
