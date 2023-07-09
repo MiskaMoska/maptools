@@ -7,7 +7,7 @@ from copy import deepcopy, copy
 
 _Solution = TypeVar('_Solution')
 
-class BaseSimulatedAnnealing(Generic[_Solution], Callable, metaclass=ABCMeta):
+class BaseSimulatedAnnealing(Generic[_Solution], metaclass=ABCMeta):
 
     def __init__(
         self, 
