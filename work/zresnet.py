@@ -7,11 +7,15 @@ import torch
 import onnxruntime as rt
 
 # 读取onnx模型
-config = {'mapname': 'yolo'}
-model = onnx.load("onnx_models/simp-yolo.onnx")
+config = {
+    'mapname': 'resnet18',
+    'quantize': True
+}
+
+model = onnx.load("onnx_models/simp-resnet18.onnx")
 
 # 创建onnx转换器
-oc = OnnxConverter(model, arch=NNModelArch.YOLO_V3, **config)
+oc = OnnxConverter(model, arch=NNModelArch.RESNET, **config)
 
 # 执行模型转换
 oc.run_conversion()
@@ -23,7 +27,7 @@ oc.plot_device_graph()
 og = oc.device_graph
 
 # 创建逻辑映射器，设置Xbar尺寸
-xm = TileMapper(og, 64, 64*5, **config)
+xm = TileMapper(og, 256, 256*5, **config)
 
 # 执行映射
 xm.run_map()
@@ -34,6 +38,21 @@ xm.print_config()
 # 获得映射得到的CTG
 ctg = xm.ctg
 ctg.plot_ctg(direction='UD')
+
+params = read_quantparams(config['mapname'])
+
+# 创建CalcuSim仿真器, tm是TileMapper, oc是OnnxConverter
+csim = CalcuSim(
+    xm.ctg, oc.host_graph, params,
+    quantize=True, physical=True, stats=True
+)
+
+# 获取输入图片数据, 缩放至 224 × 224
+input = get_input('work/test1.png', resize=(768, 768))
+
+# 运行CalcuSim仿真, 获得输出结果
+output = csim(input)
+
 
 # # 创建Tile阵列拓扑图，设置阵列规模
 # acg = ACG(8, 9)
@@ -52,7 +71,7 @@ ctg.plot_ctg(direction='UD')
 # # 保存硬件配置信息
 # nm.save_config()
 
-toksim = TokSim(ctg, **config)
-toksim.run()
+# toksim = TokSim(ctg, **config)
+# toksim.run()
 
-plot_tokens(config['mapname'])
+# plot_tokens(config['mapname'])
