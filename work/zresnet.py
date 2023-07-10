@@ -71,7 +71,7 @@ output = csim(input)
 # # 保存硬件配置信息
 # nm.save_config()
 
-# toksim = TokSim(ctg, **config)
-# toksim.run()
+toksim = TokSim(ctg, **config)
+toksim.run()
 
-# plot_tokens(config['mapname'])
+plot_tokens(config['mapname'])

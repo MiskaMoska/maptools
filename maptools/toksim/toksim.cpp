@@ -2670,7 +2670,7 @@ static const char __pyx_k_No_value_specified_for_struct_at_25[] = "No value spec
 static const char __pyx_k_No_value_specified_for_struct_at_26[] = "No value specified for struct attribute 'pool_pads'";
 static const char __pyx_k_No_value_specified_for_struct_at_27[] = "No value specified for struct attribute 'resize_scales'";
 /* #### Code section: decls ### */
-static int __pyx_pf_8maptools_6toksim_6toksim_6TokSim___init__(struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *__pyx_v_self, PyObject *__pyx_v_ctg, PyObject *__pyx_v_mapname); /* proto */
+static int __pyx_pf_8maptools_6toksim_6toksim_6TokSim___init__(struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *__pyx_v_self, PyObject *__pyx_v_ctg, PyObject *__pyx_v_mapname, CYTHON_UNUSED PyObject *__pyx_v_kwargs); /* proto */
 static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_2run(struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_8get_bufs_genexpr(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_genexpr_arg_0); /* proto */
 static PyObject *__pyx_pf_8maptools_6toksim_6toksim_6TokSim_4get_bufs(struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *__pyx_v_self); /* proto */
@@ -8114,7 +8114,7 @@ static PyObject *__pyx_convert_vector_to_py_int(std::vector<int>  const &__pyx_v
 /* "maptools/toksim/toksim.pyx":24
  *     _token_dict: Dict[bytes, List[int]]
  * 
- *     def __init__(self, ctg: CTG, mapname: str = 'newmap') -> None:             # <<<<<<<<<<<<<<
+ *     def __init__(self, ctg: CTG, mapname: str = 'newmap', **kwargs) -> None:             # <<<<<<<<<<<<<<
  *         self.ctg = ctg
  *         self.mapname = mapname
  */
@@ -8124,6 +8124,7 @@ static int __pyx_pw_8maptools_6toksim_6toksim_6TokSim_1__init__(PyObject *__pyx_
 static int __pyx_pw_8maptools_6toksim_6toksim_6TokSim_1__init__(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_ctg = 0;
   PyObject *__pyx_v_mapname = 0;
+  CYTHON_UNUSED PyObject *__pyx_v_kwargs = 0;
   CYTHON_UNUSED const Py_ssize_t __pyx_nargs = PyTuple_GET_SIZE(__pyx_args);
   CYTHON_UNUSED PyObject *const *__pyx_kwvalues = __Pyx_KwValues_VARARGS(__pyx_args, __pyx_nargs);
   int __pyx_lineno = 0;
@@ -8132,6 +8133,8 @@ static int __pyx_pw_8maptools_6toksim_6toksim_6TokSim_1__init__(PyObject *__pyx_
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__init__ (wrapper)", 0);
+  __pyx_v_kwargs = PyDict_New(); if (unlikely(!__pyx_v_kwargs)) return -1;
+  __Pyx_GOTREF(__pyx_v_kwargs);
   {
     PyObject **__pyx_pyargnames[] = {&__pyx_n_s_ctg,&__pyx_n_s_mapname,0};
     PyObject* values[2] = {0,0};
@@ -8162,7 +8165,7 @@ static int __pyx_pw_8maptools_6toksim_6toksim_6TokSim_1__init__(PyObject *__pyx_
       }
       if (unlikely(kw_args > 0)) {
         const Py_ssize_t kwd_pos_args = __pyx_nargs;
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "__init__") < 0)) __PYX_ERR(0, 24, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, __pyx_v_kwargs, values + 0, kwd_pos_args, "__init__") < 0)) __PYX_ERR(0, 24, __pyx_L3_error)
       }
     } else {
       switch (__pyx_nargs) {
@@ -8180,23 +8183,25 @@ static int __pyx_pw_8maptools_6toksim_6toksim_6TokSim_1__init__(PyObject *__pyx_
   __pyx_L5_argtuple_error:;
   __Pyx_RaiseArgtupleInvalid("__init__", 0, 1, 2, __pyx_nargs); __PYX_ERR(0, 24, __pyx_L3_error)
   __pyx_L3_error:;
+  __Pyx_DECREF(__pyx_v_kwargs); __pyx_v_kwargs = 0;
   __Pyx_AddTraceback("maptools.toksim.toksim.TokSim.__init__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return -1;
   __pyx_L4_argument_unpacking_done:;
   if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_mapname), (&PyString_Type), 0, "mapname", 1))) __PYX_ERR(0, 24, __pyx_L1_error)
-  __pyx_r = __pyx_pf_8maptools_6toksim_6toksim_6TokSim___init__(((struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *)__pyx_v_self), __pyx_v_ctg, __pyx_v_mapname);
+  __pyx_r = __pyx_pf_8maptools_6toksim_6toksim_6TokSim___init__(((struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *)__pyx_v_self), __pyx_v_ctg, __pyx_v_mapname, __pyx_v_kwargs);
 
   /* function exit code */
   goto __pyx_L0;
   __pyx_L1_error:;
   __pyx_r = -1;
   __pyx_L0:;
+  __Pyx_DECREF(__pyx_v_kwargs);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static int __pyx_pf_8maptools_6toksim_6toksim_6TokSim___init__(struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *__pyx_v_self, PyObject *__pyx_v_ctg, PyObject *__pyx_v_mapname) {
+static int __pyx_pf_8maptools_6toksim_6toksim_6TokSim___init__(struct __pyx_obj_8maptools_6toksim_6toksim_TokSim *__pyx_v_self, PyObject *__pyx_v_ctg, PyObject *__pyx_v_mapname, CYTHON_UNUSED PyObject *__pyx_v_kwargs) {
   int __pyx_r;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -8214,7 +8219,7 @@ static int __pyx_pf_8maptools_6toksim_6toksim_6TokSim___init__(struct __pyx_obj_
 
   /* "maptools/toksim/toksim.pyx":25
  * 
- *     def __init__(self, ctg: CTG, mapname: str = 'newmap') -> None:
+ *     def __init__(self, ctg: CTG, mapname: str = 'newmap', **kwargs) -> None:
  *         self.ctg = ctg             # <<<<<<<<<<<<<<
  *         self.mapname = mapname
  *         self._cpp_get_interface_vars()
@@ -8226,7 +8231,7 @@ static int __pyx_pf_8maptools_6toksim_6toksim_6TokSim___init__(struct __pyx_obj_
   __pyx_v_self->ctg = __pyx_v_ctg;
 
   /* "maptools/toksim/toksim.pyx":26
- *     def __init__(self, ctg: CTG, mapname: str = 'newmap') -> None:
+ *     def __init__(self, ctg: CTG, mapname: str = 'newmap', **kwargs) -> None:
  *         self.ctg = ctg
  *         self.mapname = mapname             # <<<<<<<<<<<<<<
  *         self._cpp_get_interface_vars()
@@ -8314,7 +8319,7 @@ static int __pyx_pf_8maptools_6toksim_6toksim_6TokSim___init__(struct __pyx_obj_
   /* "maptools/toksim/toksim.pyx":24
  *     _token_dict: Dict[bytes, List[int]]
  * 
- *     def __init__(self, ctg: CTG, mapname: str = 'newmap') -> None:             # <<<<<<<<<<<<<<
+ *     def __init__(self, ctg: CTG, mapname: str = 'newmap', **kwargs) -> None:             # <<<<<<<<<<<<<<
  *         self.ctg = ctg
  *         self.mapname = mapname
  */

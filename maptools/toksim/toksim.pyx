@@ -21,7 +21,7 @@ cdef class TokSim:
 
     _token_dict: Dict[bytes, List[int]]
 
-    def __init__(self, ctg: CTG, mapname: str = 'newmap') -> None:
+    def __init__(self, ctg: CTG, mapname: str = 'newmap', **kwargs) -> None:
         self.ctg = ctg
         self.mapname = mapname
         self._cpp_get_interface_vars()
