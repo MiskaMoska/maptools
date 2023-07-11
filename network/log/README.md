@@ -1,1 +1,0 @@
-This folder is used to save logging files for simulation

@@ -12,3 +12,6 @@ build/*
 dist/*
 maptools.egg-info/*
 make.sh
+.mypy_cache/*
+.vs/*
+maptools/.vscode/*
