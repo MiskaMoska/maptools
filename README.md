@@ -6,6 +6,8 @@ https://github.com/MiskaMoska/maptools)
 https://github.com/MiskaMoska/maptools)
 [![ Documentation ](https://img.shields.io/badge/documentation-up_to_data-lightseagreen)](
 https://maptools-doc.readthedocs.io/en/latest/)
+[![ Python ](https://img.shields.io/badge/python-3.8_|_3.9_|_3.10_|_3.11-orange)](
+https://www.python.org/)
 
 
 
