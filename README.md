@@ -1,10 +1,10 @@
 ![img1](https://github.com/MiskaMoska/maptools/blob/main/assets/maptools-logo.png)
 
-[![ Build ](https://img.shields.io/badge/build-passing-green)](
+[![ Build ](https://img.shields.io/badge/build-passing-mediumgreen)](
 https://github.com/MiskaMoska/maptools)
 [![ Version ](https://img.shields.io/badge/version-1.0.0-blue)](
 https://github.com/MiskaMoska/maptools)
-[![ Documentation ](https://img.shields.io/badge/documentation-up_to_data-orange)](
+[![ Documentation ](https://img.shields.io/badge/documentation-up_to_data-lightseagreen)](
 https://maptools-doc.readthedocs.io/en/latest/)
 
 
