@@ -2,9 +2,11 @@
 
 [![ Build ](https://img.shields.io/badge/build-passing-green)](
 https://github.com/MiskaMoska/maptools)
-
 [![ Version ](https://img.shields.io/badge/version-1.0.0-blue)](
 https://github.com/MiskaMoska/maptools)
+[![ Documentation ](https://img.shields.io/badge/documentation-up_to_data-orange)](
+https://maptools-doc.readthedocs.io/en/latest/)
+
 
 
 
