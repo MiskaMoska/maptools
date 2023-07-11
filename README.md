@@ -1,5 +1,8 @@
 ![img1](https://github.com/MiskaMoska/maptools/blob/main/assets/maptools-logo.png)
 
+[![ Build ](https://img.shields.io/badge/build-passing-green)](
+https://github.com/MiskaMoska/maptools)
+
 [![ Version ](https://img.shields.io/badge/version-1.0.0-blue)](
 https://github.com/MiskaMoska/maptools)
 
