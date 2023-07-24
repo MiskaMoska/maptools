@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from typing import List, Dict, Optional, Tuple, Any, Callable
-from maptools.core import LogicalTile
+from maptools.core import LogicalTile, TileQuantConfig
 
 __all__ = ['ConvUnit']
 
@@ -13,10 +13,11 @@ def cimu_conv2d(
     stride: Optional[List[int]] = [1, 1],
     factor: float = 1,
     tile: LogicalTile = None,
+    tqc: TileQuantConfig = None,
     stats: bool = False
 ) -> torch.Tensor:
     
-    x = torch.clamp(x, -128, 127)
+    x = torch.clamp(x, tqc.io_min, tqc.io_max)
     x = x.type(torch.int8)
     y = 0
 
@@ -28,7 +29,7 @@ def cimu_conv2d(
 
         print(f'\n--> Tile {tile}')
 
-    for i in range(8):
+    for i in range(tqc.io_bits):
         _y = F.conv2d(
             ((x >> i) & 1).float(),
             weight,
@@ -36,7 +37,7 @@ def cimu_conv2d(
         )
 
         if not stats: # if not do distribution statistics, enable adc clamp
-            _y = torch.clamp(torch.round(_y / factor), -128, 127) # ivc clamping transfer
+            _y = torch.clamp(torch.round(_y / factor), tqc.io_min, tqc.io_max) # ivc clamping transfer
             _y = torch.round(_y * factor) # invert transfer
 
         else: # if do distribution statistics, disable adc clamp and analyze results
@@ -48,10 +49,10 @@ def cimu_conv2d(
                 'range:'            , res_range,
                 'avg_abs:'          , round(res_avg, 3)    
             ))
-
-        if i == 7: # sign bit
-            y += _y*(-pow(2, 7))
-        else: # non sign bit
+        
+        if i == tqc.io_bits-1: # sign bit
+            y += _y*(-pow(2, i))
+        else: # non-sign bit
             y += _y*pow(2, i)
 
     if bias is not None:
@@ -69,6 +70,7 @@ class ConvUnit(nn.Module):
         strides: List[int],
         physical: bool = False,
         tile: LogicalTile = None,
+        tqc: TileQuantConfig = None,
         ivcf: Optional[float] = None,
         first_layer_ivcf: Optional[float] = None,
         stats: bool = False
@@ -78,6 +80,7 @@ class ConvUnit(nn.Module):
         self.bias = bias
         self.strides = strides
         self.tile = tile
+        self.tqc = tqc
         self.physical = physical
         self.stats = stats
 
@@ -103,6 +106,7 @@ class ConvUnit(nn.Module):
                 factor=self.factor,
                 tile=self.tile,
                 stats=self.stats,
+                tqc=self.tqc
             )
         else: # use pytorch conv2d
             return F.conv2d(

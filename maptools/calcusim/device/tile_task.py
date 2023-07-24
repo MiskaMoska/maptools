@@ -70,6 +70,7 @@ class TileTask(nn.Module):
             self.conv_strides, 
             physical=self.physical,
             tile=self.tile,
+            tqc=self.tqc,
             ivcf=self.ivcf,
             first_layer_ivcf=self.first_layer_ivcf,
             stats=self.stats
@@ -120,14 +121,14 @@ class TileTask(nn.Module):
             x = torch.add(x, self.merge_in)
 
         # only for merge node where a complete sum should appear
-        # conv quantization converting from input to output, return a int8
+        # conv quantization converting from input to output
         if self.merge_node and self.quantize:
             if self.hardtrans:
                 ctrans_i = self.tqc.ctrans_i.view([1, -1, 1, 1])
                 ctrans_s = self.tqc.ctrans_s.view([1, -1, 1, 1])
                 mult = ctrans_i / pow(2, -ctrans_s)
             else: mult = self.tqc.ctrans.view([1, -1, 1, 1])
-            x = torch.clamp(torch.round(x * mult), -128, 127)
+            x = torch.clamp(torch.round(x * mult), self.tqc.io_min, self.tqc.io_max)
 
         if self.is_gather:
             assert self.merge_node, f"this is a gather_in node but is not a merge node"
@@ -137,12 +138,12 @@ class TileTask(nn.Module):
             x = torch.add(x, self.gather_in)
 
             # only for tile with gather in dataflow
-            # add quantization converting from input to output, return a int8
+            # add quantization converting from input to output
             if self.quantize:
                 if self.hardtrans: 
                     mult = self.tqc.strans_i / pow(2, -self.tqc.strans_s)
                 else: mult = self.tqc.strans
-                x = torch.clamp(torch.round(x * mult), -128, 127)
+                x = torch.clamp(torch.round(x * mult), self.tqc.io_min, self.tqc.io_max)
 
         if self.is_act:
             assert self.act_mode == 'Relu', (
@@ -150,12 +151,12 @@ class TileTask(nn.Module):
             x = F.relu(x)
 
             # only for tile with activation (relu)
-            # act quantization converting from input to output, return a int8
+            # act quantization converting from input to output
             if self.quantize:
                 if self.hardtrans:
                     mult = self.tqc.atrans_i / pow(2, -self.tqc.atrans_s)
                 else: mult = self.tqc.atrans
-                x = torch.clamp(torch.round(x * mult), -128, 127)
+                x = torch.clamp(torch.round(x * mult), self.tqc.io_min, self.tqc.io_max)
 
         if self.is_resize:
             x = self._resize(x)

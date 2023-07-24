@@ -1,10 +1,13 @@
 import os
 import torch
 from typing import Iterable, Tuple, Dict, List, Any, Optional
+
+from .ppq_lowbit import *
 from ppq import BaseGraph, QuantizationSettingFactory, TargetPlatform
 from ppq.api import dispatch_graph, export_ppq_graph, load_onnx_graph, quantize_onnx_model
 from ppq.quantization.analyse.graphwise import graphwise_error_analyse
 from ppq.executor.torch import TorchExecutor
+
 from maptools.quantization.saving import save_quantization
 from maptools.core import ROOT_DIR
 
@@ -27,6 +30,8 @@ def quantize(
     input_shapes: Dict[str, List[int]],
     device: str,
     onnx_path: str,
+    bit_width: int = 8,
+    per_channel: bool = True,
     mapname = 'newmap',
     calibset: Optional[Iterable[Dict[str, torch.Tensor]]] = None,
     calib_steps: int = 32
@@ -35,12 +40,11 @@ def quantize(
         return {k: v.to(device) for k, v in batch.items()}
     
     # use default quantization settings
-    QSetting = QuantizationSettingFactory.default_setting() 
+    QSetting = QuantizationSettingFactory.trt_setting() 
     QSetting.lsq_optimization = False
 
     # load and dispatch
     graph = load_onnx_graph(onnx_import_file=onnx_path)
-    graph = dispatch_graph(graph=graph, platform=PLATFORM)
 
     for name in graph.inputs:
         if name not in input_shapes:
@@ -51,13 +55,17 @@ def quantize(
 
     # get calibration dataset
     if calibset is None:
-        print("Calibration dataset not specified, using default calibration dataset")
+        print("Calibration dataset not specified, using random calibration dataset")
         calibset = generate_calibration_dataset(input_shapes, graph)
     else:
         print("Using user defined calibration dataset")
 
-    quantized: BaseGraph = quantize_onnx_model(
-        onnx_import_file=onnx_path, 
+    # perform quantization
+    quantized: BaseGraph = quantize_onnx_model_lowbit(
+        onnx_import_file=onnx_path,
+        bit_width=bit_width,
+        symmetrical=True,
+        per_channel=per_channel,
         calib_dataloader=calibset,
         calib_steps=calib_steps, 
         input_shape=None, 
@@ -68,10 +76,6 @@ def quantize(
         device=device,
         verbose=0
     )
-
-    executor, reference_outputs = TorchExecutor(quantized), []
-    for sample in calibset:
-        reference_outputs.append(executor.forward(collate_fn(sample)))
 
     graphwise_error_analyse(
         graph=quantized, 

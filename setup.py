@@ -33,6 +33,7 @@ setup(
         'maptools.hardware',
         'maptools.mapper',
         'maptools.quantization',
+        'maptools.quantization.ppq_lowbit',
         'maptools.toksim',
         'maptools.utils',
         'maptools.nlrt'

@@ -6,6 +6,7 @@ from ppq import QuantableOperation, TensorQuantizationConfig
 from ppq.quantization.qfunction import PPQuantFunction_toInt
 from maptools.core import OperatorQuantConfig
 from maptools.utils.tools import destruct_scale
+from .ppq_lowbit import PPQLinearQuant_toInt_My
 
 __all__ = ['save_quantization']
 
@@ -48,7 +49,7 @@ def get_quantized_conv_weight(
     For TRT_INT8 platform, the quantization configuration information is generated to in `config` 
     while performing quantization.
     '''
-    return PPQuantFunction_toInt(tensor, config)
+    return PPQLinearQuant_toInt_My(tensor, config)
 
 
 def get_quantized_conv_bias(
@@ -67,7 +68,7 @@ def get_quantized_conv_bias(
     config.quant_min = -pow(2, 31) # preventing overflow
     config.scale = weight_config.scale * input_config.scale
     config.offset = 0
-    return PPQuantFunction_toInt(tensor, config)
+    return PPQLinearQuant_toInt_My(tensor, config)
 
 
 def save_quantization(
@@ -89,15 +90,20 @@ def save_quantization(
             output_config = op.output_quant_config[0]
 
             config_kwargs['op_type'] = op._type
-            config_kwargs['input_bits'] = int(input_config.num_of_bits)
+            if input_config.num_of_bits != output_config.num_of_bits: 
+                raise AssertionError("input quant bits must equal output quant bits")
+            
+            config_kwargs['io_bits'] = int(input_config.num_of_bits)
+            config_kwargs['io_min'] = int(input_config.quant_min)
+            config_kwargs['io_max'] = int(input_config.quant_max)
             config_kwargs['input_scale'] = float(input_config.scale)
-
-            config_kwargs['output_bits'] = int(output_config.num_of_bits)
             config_kwargs['output_scale'] = float(output_config.scale)
 
             if op._type == 'Conv':
                 weight_config = op.input_quant_config[1]
                 config_kwargs['weight_bits'] = int(weight_config.num_of_bits)
+                config_kwargs['weight_min'] = int(weight_config.quant_min)
+                config_kwargs['weight_max'] = int(weight_config.quant_max)
                 config_kwargs['weight_scale'] = weight_config.scale.cpu()
 
                 weight_tensor = get_quantized_conv_weight(

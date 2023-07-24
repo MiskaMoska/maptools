@@ -5,7 +5,7 @@ import torch.nn as nn
 import pickle
 from functools import wraps
 from typing import List, Dict, Optional, Tuple, Any, Union, Callable
-from maptools.core import CTG, ModelParams, ROOT_DIR, PhysicalTile
+from maptools.core import CTG, ModelParams, ROOT_DIR, PhysicalTile, TileQuantConfig
 from maptools.calcusim.device.utils import *
 from maptools.calcusim.device.tile_task import TileTask, OBSERVE_VARS
 
@@ -111,9 +111,9 @@ class DeviceTask(nn.Module):
             if self.ctg.is_head_tile(node):
                 # quantizing before the head tile
                 if self.quantize:
-                    i_scale = self.ctg.dicts[node]['tqc'].i_scale
-                    x = torch.round(torch.divide(x, i_scale))
-                    x = torch.clamp(x, -128, 127)
+                    tqc: TileQuantConfig = self.ctg.dicts[node]['tqc']
+                    x = torch.round(torch.divide(x, tqc.i_scale))
+                    x = torch.clamp(x, tqc.io_min, tqc.io_max)
                 cast_in = x
             else:
                 if self.ctg.has_cast_in(node):

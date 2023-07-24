@@ -190,6 +190,11 @@ class TileMapper(object):
             tqc_kwargs = {}
             tqc_kwargs['op_type'] = config['op_type']
             conv_qc: OperatorQuantConfig = config['conv_quant_config']
+
+            tqc_kwargs['io_bits'] = conv_qc.io_bits
+            tqc_kwargs['io_min'] = conv_qc.io_min
+            tqc_kwargs['io_max'] = conv_qc.io_max
+
             tqc_kwargs['ci_scale'] = conv_qc.input_scale
             tqc_kwargs['co_scale'] = conv_qc.output_scale
             tqc_kwargs['i_scale'] = conv_qc.input_scale

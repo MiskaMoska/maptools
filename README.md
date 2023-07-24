@@ -13,6 +13,4 @@ https://maptools-doc.readthedocs.io/en/latest/Maptools%E5%AE%89%E8%A3%85%E4%B8%8
 
 
 
-
-
-Maptools (Memristor-based-AI Production Tools) is It is a Python-based tool kit for designing and developing Memristors-based AI chips. It enables end-to-end mapping from algorithms to hardware and provides system-level pre-simulation.
+Maptools (Memristor-based-AI Production Tools) is a Python-based tool kit for designing and developing Memristors-based AI chips. It enables end-to-end mapping from algorithms to hardware and provides system-level pre-simulation.

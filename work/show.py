@@ -48,7 +48,7 @@ csim = CalcuSim(
 )
 
 # 获取输入图片数据, 缩放至 224 × 224
-input = get_input('work/test1.png', resize=(768, 768))
+input = get_input('work/test1.png', resize=(224, 224))
 
 # 运行CalcuSim仿真, 获得输出结果
 output = csim(input)
@@ -71,7 +71,7 @@ output = csim(input)
 # # 保存硬件配置信息
 # nm.save_config()
 
-toksim = TokSim(ctg, **config)
-toksim.run()
+# toksim = TokSim(ctg, **config)
+# toksim.run()
 
-plot_tokens(config['mapname'])
+# plot_tokens(config['mapname'])

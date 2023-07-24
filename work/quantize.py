@@ -30,6 +30,8 @@ quantize(
     DEVICE,
     ONNX_PATH,
     mapname='resnet18',
+    bit_width=8,
+    per_channel=True,
     calibset=calibset,
     calib_steps=CALIB_STEPS
 )

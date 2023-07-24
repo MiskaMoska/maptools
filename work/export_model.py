@@ -15,7 +15,7 @@ import onnx
 # print(ssd.get_num_params())
 # ox.export(ssd,torch.randn(1,3,300,300),"ssd300_vgg16.onnx",opset_version=13)
 
-# model = tv.models.resnet18()
+model = tv.models.resnet18()
 model = tv.models.vgg16()
 # print(model.get_num_params())
 ox.export(
