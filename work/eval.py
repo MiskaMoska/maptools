@@ -17,7 +17,7 @@ ONNXDIR = 'onnx_models/simp-resnet18.onnx'
 QUANTIZE = True # 是否进行量化
 DEVICE = 'cuda' # 是否使用CUDA加速
 BATCHSIZE = 32 # Batch 大小
-PHYSICAL = True # 是否模拟真实的Xbar和ADC计算
+PHYSICAL = False # 是否模拟真实的Xbar和ADC计算
 HARDTRANS = True # 是否模拟真实的定点数乘法
 IVCF = 4000/128 # ADC电流-电压转换系数
 

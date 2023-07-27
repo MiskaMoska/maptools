@@ -36,7 +36,7 @@ def quantize(
     calibset: Optional[Iterable[Dict[str, torch.Tensor]]] = None,
     calib_steps: int = 32
 ) -> None:
-    def collate_fn(batch: dict) -> torch.Tensor:
+    def collate_fn(batch: Dict[str, torch.Tensor]) -> Dict[str, torch.Tensor]:
         return {k: v.to(device) for k, v in batch.items()}
     
     # use default quantization settings
@@ -49,6 +49,9 @@ def quantize(
     for name in graph.inputs:
         if name not in input_shapes:
             raise KeyError(f'Graph input {name} needs a valid shape.')
+    
+    if len(graph.inputs) != 1:
+        raise ValueError('This program requires graph to have only 1 input.')
 
     if len(graph.outputs) != 1:
         raise ValueError('This program requires graph to have only 1 output.')
@@ -60,6 +63,9 @@ def quantize(
     else:
         print("Using user defined calibration dataset")
 
+    # get input data, must be a dictionary
+    inputs = {name: torch.rand(input_shapes[name]) for name in graph.inputs}
+
     # perform quantization
     quantized: BaseGraph = quantize_onnx_model_lowbit(
         onnx_import_file=onnx_path,
@@ -69,7 +75,7 @@ def quantize(
         calib_dataloader=calibset,
         calib_steps=calib_steps, 
         input_shape=None, 
-        inputs=collate_fn(calibset[-1]),
+        inputs=collate_fn(inputs),
         setting=QSetting, 
         collate_fn=collate_fn, 
         platform=PLATFORM,

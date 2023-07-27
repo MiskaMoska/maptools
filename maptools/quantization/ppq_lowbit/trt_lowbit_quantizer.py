@@ -65,8 +65,9 @@ class TrtLowBitQuantizer(BaseQuantizer):
                     )
                     conv_weight_config.quant_min = -pow(2, self.num_of_bits - 1)
                     conv_weight_config.quant_max = pow(2, self.num_of_bits - 1) - 1
-                    conv_weight_config.channel_axis = (
-                        1 if operation.type == 'ConvTranspose' else 0)
+                    if self.per_channel:
+                        conv_weight_config.channel_axis = (
+                            1 if operation.type == 'ConvTranspose' else 0)
                     conv_weight_config.observer_algorithm = 'minmax'
 
             # first parameter must exits, for gemm layer it will be gemm_weight
@@ -82,7 +83,8 @@ class TrtLowBitQuantizer(BaseQuantizer):
                     )
                     gemm_weight_config.quant_min = -pow(2, self.num_of_bits - 1)
                     gemm_weight_config.quant_max = pow(2, self.num_of_bits - 1) - 1
-                    gemm_weight_config.channel_axis = 0
+                    if self.per_channel:
+                        gemm_weight_config.channel_axis = 0
                     gemm_weight_config.observer_algorithm = 'minmax'
 
             if operation.num_of_input > 2:
@@ -192,8 +194,9 @@ class TrtLowBitQuantizer_InputOnly(BaseQuantizer):
                     )
                     conv_weight_config.quant_min = -pow(2, self.num_of_bits -1)
                     conv_weight_config.quant_max = pow(2, self.num_of_bits -1) - 1
-                    conv_weight_config.channel_axis = (
-                        1 if operation.type == 'ConvTranspose' else 0)
+                    if self.per_channel:
+                        conv_weight_config.channel_axis = (
+                            1 if operation.type == 'ConvTranspose' else 0)
                     conv_weight_config.observer_algorithm = 'minmax'
             # first parameter must exits, for gemm layer it will be gemm_weight
             # layout: [in_dim, out_dim]
@@ -211,7 +214,8 @@ class TrtLowBitQuantizer_InputOnly(BaseQuantizer):
                     )
                     gemm_weight_config.quant_min = -pow(2, self.num_of_bits - 1)
                     gemm_weight_config.quant_max = pow(2, self.num_of_bits - 1) - 1
-                    gemm_weight_config.channel_axis = 0
+                    if self.per_channel:
+                        gemm_weight_config.channel_axis = 0
                     gemm_weight_config.observer_algorithm = 'minmax'
             # if operation has bias
             if operation.num_of_input > 2:

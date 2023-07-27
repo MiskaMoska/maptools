@@ -30,7 +30,6 @@ class QDQHelper():
                 QuantizationProperty.LINEAR):
             if TQC.policy.has_property(QuantizationProperty.ASYMMETRICAL):
                 range_check = TQC.quant_max <= 255 and TQC.quant_min >= 0
-                print(range_check)
             else:
                 range_check = TQC.quant_max <= 127 and TQC.quant_min >= -128
         else:
