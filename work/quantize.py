@@ -23,16 +23,18 @@ print(f"Calibration dataset prepared, number of samples: {len(calibset)}")
 INPUT_SHAPES     = {'input': [1, 3, 224, 224]}
 CALIB_STEPS      = 128
 DEVICE           = 'cuda'
+BIT_WIDTH        = 8
+PER_CHANNEL      = True
 ONNX_PATH        = 'onnx_models/simp-resnet18.onnx'
 
 quantize(
     INPUT_SHAPES,
     DEVICE,
     ONNX_PATH,
-    mapname='resnet18',
-    bit_width=8,
-    per_channel=True,
+    bit_width=BIT_WIDTH,
+    per_channel=PER_CHANNEL,
     calibset=calibset,
+    mapname='resnet18',
     calib_steps=CALIB_STEPS
 )
 

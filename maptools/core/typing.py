@@ -8,6 +8,8 @@ TileConfig = Dict[str, Any]
 OperatorConfig = Dict[str, Any]
 ModelParams = Dict[str, np.ndarray]
 
+Connection = str
+
 # for layout and routing design
 CIRTile = Tuple[int, int]
 CIR2PhyIdxMap = Dict[CIRTile, int]

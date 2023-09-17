@@ -7,3 +7,4 @@ from .dle import *
 from .dre import *
 from .layout_designer import *
 from .routing_designer import *
+from .routing_trail import *

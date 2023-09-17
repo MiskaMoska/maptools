@@ -1,13 +1,16 @@
 import torch
 from enum import Enum
-from typing import Optional
+from typing import List, Optional, Union
+from maptools.core.typing import PhysicalTile, MeshEdge
 
 __all__ = [
     'OperatorQuantConfig',
     'TileQuantConfig',
     'NNModelArch',
     'DLEMethod',
-    'DREMethod'
+    'DREMethod',
+    'RouterPort',
+    'TrailType'
 ]
 
 class OperatorQuantConfig(object):
@@ -128,18 +131,35 @@ class TileQuantConfig(object):
 
 
 class NNModelArch(Enum):
-    VGG          = 0
-    RESNET       = 1
-    GOOGLENET    = 2
-    YOLO_V3      = 3
-    SQUEEZENET   = 4
+    VGG             = 0
+    RESNET          = 1
+    GOOGLENET       = 2
+    YOLO_V3         = 3
+    SQUEEZENET      = 4
 
 
 class DLEMethod(Enum):
-    REVERSE_S = 0
+    REVERSE_S       = 0
 
 
 class DREMethod(Enum):
-    DYXY = 0
-    RPM = 1
-    OCR = 2
+    DYXY            = 0
+    RPM             = 1
+    OCR             = 2
+
+class RouterPort(Enum):
+    WEST_I          = 0
+    WEST_O          = 1
+    EAST_I          = 2
+    EAST_O          = 3
+    NORTH_I         = 4
+    NORTH_O         = 5
+    SOUTH_I         = 6
+    SOUTH_O         = 7
+    LOCAL_I         = 8
+    LOCAL_O         = 9
+
+class TrailType(Enum):
+    CAST            = 0 # fused both cast and gather data stream
+    MERGE           = 1
+    

@@ -236,7 +236,7 @@ class DeviceGraph(OperatorGraph):
         self.graph.add_edges_from(es2add)
 
     def remove_concat(self) -> None:
-        # Remove concat and genrate concat information
+        # Remove concat and generate concat information
         ns2rmv, es2add = [], []
         for n in self.graph.nodes:
             if self.op_type(n) == 'Concat': # current node is concat

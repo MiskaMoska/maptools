@@ -8,7 +8,6 @@ if os.name == 'posix':
 from maptools.hardware import NocConfig
 from maptools.utils import read_quantparams
 from maptools.core import CTG, NNModelArch, ROOT_DIR
-from maptools.drawing import MapPlotter
 from maptools.mapper import OnnxConverter, TileMapper, NocMapper
 from maptools.calcusim import CalcuSim
 
@@ -126,21 +125,6 @@ class MapRoutine(object):
             nm.run_routing()
 
             if self.save_mapinfo: nm.save_config()
-            if self.show_cast_path or self.show_gather_path:
-                plt = MapPlotter(
-                    self.noc_size[0], 
-                    self.noc_size[1], 
-                    nm.cast_paths, 
-                    nm.merge_paths, 
-                    nm.cast_paths, 
-                    show_path=True,
-                    **self.config
-                )
-
-                if self.show_cast_path: plt.plot_cast_map()
-                if self.show_merge_path: plt.plot_merge_map()
-                if self.show_gather_path: plt.plot_gather_map()
-            
             if self.save_cfginfo:
                 nc = NocConfig(
                     self.noc_size[0], 

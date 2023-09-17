@@ -7,10 +7,10 @@ from copy import deepcopy
 from typing import List, Dict, Tuple, Any, Optional, Generator
 from functools import cached_property
 from maptools.mapper.tile_mapper import TileMapper
-from maptools.core import CTG, ACG, ROOT_DIR
+from maptools.core import CTG, ACG, ROOT_DIR, Connection, TrailType, MeshEdge
 from maptools.nlrt import LayoutDesigner, LayoutResult
-from maptools.nlrt import RoutingDesigner, RoutingResult
-from maptools.drawing import MapPlotter
+from maptools.nlrt import RoutingDesigner, RoutingResult, RoutingTrail
+from maptools.drawing import draw_cast_trails, draw_merge_trails
 
 __all__ = ['NocMapper']
 
@@ -32,15 +32,6 @@ class NocMapper(object):
 
         acg: ACG
             Architecture Characterization Graph of the NoC.
-
-        Key Members
-        -----------
-        self.xxx_paths : Dict[str, Dict[str, Any]]
-            xxx can be any of [cast, merge].
-            Stores the mapped paths and corresponding attributes for each connection type.
-            `self.xxx_paths` = {'connection_name' : `path_dict`}
-            where `path_dict` = {'sid' : int, 'src' : List[Tuple], 'dst' : List[Tuple], 
-                                'path' : List[Tuple[Tuple]], 'load_ratio' : float, ....}}
         '''
         self.ctg = ctg
         self.acg = acg
@@ -51,9 +42,7 @@ class NocMapper(object):
         self.mapname = 'newmap'
         self.__dict__.update(kwargs)
 
-        # network routing paths
-        self.cast_paths: Dict[str, Dict[str, Any]] = dict()
-        self.merge_paths: Dict[str, Dict[str, Any]] = dict()
+        self._merge_path: Dict[str, List[MeshEdge]] = dict()
 
     def run_layout(self) -> None:
         self.layout_designer = LayoutDesigner(
@@ -63,26 +52,12 @@ class NocMapper(object):
         self.layout = self.layout_designer.layout_result
 
     def run_routing(self) -> None:
-        self._merge_routing()
-        self.routing_designer = RoutingDesigner(
-            self.ctg, self.acg, self.layout, **self.configs
-        )
-        self.routing_designer.run_routing()
-        self.routing = self.routing_designer.routing_result
+        self.run_merge_routing()
+        self.run_cast_routing()
 
-        sid = 0
-        for cset in [
-            self.ctg.cast_trees, 
-            self.ctg.gather_pairs
-        ]:
-            for c, src, dst in cset:
-                sid += 1
-                self.cast_paths[c] = {
-                    'sid': sid,
-                    'src': [self.layout[src]],
-                    'dst': [self.layout[d] for d in dst],
-                    'path': self.routing[c]
-                }
+    def run_map(self) -> None:
+        self.run_layout()
+        self.run_routing()
 
     @staticmethod
     def _dyxy_once(sx: int, sy: int, dx: int, dy: int) -> Tuple:
@@ -141,13 +116,13 @@ class NocMapper(object):
         path.append(((sx, sy), (nxt_sx ,nxt_sy)))
         NocMapper._route_dyxy(nxt_sx, nxt_sy, dx, dy, path, patch=patch)
 
-    def _merge_routing(self) -> None:
+    def run_merge_routing(self) -> None:
         '''
         Planning merge routing paths
         Make sure to call this method after `self.run_layout()`
         '''
         # merge tree number
-        merge_num = self.ctg.merge_num  
+        merge_num = self.ctg.merge_num
 
         for sid, (name, src_nodes, root_node) in enumerate(self.ctg.merge_trees, 1):
             root_node = self.layout[root_node] # get the mapped node pos
@@ -183,13 +158,61 @@ class NocMapper(object):
                         break
                 if flag:
                     break
-            
-            self.merge_paths[name] = {
-                'sid': sid,
-                'src': src_nodes,
-                'dst': [root_node],
-                'path': paths
-            }
+
+            self._merge_path[name] = paths
+
+    def run_cast_routing(self) -> None:
+        '''
+        Planning merge routing paths
+        Make sure to call this method after `self.run_layout()`
+        '''
+        self.routing_designer = RoutingDesigner(
+            self.ctg, self.acg, self.layout, **self.configs
+        )
+        self.routing_designer.run_routing()
+        self.routing = self.routing_designer.routing_result
+
+    @cached_property
+    def cast_trails(self) -> Dict[Connection, RoutingTrail]:
+        '''
+        Constructing cast routing trail,
+        Make sure to call this method after `self.run_routing()`
+        '''
+        sid = 0
+        cast_trails = {}
+        for cset in [
+            self.ctg.cast_trees, 
+            self.ctg.gather_pairs
+        ]:
+            for conn, src, dst in cset:
+                sid += 1
+                cast_trails[conn] = RoutingTrail(
+                    sid, [self.layout[src]], 
+                    [self.layout[d] for d in dst],
+                    self.routing.get_path(conn),
+                    acg=self.acg, 
+                    trail_type=TrailType.CAST
+                )
+
+        return cast_trails
+    
+    @cached_property
+    def merge_trails(self) -> Dict[Connection, RoutingTrail]:
+        '''
+        Constructing merge routing trail,
+        Make sure to call this method after `self.run_routing()`
+        '''
+        merge_trails = {}
+        for sid, (conn, src, dst) in enumerate(self.ctg.merge_trees, 1):
+            merge_trails[conn] = RoutingTrail(
+                sid, [self.layout[s] for s in src],
+                [self.layout[dst]],
+                self._merge_path[conn],
+                acg=self.acg, 
+                trail_type=TrailType.MERGE
+            )
+
+        return merge_trails
 
     @cached_property
     def tile_config(self) -> Dict:
@@ -252,16 +275,14 @@ class NocMapper(object):
         Save routing graphs
         '''
         self.routing.draw()
-        mplt = MapPlotter(
-            self.w, self.h,
-            self.cast_paths, 
-            self.merge_paths, 
-            self.cast_paths, 
-            show_path=True,
-            **self.configs
+        draw_cast_trails(
+            list(self.cast_trails.values()), 
+            mapname=self.mapname
         )
-        mplt.plot_cast_map()
-        mplt.plot_merge_map()
+        draw_merge_trails(
+            list(self.merge_trails.values()), 
+            mapname=self.mapname           
+        )
 
     def save_config(self, file_name: str = 'mapinfo') -> None:
         '''
@@ -280,10 +301,6 @@ class NocMapper(object):
         # write noc mapping info
         info_dict['match_dict'] = self.layout.l2p_map
         info_dict['tile_config'] = self.tile_config
-
-        # write network config info
-        info_dict['cast_paths'] = self.cast_paths
-        info_dict['merge_paths'] = self.merge_paths
 
         # write p2p communication info
         info_dict['p2p_casts'] = list(self.p2p_casts)
