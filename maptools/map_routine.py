@@ -5,7 +5,6 @@ import torch
 from typing import Optional, Tuple, Any
 if os.name == 'posix':
     from maptools.toksim import TokSim
-from maptools.hardware import NocConfig
 from maptools.utils import read_quantparams
 from maptools.core import CTG, NNModelArch, ROOT_DIR
 from maptools.mapper import OnnxConverter, TileMapper, NocMapper
@@ -125,17 +124,6 @@ class MapRoutine(object):
             nm.run_routing()
 
             if self.save_mapinfo: nm.save_config()
-            if self.save_cfginfo:
-                nc = NocConfig(
-                    self.noc_size[0], 
-                    self.noc_size[1],
-                    nm.cast_paths,
-                    nm.merge_paths,
-                    nm.cast_paths,
-                    **self.config
-                )
-                nc.run_config()
-                nc.save_config()
                 
         if self.show_ctg:
             if self.noc_map: nm.plot_ctg()

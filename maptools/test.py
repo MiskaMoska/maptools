@@ -57,3 +57,5 @@ class B():
 # g.add_node(1, color='red')
 
 # print(g.nodes[1])
+
+print((1,2)+(3,4))

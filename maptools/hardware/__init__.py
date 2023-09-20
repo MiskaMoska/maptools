@@ -1,2 +1,1 @@
-from .noc_config import *
-from .fc_plan import *
+from .routing_configurator import *

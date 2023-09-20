@@ -11,7 +11,7 @@ import onnxruntime as rt
 config = {
     'mapname': 'resnet18',
     'quantize': True,
-    # 'dre': DREMethod.DYXY
+    'dre': DREMethod.DYXY
 }
 
 model = onnx.load("onnx_models/simp-resnet18.onnx")
@@ -70,13 +70,17 @@ nm.run_routing()
 nm.save_layout()
 nm.save_routing()
 
-import sys
-sys.exit()
-
 # # 保存硬件配置信息
 # nm.save_config()
 
 routing = nm.routing
+
+rc = RoutingConfigurator(nm.cast_trails, nm.merge_trails, acg)
+rc.vc_assignment()
+rc.gen_crt()
+
+import sys
+sys.exit()
 
 #####################################################################
 def vc_assignment(routing: RoutingResult) -> Dict[str, int]:

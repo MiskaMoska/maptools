@@ -47,7 +47,7 @@ class RoutingTrail(object):
         self._sid = sid
         self._src = src
         self._dst = dst
-        self._trail = trail
+        self._path = trail
         self._type = trail_type
 
         self.w = acg.w
@@ -60,6 +60,18 @@ class RoutingTrail(object):
         elif self.is_merge():
             assert len(self._dst) == 1, (
                 "number of destination node must be 1 for merge connection")
+
+    @property
+    def path(self) -> List[MeshEdge]:
+        return self._path
+    
+    @property
+    def src(self) -> List[PhysicalTile]:
+        return self._src
+    
+    @property
+    def dst(self) -> List[PhysicalTile]:
+        return self._dst
 
     @staticmethod
     def _route_calcu(
@@ -118,7 +130,7 @@ class RoutingTrail(object):
             raise AssertionError("invalid operation, this is not a cast connection")
         
         g = nx.DiGraph()
-        g.add_edges_from(self._trail)
+        g.add_edges_from(self._path)
         transitions = []
 
         dst_nodes = self._dst
@@ -164,7 +176,7 @@ class RoutingTrail(object):
             raise AssertionError("invalid operation, this is not a merge connection")
         
         g = nx.DiGraph()
-        g.add_edges_from(self._trail)
+        g.add_edges_from(self._path)
         transitions = []
 
         for node in g.nodes:
@@ -201,6 +213,6 @@ class RoutingTrail(object):
         get cast or merge inter-router links
         ''' 
         g = nx.DiGraph()
-        g.add_edges_from(self._trail)
+        g.add_edges_from(self._path)
         return [self._get_link(edge) for edge in g.edges]
         
