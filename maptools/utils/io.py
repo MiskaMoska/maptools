@@ -3,7 +3,7 @@ import torch
 import pickle
 import logging
 from PIL import Image
-from typing import Tuple, Dict
+from typing import Tuple, Dict, Any
 from torchvision import transforms as transforms
 from maptools.core import ROOT_DIR, ModelParams
 
@@ -12,7 +12,9 @@ __all__ = [
     'read_params',
     'read_quantparams',
     'read_mapinfo',
-    'read_cfginfo',
+    'read_generalcfg',
+    'read_castcfg',
+    'read_mergecfg',
     'read_results',
     'get_logger'
 ]
@@ -29,36 +31,39 @@ def get_input(img_path: str, resize: Tuple = (224, 224)) -> torch.Tensor:
     img = trans(img)
     return torch.unsqueeze(img, dim=0)
 
+def _read_pkl(file_path: str) -> Any:
+    with open(file_path, 'rb') as f:
+        res = pickle.load(f)
+    return res
+
 def read_params(mapname: str) -> ModelParams:
-    file_dir = os.path.join(ROOT_DIR, 'mapsave', mapname, 'params.pkl')
-    with open(file_dir, 'rb') as f:
-        params = pickle.load(f)
-    return params
+    file_path = os.path.join(ROOT_DIR, 'mapsave', mapname, 'params.pkl')
+    return _read_pkl(file_path)
 
 def read_quantparams(mapname: str) -> ModelParams:
-    file_dir = os.path.join(ROOT_DIR, 'mapsave', mapname, 'quantparams.pkl')
-    with open(file_dir, 'rb') as f:
-        params = pickle.load(f)
-    return params
+    file_path = os.path.join(ROOT_DIR, 'mapsave', mapname, 'quantparams.pkl')
+    return _read_pkl(file_path)
 
 def read_mapinfo(mapname: str) -> Dict:
-    file_dir = os.path.join(ROOT_DIR, 'mapsave', mapname, 'mapinfo.pkl')
-    with open(file_dir, 'rb') as f:
-        mapinfo = pickle.load(f)
-    return mapinfo
+    file_path = os.path.join(ROOT_DIR, 'mapsave', mapname, 'mapinfo.pkl')
+    return _read_pkl(file_path)
 
-def read_cfginfo(mapname: str) -> Dict:
-    file_dir = os.path.join(ROOT_DIR, 'mapsave', mapname, 'cfginfo.pkl')
-    with open(file_dir, 'rb') as f:
-        cfginfo = pickle.load(f)
-    return cfginfo
+def read_generalcfg(mapname: str) -> Dict:
+    file_path = os.path.join(ROOT_DIR, 'mapsave', mapname, 'hwconfig', 'general_config.pkl')
+    return _read_pkl(file_path)
+
+def read_castcfg(mapname: str) -> Dict:
+    file_path = os.path.join(ROOT_DIR, 'mapsave', mapname, 'hwconfig', 'cast_config.pkl')
+    return _read_pkl(file_path)
+
+def read_mergecfg(mapname: str) -> Dict:
+    file_path = os.path.join(ROOT_DIR, 'mapsave', mapname, 'hwconfig', 'merge_config.pkl')
+    return _read_pkl(file_path)
 
 def read_results(mapname: str, file_name: str) -> Dict:
     file_name = file_name.rstrip('.pkl') + '.pkl'
-    file_dir = os.path.join(ROOT_DIR, 'mapsave', mapname, 'calcusim', file_name)
-    with open(file_dir, 'rb') as f:
-        results = pickle.load(f)
-    return results
+    file_path = os.path.join(ROOT_DIR, 'mapsave', mapname, 'calcusim', file_name)
+    return _read_pkl(file_path)
 
 def get_logger(name: str, dir: str) -> logging.Logger:
     filename = os.path.join(dir, f'{name}.log')

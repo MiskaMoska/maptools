@@ -18,7 +18,8 @@ class RoutingTrail(object):
         dst: List[PhysicalTile],
         trail: List[MeshEdge],
         acg: ACG,
-        trail_type: TrailType = TrailType.CAST
+        trail_type: TrailType = TrailType.CAST,
+        is_gather: bool = False
     ) -> None:
         '''
         This class stores the routing trail information of the connection,
@@ -43,12 +44,18 @@ class RoutingTrail(object):
 
         trail_type: TrailType = TrailType.CAST
             type of the routing trail
+
+        is_gather: bool = False
+            indicate whether the corresponding connection is a gather connection, only valid for
+            trails with trail type of `TrailType.CAST` since the cast trails absorbed both cast 
+            connections and gather connections.
         '''
         self._sid = sid
         self._src = src
         self._dst = dst
         self._path = trail
         self._type = trail_type
+        self._is_gather = is_gather
 
         self.w = acg.w
         self.h = acg.h

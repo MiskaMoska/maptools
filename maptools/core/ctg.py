@@ -13,7 +13,7 @@ from typing import (
 )
 from maptools.core.graph import DeviceGraph
 from maptools.core.utils import is_subseq
-from maptools.core.typing import TileConfig
+from maptools.core.typing import TileConfig, LogicalTile
 from maptools.core.common import ROOT_DIR
 
 __all__ = ['CTG']
@@ -94,6 +94,22 @@ class CTG(object):
     @cached_property
     def tiles(self) -> List[Tuple]:
         return [n for n in self.node_names if self.is_tile(n)]
+    
+    @cached_property
+    def head_tile(self) -> LogicalTile:
+        for tile in self.tile_nodes:
+            if self.is_head_tile(tile):
+                return tile
+        raise RuntimeError("cannot find head tile in CTG")
+
+    @cached_property
+    def tail_tiles(self) -> List[LogicalTile]:
+        tails = [] 
+        for tile in self.tile_nodes:
+            if self.is_tail_tile(tile):
+                tails.append(tile)
+        tails.sort(key=lambda tup:tup[1])
+        return tails
 
     @property
     def comms(self) -> List[str]:

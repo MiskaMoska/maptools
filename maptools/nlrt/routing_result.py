@@ -14,6 +14,7 @@ class RoutingResult(object):
         self._path_dict = rpc.path_dict
         self._src_dict = rpc.src_dict
         self._term_dict = rpc.term_dict
+        self._is_gather_dict = rpc.is_gather_dict
 
         self.mapname = 'newmap'
         self.__dict__.update(kwargs)
@@ -43,6 +44,9 @@ class RoutingResult(object):
         ]
         k = len(self._path_dict) // len(dark_colors) + 1
         self.colors = (dark_colors * k)[:len(self._path_dict)]
+
+    def is_gather(self, conn: Connection) -> bool:
+        return self._is_gather_dict[conn]
 
     @property
     def max_conflicts(self) -> int:
@@ -78,3 +82,4 @@ class RoutingResult(object):
         fdp.render(cleanup=True, directory=save_dir, view=False)
 
         print(f"routing graph saved to {save_dir}")
+

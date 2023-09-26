@@ -30,7 +30,7 @@ class LayoutResult(object):
 
     def _prepare_tile_color(self) -> None:
         dark_colors = [
-            color for _, color in mcolors.CSS4_COLORS.items() 
+            color for _, color in mcolors.CSS4_COLORS.items()
             if all(c <= 0.7 for c in mcolors.to_rgb(color))
         ]
         k = len(self.map) // len(dark_colors) + 1

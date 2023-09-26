@@ -58,4 +58,30 @@ class B():
 
 # print(g.nodes[1])
 
-print((1,2)+(3,4))
+def add(x):
+    return x+1
+
+a = ([1,2,3],[4,5,6])
+
+print(list(zip(*a)))
+
+
+def set_precall_method(callee=lambda x:x):
+    def precall_method(func):
+
+        def wrapper(*args, **kwargs):
+            callee()
+            return func(*args, **kwargs)
+
+        return wrapper
+    return precall_method
+
+
+
+def echo():
+    print("fuck")
+
+def add(x, y):
+    return x+y
+
+print(add(3,4))

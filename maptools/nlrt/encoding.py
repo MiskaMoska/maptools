@@ -501,9 +501,11 @@ class RoutingPatternCode(BaseCode):
         self.src_dict: Dict[str, PhysicalTile] = {} # src node dict
         self.term_dict: Dict[str, List[PhysicalTile]] = {} # terminal nodes dict
         self.path_dict: Dict[str, List[MeshEdge]] = {} # communication path dict
+        self.is_gather_dict: Dict[str, bool] = {} # indicates whether each communication is gather or not
 
         # initialize dictionaries for cast/gather connections
-        for connects in [ctg.cast_trees, ctg.gather_pairs]:
+        connect_classes = [ctg.cast_trees, ctg.gather_pairs]
+        for i, connects in enumerate(connect_classes):
             for c, src, dst in connects:
                 physrc = layout[src]
                 phydst = [layout[d] for d in dst]
@@ -512,6 +514,7 @@ class RoutingPatternCode(BaseCode):
 
                 self.comms.append(c)
                 self.src_dict[c] = physrc
+                self.is_gather_dict[c] = bool(i)
 
         self.choice_probs = self.gen_choice_probs()
         self.reset()

@@ -75,57 +75,9 @@ nm.save_routing()
 
 routing = nm.routing
 
-rc = RoutingConfigurator(nm.cast_trails, nm.merge_trails, acg)
-rc.vc_assignment()
-rc.gen_crt()
+hd = HardwareDeployer(nm.cast_trails, nm.merge_trails, acg, ctg, nm.layout, **config)
 
-import sys
-sys.exit()
-
-#####################################################################
-def vc_assignment(routing: RoutingResult) -> Dict[str, int]:
-    # constructing communication confiction graph
-    confliction_dict: Dict[MeshEdge, List[str]] = {}
-    for connection, path in routing.path_dict.items():
-        for edge in path:
-            if edge not in confliction_dict:
-                confliction_dict[edge] = []
-            confliction_dict[edge].append(connection)
-    
-    max_confliction = max([len(c) for c in confliction_dict.values()])
-
-    graph_list = []
-    print(f"the number of confliction blocks: {len([p for p in confliction_dict.keys() if len(confliction_dict[p])>2])}")
-    for connections in confliction_dict.values():
-        graph_list.append(nx.complete_graph(connections))
-    
-    confliction_graph = nx.compose_all(graph_list)
-    res = nx.greedy_color(confliction_graph)
-
-    # dark_colors = {
-    #     i: color for i, (_, color) in enumerate(mcolors.CSS4_COLORS.items())
-    #     # if all(c <= 0.7 for c in mcolors.to_rgb(color))
-    # }
-    color_map = {
-        0: 'red',
-        1: 'blue',
-        2: 'green',
-        3: 'orange',
-        4: 'purple',
-        5: 'yellow'
-    }
-    colors = []
-    for n in confliction_graph.nodes:
-        colors.append(color_map[res[n]])
-
-    max_vc = len(set(list(res.values())))
-    print(max_confliction, max_vc)
-    nx.draw(confliction_graph, node_color=colors, node_size=40)
-    plt.show()
-
-# nx.draw_networkx()
-vc_assignment(routing)
-
+hd.save_config()
 # toksim = TokSim(ctg, **config)
 # toksim.run()
 

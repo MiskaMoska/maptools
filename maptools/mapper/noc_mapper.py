@@ -191,7 +191,7 @@ class NocMapper(object):
                     [self.layout[d] for d in dst],
                     self.routing.get_path(conn),
                     acg=self.acg, 
-                    trail_type=TrailType.CAST
+                    is_gather=self.routing.is_gather(conn)   
                 )
 
         return cast_trails
@@ -214,56 +214,6 @@ class NocMapper(object):
 
         return merge_trails
 
-    @cached_property
-    def tile_config(self) -> Dict:
-        '''
-        A dictionary with physical tile as keys and configuration info as values.
-        Tile configuration information for system simulation.
-        Always call this method after calling `self.run_map`.
-        '''
-        return {self.layout[k] : self.ctg.dicts[k] for k in self.ctg.tile_nodes}
-
-    @property 
-    def p2p_casts(self) -> Generator:
-        '''
-        cast information for P2P simulation.
-        Make sure to call this method after calling `self.run_map`.
-        '''
-        for _, root_node, dst_nodes in self.ctg.cast_trees:
-            yield (self.layout[root_node], [self.layout[d] for d in dst_nodes])
-    
-    @property
-    def p2p_merges(self) -> Generator:
-        '''
-        merge information for P2P simulation.
-        Make sure to call this method after calling `self.run_map`.
-        '''
-        for _, src_nodes, root_node in self.ctg.merge_trees:
-            yield ([self.layout[s] for s in src_nodes], self.layout[root_node])
-
-    @property
-    def p2p_gathers(self) -> Generator:
-        '''
-        gather information for P2P simulation.
-        Make sure to call this method after calling `self.run_map`.
-        '''
-        for _, src_node, dst_nodes in self.ctg.gather_pairs:
-            yield (self.layout[src_node], [self.layout[d] for d in dst_nodes])
-
-    @cached_property
-    def tail_tiles(self) -> List[Tuple]:
-        '''
-        tail tiles information for concatenating outputs
-        [(x1, y1), (x2, y2), (...), (...), ...]
-        following tensor slice orders
-        '''
-        tails = [] 
-        for tile in self.ctg.tile_nodes:
-            if self.ctg.is_tail_tile(tile):
-                tails.append(tile)
-        tails.sort(key=lambda tup:tup[1])
-        return [self.layout[x] for x in tails]
-
     def save_layout(self) -> None:
         '''
         Save layout graphs
@@ -283,35 +233,6 @@ class NocMapper(object):
             list(self.merge_trails.values()), 
             mapname=self.mapname           
         )
-
-    def save_config(self, file_name: str = 'mapinfo') -> None:
-        '''
-        Save NoC configuration information
-        '''
-        save_dir = os.path.join(ROOT_DIR, 'mapsave', self.mapname)
-        if not os.path.exists(save_dir):
-            os.makedirs(save_dir)
-        file_dir = os.path.join(save_dir, file_name+'.pkl')
-        info_dict = dict()
-
-        # write network size info
-        info_dict['network_width'] = self.w
-        info_dict['network_height'] = self.h
-
-        # write noc mapping info
-        info_dict['match_dict'] = self.layout.l2p_map
-        info_dict['tile_config'] = self.tile_config
-
-        # write p2p communication info
-        info_dict['p2p_casts'] = list(self.p2p_casts)
-        info_dict['p2p_merges'] = list(self.p2p_merges)
-        info_dict['p2p_gathers'] = list(self.p2p_gathers)
-
-        info_dict['tail_tiles'] = self.tail_tiles
-
-        with open(file_dir, 'wb') as f:
-            pickle.dump(info_dict, f)
-        # print(f"noc mapping info has been written to {file_dir}")
 
     def plot_ctg(self) -> None:
         '''
