@@ -131,8 +131,6 @@ class HardwareDeployer(object):
         # write injection and ejection info
         cfg_dict['head_tile'] = self.layout[self.ctg.head_tile]
         cfg_dict['tail_tiles'] = [self.layout[t] for t in self.ctg.tail_tiles]
-        cfg_dict['injects'] = self.rc.get_injects()
-        cfg_dict['ejects'] = self.rc.get_ejects()
 
         with open(file_path, 'wb') as f:
             pickle.dump(cfg_dict, f)

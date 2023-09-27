@@ -68,21 +68,6 @@ class RoutingConfigurator(object):
 
         Key Members
         -----------
-        self._injects: Tuple[PhysicalTile, int, int]
-            This member stores the injection information, which is a 3-elemnet tuple
-            The first element is the first-layer tile through which data injects, the second element 
-            is the input port index for injection, which follows the mapping relationship of 
-            `self.IP_MAP`, the third element is the VC number that the injecting dataflow traverses on
-        
-        self._ejects: Tuple[List[PhysicalTile], List[int], List[int]]
-            This member stores the ejection information, which is a 3-element tuple
-            The first element is a list of ejection tiles through which data ejects, the second element 
-            is a list of the corresponding ejecting ports in the ejection tiles, the third element is 
-            a list of the corresponding ejecting VCs that the ejecting dataflow traverses on.
-            
-            Note that the order of the ejection list matters, it is the concatenating order for the 
-            output vectors.
-
         self._crt: Mapping[PhysicalTile, List[List[List[int]]]]
             This is Cast Routing Tables, storing the routing table for each input VC of each 
             input port of each cast router
@@ -158,16 +143,6 @@ class RoutingConfigurator(object):
     def get_cloc(self
     ) -> Mapping[PhysicalTile, Tuple[bool, int, int]]:
         return self._cloc
-    
-    @set_precall_method(method=run_config)
-    def get_injects(self
-    ) -> Tuple[PhysicalTile, int, int]:
-        return self._injects
-
-    @set_precall_method(method=run_config)
-    def get_ejects(self
-    ) -> Tuple[List[PhysicalTile], List[int], List[int]]:
-        return self._ejects
 
     @staticmethod
     def has_intersection(list1: List, list2: List) -> bool:
@@ -191,9 +166,7 @@ class RoutingConfigurator(object):
                     raise AssertionError(
                         "the intra-router transition donnot share the same router ID")
                 self._crt[src[0:2]] [self.IP_MAP[src[2]]] [self._cvmap[conn]] [self.OP_MAP[dst[2]]] = 1
-        
-        self.injection_allocation()
-        self.ejection_allocation()
+
     
     def run_mrt_config(self) -> None:
         '''
@@ -282,52 +255,6 @@ class RoutingConfigurator(object):
         self._minvc = len(set(list(self._cvmap.values())))
         print('max confliction:', max_confliction, 'min vc:', self._minvc)
 
-    def injection_allocation(self) -> None:
-        '''
-        This function allocates an available input port and VC for injecting dataflow,
-        and writes the injection information into `self._injects`.
-        '''
-        inject_tile = self._layout[self._ctg.head_tile]
-        for ip in range(1, 5): # search through west, east, north and south ports
-            for vc in range(self._minvc): # search through all VCs
-                if sum(self._crt[inject_tile][ip][vc]) == 0: # the input vc has no transfer request
-                    self._injects = (inject_tile, ip, vc)
-
-                    # update the cast routing table by adding request to local output port
-                    self._crt[inject_tile][ip][vc][0] = 1
-                    return
-                
-        # raise RuntimeError(f"failed to allocate the fucking injection port for tile {inject_tile}")
-    
-    def ejection_allocation(self) -> None:
-        '''
-        This function allocates available output ports and VCs for all ejecting dataflow,
-        and writes the ejection information into `self._ejects`.
-        '''
-        eject_tiles = [self._layout[t] for t in self._ctg.tail_tiles]
-        eject_ports = []
-        for et in eject_tiles:
-            # record whether an output port is occupied or not
-            ocp_dict = {op: False for op in range(1, 5)} 
-            for ip in range(1, 5):
-                for vc in range(self._minvc):
-                    for op in range(1, 5):
-                        if bool(self._crt[et][ip][vc][op]):
-                            ocp_dict[op] = True
-
-            for op, flag in ocp_dict.items():
-                if not flag:
-                    eject_ports.append(op)
-                    
-                    # update the cast routing table by adding request from local input port
-                    self._crt[et][0][0][op] = 1
-                    break
-            else:
-                # raise RuntimeError(f"failed to allocate the fucking ejection port for tile {et}")
-                pass
-        # the output VCs donnot matter, so they are default to be 0
-        self._ejects = (eject_tiles, eject_ports, [0]*len(eject_ports))
-
     def run_local_port_config(self) -> None:
         '''
         This method generates the cast local input/output configurations, then stores them into
@@ -350,10 +277,8 @@ class RoutingConfigurator(object):
             if is_cast:
                 # if a tile has cast_in/out, then the tile may be head/tail
                 # then it has no cast_in/out connection
-                if type == 'in' and self._ctg.is_head_tile(tile):
-                    cast_vc = self._injects[2]
-
-                elif type == 'out' and self._ctg.is_tail_tile(tile):
+                if (type == 'in' and self._ctg.is_head_tile(tile)) or (
+                    type == 'out' and self._ctg.is_tail_tile(tile)):
                     cast_vc = 0
                     
                 else:
