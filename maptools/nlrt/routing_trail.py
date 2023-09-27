@@ -127,6 +127,9 @@ class RoutingTrail(object):
 
     def is_merge(self) -> bool:
         return self._type == TrailType.MERGE
+    
+    def is_casted_gather(self) -> bool:
+        return self._is_gather
 
     @property
     def cast_transitions(self) -> List[Tuple]:

@@ -116,6 +116,9 @@ class HardwareDeployer(object):
         cfg_dict['network_width'] = self.w
         cfg_dict['network_height'] = self.h
 
+        # write VC info
+        cfg_dict['vcnumber'] = self.rc.get_vcnumber()
+
         # write noc mapping info
         cfg_dict['match_dict'] = self.layout.l2p_map
         cfg_dict['tile_config'] = self.tile_config
@@ -126,6 +129,7 @@ class HardwareDeployer(object):
         cfg_dict['p2p_gathers'] = list(self.p2p_gathers)
         
         # write injection and ejection info
+        cfg_dict['head_tile'] = self.layout[self.ctg.head_tile]
         cfg_dict['tail_tiles'] = [self.layout[t] for t in self.ctg.tail_tiles]
         cfg_dict['injects'] = self.rc.get_injects()
         cfg_dict['ejects'] = self.rc.get_ejects()

@@ -10,8 +10,9 @@ import onnxruntime as rt
 # 读取onnx模型
 config = {
     'mapname': 'resnet18',
-    'quantize': True,
-    'dre': DREMethod.DYXY
+    'quantize': False,
+    # 'dre': DREMethod.DYXY,
+    # 'dle': DLEMethod.REVERSE_S
 }
 
 model = onnx.load("onnx_models/simp-resnet18.onnx")
@@ -65,6 +66,7 @@ nm = NocMapper(ctg, acg, **config)
 # 执行智能布局布线
 nm.run_layout()
 nm.run_routing()
+nm.plot_ctg()
 
 # 保存布局布线图
 nm.save_layout()

@@ -135,6 +135,46 @@ class RoutingConfigurator(object):
         self.run_mrt_config()
         self.run_local_port_config()
 
+    @set_precall_method(method=run_config)
+    def get_vcnumber(self) -> int:
+        return self._minvc
+
+    @set_precall_method(method=run_config)
+    def get_crt(self
+    ) -> Mapping[PhysicalTile, List[List[List[int]]]]:
+        return self._crt
+
+    @set_precall_method(method=run_config)
+    def get_mrt(self
+    ) -> Mapping[PhysicalTile, Dict[str, List[int]]]:
+        return self._mrt
+
+    @set_precall_method(method=run_config)
+    def get_clic(self
+    ) -> Mapping[PhysicalTile, Tuple[bool, int, int]]:
+        return self._clic
+
+    @set_precall_method(method=run_config)
+    def get_cloc(self
+    ) -> Mapping[PhysicalTile, Tuple[bool, int, int]]:
+        return self._cloc
+    
+    @set_precall_method(method=run_config)
+    def get_injects(self
+    ) -> Tuple[PhysicalTile, int, int]:
+        return self._injects
+
+    @set_precall_method(method=run_config)
+    def get_ejects(self
+    ) -> Tuple[List[PhysicalTile], List[int], List[int]]:
+        return self._ejects
+
+    @staticmethod
+    def has_intersection(list1: List, list2: List) -> bool:
+        set1, set2 = set(list1), set(list2)
+        common = set1.intersection(set2)
+        return len(common) > 0
+
     def run_crt_config(self) -> None:
         '''
         This method generates the cast routing tables, which is then stored in `self._crt`.
@@ -210,7 +250,31 @@ class RoutingConfigurator(object):
             graph_list.append(nx.complete_graph(connections))
 
         # constructing communication confliction graph
-        confliction_graph = nx.compose_all(graph_list)
+        confliction_graph: nx.Graph = nx.compose_all(graph_list)
+
+        '''
+        Apart from the link confliction, the confliction at local output port must be taken into
+        consideration, too. Actually the essence of link confliction is the output-port-confliction,
+        becasuse dataflows that conflict at an output port will then share the succeeding link,
+        so when we find a link confliction, we found the corresponding output-port-confliction, too.
+        However, the local output port is an exception whose succeeding link is invisible, and we cannot
+        take it into consideration while doing link confliction analysis only, so it requires separate handling
+
+        In addition, when two dataflows inject the NoC through the same local input port, it need no
+        special handling, because they may head for different output ports and donnot form a confliction,
+        or else if they head for the same output port, they definately share the same link then, which 
+        can be detected through link confliction analysis only.
+        '''
+        # adding local-output-conflictions to the confliction graph
+        for s_conn, s_trail in self._cast_trails.items():
+            if trail.is_casted_gather():
+                for d_conn, d_trail in self._cast_trails.items():
+                    if d_conn != s_conn:
+                        if self.has_intersection(s_trail.dst, d_trail.dst):
+                            print(f"connection {s_conn} has confliction with connection {d_conn} at local output port")
+                            confliction_graph.add_edge(s_conn, d_conn)
+
+        # apply greedy coloring algorithm
         self._cvmap: Mapping[Connection, int] = nx.greedy_color(confliction_graph)
 
         # calculate the maximum confliction and the minimum VC
@@ -233,7 +297,7 @@ class RoutingConfigurator(object):
                     self._crt[inject_tile][ip][vc][0] = 1
                     return
                 
-        raise RuntimeError(f"failed to allocate the fucking injection port for tile {inject_tile}")
+        # raise RuntimeError(f"failed to allocate the fucking injection port for tile {inject_tile}")
     
     def ejection_allocation(self) -> None:
         '''
@@ -259,8 +323,8 @@ class RoutingConfigurator(object):
                     self._crt[et][0][0][op] = 1
                     break
             else:
-                raise RuntimeError(f"failed to allocate the fucking ejection port for tile {et}")
-        
+                # raise RuntimeError(f"failed to allocate the fucking ejection port for tile {et}")
+                pass
         # the output VCs donnot matter, so they are default to be 0
         self._ejects = (eject_tiles, eject_ports, [0]*len(eject_ports))
 
@@ -325,34 +389,3 @@ class RoutingConfigurator(object):
                 self._ctg.gather_succ_comm,
                 type='out'
             )
-
-    @set_precall_method(method=run_config)
-    def get_crt(self
-    ) -> Mapping[PhysicalTile, List[List[List[int]]]]:
-        return self._crt
-
-    @set_precall_method(method=run_config)
-    def get_mrt(self
-    ) -> Mapping[PhysicalTile, Dict[str, List[int]]]:
-        return self._mrt
-
-    @set_precall_method(method=run_config)
-    def get_clic(self
-    ) -> Mapping[PhysicalTile, Tuple[bool, int, int]]:
-        return self._clic
-
-    @set_precall_method(method=run_config)
-    def get_cloc(self
-    ) -> Mapping[PhysicalTile, Tuple[bool, int, int]]:
-        return self._cloc
-    
-    @set_precall_method(method=run_config)
-    def get_injects(self
-    ) -> Tuple[PhysicalTile, int, int]:
-        return self._injects
-
-    @set_precall_method(method=run_config)
-    def get_ejects(self
-    ) -> Tuple[List[PhysicalTile], List[int], List[int]]:
-        return self._ejects
-
