@@ -167,7 +167,6 @@ class RoutingConfigurator(object):
                         "the intra-router transition donnot share the same router ID")
                 self._crt[src[0:2]] [self.IP_MAP[src[2]]] [self._cvmap[conn]] [self.OP_MAP[dst[2]]] = 1
 
-    
     def run_mrt_config(self) -> None:
         '''
         This method generates the merge routing tables, which is then stored in `self._mrt`.
@@ -287,7 +286,7 @@ class RoutingConfigurator(object):
 
             if is_gather:
                 # if a tile has gather_out, it must have gather_out connection
-                # if a tile has gather_in, it must have cast_in connection
+                # if a tile has gather_in, it must have gather_in connection
                 # so no special handling required for head/tail
                 gather_conn = gather_comm(tile)
                 gather_vc = self._cvmap[gather_conn]

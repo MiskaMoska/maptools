@@ -13,7 +13,7 @@ from typing import (
 )
 from maptools.core.graph import DeviceGraph
 from maptools.core.utils import is_subseq
-from maptools.core.typing import TileConfig, LogicalTile
+from maptools.core.typing import TileConfig, LogicalTile, Connection
 from maptools.core.common import ROOT_DIR
 
 __all__ = ['CTG']
@@ -388,29 +388,16 @@ class CTG(object):
             dst = list(self.graph.successors(g))
             yield (g, src, dst)
 
-    def comm_load_analysis(self) -> None:
+    def get_comm_load(self, conn: Connection) -> int:
         '''
-        This method provides fast communication load analysis to replace the function of 
-        `TokSim`, if only communication load analysis is needed and buffer size analysis
-        is not needed, use this method rather than `TokSim.run()`.
-        This method will update `self.dicts` by adding communication load information.
+        This method returns the communication load of a given connection.
+        unit: Tokens/Input Frame
         '''
-        dict1 = dict()
-        max_load = 0
-        for n in self.node_names:
-            if self.is_comm(n):
-                succs = self.succs(n)
-                succ = list(succs)[0]
-                ifs = self.dicts[succ]['conv_input_size']
-                ni = self.dicts[succ]['xbar_num_ichan']
-                load = ifs[0] * ifs[1] * ni
-                if load > max_load:
-                    max_load = load
-                dict1[n] = load # absolute load
-        for n in self.node_names:
-            if self.is_comm(n):
-                load = dict1[n]
-                self.update_dict(n, {'load': load, 'load_ratio': load / max_load})
+        succ = list(self.succs(conn))[0]
+        ifs = self.dicts[succ]['conv_input_size']
+        ni = self.dicts[succ]['xbar_num_ichan']
+        
+        return  ifs[0] * ifs[1] * ni 
 
     def plot_ctg(
         self, 

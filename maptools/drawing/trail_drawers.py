@@ -1,3 +1,7 @@
+'''
+This module has not been put into use yet
+'''
+
 import os
 import networkx as nx
 from matplotlib import pyplot as plt

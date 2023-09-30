@@ -51,9 +51,10 @@ class NocMapper(object):
         self.layout_designer.run_layout()
         self.layout = self.layout_designer.layout_result
 
-    def run_routing(self) -> None:
-        self.run_merge_routing()
+    def run_routing(self, omit_merge: bool = False) -> None:
         self.run_cast_routing()
+        if not omit_merge:
+            self.run_merge_routing()
 
     def run_map(self) -> None:
         self.run_layout()
@@ -191,7 +192,8 @@ class NocMapper(object):
                     [self.layout[d] for d in dst],
                     self.routing.get_path(conn),
                     acg=self.acg, 
-                    is_gather=self.routing.is_gather(conn)   
+                    is_gather=self.routing.is_gather(conn),
+                    load=self.ctg.get_comm_load(conn)
                 )
 
         return cast_trails
@@ -209,7 +211,8 @@ class NocMapper(object):
                 [self.layout[dst]],
                 self._merge_path[conn],
                 acg=self.acg, 
-                trail_type=TrailType.MERGE
+                trail_type=TrailType.MERGE,
+                load=self.ctg.get_comm_load(conn)
             )
 
         return merge_trails
@@ -220,7 +223,7 @@ class NocMapper(object):
         '''
         self.layout.draw()
 
-    def save_routing(self) -> None:
+    def save_routing(self, omit_merge: bool = False) -> None:
         '''
         Save routing graphs
         '''
@@ -229,10 +232,11 @@ class NocMapper(object):
             list(self.cast_trails.values()), 
             mapname=self.mapname
         )
-        draw_merge_trails(
-            list(self.merge_trails.values()), 
-            mapname=self.mapname           
-        )
+        if not omit_merge:
+            draw_merge_trails(
+                list(self.merge_trails.values()), 
+                mapname=self.mapname           
+            )
 
     def plot_ctg(self) -> None:
         '''

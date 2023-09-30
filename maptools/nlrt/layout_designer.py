@@ -35,9 +35,9 @@ class LayoutDesigner(object):
 
         dle: Optional[DLEMethod]
             To specify the Deterministic Layout Engine.
-            When `dle` is None, the optimization algorithm is default to be enabled
+            When `dle` is `None`, the optimization algorithm is default to be enabled
             to search for the best layout pattern.
-            When `dle` is not None, it must be one of the predefined DLEs, and the 
+            When `dle` is not `None`, it must be one of the predefined DLEs, and the 
             optimization algorithm is disabled, while the task of layout is handed 
             over to the specified DLE.
         '''

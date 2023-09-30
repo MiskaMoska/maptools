@@ -55,6 +55,18 @@ class ReversesDLE(BaseDLE):
         return path
 
 
+class ZigzagDLE(BaseDLE):
+
+    def generate_path(self) -> List[int]:
+        path = []
+        for i in range(self.noc_h):
+            for j in range(self.noc_w):
+                path.append(j+i*self.noc_w)
+        
+        return path
+
+
 __DLE_ACCESS_TABLE__ = {
-    DLEMethod.REVERSE_S         :ReversesDLE
+    DLEMethod.REVERSE_S         :ReversesDLE,
+    DLEMethod.ZIGZAG            :ZigzagDLE
 }

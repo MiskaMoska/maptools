@@ -66,7 +66,7 @@ class TileMapper(object):
         self.__dict__.update(kwargs)
         self.match_dict: Dict[str, int] = dict() 
         self.map_list: List[np.ndarray] = []
-        self.map_dict: Dict[LogicalTile, OperatorConfig] = dict() 
+        self.map_dict: Dict[LogicalTile, OperatorConfig] = dict()
 
     def _assert_first_layer(self, in_len: int, out_len: int) -> None:
         '''
@@ -106,7 +106,7 @@ class TileMapper(object):
                 else: end_ochan_index = (cluster_index + 1) * self.w
                 
                 if 'block_boxes' not in layer_config:
-                    raise KeyError("cannot find 'block_boxes' when tile mapping")
+                    raise KeyError("cannot find 'block_boxes' when performing tile mapping")
                 
                 # `block base index` is the base block index for each box
                 block_base_index = 0

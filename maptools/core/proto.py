@@ -140,6 +140,7 @@ class NNModelArch(Enum):
 
 class DLEMethod(Enum):
     REVERSE_S       = 0
+    ZIGZAG          = 1
 
 
 class DREMethod(Enum):
