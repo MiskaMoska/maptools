@@ -9,6 +9,7 @@ from maptools.hardware import *
 from maptools.mapper import *
 from maptools.nlrt import *
 from maptools.utils import *
+from maptools.research import *
 
 if os.name == 'posix':
     from maptools.toksim import *

@@ -48,11 +48,13 @@ def draw_heatmap(
 
     F_FUNC = {
         'log2'  :lambda x: math.log2(x+1),
+        'lg'  :lambda x: math.log10(x+1),
         'sqrt'  :lambda x: math.sqrt(x)
     }
 
     R_FUNC = {
         'log2'  :lambda x: math.pow(2, x)-1,
+        'lg'  :lambda x: math.pow(10, x)-1,
         'sqrt'  :lambda x: x**2
     }
 
@@ -64,6 +66,11 @@ def draw_heatmap(
     for trail in trails:
         for edge in trail.path:
             load_dict[edge] += trail.load
+    
+    total_load = sum(load_dict.values())
+    nonz_list = [load for load in load_dict.values() if load != 0]
+    print('Average load: ', total_load / len(load_dict))
+    print('Hotspot ratio: ', total_load/ len(nonz_list))
 
     for edge, load in load_dict.items():
         # load_dict[edge] = math.log2(load+1)

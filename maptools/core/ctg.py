@@ -395,14 +395,16 @@ class CTG(object):
         '''
         succ = list(self.succs(conn))[0]
         ifs = self.dicts[succ]['conv_input_size']
-        ni = self.dicts[succ]['xbar_num_ichan']
+        pred = list(self.preds(conn))[0]
+        nchan = self.dicts[pred]['xbar_num_ochan']
         
-        return  ifs[0] * ifs[1] * ni 
+        return  ifs[0] * ifs[1] * nchan
 
     def plot_ctg(
         self, 
         match_dict: Optional[Dict] = None, 
-        direction: Literal['LR', 'UD'] = 'LR'
+        direction: Literal['LR', 'UD'] = 'LR',
+        abstract: bool = False
     ) -> None:
         save_dir = os.path.join(ROOT_DIR, 'mapsave', self.mapname, 'ctg')
         if not os.path.exists(save_dir):
@@ -425,31 +427,52 @@ class CTG(object):
                 if key in local:
                     _label += f'\n{key} : {local[key]}'
             if self.is_tile(n): # tile
-                config = self.dicts[n]
-                icfg = config['xbar_icfg'][0]
-                ocfg = config['xbar_ocfg']
-                box_idx = config['box_idx']
-                shape = 'rectangle'
-                shape = 'box3d'
-                label = 'log: ' + str(n) 
-                if match_dict is not None:
-                    label += '\nphy: ' + str(match_dict[n])
-                label += f'\nop_type: {config["op_type"]}'
-                label += f'\nichan: {(icfg[1], icfg[2])}'
-                label += f'\nochan: {ocfg}'
-                label += f'\nbox_idx: {box_idx}'
-                label += _label
-                xlabel = None
+                if abstract:
+                    shape = 'box3d'
+                    label = 'Tile'
+                    xlabel = None
+                    fixedsize = 'true'
+                    height = 0.6
+                    width = 0.6
+                    penwidth = 2
+                else:
+                    config = self.dicts[n]
+                    icfg = config['xbar_icfg'][0]
+                    ocfg = config['xbar_ocfg']
+                    box_idx = config['box_idx']
+                    shape = 'rectangle'
+                    shape = 'box3d'
+                    label = 'log: ' + str(n) 
+                    if match_dict is not None:
+                        label += '\nphy: ' + str(match_dict[n])
+                    label += f'\nop_type: {config["op_type"]}'
+                    label += f'\nichan: {(icfg[1], icfg[2])}'
+                    label += f'\nochan: {ocfg}'
+                    label += f'\nbox_idx: {box_idx}'
+                    label += _label
+                    xlabel = None
+                    fixedsize = 'false'
+                    height = None
+                    width = None
+                    penwidth = 2
             else: # comm
                 shape = 'point'
                 label = None
                 xlabel = _label.lstrip('\n')
+                fixedsize = 'false'
+                height = None
+                width = None
+                penwidth = 2
             dot.node(
                 str(n), 
                 label=label, 
                 fontname='Arial',
                 shape=shape, 
-                xlabel=xlabel
+                xlabel=xlabel,
+                fixedsize=fixedsize,
+                height=str(height),
+                width=str(width),
+                penwidth=str(penwidth)
             )
 
         # plot edges
@@ -460,7 +483,7 @@ class CTG(object):
                 color = 'blue'
             elif e[0] in self.gather_comms or e[1] in self.gather_comms:
                 color = 'purple'
-            dot.edge(str(e[0]), str(e[1]), color=color)
+            dot.edge(str(e[0]), str(e[1]), color=color, penwidth='2')
             
         dot.render(cleanup=True, directory=save_dir, view=False)
         print(f"ctg saved to {save_dir}")

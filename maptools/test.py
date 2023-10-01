@@ -85,3 +85,7 @@ def add(x, y):
     return x+y
 
 print(add(3,4))
+
+
+a = [1,2,3,4]
+print(a[:3])

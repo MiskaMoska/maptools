@@ -36,7 +36,8 @@ setup(
         'maptools.quantization.ppq_lowbit',
         'maptools.toksim',
         'maptools.utils',
-        'maptools.nlrt'
+        'maptools.nlrt',
+        'maptools.research'
     ],
     ext_modules=ext_modules
 )
