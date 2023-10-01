@@ -11,8 +11,8 @@ import onnxruntime as rt
 config = {
     'mapname': 'resnet18',
     'quantize': False,
-    'dre': DREMethod.DYXY,
-    'dle': DLEMethod.ZIGZAG
+    # 'dre': DREMethod.DYXY,
+    # 'dle': DLEMethod.REVERSE_S
 }
 
 model = onnx.load("onnx_models/simp-resnet18.onnx")
@@ -65,12 +65,12 @@ nm = NocMapper(ctg, acg, **config)
 
 # 执行智能布局布线
 nm.run_layout()
-nm.run_routing(omit_merge=True)
+nm.run_routing(omit_merge=False)
 nm.plot_ctg()
 
 # 保存布局布线图
-nm.save_layout()
-nm.save_routing(omit_merge=True)
+# nm.save_layout()
+# nm.save_routing(omit_merge=False)
 
 # # 保存硬件配置信息
 # nm.save_config()
@@ -83,9 +83,9 @@ routing = nm.routing
 # toksim = TokSim(ctg, **config)
 # toksim.run()
 
-trails = nm.cast_trails.values()
+trails = list(nm.cast_trails.values())+list(nm.merge_trails.values())
 
-draw_heatmap(acg, trails)
+draw_heatmap(acg, trails, mapfunc='sqrt')
 
 # plot_tokens(config['mapname'])
 

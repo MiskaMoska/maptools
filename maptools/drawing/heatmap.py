@@ -1,7 +1,7 @@
 import math
 from maptools.core import ACG, MeshEdge
 from maptools.nlrt import RoutingTrail
-from typing import Iterable, Dict, Optional
+from typing import Iterable, Dict, Optional, Literal
 import matplotlib.pyplot as plt
 from matplotlib.path import Path
 from matplotlib.patches import PathPatch, CirclePolygon
@@ -19,7 +19,8 @@ LW = 5 # link width
 def draw_heatmap(
     acg: ACG, 
     trails: Iterable[RoutingTrail],
-    maximum: Optional[int] = None,  
+    maximum: Optional[int] = None,
+    mapfunc: Literal['log2', 'sqrt'] = 'log2',
     cmap_name: str = 'coolwarm'
 ) -> None:
     '''
@@ -29,16 +30,35 @@ def draw_heatmap(
     ----------
     acg: ACG
         Architecture characterization graph.
-
-    maximum: Optional[int] = None:
-        The value corresponding to the deepest color
     
     trails: Iterable[RoutingTrail]
         An iterable collection of routing trails, whitch contains the path and load information.
         Users can pass any trails as he/she likes, so drawing heatmap with a part of connections
         is supported, for example, if you only care about the cast(gather) communication load 
         distribution, you can pass the cast trails only.
+
+    maximum: Optional[int] = None
+        The value corresponding to the deepest color
+
+    mapfunc: Literal['log2', 'sqrt'] = 'log2'
+        The mapping function for value-color matching.
+        This mapping function is used to change the ralation of value-color matching
+        from linear to nonlinear to balancing the color distribution.
     '''
+
+    F_FUNC = {
+        'log2'  :lambda x: math.log2(x+1),
+        'sqrt'  :lambda x: math.sqrt(x)
+    }
+
+    R_FUNC = {
+        'log2'  :lambda x: math.pow(2, x)-1,
+        'sqrt'  :lambda x: x**2
+    }
+
+    def format_func(x, pos):
+        return f'{R_FUNC[mapfunc](x):.2e}'
+
     w, h = acg.w, acg.h
     load_dict = _init_load_dict(w, h)
     for trail in trails:
@@ -46,7 +66,8 @@ def draw_heatmap(
             load_dict[edge] += trail.load
 
     for edge, load in load_dict.items():
-        load_dict[edge] = math.log2(load+1)
+        # load_dict[edge] = math.log2(load+1)
+        load_dict[edge] = F_FUNC[mapfunc](load)
     
     fig, ax = plt.subplots()
     ax.axis('off')
@@ -62,7 +83,7 @@ def draw_heatmap(
     max_value = max(load_dict.values())
 
     if maximum is not None:
-        maximum = math.log2(maximum+1)
+        maximum = F_FUNC[mapfunc](maximum)
         if max_value < maximum:
             max_value = maximum
 
@@ -161,16 +182,13 @@ def draw_heatmap(
     colorbar = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
     cbar = plt.colorbar(colorbar, ax=ax, shrink=0.8)
 
-    def format_func(x, pos):
-        return f'{(pow(2, x)-1):.2e}'
-
     cbar.ax.yaxis.set_major_formatter(
         ticker.FuncFormatter(
             lambda x, pos: 
             format_func(x, pos)
         )
     )
-    
+
     plt.tight_layout()
     plt.show()
 
