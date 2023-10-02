@@ -17,9 +17,9 @@ class ClassicCTG(CTG):
         **kwargs: Any
     ) -> None:
         '''
-        This is a CTG re-designed for the classical mapping methods.
+        This is a CTG re-designed for the input-channel-wise mapping methods.
 
-        The classical input-channel-wise-mapping methods raised new requirements for the strategy 
+        The classic input-channel-wise-mapping methods raised new requirements for the strategy 
         to construct communication connections. For example, multiple cast connections can share 
         the same destination tile, where the data concatenation happens, but this will never happen 
         under our novel channel-decoupling-mapping methods.

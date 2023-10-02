@@ -309,7 +309,7 @@ class CTG(object):
 
     def _complete_connection_attrs(self) -> None:
         '''
-        Complete connection attributes.
+        This method completes connection attributes.
         This step is performed after building CTG rather than in-time with 
         building CTG to achieve procedure decoupling and safety.
         '''
@@ -399,6 +399,43 @@ class CTG(object):
         nchan = self.dicts[pred]['xbar_num_ochan']
         
         return  ifs[0] * ifs[1] * nchan
+
+    def get_comm_lifetime(self, conn: Connection) -> float:
+        '''
+        This method returns the lifetime of a given connection.
+        '''
+        for dst_tile in self.graph.successors(conn):
+            config = self.get_tile_config(dst_tile)
+            return 1 - config['arrival_time']
+        
+        raise AssertionError(f"connection {conn} has no destination tiles")
+    
+    def report_communication(self) -> None:
+        print('\n'+'-'*70)
+        print('\t\tCommunication Report')
+        print('-'*70)
+        for comm in self.comms:
+            load = self.get_comm_load(comm)
+            lifetime = self.get_comm_lifetime(comm)
+            print(f"comm: {comm}, load: {load}, lifetime: {lifetime}")
+
+    def report_local_port_buffer_number(self) -> None:
+        print('\n'+'-'*70)
+        print('\t\tLocal Port Buffer Number Report')
+        print('-'*70)
+        nums = []
+        for tile in self.tile_nodes:
+            if not self.is_head_tile(tile):
+                cast_in = [
+                    node for node in self.preds(tile)
+                    if self.is_cast_comm(node)
+                ]
+                num = len(cast_in)
+                nums.append(num)
+                print(f"tile {tile} local port buffer num: {num}")
+
+        print(f"maximum local port buffer number: {max(nums)}")
+        print(f"average local port buffer number: {sum(nums)/len(nums)}")
 
     def plot_ctg(
         self, 

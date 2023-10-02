@@ -4,6 +4,7 @@ TODO trunk is harmful to hybrid network structures
 
 import os
 import sys
+import math
 import networkx as nx
 from copy import deepcopy 
 from graphviz import Digraph as GDG
@@ -336,6 +337,55 @@ class DeviceGraph(OperatorGraph):
             if self.op_type(n) in {'MaxPool', 'AveragePool', 'GlobalAveragePool'}:
                 raise RuntimeError("existing remain pools")
 
+    def determine_arrival_times(self) -> None:
+        for n in self.nodes:
+            arrival_time = self._recursive_calcu_arrival_time(n, 1)
+            self.dicts[n]['arrival_time'] = arrival_time
+            print(f"calculated arrival time for layer {n}: {arrival_time}")
+
+    def get_head_layer(self) -> str:
+        for n in self.graph.nodes:
+            if self.is_input(n):
+                return n
+            
+        raise AssertionError("cannot find head layer")
+
+    def _recursive_calcu_arrival_time(self, layer: str, N: int) -> float:
+        if self.is_input(layer):
+            config = self.dicts[layer]
+            lines = config['conv_input_size'][0]
+            arrival_time = (N - 1) / lines
+
+        else:
+            pred = list(self.graph.predecessors(layer))[0] # choose a predecessor randomly
+            pred_config = self.dicts[pred]
+            op_type = pred_config['op_type']
+            if 'Conv' not in op_type:
+                raise AssertionError(f"layer {pred} has no Conv operation")
+            
+            Kc = pred_config['conv_kernel_size'][0]
+            Sc = pred_config['conv_strides'][0]
+            if 'Pool' in op_type: # has pooling
+                Kp = pred_config['pool_kernel_size'][0]
+                Sp = pred_config['pool_strides'][0]
+                Np = Kp - 1 + (N - 1) * Sp
+                No = Kc - 1 + (Np- 1) * Sc
+
+            elif 'Rsz' in op_type: # has resizing
+                R = pred_config['resize_scales'][2]
+                No = Kc - 1 + ((N - 1) // R) * Sc
+
+            else: # only has conv
+                No = Kc - 1 + (N - 1) * Sc
+
+            arrival_time = self._recursive_calcu_arrival_time(pred, No)
+
+        if arrival_time > 1:
+            raise AssertionError(
+                f"illegal arrival time (> 1) at layer {layer}: {arrival_time}")
+        
+        return arrival_time
+    
 
 class OperatorVariableGraph(object):
     

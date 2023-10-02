@@ -1,5 +1,5 @@
-import math
-from maptools.core import ACG, MeshEdge
+import os, math
+from maptools.core import ACG, MeshEdge, ROOT_DIR
 from maptools.nlrt import RoutingTrail
 from typing import Iterable, Dict, Optional, Literal
 import matplotlib.pyplot as plt
@@ -21,7 +21,8 @@ def draw_heatmap(
     trails: Iterable[RoutingTrail],
     maximum: Optional[int] = None,
     mapfunc: Literal['log2', 'sqrt'] = 'log2',
-    cmap_name: str = 'coolwarm'
+    cmap_name: str = 'coolwarm',
+    *args, **kwargs
 ) -> None:
     '''
     This function draws the heatmap which shows the communication load distribution in the NoC
@@ -45,6 +46,11 @@ def draw_heatmap(
         This mapping function is used to change the ralation of value-color matching
         from linear to nonlinear to balancing the color distribution.
     '''
+    config = {
+        'mapname': 'newmap',
+        'dpi': 300
+    }
+    config.update(kwargs)
 
     F_FUNC = {
         'log2'  :lambda x: math.log2(x+1),
@@ -65,7 +71,7 @@ def draw_heatmap(
     load_dict = _init_load_dict(w, h)
     for trail in trails:
         for edge in trail.path:
-            load_dict[edge] += trail.load
+            load_dict[edge] += trail.load / trail.lifetime
     
     total_load = sum(load_dict.values())
     nonz_list = [load for load in load_dict.values() if load != 0]
@@ -107,8 +113,8 @@ def draw_heatmap(
     # vertical links
     for x in range(w):
         for y in range(h-1):
-            edge1 = ((x, y), (x, y+1))
-            edge2 = ((x, y+1), (x, y))
+            edge1 = ((x, y+1), (x, y))
+            edge2 = ((x, y), (x, y+1))
 
             src = (x*L, -y*L)
             dst = (x*L, (-y-1)*L)
@@ -197,6 +203,16 @@ def draw_heatmap(
     )
 
     plt.tight_layout()
+    save_dir = os.path.join(ROOT_DIR, 'mapsave', config['mapname'], 'heatmap')
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
+
+    file_dir = os.path.join(save_dir, 'heatmap.png')
+    plt.savefig(
+        file_dir,
+        dpi=config['dpi'], 
+    )
+    print(f"heatmap saved to {save_dir}")
     plt.show()
 
 

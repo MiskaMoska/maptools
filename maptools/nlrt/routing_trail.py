@@ -20,7 +20,8 @@ class RoutingTrail(object):
         acg: ACG,
         trail_type: TrailType = TrailType.CAST,
         is_gather: bool = False,
-        load: int = 0
+        load: int = 0,
+        lifetime: float = 1.0
     ) -> None:
         '''
         This class stores the routing trail information of the connection,
@@ -53,6 +54,13 @@ class RoutingTrail(object):
 
         load: int = 0
             The communication load of the current connection, unit: Tokens/Input Frame
+
+        lifetime: float = 1.0
+            The life time of the current connection, it describes the proportion of the time of 
+            one input frame that the valid communication time occupies.
+
+            The local temporal communication load of the current connection is co-determined by 
+            the communication load and the communication lifetime.
         '''
         self._sid = sid
         self._src = src
@@ -61,6 +69,7 @@ class RoutingTrail(object):
         self._type = trail_type
         self._is_gather = is_gather
         self._load = load
+        self._lifetime = lifetime
 
         self.w = acg.w
         self.h = acg.h
@@ -88,6 +97,10 @@ class RoutingTrail(object):
     @property
     def load(self) -> int:
         return self._load
+    
+    @property
+    def lifetime(self) -> float:
+        return self._lifetime
 
     @staticmethod
     def _route_calcu(

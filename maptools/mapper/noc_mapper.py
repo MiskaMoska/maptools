@@ -193,7 +193,8 @@ class NocMapper(object):
                     self.routing.get_path(conn),
                     acg=self.acg, 
                     is_gather=self.routing.is_gather(conn),
-                    load=self.ctg.get_comm_load(conn)
+                    load=self.ctg.get_comm_load(conn),
+                    lifetime=self.ctg.get_comm_lifetime(conn)
                 )
 
         return cast_trails
@@ -212,7 +213,8 @@ class NocMapper(object):
                 self._merge_path[conn],
                 acg=self.acg, 
                 trail_type=TrailType.MERGE,
-                load=self.ctg.get_comm_load(conn)
+                load=self.ctg.get_comm_load(conn),
+                lifetime=self.ctg.get_comm_lifetime(conn)
             )
 
         return merge_trails

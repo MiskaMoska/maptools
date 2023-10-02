@@ -9,10 +9,11 @@ import onnxruntime as rt
 
 # 读取onnx模型
 config = {
-    'mapname': 'resnet18',
+    'mapname': 'yolo',
     'quantize': False,
     'dre': DREMethod.DYXY,
-    'dle': DLEMethod.REVERSE_S
+    'dle': DLEMethod.ZIGZAG,
+    'dpi': 300
 }
 
 CONCAT = True
@@ -20,10 +21,10 @@ CONCAT = True
 Mapper = ClassicTileMapper if CONCAT else TileMapper
 
 
-model = onnx.load("onnx_models/simp-resnet18.onnx")
+model = onnx.load("onnx_models/simp-yolo.onnx")
 
 # 创建onnx转换器
-oc = OnnxConverter(model, arch=NNModelArch.RESNET, **config)
+oc = OnnxConverter(model, arch=NNModelArch.YOLO_V3, **config)
 
 # 执行模型转换
 oc.run_conversion()
@@ -32,21 +33,26 @@ oc.run_conversion()
 oc.plot_device_graph()
 
 # 获得转换得到的设备算子图
-og = oc.device_graph
+dg = oc.device_graph
 
 # 创建逻辑映射器，设置Xbar尺寸
-xm = Mapper(og, 128, 128*5, **config)
+xm = Mapper(dg, 64, 64*5, **config)
 
 # 执行映射
 xm.run_map()
 
 # 打印映射信息
-xm.print_config()
+xm.report_config()
 
 # 获得映射得到的CTG
 ctg = xm.ctg
+
 if CONCAT:
     ctg.to_full_concat()
+
+ctg.report_communication()
+ctg.report_local_port_buffer_number()
+
 ctg.plot_ctg(direction='UD', abstract=True)
 
 # params = read_quantparams(config['mapname'])
@@ -65,7 +71,7 @@ ctg.plot_ctg(direction='UD', abstract=True)
 
 
 # 创建Tile阵列拓扑图，设置阵列规模
-acg = ACG(10, 17)
+acg = ACG(7, 10)
 
 # 创建物理映射器
 nm = NocMapper(ctg, acg, **config)
@@ -90,8 +96,9 @@ nm.run_routing(omit_merge=True)
 # toksim.run()
 
 trails = list(nm.cast_trails.values())
+trails = [trail for trail in trails if trail.lifetime]
 
-draw_heatmap(acg, trails, mapfunc='lg')
+draw_heatmap(acg, trails, mapfunc='lg', cmap_name='coolwarm', **config)
 
 # plot_tokens(config['mapname'])
 

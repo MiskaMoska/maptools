@@ -251,12 +251,9 @@ class TileMapper(object):
         '''
         return self.map_dict
 
-    def print_config(self) -> None:
-        '''
-        Print tile configs
-        '''
+    def report_config(self) -> None:
         print('\n'+'-'*70)
-        print('\t\tLogical Mapping Results')
+        print('\t\tLogical Mapping Report')
         print('-'*70)
         total = 0
         _match_dict = dict(zip(self.match_dict.values(), self.match_dict.keys()))

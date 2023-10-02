@@ -148,6 +148,7 @@ class OnnxConverter(object):
     def construct_device_graph(self) -> None:
         self.shaper(self.device_graph)
         recheck_pads(self.device_graph)
+        self.device_graph.determine_arrival_times()
 
     def run_conversion(self) -> None:
         self.construct_origin_graph()
