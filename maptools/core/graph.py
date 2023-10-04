@@ -338,6 +338,16 @@ class DeviceGraph(OperatorGraph):
                 raise RuntimeError("existing remain pools")
 
     def determine_arrival_times(self) -> None:
+        '''
+        This method determines the data arrival time for each layer.
+        Due to the data dependencies between defferent layers, the next layer does not receive 
+        the first input data until the current layer receive 3 lines of data and complete a window,
+        so as the layer goes deeper, the arrival time of input data is increasingly delayed.
+
+        The data arrival time has an influence on the valid communication time, because all communication
+        ends simultaneously as a frame is over, the later the data arrives, the shorter the valid 
+        communication time. We refer to the valid communication time as the lifetime.
+        '''
         for n in self.nodes:
             arrival_time = self._recursive_calcu_arrival_time(n, 1)
             self.dicts[n]['arrival_time'] = arrival_time
@@ -351,13 +361,28 @@ class DeviceGraph(OperatorGraph):
         raise AssertionError("cannot find head layer")
 
     def _recursive_calcu_arrival_time(self, layer: str, N: int) -> float:
+        '''
+        This method calculates the data arrival time of each layer in a recursive manner.
+        The variable `No` is the lines (without pads) in the input feature map that should be covered in 
+        the preceding layer to cover `N` lines (without pads) in the input feature map in layer represented
+        by `layer`.
+        '''
+
+        def assert_arrival_time_value(v):
+            assert v <= 1, f"illegal arrival time (> 1) at layer {layer}: {v}"
+
+        if N <= 0: # when the needed lines is covered by conv pads
+            return 0
+
         if self.is_input(layer):
             config = self.dicts[layer]
             lines = config['conv_input_size'][0]
             arrival_time = (N - 1) / lines
+            assert_arrival_time_value(arrival_time)
+            return arrival_time
 
-        else:
-            pred = list(self.graph.predecessors(layer))[0] # choose a predecessor randomly
+        arrival_times = []
+        for pred in self.graph.predecessors(layer): # choose the worst arrival time
             pred_config = self.dicts[pred]
             op_type = pred_config['op_type']
             if 'Conv' not in op_type:
@@ -365,26 +390,30 @@ class DeviceGraph(OperatorGraph):
             
             Kc = pred_config['conv_kernel_size'][0]
             Sc = pred_config['conv_strides'][0]
+            Pc = pred_config['conv_pads'][0]
             if 'Pool' in op_type: # has pooling
                 Kp = pred_config['pool_kernel_size'][0]
                 Sp = pred_config['pool_strides'][0]
-                Np = Kp - 1 + (N - 1) * Sp
-                No = Kc - 1 + (Np- 1) * Sc
+                Pp = pred_config['pool_pads'][0]
+                Np = Kp + (N - 1) * Sp - Pp
+
+                if Np <= 0: # when the needed lines is covered by pool pads 
+                    return 0
+                
+                No = Kc + (Np - 1) * Sc - Pc
 
             elif 'Rsz' in op_type: # has resizing
                 R = pred_config['resize_scales'][2]
-                No = Kc - 1 + ((N - 1) // R) * Sc
+                No = Kc + ((N - 1) // R) * Sc - Pc
 
             else: # only has conv
-                No = Kc - 1 + (N - 1) * Sc
+                No = Kc + (N - 1) * Sc - Pc
 
             arrival_time = self._recursive_calcu_arrival_time(pred, No)
-
-        if arrival_time > 1:
-            raise AssertionError(
-                f"illegal arrival time (> 1) at layer {layer}: {arrival_time}")
+            assert_arrival_time_value(arrival_time)
+            arrival_times.append(arrival_time)
         
-        return arrival_time
+        return max(arrival_times)
     
 
 class OperatorVariableGraph(object):

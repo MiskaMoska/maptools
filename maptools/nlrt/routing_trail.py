@@ -1,5 +1,6 @@
 import networkx as nx
 from typing import List, Tuple, Literal, Optional
+from functools import cached_property
 from maptools.core import (
     PhysicalTile, MeshEdge, ACG, TrailType,
     RouterPort
@@ -70,6 +71,7 @@ class RoutingTrail(object):
         self._is_gather = is_gather
         self._load = load
         self._lifetime = lifetime
+        self._graph = nx.DiGraph()
 
         self.w = acg.w
         self.h = acg.h
@@ -101,6 +103,17 @@ class RoutingTrail(object):
     @property
     def lifetime(self) -> float:
         return self._lifetime
+    
+    @cached_property
+    def degree(self) -> float:
+        if self._type == TrailType.MERGE:
+            print("It doesn't make sense to access the degree of a merge trail")
+            return 0.0
+        
+        self._graph.add_edges_from(self.path)
+        degrees = self._graph.out_degree()
+        degrees = [d for d in dict(degrees).values() if d > 0]
+        return sum(degrees) / len(degrees)
 
     @staticmethod
     def _route_calcu(

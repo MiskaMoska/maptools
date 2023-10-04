@@ -9,7 +9,8 @@ from maptools.nlrt import RoutingTrail, LayoutResult
 from maptools.utils import invoke_once, set_precall_method
 from maptools.core import (
     MeshEdge, Connection, ROOT_DIR,
-    ACG, CTG, RouterPort, PhysicalTile)
+    ACG, CTG, RouterPort, PhysicalTile
+)
 
 __all__ = ['RoutingConfigurator']
 

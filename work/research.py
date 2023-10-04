@@ -9,22 +9,21 @@ import onnxruntime as rt
 
 # 读取onnx模型
 config = {
-    'mapname': 'yolo',
+    'mapname': 'resnet18',
     'quantize': False,
-    'dre': DREMethod.DYXY,
-    'dle': DLEMethod.ZIGZAG,
+    # 'dre': DREMethod.DYXY,
+    'dle': DLEMethod.REVERSE_S,
     'dpi': 300
 }
 
-CONCAT = True
+CONCAT = False
 
 Mapper = ClassicTileMapper if CONCAT else TileMapper
 
-
-model = onnx.load("onnx_models/simp-yolo.onnx")
+model = onnx.load("onnx_models/simp-resnet18.onnx")
 
 # 创建onnx转换器
-oc = OnnxConverter(model, arch=NNModelArch.YOLO_V3, **config)
+oc = OnnxConverter(model, arch=NNModelArch.RESNET, **config)
 
 # 执行模型转换
 oc.run_conversion()
@@ -36,7 +35,7 @@ oc.plot_device_graph()
 dg = oc.device_graph
 
 # 创建逻辑映射器，设置Xbar尺寸
-xm = Mapper(dg, 64, 64*5, **config)
+xm = Mapper(dg, 256, 256*2, **config)
 
 # 执行映射
 xm.run_map()
@@ -71,7 +70,7 @@ ctg.plot_ctg(direction='UD', abstract=True)
 
 
 # 创建Tile阵列拓扑图，设置阵列规模
-acg = ACG(7, 10)
+acg = ACG(8, 14)
 
 # 创建物理映射器
 nm = NocMapper(ctg, acg, **config)
@@ -95,10 +94,14 @@ nm.run_routing(omit_merge=True)
 # toksim = TokSim(ctg, **config)
 # toksim.run()
 
-trails = list(nm.cast_trails.values())
-trails = [trail for trail in trails if trail.lifetime]
+nm.report_trail_degree()
 
-draw_heatmap(acg, trails, mapfunc='lg', cmap_name='coolwarm', **config)
+trails = list(nm.cast_trails.values())
+trails = [trail for trail in trails]
+
+
+
+# draw_heatmap(acg, trails, mapfunc='lg', cmap_name='coolwarm', **config)
 
 # plot_tokens(config['mapname'])
 

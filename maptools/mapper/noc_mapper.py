@@ -199,6 +199,13 @@ class NocMapper(object):
 
         return cast_trails
     
+    def report_trail_degree(self) -> None:
+        print('\n'+'-'*70)
+        print('\t\tTrail Degree Report')
+        print('-'*70)
+        for name, trail in self.cast_trails.items():
+            print(f'connection: {name}\taverage degree: {trail.degree}')
+
     @cached_property
     def merge_trails(self) -> Dict[Connection, RoutingTrail]:
         '''

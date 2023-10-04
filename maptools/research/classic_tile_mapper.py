@@ -98,10 +98,10 @@ class ClassicTileMapper(TileMapper):
                         end_chan = start_chan + self.w
                     unit_slices.append((start_chan, end_chan))
 
-            print('\nlayer: ', layer_index, layer_name)
-            print('num_ichan: ', n_ichan)
-            print('num_ochan: ', n_ochan)
-            print('unit_slices: ', unit_slices)      
+            # print('\nlayer: ', layer_index, layer_name)
+            # print('num_ichan: ', n_ichan)
+            # print('num_ochan: ', n_ochan)
+            # print('unit_slices: ', unit_slices)      
 
             clusters_split = math.ceil(n_ochan / self.w) 
             for cluster_index in range(clusters_split):
@@ -169,9 +169,6 @@ class ClassicTileMapper(TileMapper):
 
     def run_map(self) -> None: 
         self._map_for_all()
-        # This class is not supporting quntization
-        # if self.quantize:
-        #     self._build_tile_quant_config()
 
     @property
     def ctg(self) -> ClassicCTG:

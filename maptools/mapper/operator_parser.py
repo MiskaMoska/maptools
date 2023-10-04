@@ -69,8 +69,8 @@ class ConvParser(BaseOperatorParser):
     def process(self) -> OperatorConfig:
         super().process()
         size_i, size_o = self._get_io_size(self.node)
-        self.config['conv_input_size'] = size_i # including conv pads
-        self.config['conv_output_size'] = size_o
+        self.config['conv_input_size'] = size_i # input feature map size without pads
+        self.config['conv_output_size'] = size_o # output feature map size without pads
         self.config['conv_pads'] = [0]*4 # some conv operators have no conv_pads
 
         for at in self.node.attribute:
@@ -112,8 +112,8 @@ class PoolParser(BaseOperatorParser):
     def process(self) -> OperatorConfig:
         super().process()
         size_i, size_o = self._get_io_size(self.node)
-        self.config['pool_input_size'] = size_i
-        self.config['pool_output_size'] = size_o
+        self.config['pool_input_size'] = size_i # input feature map size without pads
+        self.config['pool_output_size'] = size_o # output feature map size without pads
         self.config['pool_mode'] = self.node.op_type
 
         for at in self.node.attribute:
