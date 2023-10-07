@@ -48,8 +48,7 @@ class RoutingResult(object):
     def is_gather(self, conn: Connection) -> bool:
         return self._is_gather_dict[conn]
 
-    @property
-    def max_conflicts(self) -> int:
+    def _get_conflicts(self) -> None:
         freq_dict = {}
         for path in self._path_dict.values():
             for edge in path:
@@ -57,8 +56,19 @@ class RoutingResult(object):
                     freq_dict[edge] = 0
                 freq_dict[edge] += 1
         
-        conflicts = list(freq_dict.values())
-        return max(conflicts)
+        self.conflicts = list(freq_dict.values())        
+
+    @property
+    def max_conflicts(self) -> int:
+        if not hasattr(self, 'conflicts'):
+            self._get_conflicts()
+        return max(self.conflicts)
+    
+    @property
+    def avg_conflicts(self) -> float:
+        if not hasattr(self, 'conflicts'):
+            self._get_conflicts()
+        return sum(self.conflicts) / len(self.conflicts)
 
     def draw(self) -> None:
         save_dir = os.path.join(ROOT_DIR, 'mapsave', self.mapname, 'routing')

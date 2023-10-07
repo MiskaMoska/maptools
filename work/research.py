@@ -11,7 +11,7 @@ import onnxruntime as rt
 config = {
     'mapname': 'resnet18',
     'quantize': False,
-    # 'dre': DREMethod.DYXY,
+    'dre': DREMethod.DYXY,
     'dle': DLEMethod.REVERSE_S,
     'dpi': 300
 }
@@ -68,11 +68,9 @@ ctg.plot_ctg(direction='UD', abstract=True)
 # # 运行CalcuSim仿真, 获得输出结果
 # output = csim(input)
 
-
 # 创建Tile阵列拓扑图，设置阵列规模
 acg = ACG(8, 14)
 
-# 创建物理映射器
 nm = NocMapper(ctg, acg, **config)
 
 # 执行智能布局布线
@@ -80,8 +78,8 @@ nm.run_layout()
 nm.run_routing(omit_merge=True)
 
 # 保存布局布线图
-# nm.save_layout()
-# nm.save_routing(omit_merge=True)
+nm.save_layout()
+nm.save_routing(omit_merge=True)
 
 # # 保存硬件配置信息
 # nm.save_config()
@@ -94,14 +92,12 @@ nm.run_routing(omit_merge=True)
 # toksim = TokSim(ctg, **config)
 # toksim.run()
 
-nm.report_trail_degree()
+nm.report_routing()
 
 trails = list(nm.cast_trails.values())
 trails = [trail for trail in trails]
 
-
-
-# draw_heatmap(acg, trails, mapfunc='lg', cmap_name='coolwarm', **config)
+draw_heatmap(acg, trails, mapfunc='lg', cmap_name='coolwarm', **config)
 
 # plot_tokens(config['mapname'])
 

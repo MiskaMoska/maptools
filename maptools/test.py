@@ -78,15 +78,6 @@ def set_precall_method(callee=lambda x:x):
 
 import networkx as nx
 
-# 创建一个图对象并添加节点和边
-G = nx.DiGraph()
-G.add_nodes_from([1, 2, 3, 4])
-G.add_edges_from([(1, 2), (2, 3), (3, 4)])
+with open('test', 'w') as f:
+    print("what?", file=None)
 
-# 计算每个节点的度
-degrees = G.out_degree()
-
-# 计算平均度
-average_degree = sum(dict(degrees).values()) / len(G)
-
-print("Average degree:", average_degree)

@@ -4,6 +4,7 @@ import pickle
 import networkx as nx
 from random import shuffle
 from copy import deepcopy
+from io import TextIOWrapper
 from typing import List, Dict, Tuple, Any, Optional, Generator
 from functools import cached_property
 from maptools.mapper.tile_mapper import TileMapper
@@ -199,12 +200,20 @@ class NocMapper(object):
 
         return cast_trails
     
-    def report_trail_degree(self) -> None:
-        print('\n'+'-'*70)
-        print('\t\tTrail Degree Report')
-        print('-'*70)
+    def report_routing(self, file: TextIOWrapper = None) -> None:
+        print('\n'+'-'*70, file=file)
+        print('\t\tTrail Degree Report', file=file)
+        print('-'*70, file=file)
+        degrees = []
         for name, trail in self.cast_trails.items():
-            print(f'connection: {name}\taverage degree: {trail.degree}')
+            print(f'connection: {name}\taverage degree: {trail.degree}', file=file)
+            if self.ctg.graph.out_degree(name) > 1: # current connection has multiple destination tiles
+                degrees.append(trail.degree)
+
+        print(f"maximum trail degree: {max(degrees)}", file=file)
+        print(f"average trail degree (only for multicast): {sum(degrees) / len(degrees)}", file=file) 
+        print(f"maximum conflict: {self.routing.max_conflicts}", file=file)
+        print(f"average conflict: {self.routing.avg_conflicts}", file=file)
 
     @cached_property
     def merge_trails(self) -> Dict[Connection, RoutingTrail]:
