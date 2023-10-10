@@ -2,6 +2,7 @@ import torch
 import torch.nn.functional as F
 import torch.nn as nn
 from typing import Generator
+import math
 
 class A(nn.Module):
 
@@ -76,8 +77,6 @@ def set_precall_method(callee=lambda x:x):
         return wrapper
     return precall_method
 
-import networkx as nx
-
-with open('test', 'w') as f:
-    print("what?", file=None)
+a = [(1,2),(3,4),(5,6)]
+print(math.ceil(10/2))
 

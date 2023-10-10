@@ -92,6 +92,10 @@ class LayoutPatternCode(BaseCode):
         # This is the inverted-mapped version of `self.phy_dict`
         self.inv_phy_dict: Dict[PhysicalTile, int] = {}
 
+        # A dictionary with logical tiles as keys and CIR tiles as values
+        # This is the inverted-mapped version of `self.log_dict`
+        self.inv_log_dict: Dict[LogicalTile, CIRTile] = {}
+
         # The core data structure of LPC
         # A dictionary with CIR tiles as keys and physical tile indices as values
         self.map: CIR2PhyIdxMap = {}
@@ -107,8 +111,12 @@ class LayoutPatternCode(BaseCode):
                 cir_tile = (i, k)
                 self.cir_tiles.append(cir_tile)
                 self.log_dict[cir_tile] = tile
+                self.inv_log_dict[tile] = cir_tile
 
         self.reset()
+
+    def get_cirtile_by_logtile(self, log: LogicalTile) -> CIRTile:
+        return self.inv_log_dict[log]
 
     def mutation(self) -> None:
         k1, k2 = random.sample(list(self.map.keys()), 2)

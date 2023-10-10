@@ -45,6 +45,7 @@ class LayoutDesigner(object):
             raise ValueError(
                 f"need larger NoC with more than {len(ctg.tile_nodes)} nodes")
         
+        self.ctg = ctg
         self.acg_nodes = acg.nodes
         self.lpc = LayoutPatternCode(ctg, acg)
         self.configs = kwargs
@@ -58,10 +59,10 @@ class LayoutDesigner(object):
             self.layout_engine = LayoutSimulatedAnnealing(
                 self.obj_func, 
                 self.lpc,
-                T_max=1e-2, 
+                T_max=10, 
                 T_min=1e-10, 
                 L=10, 
-                max_stay_counter=150,
+                max_stay_counter=500,
                 silent=False  
             )
 
@@ -86,14 +87,22 @@ class LayoutDesigner(object):
         because the function is generic for all algorithms (such as SA and GA),
         and it needs global variables in `LayoutDesigner` to execute. 
         '''
-        total_dist = 0
+        intra_dist = 0
+        inter_dist = 0
         for i, num in enumerate(x.cluster_list):
             for s, d in comb(list(range(num)), 2):
                 s_cir, d_cir = (i, s), (i, d)
                 s_pidx, d_pidx = x.map[s_cir], x.map[d_cir]
-                total_dist += self.ptdm[s_pidx, d_pidx]
+                intra_dist += self.ptdm[s_pidx, d_pidx]
 
-        return total_dist
+        for _, src, dsts in self.ctg.cast_trees:
+            for dst in dsts:
+                s_cir = x.get_cirtile_by_logtile(src)
+                d_cir = x.get_cirtile_by_logtile(dst)
+                s_pidx, d_pidx = x.map[s_cir], x.map[d_cir]
+                inter_dist += self.ptdm[s_pidx, d_pidx]
+
+        return intra_dist * inter_dist
 
     @property
     def layout_valid(self) -> bool:

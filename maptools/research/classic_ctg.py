@@ -18,6 +18,7 @@ class ClassicCTG(CTG):
     ) -> None:
         '''
         This is a CTG re-designed for the input-channel-wise mapping methods.
+        This CTG does not support CalcuSim-based and TokSim-based simulation.
 
         The classic input-channel-wise-mapping methods raised new requirements for the strategy 
         to construct communication connections. For example, multiple cast connections can share 

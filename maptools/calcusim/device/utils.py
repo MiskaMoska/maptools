@@ -6,22 +6,29 @@ from maptools.core import ModelParams, TileConfig
 
 __all__ = ['get_tile_kwargs']
 
-def rebuild_conv_weight(icfg: List[Tuple], ocfg: Tuple, weight: torch.Tensor) -> torch.Tensor:
+def rebuild_conv_weight(icfg: List[Tuple], ocfg: Tuple, xbar_num_ichan: int, weight: torch.Tensor) -> torch.Tensor:
     '''
     Rebuild convolution weight according to vector slicing information
     '''
     assert len(weight.shape) == 4, f"dimension of weight should be 4, but got {len(weight.shape)}"
-    ichan_s = icfg[0][1]
-    ichan_d = icfg[0][2]
+    ichan_ss = list(zip(*icfg))[1]
+    ichan_ds = list(zip(*icfg))[2]
+    ichan_s = min(ichan_ss)
+    ichan_d = max(ichan_ds)
+    assert ichan_d - ichan_s == xbar_num_ichan, (
+        f"input channel not matched, got slice ({ichan_s}, {ichan_d}, but got xbar_num_ichan: {xbar_num_ichan})"
+    )
     ochan_s = ocfg[0]
     ochan_d = ocfg[1]
     _weight = deepcopy(weight[ochan_s:ochan_d, ichan_s:ichan_d, :, :])
     partial_weight = torch.zeros_like(_weight)
     kw = weight.shape[3]
-    for i in [m[0] for m in icfg]:
+    for i, s, d in icfg:
         y = i // kw
         x = i % kw
-        partial_weight[:, :, y, x] = _weight[:, :, y, x] # mask
+        b = s - ichan_s
+        e = d - ichan_s
+        partial_weight[:, b:e, y, x] = _weight[:, b:e, y, x] # mask
     return partial_weight
 
 
@@ -43,7 +50,8 @@ def get_tile_kwargs(cfg: TileConfig, params: ModelParams) -> Dict:
     # get conv weight
     weight_ptr = cfg['conv_weight']
     weight = rebuild_conv_weight(
-        cfg['xbar_icfg'], cfg['xbar_ocfg'], 
+        cfg['xbar_icfg'], cfg['xbar_ocfg'],
+        cfg['xbar_num_ichan'],
         torch.tensor(params[weight_ptr]).float()
     )
     kwargs['conv_weight'] = weight

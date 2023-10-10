@@ -14,11 +14,11 @@ import onnx
 K = 3 # 准确率指标为 K-ACC
 MAPNAME = 'resnet18' 
 ONNXDIR = 'onnx_models/simp-resnet18.onnx'
-QUANTIZE = True # 是否进行量化
+QUANTIZE = False # 是否进行量化
 DEVICE = 'cuda' # 是否使用CUDA加速
 BATCHSIZE = 32 # Batch 大小
 PHYSICAL = False # 是否模拟真实的Xbar和ADC计算
-HARDTRANS = True # 是否模拟真实的定点数乘法
+HARDTRANS = False # 是否模拟真实的定点数乘法
 IVCF = 4000/128 # ADC电流-电压转换系数
 
 ########################## 以下是 CalcuSim 模型 ############################################
@@ -29,9 +29,10 @@ oc.run_conversion()
 xm = TileMapper(
     oc.device_graph, 
     256, 
-    256*5, 
+    600, 
     mapname=MAPNAME,
-    quantize=QUANTIZE
+    quantize=QUANTIZE,
+    slice_align=False
 )
 xm.run_map()
 params = read_quantparams(MAPNAME) if QUANTIZE else oc.params

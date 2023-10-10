@@ -30,6 +30,10 @@ class TileMapper(object):
         h : int
             Xbar height
 
+        slice_align: bool = True
+            When set True, each Tile must hold complete input channel slices after mapping.
+            When set False, each Tile can hold incomplete input channel slices after mapping.
+
         Key Members
         -----------
         self.match_dict : Dict[str, int]
@@ -57,12 +61,19 @@ class TileMapper(object):
             >>> key = (0, 1, 2, 1)
             >>> config_info = self.map_dict[key]
         '''
+        if not isinstance(w, int):
+            raise AssertionError(f'w must be a integer, but got {type(w)}')
+        
+        if not isinstance(h, int):
+            raise AssertionError(f'w must be a integer, but got {type(h)}')
+        
         assert w <= h, "Xbar height must be no smaller than width"
         self.device_graph = device_graph
         self.w = w
         self.h = h
         self.mapname = 'newmap'
         self.quantize = False
+        self.slice_align = True
         self.__dict__.update(kwargs)
         self.match_dict: Dict[str, int] = dict() 
         self.map_list: List[np.ndarray] = []
@@ -135,33 +146,93 @@ class TileMapper(object):
                         start_ichan_index = box[0] + box_block_index * self.w # box[0] is the base # ichannel
                         end_ichan_index = start_ichan_index + slice_len
 
-                        slices_per_tile = self.h // slice_len # max slices per tile
-                        tiles_per_block = math.ceil((kernel_size[0] * kernel_size[1]) / slices_per_tile)
-                    
-                        for tile_index in range(tiles_per_block):
-                            icfg = []
-                            if (tile_index + 1) * slices_per_tile > kernel_size[0] * kernel_size[1]:
-                                slices_now_tile = kernel_size[0] * kernel_size[1] % slices_per_tile
-                            else: slices_now_tile = slices_per_tile
-                            
-                            for k in range(slices_now_tile):
-                                winpos_idx = tile_index * slices_per_tile + k
-                                icfg.append((winpos_idx, start_ichan_index, end_ichan_index))
+                        #--------------------------------------------------------------------------------
+                        #   Aligned Mapping (Each Tile must hold complete input channel slices)
+                        #--------------------------------------------------------------------------------
+                        if self.slice_align:
+                            slices_per_tile = self.h // slice_len # max slices per tile
+                            tiles_per_block = math.ceil((kernel_size[0] * kernel_size[1]) / slices_per_tile)
+                        
+                            for tile_index in range(tiles_per_block):
+                                icfg = []
+                                if (tile_index + 1) * slices_per_tile > kernel_size[0] * kernel_size[1]:
+                                    slices_now_tile = kernel_size[0] * kernel_size[1] % slices_per_tile
+                                else: slices_now_tile = slices_per_tile
                                 
-                            tile_dict = {
-                                'xbar_icfg': icfg, 
-                                'xbar_ocfg': (start_ochan_index, end_ochan_index),
-                                'xbar_num_ichan': end_ichan_index - start_ichan_index, 
-                                'xbar_num_ochan': end_ochan_index - start_ochan_index,
-                                'box_idx': box_index
-                            }
-                            tile_dict.update(layer_config)
+                                for k in range(slices_now_tile):
+                                    winpos_idx = tile_index * slices_per_tile + k
+                                    icfg.append((winpos_idx, start_ichan_index, end_ichan_index))
+                                
+                                tile_dict = {
+                                    'xbar_icfg': icfg, 
+                                    'xbar_ocfg': (start_ochan_index, end_ochan_index),
+                                    'xbar_num_ichan': end_ichan_index - start_ichan_index, 
+                                    'xbar_num_ochan': end_ochan_index - start_ochan_index,
+                                    'box_idx': box_index
+                                }
+                                tile_dict.update(layer_config)
 
-                            is_merge_tile = (block_index == 0 and tile_index == 0)
-                            self._regularize_op_type(tile_dict, is_merge_tile)
+                                is_merge_tile = (block_index == 0 and tile_index == 0)
+                                self._regularize_op_type(tile_dict, is_merge_tile)
 
-                            self.map_dict[(layer_index, cluster_index, block_index, tile_index)] = tile_dict
-                            map_info[cluster_index][block_index] += 1
+                                self.map_dict[(layer_index, cluster_index, block_index, tile_index)] = tile_dict
+                                map_info[cluster_index][block_index] += 1
+
+                        #--------------------------------------------------------------------------------
+                        #   Unaligned Mapping (Each Tile can hold incomplete input channel slices)
+                        #--------------------------------------------------------------------------------
+                        else:
+                            tiles_per_block = math.ceil(kernel_size[0] * kernel_size[1] * slice_len / self.h)
+                            for tile_index in range(tiles_per_block):
+                                icfg = []
+                                last_remain = (self.h * tile_index) % slice_len
+                                head_align = (last_remain == 0)
+                                head_winpos = (self.h * tile_index) // slice_len
+
+                                if tile_index == tiles_per_block - 1: # the last tile, must hold the tail slices
+                                    tail_winpos = kernel_size[0] * kernel_size[1] - 1
+
+                                    for winpos in range(head_winpos, tail_winpos + 1):
+                                        icfg.append([winpos, start_ichan_index, end_ichan_index])
+
+                                    if not head_align:
+                                        icfg[0][1] += last_remain
+                                        
+                                else: # not the last tile, may hold incomplete tail slice
+                                    cur_remain = (self.h * (tile_index + 1)) % slice_len
+                                    tail_align = (cur_remain == 0)
+                                    tail_winpos = math.ceil((self.h * (tile_index + 1)) / slice_len)
+                                    for winpos in range(head_winpos, tail_winpos):
+                                        icfg.append([winpos, start_ichan_index, end_ichan_index])
+
+                                    if not head_align:
+                                        icfg[0][1] += last_remain
+
+                                    if not tail_align:
+                                        icfg[-1][2] = start_ichan_index + cur_remain
+
+                                tile_dict = {
+                                    'xbar_icfg': [tuple(ele) for ele in icfg], 
+                                    'xbar_ocfg': (start_ochan_index, end_ochan_index),
+                                    'xbar_num_ichan': end_ichan_index - start_ichan_index, 
+                                    'xbar_num_ochan': end_ochan_index - start_ochan_index,
+                                    'box_idx': box_index
+                                }
+
+                                print('\n\n'+'*'*50)
+                                print('layer: ', layer_index)
+                                print('cluster: ', cluster_index)
+                                print('block: ', block_index)
+                                print('tile: ', tile_index)
+                                print('icfg: ', icfg)
+
+                                tile_dict.update(layer_config)
+
+                                is_merge_tile = (block_index == 0 and tile_index == 0)
+                                self._regularize_op_type(tile_dict, is_merge_tile)
+
+                                self.map_dict[(layer_index, cluster_index, block_index, tile_index)] = tile_dict
+                                map_info[cluster_index][block_index] += 1
 
                     # for each box, the `block_base_index` accumulate
                     block_base_index += box_blocks_split
@@ -261,7 +332,7 @@ class TileMapper(object):
             sum = np.sum(mtx)
             total += sum
             print('%-20s%-10s%-11s%-10s%-9s%-10s%-8s%-10s' % (
-                f'Layer{i}({_match_dict[i]}):'      , i,
+                f'Layer{i}({_match_dict[i]}):'     , i,
                 '#Cluster:'                        , mtx.shape[0],
                 '#Block:'                          , mtx.shape[1],
                 '#Tile:'                           , sum
