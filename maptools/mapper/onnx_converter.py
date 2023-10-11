@@ -55,15 +55,17 @@ class OnnxConverter(object):
             The onnx model must be simplified model, run `onnxsim model.onnx model_sim.onnx` to simplify the model.
             It's better to preview the model structure using netron before running OnnxConverter.
 
-        kwargs : Dict
-            arch : NNModelArch = NNModelArch.RESNET
-                The architecture of the model (or backbone).
+        arch : NNModelArch = NNModelArch.RESNET
+            The architecture of the model (or backbone).
 
-            mapname : str = 'newmap'
-                Map name
+        mapname : str = 'newmap'
+            Map name
 
-            quantize : bool = True
-                whether to include quantization information
+        quantize : bool = True
+            whether to include quantization information
+
+        analyze_arrival_time : bool = False
+            whether to do arrival time analysis
 
         Key Members
         -----------
@@ -75,6 +77,7 @@ class OnnxConverter(object):
         self.arch = NNModelArch.RESNET
         self.mapname = 'newmap'
         self.quantize = False
+        self.analyze_arrival_time = False
         self.__dict__.update(kwargs)
         assert isinstance(self.arch, NNModelArch), f"unsupported model arch: {self.arch}"
 
@@ -101,7 +104,7 @@ class OnnxConverter(object):
 
     def _construct_raw_graph(self) -> None:
         for i, n in enumerate(self._model.graph.node):
-            node_name = n.name if n.name != '' else f'{n.op_type}_{i}'
+            node_name = f'{n.name}_{i}' # ID-based naming
             self.raw_graph.add_operator_node(node_name)
             self._assert_node(n)
 
@@ -121,7 +124,10 @@ class OnnxConverter(object):
             self.raw_graph.add_variable_node(succ_node+'_d')
             self.raw_graph.add_edge(node_name, succ_node+'_d')
 
-            parser = __PARSER_ACCESS_TABLE__[n.op_type](n, self._model.graph, self.params)
+            parser = __PARSER_ACCESS_TABLE__[n.op_type](
+                n, node_name, 
+                self._model.graph, self.params
+            )
             self.raw_graph.set_operator_config(node_name, parser())
 
     def insert_quant_info(self) -> None:
@@ -148,7 +154,9 @@ class OnnxConverter(object):
     def construct_device_graph(self) -> None:
         self.shaper(self.device_graph)
         recheck_pads(self.device_graph)
-        self.device_graph.determine_arrival_times()
+        self.device_graph.determine_arrival_times(
+            real_analyze=self.analyze_arrival_time
+        )
 
     def run_conversion(self) -> None:
         self.construct_origin_graph()

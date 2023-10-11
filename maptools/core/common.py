@@ -53,7 +53,7 @@ MERGE_OPS = {
 VALID_OPS = {
     'Conv', 'Gemm',
     'Mul', 'Concat', 'Add',
-    'Relu', 'PRelu', 'HardSigmoid', 'Softmax',
+    'Relu', 'PRelu', 'HardSigmoid', 'Softmax', 'LeakyRelu',
     'MaxPool', 'AveragePool', 'GlobalAveragePool',
     'Flatten', 'Reshape', 'Resize', 'Transpose'
 }
@@ -67,6 +67,7 @@ QUANT_OP_NAMES = {
 QUANT_NAME_TABLE = {
     'Conv'          : 'conv',
     'Relu'          : 'act',
+    'LeakyRelu'     : 'act',
     'PRelu'         : 'act',
     'HardSigmoid'   : 'act',
     'Add'           : 'sum',

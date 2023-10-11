@@ -30,7 +30,7 @@ class TileMapper(object):
         h : int
             Xbar height
 
-        slice_align: bool = True
+        slice_align: bool = False
             When set True, each Tile must hold complete input channel slices after mapping.
             When set False, each Tile can hold incomplete input channel slices after mapping.
 
@@ -73,7 +73,7 @@ class TileMapper(object):
         self.h = h
         self.mapname = 'newmap'
         self.quantize = False
-        self.slice_align = True
+        self.slice_align = False
         self.__dict__.update(kwargs)
         self.match_dict: Dict[str, int] = dict() 
         self.map_list: List[np.ndarray] = []

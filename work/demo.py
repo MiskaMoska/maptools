@@ -34,6 +34,11 @@ xm.run_map()
 # 打印映射信息
 xm.report_config()
 
+ctg = xm.ctg
+
+toksim = TokSim(ctg, **config)
+toksim.run()
+
 import sys
 sys.exit()
 

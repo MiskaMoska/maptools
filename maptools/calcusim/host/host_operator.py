@@ -13,6 +13,8 @@ def record_name(func: Callable) -> Callable:
     def wrapper(self, config, *args):
         self.name = config['name']
         self.op_type = config['op_type']
+        # print(f"name: {self.name}")
+        # print(f"op_type: {self.op_type}")
         return func(self, config, *args)
     return wrapper
 
@@ -20,8 +22,8 @@ def record_name(func: Callable) -> Callable:
 def echo_input(func: Callable) -> Callable:
     @wraps(func)
     def wrapper(self, x):
+        print(f"input_size: {x[0].shape}")
         res = func(self, x)
-        # print(f"output_size: {res.shape}")
         return res
     return wrapper
 
@@ -71,6 +73,17 @@ class Gemm(nn.Linear):
 
 
 class Relu(nn.ReLU):
+
+    @record_name
+    def __init__(self, *args) -> None:
+        super().__init__()
+
+    @echo_input
+    def forward(self, x: List[torch.Tensor]) -> torch.Tensor:
+        return super().forward(x[0])
+
+
+class LeakyRelu(nn.LeakyReLU):
 
     @record_name
     def __init__(self, *args) -> None:
@@ -167,6 +180,7 @@ class Reshape(nn.Module):
     def forward(self, x: List[torch.Tensor]) -> torch.Tensor:
         # adapt to input batch size
         self.shape[0] = x[0].shape[0]
+        print("shape: ", self.shape)
         return torch.reshape(x[0], self.shape)
 
 
@@ -225,6 +239,7 @@ __HOST_OPERATOR_ACCESS_TABLE__ = {
     'Flatten'                   : Flatten,
     'Conv'                      : Conv,
     'Relu'                      : Relu,
+    'LeakyRelu'                 : LeakyRelu,
     'MaxPool'                   : MaxPool,
     'Gemm'                      : Gemm,
     'Add'                       : Add,

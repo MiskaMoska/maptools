@@ -31,7 +31,7 @@ class ModelTask(nn.Module):
                 self._buffers[n] = self._modules[n]([x])
             
             else:
-                input_list = [self._buffers[pred] \
+                input_list = [self._buffers[pred] 
                     for pred in self.origin_graph.preds(n)]
                 res = self._modules[n](input_list)
                 if self.origin_graph.is_output(n):

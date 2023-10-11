@@ -40,9 +40,7 @@ class ClassicCTG(CTG):
             s_info = self.map_list[s_lid] # dest node map info matrix
 
             # add gather comms
-            if device_graph.in_degree(e[1]) > 1 and (
-                'Add' in device_graph.dicts[e[1]]['op_type']) and (
-                not is_subseq([e[0], e[1]], device_graph.trunk)): 
+            if device_graph.in_degree(e[1]) > 1 and device_graph.is_add_edge(e):
                 assert p_info[0] == s_info[0], (
                     "# clusters not match for gather communication")
                     

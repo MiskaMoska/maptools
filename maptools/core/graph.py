@@ -1,7 +1,3 @@
-'''
-TODO trunk is harmful to hybrid network structures
-'''
-
 import os
 import sys
 import math
@@ -9,7 +5,7 @@ import networkx as nx
 from copy import deepcopy 
 from graphviz import Digraph as GDG
 from functools import cached_property, wraps
-from typing import Any, List, Dict, Tuple, Optional, Generator, Callable
+from typing import Any, List, Dict, Tuple, Optional, Generator, Callable, overload
 from maptools.core.typing import OperatorConfig
 from maptools.core.proto import OperatorQuantConfig, NNModelArch
 from maptools.core.common import ROOT_DIR, TRUNCATE_OPS
@@ -189,6 +185,49 @@ class HostGraph(OperatorGraph): ...
 
 class DeviceGraph(OperatorGraph):
 
+    def _get_add_direction(self, add_point: str) -> Tuple[str, str]:
+        '''
+        This method determines the add direction of a given add point.
+        For example, if the current add point has 2 conv-predecessors conv1 and conv2,
+        this method determines whether the add direction is conv1 -> conv2 or 
+        conv2 -> conv1. The basic rule to make this determination is to add the results
+        from a shallow branch (or even depth-0 branch) to a deeper branch.
+
+        Return: (add_src_node, add_dst_node)
+
+        Note that this method is only for non-nested residual branch structures, for example,
+        if a residual branch appears inside another residual branch, this method doesn't work for
+        the outer branch. But actually, we have not found any AI models who adopts nested residual
+        branch structures, so the aforementioned condition does not actually exist.
+        '''
+        assert self.graph.in_degree(add_point) == 2, f"the in-degree of the operator {add_point} is not 2"
+        _graph = deepcopy(self.graph)
+        cur_node = add_point
+        cur_branch_depth = 0
+        while True:
+            nxt_node = list(self.graph.predecessors(cur_node))[0]
+            cur_branch_depth += 1
+            _graph.remove_edge(nxt_node, cur_node)
+            if nx.has_path(_graph, nxt_node, add_point): # found the branch-out point
+                another_branch_depth = nx.shortest_path_length(_graph, nxt_node, add_point)
+                break
+            cur_node = nxt_node
+
+        res = list(self.graph.predecessors(add_point))
+        if another_branch_depth < cur_branch_depth:
+            res.reverse()
+        return tuple(res)
+    
+    def is_add_src(self, node: str) -> bool:
+        return 'is_add_src' in self.dicts[node]
+
+    def is_add_dst(self, node: str) -> bool:
+        return 'Add' in self.dicts[node]['op_type']
+    
+    def is_add_edge(self, edge: Tuple[str, str]) -> bool:
+        src, dst = edge[0], edge[1]
+        return self.is_add_src(src) and self.is_add_dst(dst)
+    
     def _fuse_config(self, snode: str, dnode: str) -> None:
         # Fuse one operator's config to another
         tmp = deepcopy(self.dicts[snode])
@@ -200,7 +239,7 @@ class DeviceGraph(OperatorGraph):
         # Fuse act to its predecessor
         ns2rmv, es2add = [], []
         for n in self.graph.nodes:
-            if self.op_type(n) in {'Relu', 'PRelu', 'HardSigmoid'}: # current node is act
+            if self.op_type(n) in {'Relu', 'PRelu', 'HardSigmoid', 'LeakyRelu'}: # current node is act
                 pred_type = self.op_type(self.unique_pred(n))
                 assert pred_type in {'Conv', 'Add'}, \
                     f"the predecessor of an activation node must be Conv or Add rather than {pred_type}"
@@ -301,6 +340,7 @@ class DeviceGraph(OperatorGraph):
         self.graph.remove_edges_from(es2rmv)
         self.graph.add_edges_from(es2add)
 
+    @overload
     def fuse_add(self) -> None:
         # Fuse add to its trunk predecessor
         trunk = self.trunk
@@ -330,6 +370,27 @@ class DeviceGraph(OperatorGraph):
                     break
             if nf:
                 break
+    
+    def fuse_add(self) -> None:
+        # Fuse add to its deep-branch predecessor
+        while True:
+            nf = True
+            for n in self.graph.nodes:
+                if self.op_type(n) in {'Add', 'Add-Act'}:
+                    nf = False
+                    s_pred, d_pred = self._get_add_direction(n)
+                    self.dicts[s_pred]['is_add_src'] = True
+                    succs = self.succs(n)
+                    self.graph.remove_node(n)
+                    self.graph.add_edge(s_pred, d_pred)
+                    for succ in succs:
+                        self.graph.add_edge(d_pred, succ)
+                    self._exten_op_type(d_pred, '-'+self.op_type(n))
+                    self._fuse_config(n, d_pred)
+                    self.dicts.pop(n)
+                    break
+            if nf:
+                break
 
     def regu_pool(self) -> None:
         # Regularize remain pools
@@ -337,7 +398,7 @@ class DeviceGraph(OperatorGraph):
             if self.op_type(n) in {'MaxPool', 'AveragePool', 'GlobalAveragePool'}:
                 raise RuntimeError("existing remain pools")
 
-    def determine_arrival_times(self) -> None:
+    def determine_arrival_times(self, real_analyze: bool = False) -> None:
         '''
         This method determines the data arrival time for each layer.
         Due to the data dependencies between defferent layers, the next layer does not receive 
@@ -349,7 +410,10 @@ class DeviceGraph(OperatorGraph):
         communication time. We refer to the valid communication time as the lifetime.
         '''
         for n in self.nodes:
-            arrival_time = self._recursive_calcu_arrival_time(n, 1)
+            if real_analyze:
+                arrival_time = self._recursive_calcu_arrival_time(n, 1)
+            else:
+                arrival_time = 0
             self.dicts[n]['arrival_time'] = arrival_time
             print(f"calculated arrival time for layer {n}: {arrival_time}")
 

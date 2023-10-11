@@ -9,56 +9,68 @@ import onnxruntime as rt
 
 # 读取onnx模型
 config = {
-    'mapname': 'resnet18',
+    'mapname': 'yolov3',
     'quantize': False,
     # 'dre': DREMethod.DYXY,
-    # 'dle': DLEMethod.REVERSE_S
+    'dle': DLEMethod.REVERSE_S
 }
 
-model = onnx.load("onnx_models/simp-resnet18.onnx")
+model = onnx.load("onnx_models/yolov3.onnx")
 
 # 创建onnx转换器
-oc = OnnxConverter(model, arch=NNModelArch.RESNET, **config)
+oc = OnnxConverter(model, arch=NNModelArch.YOLO_V3, **config)
 
 # 执行模型转换
 oc.run_conversion()
-
-# 显示转换得到的设备算子图
 oc.plot_device_graph()
+oc.plot_host_graph()
+oc.plot_origin_graph()
+oc.save_params()
 
 # 获得转换得到的设备算子图
-og = oc.device_graph
+dg = oc.device_graph
 
 # 创建逻辑映射器，设置Xbar尺寸
-xm = TileMapper(og, 256, 256*5, **config)
+xm = TileMapper(dg, 256, 1152, **config)
 
 # 执行映射
 xm.run_map()
 
 # 打印映射信息
-xm.print_config()
+xm.report_config()
 
 # 获得映射得到的CTG
 ctg = xm.ctg
-# ctg.plot_ctg(direction='UD')
+ctg.plot_ctg(direction='UD')
 
-# params = read_quantparams(config['mapname'])
+# mtsk = ModelTask(oc.origin_graph, oc.params)
+
+# print(oc.origin_graph.dicts['_174'])
+# print(oc.origin_graph.dicts['_177'])
+# print(oc.origin_graph.dicts['_180'])
+
+
+# # 获取输入图片数据, 缩放至 224 × 224
+# input = get_input('work/test1.png', resize=(416, 416))
+
+# output = mtsk(input)
+# print(output)
+
 
 # # 创建CalcuSim仿真器, tm是TileMapper, oc是OnnxConverter
 # csim = CalcuSim(
-#     xm.ctg, oc.host_graph, params,
-#     quantize=True, physical=True, stats=True
+#     xm.ctg, oc.host_graph, oc.params,
+#     quantize=False, physical=False, stats=True
 # )
 
-# # 获取输入图片数据, 缩放至 224 × 224
-# input = get_input('work/test1.png', resize=(224, 224))
+
 
 # # 运行CalcuSim仿真, 获得输出结果
 # output = csim(input)
 
 
 # 创建Tile阵列拓扑图，设置阵列规模
-acg = ACG(6, 8)
+acg = ACG(15, 20)
 
 # 创建物理映射器
 nm = NocMapper(ctg, acg, **config)
@@ -66,11 +78,11 @@ nm = NocMapper(ctg, acg, **config)
 # 执行智能布局布线
 nm.run_layout()
 nm.run_routing(omit_merge=False)
-nm.plot_ctg()
+# nm.plot_ctg()
 
 # 保存布局布线图
-# nm.save_layout()
-# nm.save_routing(omit_merge=False)
+nm.save_layout()
+nm.save_routing(omit_merge=False)
 
 # # 保存硬件配置信息
 # nm.save_config()
@@ -83,9 +95,9 @@ routing = nm.routing
 # toksim = TokSim(ctg, **config)
 # toksim.run()
 
-trails = list(nm.cast_trails.values())+list(nm.merge_trails.values())
+# trails = list(nm.cast_trails.values())
 
-draw_heatmap(acg, trails, mapfunc='sqrt')
+# draw_heatmap(acg, trails, mapfunc='sqrt')
 
 # plot_tokens(config['mapname'])
 

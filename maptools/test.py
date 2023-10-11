@@ -3,6 +3,7 @@ import torch.nn.functional as F
 import torch.nn as nn
 from typing import Generator
 import math
+import networkx as nx
 
 class A(nn.Module):
 
@@ -77,6 +78,16 @@ def set_precall_method(callee=lambda x:x):
         return wrapper
     return precall_method
 
-a = [(1,2),(3,4),(5,6)]
-print(math.ceil(10/2))
+g = nx.DiGraph()
+
+g.add_edge(1,2)
+g.add_edge(2,3)
+g.add_edge(3,4)
+g.add_edge(4,5)
+# g.add_edge(2,5)
+g.add_edge(5,6)
+
+print(nx.shortest_path_length(g, 1, 6))
+
+
 

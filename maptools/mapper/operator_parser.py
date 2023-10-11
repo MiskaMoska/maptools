@@ -2,6 +2,7 @@ import onnx
 import numpy as np
 from abc import ABCMeta, abstractmethod
 from typing import Dict, List, Tuple
+from functools import wraps
 from maptools.core import OperatorConfig, ModelParams
 import onnx.numpy_helper as onh
 
@@ -14,6 +15,7 @@ class BaseOperatorParser(object):
     def __init__(
         self, 
         node: onnx.NodeProto, 
+        node_name: str, # the node.name may have duplicates, so all nodes are renamed outsides
         graph: onnx.GraphProto, 
         params: ModelParams
     ) -> None:
@@ -24,6 +26,7 @@ class BaseOperatorParser(object):
             raise TypeError(
                 f"parser need a {onnx.GraphProto} to proccess, but got a {type(graph)}")
         self.node = node
+        self.node_name = node_name
         self.graph = graph
         self.params = params
 
@@ -53,12 +56,17 @@ class BaseOperatorParser(object):
         o_dims = self._get_data_dims(name, self.graph)
         return list(i_dims[-2:]), list(o_dims[-2:])
 
+    def echo_invoke(func):
+        @wraps(func)
+        def wrapper(self, *args, **kwargs):
+            print(f"Parsing Onnx Operator: {self.node_name} using Parser: {type(self)}")
+            return func(self, *args, **kwargs)
+        return wrapper
+
+    @echo_invoke
     def process(self) -> OperatorConfig:
         self.config = {}
-        name = self.node.name
-        if name == '':
-            name = f"{self.node.op_type}_{self.processed_nodes}"
-        self.config['name'] = name
+        self.config['name'] = self.node_name
         self.config['op_type'] = self.node.op_type
         self.processed_nodes += 1
         return self.config
@@ -92,12 +100,12 @@ class ConvParser(BaseOperatorParser):
             bias = self._get_variable(self.node.input[2]) # input[2] should be weight
 
         # save convolution weights
-        name = self.node.name + '_conv_weight'
+        name = self.node_name + '_conv_weight'
         self.config['conv_weight'] = name
         self.params[name] = onh.to_array(weight)
 
         # save convolution bias
-        name = self.node.name + '_conv_bias'
+        name = self.node_name + '_conv_bias'
         self.config['conv_bias'] = name
         self.params[name] = None if bias is None else onh.to_array(bias)
 
@@ -139,12 +147,12 @@ class GemmParser(BaseOperatorParser):
         else: bias = np.zeros(weight.dims[0])
 
         # save gemm weights
-        name = self.node.name + '_gemm_weight'
+        name = self.node_name + '_gemm_weight'
         self.config['gemm_weight'] = name
         self.params[name] = onh.to_array(weight) 
 
         # save gemm bias
-        name = self.node.name + '_gemm_bias'
+        name = self.node_name + '_gemm_bias'
         self.config['gemm_bias'] = name
         self.params[name] = None if bias is None else onh.to_array(bias)
 
@@ -225,6 +233,7 @@ __PARSER_ACCESS_TABLE__ = {
     'GlobalAveragePool'     : PoolParser,
     'Relu'                  : ActParser,
     'PRelu'                 : ActParser,
+    'LeakyRelu'             : ActParser,
     'HardSigmoid'           : ActParser,
     'Resize'                : ResizeParser,
     'Flatten'               : FlattenParser,

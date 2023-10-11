@@ -41,8 +41,10 @@ class Yolov3GraphShaper(BaseGraphShaper):
 
     def process(self, graph: DeviceGraph) -> None:
         graph.fuse_act()
+        graph.fuse_add()
         graph.fuse_resize()
         graph.remove_concat()
+
 
 class SqueezenetGraphShaper(BaseGraphShaper):
 
