@@ -1,6 +1,5 @@
 import onnx
 import numpy as np
-from abc import ABCMeta, abstractmethod
 from typing import Dict, List, Tuple
 from functools import wraps
 from maptools.core import OperatorConfig, ModelParams

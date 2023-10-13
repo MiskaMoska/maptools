@@ -13,14 +13,14 @@ __all__ = ['draw_heatmap']
 
 L = 5 # linke length
 R = 0.5 # node radius
-LS = 8 # arc link ratio
+LS = 4 # arc link ratio
 LW = 5 # link width
 
 def draw_heatmap(
     acg: ACG, 
     trails: Iterable[RoutingTrail],
     maximum: Optional[int] = None,
-    mapfunc: Literal['log2', 'sqrt'] = 'log2',
+    mapfunc: Literal['log2', 'lg', 'sqrt'] = 'log2',
     cmap_name: str = 'coolwarm',
     *args, **kwargs
 ) -> None:

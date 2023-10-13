@@ -95,9 +95,9 @@ routing = nm.routing
 # toksim = TokSim(ctg, **config)
 # toksim.run()
 
-# trails = list(nm.cast_trails.values())
+trails = list(nm.cast_trails.values())
 
-# draw_heatmap(acg, trails, mapfunc='sqrt')
+draw_heatmap(acg, trails, mapfunc='lg', mapname=config['mapname'])
 
 # plot_tokens(config['mapname'])
 
