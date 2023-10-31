@@ -1,6 +1,6 @@
 import os
 import torch
-from typing import Iterable, Tuple, Dict, List, Any, Optional
+from typing import Iterable, Tuple, Dict, List, Any, Optional, Literal
 
 from .ppq_lowbit import *
 from ppq import BaseGraph, QuantizationSettingFactory, TargetPlatform
@@ -28,7 +28,7 @@ def generate_calibration_dataset(
 
 def quantize(
     input_shapes: Dict[str, List[int]],
-    device: str,
+    device: Literal['cpu', 'cuda'],
     onnx_path: str,
     bit_width: int = 8,
     per_channel: bool = True,

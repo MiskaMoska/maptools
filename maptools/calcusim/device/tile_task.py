@@ -58,6 +58,10 @@ class TileTask(nn.Module):
         self.first_layer_ivcf: Optional[float] = None
         self.stats: bool = False
 
+        # for power evaluation
+        self.eval_power: bool = False
+        self.power_dict: Dict[LogicalTile, Dict[str, float]] = {}
+
         self.__dict__.update(kwargs)
         self._init_conv_module()
         if self.observe: self._init_observe_vars()
@@ -73,7 +77,9 @@ class TileTask(nn.Module):
             tqc=self.tqc,
             ivcf=self.ivcf,
             first_layer_ivcf=self.first_layer_ivcf,
-            stats=self.stats
+            stats=self.stats,
+            eval_power=self.eval_power,
+            power_dict=self.power_dict
         )
 
     def _init_resize_module(self) -> None:

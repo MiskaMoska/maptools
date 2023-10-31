@@ -7,7 +7,9 @@ __all__ = [
     'MERGE_OPS',
     'VALID_OPS',
     'QUANT_OP_NAMES',
-    'QUANT_NAME_TABLE'
+    'QUANT_NAME_TABLE',
+    "XBAR_POWER_PER_1",
+    "ADC_POWER_PER_TRANSFER"
 ]
 
 # This is the root directory of this project
@@ -74,3 +76,7 @@ QUANT_NAME_TABLE = {
     'MaxPool'       : 'pool',
     'AveragePool'   : 'pool'
 }
+
+# for power analysis, unit: J
+XBAR_POWER_PER_1 = 0.125 * 1e-15
+ADC_POWER_PER_TRANSFER = 17.5 * 1e-12

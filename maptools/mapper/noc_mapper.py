@@ -145,9 +145,11 @@ class NocMapper(object):
                 paths = []
                 for src_node in src_nodes:
                     path = []
-                    self._route_dyxy(src_node[0], src_node[1], 
-                                        root_node[0], root_node[1], path, 
-                                        patch=cluster_nodes)
+                    self._route_dyxy(
+                        src_node[0], src_node[1], 
+                        root_node[0], root_node[1], 
+                        path, patch=cluster_nodes
+                    )
                     paths.extend(path)
                 paths = list(set(paths))
                 g.add_edges_from(paths)

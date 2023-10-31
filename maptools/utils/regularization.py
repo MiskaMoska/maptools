@@ -3,7 +3,7 @@ from maptools.core import OriginGraph, DeviceGraph
 
 __all__ = [
     'regularize_pads',
-    'recheck_pads'
+    'recheck_sizes'
 ]
 
 def _regu_size(
@@ -80,7 +80,7 @@ def regularize_pads(graph: OriginGraph) -> None:
             graph.dicts[node]['pool_pads'] = ppads
 
 
-def recheck_pads(graph: DeviceGraph) -> None:
+def recheck_sizes(graph: DeviceGraph) -> None:
     '''
     To make sure:
     1. the `conv_output_size` matches `pool_input_size` in the same device operator.

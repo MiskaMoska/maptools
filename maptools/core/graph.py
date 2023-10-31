@@ -1,6 +1,7 @@
 import os
 import sys
 import math
+import numpy as np
 import networkx as nx
 from copy import deepcopy 
 from graphviz import Digraph as GDG
@@ -479,6 +480,40 @@ class DeviceGraph(OperatorGraph):
         
         return max(arrival_times)
     
+    @cached_property
+    def param_num(self) -> float:
+        '''
+        This method returns the (convolution) parameter number of the model, unit: MB
+        '''
+        num = 0
+        for n in self.nodes:
+            if 'Conv' in self.op_type(n):
+                config = self.config(n)
+                kernel_size = config['conv_kernel_size']
+                ichans = config['conv_num_ichan']
+                ochans = config['conv_num_ochan']
+                num += (np.prod(kernel_size) * ichans + 1) * ochans
+        
+        return num / pow(1024, 2)
+
+    @cached_property
+    def op_num(self) -> float:
+        '''
+        This method returns the (convolution) operation number of the model, unit: GOPS
+        '''
+        num = 0
+        for n in self.nodes:
+            if 'Conv' in self.op_type(n):
+                config = self.config(n)
+                osize = config['conv_output_size']
+                kernel_size = config['conv_kernel_size']
+                ichans = config['conv_num_ichan']
+                ochans = config['conv_num_ochan']
+                num += np.prod(osize) * ((np.prod(kernel_size) *
+                    ichans + 1) * ochans)
+        
+        return num / pow(1024, 3)
+
 
 class OperatorVariableGraph(object):
     

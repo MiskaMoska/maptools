@@ -2,9 +2,10 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from copy import deepcopy
-from typing import Any, Optional
+from typing import Any, Optional, Dict
 from maptools.core import (
-    CTG, HostGraph, ModelParams
+    CTG, HostGraph, ModelParams, LogicalTile,
+    ADC_POWER_PER_TRANSFER
 )
 from maptools.calcusim.host import HostTask
 from maptools.calcusim.device import DeviceTask
@@ -93,7 +94,10 @@ class CalcuSim(nn.Module):
         self.ivcf: Optional[float] = None
         self.first_layer_ivcf: Optional[float] = None
         self.stats: bool = False
+        self.eval_power: bool = False
         self.__dict__.update(kwargs)
+
+        self.done: bool = False
 
         self.device_task = DeviceTask(
             self.ctg, 
@@ -105,7 +109,8 @@ class CalcuSim(nn.Module):
             hardtrans=self.hardtrans,
             ivcf=self.ivcf,
             first_layer_ivcf=self.first_layer_ivcf,
-            stats=self.stats
+            stats=self.stats,
+            eval_power=self.eval_power
         )
         self.host_task = HostTask(
             self.host_graph, 
@@ -118,7 +123,8 @@ class CalcuSim(nn.Module):
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         self.device_output = self.device_task(x)
-        self.host_output = self.host_task(self.device_output) 
+        self.host_output = self.host_task(self.device_output)
+        self.done = True
         return self.host_output
 
     def save_results(self, file_name: str = 'results'):
@@ -132,3 +138,37 @@ class CalcuSim(nn.Module):
         print('host output shape: ', self.host_output.shape)
         print('host output max: ', torch.max(self.host_output))
         print('host output max index: ', torch.argmax(self.host_output))
+
+    def report_power(self) -> None:
+        if not self.eval_power:
+            raise AssertionError("please enable eval_power")
+        if not self.done:
+            raise AssertionError("please run self.forward() before reporting power")
+        if not self.quantize:
+            raise AssertionError("please enable quantize before reporting power")
+        if not self.physical:
+            raise AssertionError("please enable physical before reporting power")
+        if self.stats:
+            raise AssertionError("please disable stats before reporting power")
+            
+        power_dict = self.device_task.power_dict
+        self._calcu_adc_power(power_dict)
+
+        print('\n'+'-'*70)
+        print('\t\tPower Evaluation Reports')
+        print('-'*70)
+        for tile, dict in power_dict.items():
+            print(f"tile: {tile}\txbar_power: {dict['xbar']}\tadc_power: {dict['adc']}")
+
+        xbar_powers = [p['xbar'] for p in power_dict.values()]
+        adc_powers = [p['adc'] for p in power_dict.values()]
+        print(f"total power (J/Frame): {sum(xbar_powers)+sum(adc_powers)}")
+
+    def _calcu_adc_power(self, power_dict: Dict[LogicalTile, Dict[str, float]]) -> None:
+        for tile in self.ctg.tile_nodes:
+            config = self.ctg.get_tile_config(tile)
+            osize = config['conv_output_size']
+            ochan = config['xbar_num_ochan']
+            power = osize[0] * osize[1] * ochan * 8 * ADC_POWER_PER_TRANSFER / 16 # considering adc sharing
+            power_dict[tile]['adc'] = power
+

@@ -10,7 +10,7 @@ import sys
 import pickle
 import onnx
 from typing import Any, List, Dict, Tuple, Optional, Generator
-from maptools.utils import load_quant_to_graph, regularize_pads, recheck_pads
+from maptools.utils import load_quant_to_graph, regularize_pads, recheck_sizes
 from maptools.mapper.graph_shaper import *
 from maptools.mapper.operator_parser import *
 from maptools.core import (
@@ -104,7 +104,7 @@ class OnnxConverter(object):
 
     def _construct_raw_graph(self) -> None:
         for i, n in enumerate(self._model.graph.node):
-            node_name = f'{n.name}_{i}' # ID-based naming
+            node_name = n.name if n.name != '' else f'{i}' # naming
             self.raw_graph.add_operator_node(node_name)
             self._assert_node(n)
 
@@ -153,7 +153,7 @@ class OnnxConverter(object):
 
     def construct_device_graph(self) -> None:
         self.shaper(self.device_graph)
-        recheck_pads(self.device_graph)
+        recheck_sizes(self.device_graph)
         self.device_graph.determine_arrival_times(
             real_analyze=self.analyze_arrival_time
         )

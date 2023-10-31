@@ -22,7 +22,7 @@ def record_name(func: Callable) -> Callable:
 def echo_input(func: Callable) -> Callable:
     @wraps(func)
     def wrapper(self, x):
-        print(f"input_size: {x[0].shape}")
+        # print(f"input_size: {x[0].shape}")
         res = func(self, x)
         return res
     return wrapper
@@ -94,24 +94,45 @@ class LeakyRelu(nn.LeakyReLU):
         return super().forward(x[0])
 
 
-class MaxPool(nn.Module):
+class _Pool(nn.Module):
 
-    @record_name
-    def __init__(self, config: OperatorConfig, params: ModelParams) -> None:
+    def __init__(
+        self, 
+        config: OperatorConfig, 
+        params: ModelParams,
+        fcn: Callable
+    ) -> None:
         super().__init__()
         self.kernel_size = config['pool_kernel_size']
         self.strides = config['pool_strides']
-        pads = config['pool_pads']
+        pads = [0] * 4
+        if 'pool_pads' in config:
+            pads = config['pool_pads']
         self.pads = [pads[3], pads[1], pads[0], pads[2]]
+        self.fcn = fcn
 
     @echo_input
     def forward(self, x: List[torch.Tensor]) -> torch.Tensor:
         x = F.pad(x[0], self.pads)
-        return F.max_pool2d(
+        return self.fcn(
             x, 
             kernel_size = tuple(self.kernel_size),
             stride = tuple(self.strides)
         )
+
+
+class MaxPool(_Pool):
+
+    @record_name
+    def __init__(self, config: OperatorConfig, params: ModelParams) -> None:
+        super().__init__(config, params, F.max_pool2d)
+
+
+class AveragePool(_Pool):
+
+    @record_name
+    def __init__(self, config: OperatorConfig, params: ModelParams) -> None:
+        super().__init__(config, params, F.avg_pool2d)
 
 
 class Resize(nn.Module):
@@ -180,7 +201,6 @@ class Reshape(nn.Module):
     def forward(self, x: List[torch.Tensor]) -> torch.Tensor:
         # adapt to input batch size
         self.shape[0] = x[0].shape[0]
-        print("shape: ", self.shape)
         return torch.reshape(x[0], self.shape)
 
 
@@ -241,6 +261,7 @@ __HOST_OPERATOR_ACCESS_TABLE__ = {
     'Relu'                      : Relu,
     'LeakyRelu'                 : LeakyRelu,
     'MaxPool'                   : MaxPool,
+    'AveragePool'               : AveragePool,
     'Gemm'                      : Gemm,
     'Add'                       : Add,
     'Mul'                       : Mul,

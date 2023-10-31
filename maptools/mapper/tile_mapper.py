@@ -219,12 +219,12 @@ class TileMapper(object):
                                     'box_idx': box_index
                                 }
 
-                                print('\n\n'+'*'*50)
-                                print('layer: ', layer_index)
-                                print('cluster: ', cluster_index)
-                                print('block: ', block_index)
-                                print('tile: ', tile_index)
-                                print('icfg: ', icfg)
+                                # print('\n\n'+'*'*50)
+                                # print('layer: ', layer_index)
+                                # print('cluster: ', cluster_index)
+                                # print('block: ', block_index)
+                                # print('tile: ', tile_index)
+                                # print('icfg: ', icfg)
 
                                 tile_dict.update(layer_config)
 

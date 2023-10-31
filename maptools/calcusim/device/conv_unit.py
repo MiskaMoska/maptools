@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from typing import List, Dict, Optional, Tuple, Any, Callable
-from maptools.core import LogicalTile, TileQuantConfig
+from maptools.core import LogicalTile, TileQuantConfig, XBAR_POWER_PER_1
 
 __all__ = ['ConvUnit']
 
@@ -14,7 +14,9 @@ def cimu_conv2d(
     factor: float = 1,
     tile: LogicalTile = None,
     tqc: TileQuantConfig = None,
-    stats: bool = False
+    stats: bool = False,
+    eval_power: bool = False,
+    power_dict: Dict[LogicalTile, Dict[str, float]] = {}
 ) -> torch.Tensor:
     
     x = torch.clamp(x, tqc.io_min, tqc.io_max)
@@ -37,6 +39,11 @@ def cimu_conv2d(
         )
 
         if not stats: # if not do distribution statistics, enable adc clamp
+            if eval_power:
+                if tile not in power_dict:
+                    power_dict[tile] = {'xbar': 0}
+                power_dict[tile]['xbar'] += int(torch.sum(_y)) * XBAR_POWER_PER_1
+
             _y = torch.clamp(torch.round(_y / factor), tqc.io_min, tqc.io_max) # ivc clamping transfer
             _y = torch.round(_y * factor) # invert transfer
 
@@ -73,7 +80,9 @@ class ConvUnit(nn.Module):
         tqc: TileQuantConfig = None,
         ivcf: Optional[float] = None,
         first_layer_ivcf: Optional[float] = None,
-        stats: bool = False
+        stats: bool = False,
+        eval_power: bool = False,
+        power_dict: Dict[LogicalTile, Dict[str, float]] = {}
     ) -> None:
         super().__init__()
         self.weight = weight
@@ -83,6 +92,8 @@ class ConvUnit(nn.Module):
         self.tqc = tqc
         self.physical = physical
         self.stats = stats
+        self.eval_power=eval_power
+        self.power_dict=power_dict
 
         # determine ivc transfer factor
         if ivcf is not None:
@@ -106,7 +117,9 @@ class ConvUnit(nn.Module):
                 factor=self.factor,
                 tile=self.tile,
                 stats=self.stats,
-                tqc=self.tqc
+                tqc=self.tqc,
+                eval_power=self.eval_power,
+                power_dict=self.power_dict
             )
         else: # use pytorch conv2d
             return F.conv2d(

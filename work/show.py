@@ -9,26 +9,30 @@ import onnxruntime as rt
 
 # 读取onnx模型
 config = {
-    'mapname': 'yolov3',
-    'quantize': False,
+    'mapname': 'resnet34',
+    'quantize': True,
     # 'dre': DREMethod.DYXY,
     'dle': DLEMethod.REVERSE_S
 }
 
-model = onnx.load("onnx_models/yolov3.onnx")
+model = onnx.load("onnx_models/simp-resnet34.onnx")
 
 # 创建onnx转换器
-oc = OnnxConverter(model, arch=NNModelArch.YOLO_V3, **config)
+oc = OnnxConverter(model, arch=NNModelArch.RESNET, **config)
 
 # 执行模型转换
 oc.run_conversion()
-oc.plot_device_graph()
-oc.plot_host_graph()
-oc.plot_origin_graph()
-oc.save_params()
+# oc.plot_device_graph()
+# oc.plot_host_graph()
+# oc.plot_origin_graph()
+# oc.save_params()
 
 # 获得转换得到的设备算子图
 dg = oc.device_graph
+
+print('GOPS:', dg.op_num)
+print('M weights', dg.param_num)
+print(oc.quantize)
 
 # 创建逻辑映射器，设置Xbar尺寸
 xm = TileMapper(dg, 256, 1152, **config)
@@ -50,27 +54,29 @@ ctg.plot_ctg(direction='UD')
 # print(oc.origin_graph.dicts['_180'])
 
 
-# # 获取输入图片数据, 缩放至 224 × 224
-# input = get_input('work/test1.png', resize=(416, 416))
-
+# 获取输入图片数据, 缩放至 224 × 224
+input = get_input('work/test1.png', resize=(224, 224))
 # output = mtsk(input)
 # print(output)
+params = read_quantparams(config['mapname'])
 
+# 创建CalcuSim仿真器, tm是TileMapper, oc是OnnxConverter
+csim = CalcuSim(
+    xm.ctg, oc.host_graph, params,
+    quantize=True, physical=True, stats=False,
+    eval_power=True
+)
+csim.cuda()
+# 运行CalcuSim仿真, 获得输出结果
+output = csim(input.cuda())
+print(type(output))
+csim.report_power()
 
-# # 创建CalcuSim仿真器, tm是TileMapper, oc是OnnxConverter
-# csim = CalcuSim(
-#     xm.ctg, oc.host_graph, oc.params,
-#     quantize=False, physical=False, stats=True
-# )
-
-
-
-# # 运行CalcuSim仿真, 获得输出结果
-# output = csim(input)
-
+import sys
+sys.exit()
 
 # 创建Tile阵列拓扑图，设置阵列规模
-acg = ACG(15, 20)
+acg = ACG(6, 8)
 
 # 创建物理映射器
 nm = NocMapper(ctg, acg, **config)

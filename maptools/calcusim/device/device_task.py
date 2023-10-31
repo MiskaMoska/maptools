@@ -5,9 +5,12 @@ import torch.nn as nn
 import pickle
 from functools import wraps
 from typing import List, Dict, Optional, Tuple, Any, Union, Callable
-from maptools.core import CTG, ModelParams, ROOT_DIR, PhysicalTile, TileQuantConfig
 from maptools.calcusim.device.utils import *
 from maptools.calcusim.device.tile_task import TileTask, OBSERVE_VARS
+from maptools.core import (
+    CTG, ModelParams, ROOT_DIR, 
+    LogicalTile, PhysicalTile, TileQuantConfig
+)
 
 __all__ = ['DeviceTask']
 
@@ -30,6 +33,7 @@ class DeviceTask(nn.Module):
         self.ivcf: Optional[float] = None
         self.first_layer_ivcf: Optional[float] = None
         self.stats: bool = False
+        self.eval_power: bool = False
         self.__dict__.update(kwargs)
 
         if self.physical and not self.quantize:
@@ -37,6 +41,7 @@ class DeviceTask(nn.Module):
         
         self.obj_dict: Dict[Union[PhysicalTile, str], torch.Tensor] = dict()
         self.res_dict: Dict[Union[PhysicalTile, str], Dict[str, Optional[torch.Tensor]]] = dict()
+        self.power_dict: Dict[LogicalTile, Dict[str, float]] = {}
 
         self._construct_tile_tasks()
 
@@ -69,6 +74,8 @@ class DeviceTask(nn.Module):
                     ivcf=self.ivcf,
                     first_layer_ivcf=self.first_layer_ivcf,
                     stats=self.stats,
+                    eval_power=self.eval_power,
+                    power_dict=self.power_dict,
                     **kwargs
                 )
 

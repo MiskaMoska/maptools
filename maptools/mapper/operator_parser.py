@@ -54,6 +54,19 @@ class BaseOperatorParser(object):
         name = node.output[0]
         o_dims = self._get_data_dims(name, self.graph)
         return list(i_dims[-2:]), list(o_dims[-2:])
+    
+    @staticmethod
+    def assert_kernel_padding(kernel_shape: List[int], padding: List[int]) -> None:
+        if kernel_shape is None or padding is None:
+            return
+        
+        if (kernel_shape[0] <= padding[0]) or (
+            kernel_shape[0] <= padding[2]) or (
+            kernel_shape[1] <= padding[1]) or (
+            kernel_shape[1] <= padding[3]
+        ):
+            raise AssertionError(
+                f"kernel_shape {kernel_shape} must be larger than padding {padding}")
 
     def echo_invoke(func):
         @wraps(func)
@@ -80,6 +93,8 @@ class ConvParser(BaseOperatorParser):
         self.config['conv_output_size'] = size_o # output feature map size without pads
         self.config['conv_pads'] = [0]*4 # some conv operators have no conv_pads
 
+        kernel_shape, padding = None, None
+
         for at in self.node.attribute:
             if at.name == 'dilations':
                 assert list(at.ints) == [1, 1], (
@@ -88,10 +103,14 @@ class ConvParser(BaseOperatorParser):
                 assert at.i == 1, f"conv_group must be 1, but got {at.i}"
             elif at.name == 'kernel_shape':
                 self.config['conv_kernel_size'] = list(at.ints)
+                kernel_shape = list(at.ints)
             elif at.name == 'pads':
                 self.config['conv_pads'] = list(at.ints)
+                padding = list(at.ints)
             elif at.name == 'strides':
                 self.config['conv_strides'] = list(at.ints)
+        
+        self.assert_kernel_padding(kernel_shape, padding)
 
         weight = self._get_variable(self.node.input[1]) # input[1] should be weight
         bias = None
@@ -123,16 +142,22 @@ class PoolParser(BaseOperatorParser):
         self.config['pool_output_size'] = size_o # output feature map size without pads
         self.config['pool_mode'] = self.node.op_type
 
+        kernel_shape, padding = None, None
+
         for at in self.node.attribute:
             if at.name == 'ceil_mode':
                 self.config['pool_ceil_mode'] = at.i
             elif at.name == 'kernel_shape':
                 self.config['pool_kernel_size'] = list(at.ints)
+                kernel_shape = list(at.ints)
             elif at.name == 'pads':
                 self.config['pool_pads'] = list(at.ints)
+                padding = list(at.ints)
             elif at.name == 'strides':
                 self.config['pool_strides'] = list(at.ints)
 
+        self.assert_kernel_padding(kernel_shape, padding)
+        
         return self.config
 
 
