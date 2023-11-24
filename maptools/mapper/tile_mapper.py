@@ -164,6 +164,8 @@ class TileMapper(object):
                                     icfg.append((winpos_idx, start_ichan_index, end_ichan_index))
                                 
                                 tile_dict = {
+                                    'xbar_width': self.w,
+                                    'xbar_height': self.h,
                                     'xbar_icfg': icfg, 
                                     'xbar_ocfg': (start_ochan_index, end_ochan_index),
                                     'xbar_num_ichan': end_ichan_index - start_ichan_index, 
@@ -212,6 +214,8 @@ class TileMapper(object):
                                         icfg[-1][2] = start_ichan_index + cur_remain
 
                                 tile_dict = {
+                                    'xbar_width': self.w,
+                                    'xbar_height': self.h,
                                     'xbar_icfg': [tuple(ele) for ele in icfg], 
                                     'xbar_ocfg': (start_ochan_index, end_ochan_index),
                                     'xbar_num_ichan': end_ichan_index - start_ichan_index, 

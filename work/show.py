@@ -9,19 +9,20 @@ import onnxruntime as rt
 
 # 读取onnx模型
 config = {
-    'mapname': 'resnet34',
-    'quantize': True,
-    # 'dre': DREMethod.DYXY,
+    'mapname': 'resnet18',
+    'quantize': False,
+    'dre': DREMethod.DYXY,
     'dle': DLEMethod.REVERSE_S
 }
 
-model = onnx.load("onnx_models/simp-resnet34.onnx")
+model = onnx.load("onnx_models/simp-resnet18.onnx")
 
 # 创建onnx转换器
 oc = OnnxConverter(model, arch=NNModelArch.RESNET, **config)
 
 # 执行模型转换
 oc.run_conversion()
+oc.save_params()
 # oc.plot_device_graph()
 # oc.plot_host_graph()
 # oc.plot_origin_graph()
@@ -55,22 +56,22 @@ ctg.plot_ctg(direction='UD')
 
 
 # 获取输入图片数据, 缩放至 224 × 224
-input = get_input('work/test1.png', resize=(224, 224))
+# input = get_input('work/test1.png', resize=(224, 224))
 # output = mtsk(input)
 # print(output)
-params = read_quantparams(config['mapname'])
+# params = read_quantparams(config['mapname'])
 
 # 创建CalcuSim仿真器, tm是TileMapper, oc是OnnxConverter
-csim = CalcuSim(
-    xm.ctg, oc.host_graph, params,
-    quantize=True, physical=True, stats=False,
-    eval_power=True
-)
-csim.cuda()
-# 运行CalcuSim仿真, 获得输出结果
-output = csim(input.cuda())
-print(type(output))
-csim.report_power()
+# csim = CalcuSim(
+#     xm.ctg, oc.host_graph, params,
+#     quantize=True, physical=True, stats=False,
+#     eval_power=True
+# )
+# csim.cuda()
+# # 运行CalcuSim仿真, 获得输出结果
+# output = csim(input.cuda())
+# print(type(output))
+# csim.report_power()
 
 import sys
 sys.exit()
@@ -95,15 +96,15 @@ nm.save_routing(omit_merge=False)
 
 routing = nm.routing
 
-# hd = HardwareDeployer(nm.cast_trails, nm.merge_trails, acg, ctg, nm.layout, **config)
+hd = HardwareDeployer(nm.cast_trails, nm.merge_trails, acg, ctg, nm.layout, **config)
 
-# hd.save_config()
+hd.save_config()
 # toksim = TokSim(ctg, **config)
 # toksim.run()
 
-trails = list(nm.cast_trails.values())
+# trails = list(nm.cast_trails.values())
 
-draw_heatmap(acg, trails, mapfunc='lg', mapname=config['mapname'])
+# draw_heatmap(acg, trails, mapfunc='lg', mapname=config['mapname'])
 
 # plot_tokens(config['mapname'])
 

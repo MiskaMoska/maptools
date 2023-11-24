@@ -20,7 +20,18 @@ dpi = 500
 
 def build_graph(w: int, h: int) -> Tuple[nx.DiGraph, Dict[Tuple, Tuple]]:
     graph = nx.DiGraph()
-    legal_node = [RouterPort.WEST_I, RouterPort.WEST_O, RouterPort.EAST_I, RouterPort.EAST_O, RouterPort.NORTH_I, RouterPort.NORTH_O, RouterPort.SOUTH_I, RouterPort.SOUTH_O, RouterPort.LOCAL_I, RouterPort.LOCAL_O]
+    legal_node = [
+        RouterPort.WEST_I, 
+        RouterPort.WEST_O, 
+        RouterPort.EAST_I, 
+        RouterPort.EAST_O, 
+        RouterPort.NORTH_I, 
+        RouterPort.NORTH_O, 
+        RouterPort.SOUTH_I, 
+        RouterPort.SOUTH_O, 
+        RouterPort.LOCAL_I, 
+        RouterPort.LOCAL_O
+    ]
     legal_xpos = [0,0,4,4,1,2,2,1,3.33+0.5,2.67+0.5]
     legal_ypos = [2,1,1,2,0,0,4,4,2.67+0.5,3.33+0.5]
     pos = dict()

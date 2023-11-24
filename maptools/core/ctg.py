@@ -82,6 +82,7 @@ class CTG(object):
         # build ctg
         self._build_ctg(device_graph)
         self._complete_connection_attrs()
+        self._channel_match_check()
 
     @cached_property
     def node_names(self) -> List[Any]:
@@ -361,6 +362,31 @@ class CTG(object):
                 'gather_succ_comm': gather_succ_comm
             })
 
+    def _channel_match_check(self) -> None:
+        for tile in self.tile_nodes:
+            if self.is_head_tile(tile):
+                continue
+
+            cast_conn = self.cast_pred_comm(tile)
+            tx_tile = list(self.preds(cast_conn))[0]
+            tx_config = self.get_tile_config(tx_tile)
+            tx_ocfg = tx_config['xbar_ocfg']
+            tx_start_chan = tx_ocfg[0]
+            tx_end_chan = tx_ocfg[1]
+
+            rx_config = self.get_tile_config(tile)
+            rx_icfg = rx_config['xbar_icfg']
+            rx_start_chan = min([box[1] for box in rx_icfg])
+            rx_end_chan = max([box[2] for box in rx_icfg])
+
+            if (tx_start_chan != rx_start_chan) or (
+                tx_end_chan != rx_end_chan):
+                raise AssertionError(
+                    f'''channel not match at tile pair: {tx_tile} and {tile},
+                        tx_chan_range: {tx_start_chan, tx_end_chan},
+                        rx_chan_range: {rx_start_chan, rx_end_chan},
+                        rx_icfg: {rx_icfg}''')
+
     @property
     def cast_trees(self) -> Generator[Tuple, None, None]:
         for c in self.cast_comms:
@@ -392,7 +418,7 @@ class CTG(object):
         pred = list(self.preds(conn))[0]
         nchan = self.dicts[pred]['xbar_num_ochan']
         
-        return  ifs[0] * ifs[1] * nchan
+        return ifs[0] * ifs[1] * nchan
 
     def get_comm_lifetime(self, conn: Connection) -> float:
         '''
@@ -468,8 +494,11 @@ class CTG(object):
                     penwidth = 2
                 else:
                     config = self.dicts[n]
-                    icfg = config['xbar_icfg'][0]
-                    ocfg = config['xbar_ocfg']
+                    ichan_range = (
+                        min([box[1] for box in config['xbar_icfg']]),
+                        max([box[2] for box in config['xbar_icfg']])
+                    )
+                    ochan_range = config['xbar_ocfg']
                     box_idx = config['box_idx']
                     shape = 'rectangle'
                     shape = 'box3d'
@@ -477,8 +506,8 @@ class CTG(object):
                     if match_dict is not None:
                         label += '\nphy: ' + str(match_dict[n])
                     label += f'\nop_type: {config["op_type"]}'
-                    label += f'\nichan: {(icfg[1], icfg[2])}'
-                    label += f'\nochan: {ocfg}'
+                    label += f'\nichan: {ichan_range}'
+                    label += f'\nochan: {ochan_range}'
                     label += f'\nbox_idx: {box_idx}'
                     label += _label
                     xlabel = None

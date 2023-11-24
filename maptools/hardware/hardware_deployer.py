@@ -62,6 +62,8 @@ class HardwareDeployer(object):
         '''
         A dictionary with physical tile as keys and configuration info as values.
         Tile configuration information for system simulation.
+
+        Note that self.tile_config only covers the mapped tiles.
         '''
         # get the original tile configurations from CTG
         res = {self.layout[k] : self.ctg.dicts[k] for k in self.ctg.tile_nodes}
