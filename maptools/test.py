@@ -82,5 +82,3 @@ import numpy as np
 
 print(np.prod([1,1,3,4]))
 
-
-

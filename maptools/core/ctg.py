@@ -378,9 +378,11 @@ class CTG(object):
             rx_icfg = rx_config['xbar_icfg']
             rx_start_chan = min([box[1] for box in rx_icfg])
             rx_end_chan = max([box[2] for box in rx_icfg])
+            rx_num_ichan = rx_config['xbar_num_ichan']
 
             if (tx_start_chan != rx_start_chan) or (
-                tx_end_chan != rx_end_chan):
+                tx_end_chan != rx_end_chan) or (
+                tx_end_chan - tx_start_chan != rx_num_ichan):
                 raise AssertionError(
                     f'''channel not match at tile pair: {tx_tile} and {tile},
                         tx_chan_range: {tx_start_chan, tx_end_chan},

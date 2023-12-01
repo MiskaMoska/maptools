@@ -12,8 +12,12 @@ __all__ = [
     "ADC_POWER_PER_TRANSFER"
 ]
 
-# This is the root directory of this project
-ROOT_DIR = os.environ.get('NVCIM_HOME')
+# This is the root directory of MapTools
+ROOT_DIR = os.environ.get('MPTLS_HOME')
+if ROOT_DIR is None:
+    ROOT_DIR = os.environ.get('NVCIM_HOME')
+if ROOT_DIR is None:
+    raise EnvironmentError("The path to maptools root directory need to be added to environment variables named MPTLS_HOME or NVCIM_HOME")
 
 # These are the boundary operators for graph dispatching,
 # where the original graph will be truncated at the boundary operators

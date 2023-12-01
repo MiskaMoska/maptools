@@ -46,6 +46,12 @@ xm.report_config()
 
 # 获得映射得到的CTG
 ctg = xm.ctg
+
+toksim = TokSim(ctg)
+toksim.run()
+import sys
+sys.exit()
+
 ctg.plot_ctg(direction='UD')
 
 # mtsk = ModelTask(oc.origin_graph, oc.params)
@@ -73,9 +79,6 @@ ctg.plot_ctg(direction='UD')
 # print(type(output))
 # csim.report_power()
 
-import sys
-sys.exit()
-
 # 创建Tile阵列拓扑图，设置阵列规模
 acg = ACG(6, 8)
 
@@ -90,9 +93,7 @@ nm.run_routing(omit_merge=False)
 # 保存布局布线图
 nm.save_layout()
 nm.save_routing(omit_merge=False)
-
-# # 保存硬件配置信息
-# nm.save_config()
+nm.plot_ctg()
 
 routing = nm.routing
 
