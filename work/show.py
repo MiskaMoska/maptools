@@ -11,7 +11,7 @@ import onnxruntime as rt
 config = {
     'mapname': 'resnet18',
     'quantize': False,
-    'dre': DREMethod.DYXY,
+    'dre': DREMethod.SP_REVERSE_S,
     'dle': DLEMethod.REVERSE_S
 }
 
@@ -47,12 +47,8 @@ xm.report_config()
 # 获得映射得到的CTG
 ctg = xm.ctg
 
-toksim = TokSim(ctg)
-toksim.run()
-import sys
-sys.exit()
-
-ctg.plot_ctg(direction='UD')
+# toksim = TokSim(ctg)
+# toksim.run()
 
 # mtsk = ModelTask(oc.origin_graph, oc.params)
 
@@ -62,25 +58,29 @@ ctg.plot_ctg(direction='UD')
 
 
 # 获取输入图片数据, 缩放至 224 × 224
-# input = get_input('work/test1.png', resize=(224, 224))
+input = get_input('work/test1.png', resize=(224, 224))
 # output = mtsk(input)
 # print(output)
 # params = read_quantparams(config['mapname'])
 
 # 创建CalcuSim仿真器, tm是TileMapper, oc是OnnxConverter
-# csim = CalcuSim(
-#     xm.ctg, oc.host_graph, params,
-#     quantize=True, physical=True, stats=False,
-#     eval_power=True
-# )
-# csim.cuda()
-# # 运行CalcuSim仿真, 获得输出结果
-# output = csim(input.cuda())
-# print(type(output))
+csim = CalcuSim(
+    xm.ctg, oc.host_graph, oc.params,
+    physical=False, stats=False,
+    eval_power=False, observe=True, **config
+)
+csim.cuda()
+# 运行CalcuSim仿真, 获得输出结果
+output: torch.Tensor = csim(input.cuda())
+csim.save_results()
+print(output.size())
 # csim.report_power()
+import sys
+sys.exit()
+
 
 # 创建Tile阵列拓扑图，设置阵列规模
-acg = ACG(6, 8)
+acg = ACG(5, 10)
 
 # 创建物理映射器
 nm = NocMapper(ctg, acg, **config)

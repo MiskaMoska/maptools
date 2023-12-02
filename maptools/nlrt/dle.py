@@ -11,7 +11,7 @@ class BaseDLE(Callable, metaclass=ABCMeta):
     '''
     Base Class for Deterministic Layout Engine
     '''
-    def __init__(self, lpc: LayoutPatternCode, *args, **kwargs) -> None:
+    def __init__(self, lpc: LayoutPatternCode) -> None:
         super().__init__()
         self.lpc = lpc
         self.noc_w = lpc.noc_w

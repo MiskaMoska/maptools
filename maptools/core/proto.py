@@ -147,6 +147,8 @@ class DREMethod(Enum):
     DYXY            = 0
     RPM             = 1
     OCR             = 2
+    SP_RANDOM       = 3 # random single path
+    SP_REVERSE_S    = 4 # reverse-S single path
 
 class RouterPort(Enum):
     WEST_I          = 0

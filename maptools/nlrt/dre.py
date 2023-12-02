@@ -1,6 +1,6 @@
 import random
 import networkx as nx
-from typing import Callable, List
+from typing import Callable, List, Literal
 from maptools.core import (
     CTG, ACG, DREMethod, 
     PhysicalTile, MeshEdge
@@ -13,9 +13,11 @@ class BaseDRE(Callable, metaclass=ABCMeta):
     '''
     Base Class for Deterministic Routing Engine
     '''
-    def __init__(self, rpc: RoutingPatternCode, *args, **kwargs) -> None:
+    def __init__(self, rpc: RoutingPatternCode) -> None:
         super().__init__()
         self.rpc = rpc
+        self.noc_w = rpc.noc_w
+        self.noc_h = rpc.noc_h
 
     def __call__(self) -> RoutingPatternCode:
         self._construct_all_trees()
@@ -109,15 +111,83 @@ class DyxyDLE(BaseDRE):
         Applying DyXY method.
         '''
         g = nx.Graph()
-        # if more randomization is need, deepcopy and shuffle the dst_nodes here
+        # if more randomization is needed, deepcopy and shuffle the dst_nodes here
         for d in dst_nodes:
             if d not in g.nodes:
                 DyxyDLE._cast_route_dyxy(d[0], d[1], root_node[0], root_node[1], g)
         assert nx.is_tree(g), f"failed to build cast tree, not a tree: {g.edges}"
         g = nx.dfs_tree(g, source=root_node)
         return g
+
+
+class SP_ReverseS_DRE(BaseDRE):
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.rpath = self._generate_path()
+
+    def _get_path_idx(self, node: PhysicalTile) -> int:
+        y = node[1]
+        x = self.noc_w - node[0] - 1 if y % 2 else node[0]
+        return y * self.noc_w + x
+
+    def _generate_path(self) -> List[PhysicalTile]:
+        path = []
+        for y in range(self.noc_h):
+            for x in range(self.noc_w):
+                real_x = self.noc_w-x-1 if y % 2 else x
+                path.append((real_x, y))
+        return path
+
+    def construct_one_tree(
+        self, 
+        src: PhysicalTile, 
+        term_nodes: List[PhysicalTile]
+    ) -> List[MeshEdge]:
+        src_idx = self._get_path_idx(src)
+        lower_idx = self._get_lower_idx(term_nodes)
+        upper_idx = self._get_upper_idx(term_nodes)
+
+        # print("src_idx: ", src_idx)
+        # print("upper_idx: ", upper_idx)
+        # print("lower_idx: ", lower_idx)
+
+        path = []
+        for dir in {'up', 'down'}:
+            self._generate_edges(
+                src_idx, upper_idx, lower_idx, path, dir)
+
+        return path
+
+    def _get_upper_idx(self, term_nodes: List[PhysicalTile]) -> int:
+        indices = map(self._get_path_idx, term_nodes)
+        return max(indices)
+    
+    def _get_lower_idx(self, term_nodes: List[PhysicalTile]) -> int:
+        indices = map(self._get_path_idx, term_nodes)
+        return min(indices)
+    
+    def _generate_edges(
+        self, 
+        now_idx: int, 
+        upper_idx: int,
+        lower_idx: int,
+        path: List[MeshEdge], 
+        search_dir: Literal['up', 'down']
+    ) -> None:
+        if (search_dir == 'down' and now_idx == lower_idx) or (
+            search_dir == 'up' and now_idx == upper_idx):
+            return
+        
+        nxt_idx = now_idx + (1 if search_dir == 'up' else -1)
+        path.append((self.rpath[now_idx], self.rpath[nxt_idx]))
+        self._generate_edges(
+            nxt_idx, upper_idx, lower_idx, 
+            path, search_dir
+        )
     
 
 __DRE_ACCESS_TABLE__ = {
-    DREMethod.DYXY         :DyxyDLE
+    DREMethod.DYXY              :DyxyDLE,
+    DREMethod.SP_REVERSE_S      :SP_ReverseS_DRE
 }
