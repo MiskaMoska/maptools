@@ -5,7 +5,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from typing import List, Dict, Optional, Tuple, Any, Callable
 from maptools.core import TileQuantConfig, LogicalTile
-from maptools.calcusim.device import ConvUnit
+from maptools.calcusim.device import XbarConv
 
 __all__ = ['TileTask']
 
@@ -16,6 +16,8 @@ OBSERVE_VARS = {
     'cast_in_float', 
     'merge_in_float', 
     'gather_in_float',
+    'after_xbar',
+    'after_xbar_float',
     'before_pool', 
     'before_pool_float',
     'data_out',
@@ -68,9 +70,8 @@ class TileTask(nn.Module):
         if self.is_resize: self._init_resize_module()
 
     def _init_conv_module(self) -> None:
-        self._conv = ConvUnit(
-            self.conv_weight, 
-            self.conv_bias, 
+        self._conv = XbarConv(
+            self.conv_weight,
             self.conv_strides, 
             physical=self.physical,
             tile=self.tile,
@@ -92,10 +93,10 @@ class TileTask(nn.Module):
 
     def cuda(self) -> None:
         self._conv.cuda()
+        if self.conv_bias is not None:
+            self.conv_bias = self.conv_bias.cuda()
         if self.quantize:
-            self.tqc.ctrans = self.tqc.ctrans.cuda()
-            self.tqc.ctrans_i = self.tqc.ctrans_i.cuda()
-            self.tqc.ctrans_s = self.tqc.ctrans_s.cuda()
+            self.tqc.cuda()
     
     def record_var(self, var: torch.Tensor, name: str) -> None:
         if self.observe:
@@ -111,6 +112,7 @@ class TileTask(nn.Module):
         
         self.cast_in_float = self.cast_in * self.tqc.i_scale
         self.data_out_float = self.data_out * self.tqc.o_scale
+        self.after_xbar_float = self.after_xbar * self.tqc.co_scale
 
         if self.is_merge: self.merge_in_float = self.merge_in * self.tqc.i_scale
         if self.is_gather: self.gather_in_float = self.gather_in * self.tqc.co_scale
@@ -119,18 +121,29 @@ class TileTask(nn.Module):
     def forward(self, *args: Tuple[torch.Tensor]) -> torch.Tensor:
         self.record_input_vars(*args)
         assert args[0] is not None, "cast in data got None"
+
+        # ANCHOR padding before convolution
         x = F.pad(
             args[0], 
             self.conv_pads
         )
+
+        # ANCHOR pure convolution
         x = self._conv(x)
+        self.record_var(x, 'after_xbar')
+
+        # ANCHOR add bias
+        if self.conv_bias is not None:
+            x += self.conv_bias.view(1, -1, 1, 1)
         
+        # ANCHOR add merge in 
         if self.is_merge:
             assert args[1] is not None, "merge in data got None"
             assert x.shape == args[1].shape, (
                 f"got x's shape = {x.shape} but merge's shape = {args[1].shape}, cannot merge")
             x = torch.add(x, args[1])
 
+        # ANCHOR Convolution dequantization
         # only for merge node where a complete sum should appear
         # conv quantization converting from input to output
         if self.merge_node and self.quantize:
@@ -141,6 +154,7 @@ class TileTask(nn.Module):
             else: mult = self.tqc.ctrans.view([1, -1, 1, 1])
             x = torch.clamp(torch.round(x * mult), self.tqc.io_min, self.tqc.io_max)
 
+        # ANCHOR add gather in (Add operation)
         if self.is_gather:
             assert self.merge_node, f"this is a gather_in node but is not a merge node"
             assert args[2] is not None, "gather in data got None"
@@ -148,6 +162,7 @@ class TileTask(nn.Module):
                 f"got x's shape = {x.shape} but gather's shape = {args[2].shape}, cannot gather")
             x = torch.add(x, args[2])
 
+            # ANCHOR Add dequantization
             # only for tile with gather in dataflow
             # add quantization converting from input to output
             if self.quantize:
@@ -156,11 +171,13 @@ class TileTask(nn.Module):
                 else: mult = self.tqc.strans
                 x = torch.clamp(torch.round(x * mult), self.tqc.io_min, self.tqc.io_max)
 
+        # ANCHOR activation
         if self.is_act:
             assert self.act_mode == 'Relu', (
                 f"activation mode must be Relu, but got {self.act_mode}")
             x = F.relu(x)
 
+            # ANCHOR Activation dequantization
             # only for tile with activation (relu)
             # act quantization converting from input to output
             if self.quantize:
@@ -169,14 +186,20 @@ class TileTask(nn.Module):
                 else: mult = self.tqc.atrans
                 x = torch.clamp(torch.round(x * mult), self.tqc.io_min, self.tqc.io_max)
 
+        # ANCHOR Resize (w/o quantization)
         if self.is_resize:
             x = self._resize(x)
 
+        # ANCHOR Pooling (w/o quantization)
         if self.is_pool:
             self.record_var(x, 'before_pool')
             assert self.pool_mode in ['MaxPool', 'AveragePool'], (
                 f"got invalid pool mode: {self.pool_mode}")
+            
+            # ANCHOR padding before pooling
             x = F.pad(x, self.pool_pads)
+
+            # ANCHOR pure pooling 
             if self.pool_mode == 'MaxPool':
                 x = F.max_pool2d(
                     x, 

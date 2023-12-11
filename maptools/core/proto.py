@@ -128,6 +128,11 @@ class TileQuantConfig(object):
         for k, v in self.__dict__.items():
             ret += '%-20s%s\n' % (k, v)
         return ret + '\n'
+    
+    def cuda(self) -> None:
+        self.ctrans = self.ctrans.cuda()
+        self.ctrans_i = self.ctrans_i.cuda()
+        self.ctrans_s = self.ctrans_s.cuda()
 
 
 class NNModelArch(Enum):

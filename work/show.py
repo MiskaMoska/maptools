@@ -58,7 +58,7 @@ ctg = xm.ctg
 
 
 # 获取输入图片数据, 缩放至 224 × 224
-input = get_input('work/test1.png', resize=(224, 224))
+input = get_input('work/test.jpg', resize=(224, 224))
 # output = mtsk(input)
 # print(output)
 # params = read_quantparams(config['mapname'])

@@ -4,12 +4,11 @@ import torch.nn.functional as F
 from typing import List, Dict, Optional, Tuple, Any, Callable
 from maptools.core import LogicalTile, TileQuantConfig, XBAR_POWER_PER_1
 
-__all__ = ['ConvUnit']
+__all__ = ['XbarConv']
 
-def cimu_conv2d(
+def xbar_conv_bitserial(
     x: torch.Tensor,
     weight: torch.Tensor,
-    bias: Optional[torch.Tensor] = None,
     stride: Optional[List[int]] = [1, 1],
     factor: float = 1,
     tile: LogicalTile = None,
@@ -61,19 +60,15 @@ def cimu_conv2d(
             y += _y*(-pow(2, i))
         else: # non-sign bit
             y += _y*pow(2, i)
-
-    if bias is not None:
-        y += bias.view([1, -1, 1, 1])
     
     return y
 
 
-class ConvUnit(nn.Module):
+class XbarConv(nn.Module):
 
     def __init__(
         self, 
         weight: torch.Tensor, 
-        bias: torch.Tensor, 
         strides: List[int],
         physical: bool = False,
         tile: LogicalTile = None,
@@ -86,7 +81,6 @@ class ConvUnit(nn.Module):
     ) -> None:
         super().__init__()
         self.weight = weight
-        self.bias = bias
         self.strides = strides
         self.tile = tile
         self.tqc = tqc
@@ -105,14 +99,11 @@ class ConvUnit(nn.Module):
 
     def cuda(self):
         self.weight = self.weight.cuda()
-        if self.bias is not None:
-            self.bias = self.bias.cuda()
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         if self.physical: # use physical cimu
-            return cimu_conv2d(
+            return xbar_conv_bitserial(
                 x, self.weight, 
-                bias=self.bias, 
                 stride=self.strides, 
                 factor=self.factor,
                 tile=self.tile,
@@ -124,6 +115,6 @@ class ConvUnit(nn.Module):
         else: # use pytorch conv2d
             return F.conv2d(
                 x, self.weight, 
-                bias=self.bias, 
+                bias=None, 
                 stride=self.strides,                 
             )

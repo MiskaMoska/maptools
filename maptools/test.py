@@ -85,3 +85,7 @@ print(np.prod([1,1,3,4]))
 a = [1,2,3,4]
 print(a[2:2])
 
+a = torch.tensor([1, 2, 3]).view(3, 1, 1)
+b = torch.zeros([3, 5, 6])
+print(b)
+print(torch.add(a,b))
