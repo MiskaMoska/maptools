@@ -46,8 +46,8 @@ xm.report_config()
 # 获得映射得到的CTG
 ctg = xm.ctg
 
-if CONCAT:
-    ctg.to_full_concat()
+# if CONCAT:
+#     ctg.to_full_concat()
 
 ctg.report_communication()
 ctg.report_local_port_buffer_number()
@@ -94,10 +94,10 @@ nm.save_routing(omit_merge=True)
 
 nm.report_routing()
 
-trails = list(nm.cast_trails.values())
-trails = [trail for trail in trails]
+# trails = list(nm.cast_trails.values())
+# trails = [trail for trail in trails]
 
-draw_heatmap(acg, trails, mapfunc='lg', cmap_name='coolwarm', **config)
+# draw_heatmap(acg, trails, mapfunc='lg', cmap_name='coolwarm', **config)
 
 # plot_tokens(config['mapname'])
 

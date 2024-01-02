@@ -6,6 +6,7 @@ import torch.nn.functional as F
 from typing import List, Dict, Optional, Tuple, Any, Callable
 from maptools.core import TileQuantConfig, LogicalTile
 from maptools.calcusim.device import XbarConv
+from copy import deepcopy
 
 __all__ = ['TileTask']
 
@@ -98,11 +99,11 @@ class TileTask(nn.Module):
         if self.quantize:
             self.tqc.cuda()
     
-    def record_var(self, var: torch.Tensor, name: str) -> None:
+    def record_var(self, var: Optional[torch.Tensor], name: str) -> None:
         if self.observe:
-            self.__dict__[name] = var
+            self.__dict__[name] = deepcopy(var)
 
-    def record_input_vars(self, *args: Tuple[torch.Tensor]) -> None:
+    def record_input_vars(self, *args: Tuple[Optional[torch.Tensor]]) -> None:
         for i, name in enumerate(['cast_in', 'merge_in', 'gather_in']):
             self.record_var(args[i], name)
 

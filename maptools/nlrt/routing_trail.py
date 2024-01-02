@@ -84,6 +84,9 @@ class RoutingTrail(object):
             assert len(self._dst) == 1, (
                 "number of destination node must be 1 for merge connection")
 
+    def __len__(self) -> int:
+        return len(self._path)
+
     @property
     def path(self) -> List[MeshEdge]:
         return self._path

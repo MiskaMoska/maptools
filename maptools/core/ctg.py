@@ -57,7 +57,7 @@ class CTG(object):
             block 2 of the first layer, use:
             >>> key = (0, 1, 2, 1)
             >>> config_info = self.map_dict[key]
-
+            
         kwargs : Dict
             mapname : str = 'newmap'
                 Map name

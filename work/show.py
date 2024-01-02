@@ -64,8 +64,9 @@ input = get_input('work/test.jpg', resize=(224, 224))
 # params = read_quantparams(config['mapname'])
 
 # 创建CalcuSim仿真器, tm是TileMapper, oc是OnnxConverter
+model_params = read_params(config['mapname'])
 csim = CalcuSim(
-    xm.ctg, oc.host_graph, oc.params,
+    xm.ctg, oc.host_graph, model_params,
     physical=False, stats=False,
     eval_power=False, observe=True, **config
 )

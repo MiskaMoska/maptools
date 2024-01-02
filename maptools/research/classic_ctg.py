@@ -116,7 +116,18 @@ class ClassicCTG(CTG):
                     idx += 1
                 yield base_idx, cluster
 
+    def _channel_match_check(self) -> None:
+        return
+
     def to_full_concat(self) -> None:
+        '''
+        The CTG is constructed in distributed-concatenated form
+        This method convert the CTG into fully-concatenated form, where the results from
+        all Tiles from the same conv layer must concatenate first before being sent to the
+        following layers as inputs.
+
+        The fully-concatenated form is the most connventional form of datastream.
+        '''
         for layer, info in enumerate(self.map_list):
             o_slices = info[0]
             flag, root = self._get_concat_root_layer(layer)

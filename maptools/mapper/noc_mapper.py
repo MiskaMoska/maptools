@@ -204,18 +204,22 @@ class NocMapper(object):
     
     def report_routing(self, file: TextIOWrapper = None) -> None:
         print('\n'+'-'*70, file=file)
-        print('\t\tTrail Degree Report', file=file)
+        print('\t\tRouting Report', file=file)
         print('-'*70, file=file)
         degrees = []
+        total_comm_load = 0
         for name, trail in self.cast_trails.items():
-            print(f'connection: {name}\taverage degree: {trail.degree}', file=file)
+            print(f'connection: {name}\tpath length: {len(trail)}\tcomm load: {trail.load}\taverage degree: {round(trail.degree, 2)}', file=file)
             if self.ctg.graph.out_degree(name) > 1: # current connection has multiple destination tiles
                 degrees.append(trail.degree)
+            if len(trail) > 10:
+                total_comm_load += len(trail) * trail.load
 
         print(f"maximum trail degree: {max(degrees)}", file=file)
         print(f"average trail degree (only for multicast): {sum(degrees) / len(degrees)}", file=file) 
         print(f"maximum conflict: {self.routing.max_conflicts}", file=file)
         print(f"average conflict: {self.routing.avg_conflicts}", file=file)
+        print(f"total comm load: {'{:.2e}'.format(total_comm_load)}", file=file)
 
     @cached_property
     def merge_trails(self) -> Dict[Connection, RoutingTrail]:
