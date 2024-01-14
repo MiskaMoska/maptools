@@ -282,7 +282,7 @@ class CTG(object):
                         self.cast_comms.append(comm_name)
 
                     for j in range(s_mtx.shape[0]):
-                        for k in range(s_mtx[j, i]):
+                        for k in range(s_mtx[j, base_block_idx+i]):
                             self.graph.add_edge(comm_name, (s_lid, j, base_block_idx+i, k))
         
         # add merge comms
@@ -380,9 +380,7 @@ class CTG(object):
             rx_end_chan = max([box[2] for box in rx_icfg])
             rx_num_ichan = rx_config['xbar_num_ichan']
 
-            if (tx_start_chan != rx_start_chan) or (
-                tx_end_chan != rx_end_chan) or (
-                tx_end_chan - tx_start_chan != rx_num_ichan):
+            if tx_end_chan - tx_start_chan != rx_num_ichan:
                 raise AssertionError(
                     f'''channel not match at tile pair: {tx_tile} and {tile},
                         tx_chan_range: {tx_start_chan, tx_end_chan},

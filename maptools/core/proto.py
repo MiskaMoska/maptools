@@ -153,7 +153,8 @@ class DREMethod(Enum):
     RPM             = 1
     OCR             = 2
     SP_RANDOM       = 3 # random single path
-    SP_REVERSE_S    = 4 # reverse-S single path
+    SP_FULL         = 4 # full single path
+    SP_PART         = 5
 
 class RouterPort(Enum):
     WEST_I          = 0

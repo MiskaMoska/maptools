@@ -43,7 +43,7 @@ class BaseDRE(Callable, metaclass=ABCMeta):
     def reset(self) -> None: ...
 
 
-class DyxyDLE(BaseDRE):
+class DyxyDRE(BaseDRE):
 
     def construct_one_tree(
         self, 
@@ -72,12 +72,12 @@ class DyxyDLE(BaseDRE):
         '''
         if sx == dx and sy == dy:
             return
-        nxt_sx, nxt_sy = DyxyDLE._dyxy_once(sx, sy, dx, dy)
+        nxt_sx, nxt_sy = DyxyDRE._dyxy_once(sx, sy, dx, dy)
         if (nxt_sx, nxt_sy) in graph.nodes:
             graph.add_edge((sx, sy), (nxt_sx, nxt_sy))
             return
         graph.add_edge((sx, sy), (nxt_sx, nxt_sy))
-        DyxyDLE._cast_route_dyxy(nxt_sx, nxt_sy, dx, dy, graph)
+        DyxyDRE._cast_route_dyxy(nxt_sx, nxt_sy, dx, dy, graph)
 
     @staticmethod
     def _dyxy_once(
@@ -114,80 +114,159 @@ class DyxyDLE(BaseDRE):
         # if more randomization is needed, deepcopy and shuffle the dst_nodes here
         for d in dst_nodes:
             if d not in g.nodes:
-                DyxyDLE._cast_route_dyxy(d[0], d[1], root_node[0], root_node[1], g)
+                DyxyDRE._cast_route_dyxy(d[0], d[1], root_node[0], root_node[1], g)
         assert nx.is_tree(g), f"failed to build cast tree, not a tree: {g.edges}"
         g = nx.dfs_tree(g, source=root_node)
         return g
 
 
-class SP_ReverseS_DRE(BaseDRE):
+class SP_FULL_DRE(BaseDRE):
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.rpath = self._generate_path()
+        self.outer_dir = 0
+        self.inner_dir = 0
+        self.fcn = [min, max]
 
-    def _get_path_idx(self, node: PhysicalTile) -> int:
-        y = node[1]
-        x = self.noc_w - node[0] - 1 if y % 2 else node[0]
-        return y * self.noc_w + x
+    def randomize_shape(self) -> None:
+        self.outer_dir = random.choice([0, 1])
+        self.inner_dir = random.choice([0, 1])
 
-    def _generate_path(self) -> List[PhysicalTile]:
-        path = []
-        for y in range(self.noc_h):
-            for x in range(self.noc_w):
-                real_x = self.noc_w-x-1 if y % 2 else x
-                path.append((real_x, y))
-        return path
+    def get_full_path(
+        self,
+        term_nodes: List[PhysicalTile]
+    ) -> List[MeshEdge]:
+        self.randomize_shape()
+        edges = [] # undirectional edges
+        key = lambda x : x[self.outer_dir]
+        min_pos = min(self.xy[1-self.outer_dir])
+
+        start_layer = [
+            n for n in term_nodes 
+            if n[1-self.outer_dir] == min_pos
+        ]
+        start_node = self.fcn[self.inner_dir](
+            start_layer, key=key
+        )
+        direction = self.inner_dir
+        cur_node = start_node
+        remain_nodes = term_nodes.copy()
+
+        turn_node = (
+            start_node[0] if self.outer_dir 
+            else (0 if self.inner_dir else self.noc_w-1),
+            start_node[1] if (1-self.outer_dir) 
+            else (0 if self.inner_dir else self.noc_h-1)
+        )
+
+        while True:
+            if cur_node in remain_nodes:
+                remain_nodes.remove(cur_node)
+
+            if len(remain_nodes) == 0:
+                break
+
+            if cur_node == turn_node:
+                nxt_node = (
+                    cur_node[0] + self.outer_dir, 
+                    cur_node[1] + 1-self.outer_dir
+                )
+                turn_node = (
+                    turn_node[0]+1 if self.outer_dir 
+                    else self.noc_w-1-turn_node[0], 
+                    self.noc_h-1-turn_node[1] 
+                    if self.outer_dir else turn_node[1]+1
+                )
+                direction = 1- direction
+            
+            else:
+                nxt_node = (
+                    cur_node[0] + (1-self.outer_dir) 
+                    *(-1 if direction else 1),
+                    cur_node[1] + self.outer_dir 
+                    *(-1 if direction else 1)
+                )
+
+            edges.append((cur_node, nxt_node))
+            cur_node = nxt_node
+            
+        return edges
 
     def construct_one_tree(
         self, 
         src: PhysicalTile, 
         term_nodes: List[PhysicalTile]
     ) -> List[MeshEdge]:
-        src_idx = self._get_path_idx(src)
-        lower_idx = self._get_lower_idx(term_nodes)
-        upper_idx = self._get_upper_idx(term_nodes)
-
-        # print("src_idx: ", src_idx)
-        # print("upper_idx: ", upper_idx)
-        # print("lower_idx: ", lower_idx)
-
-        path = []
-        for dir in {'up', 'down'}:
-            self._generate_edges(
-                src_idx, upper_idx, lower_idx, path, dir)
-
-        return path
-
-    def _get_upper_idx(self, term_nodes: List[PhysicalTile]) -> int:
-        indices = map(self._get_path_idx, term_nodes)
-        return max(indices)
+        self.xy = list(zip(*term_nodes))
+        edges = self.get_full_path(term_nodes)
+        graph: nx.Graph = nx.Graph()
+        graph.add_edges_from(edges)
+        digraph: nx.DiGraph = nx.bfs_tree(graph, src)
+        return list(digraph.edges)
     
-    def _get_lower_idx(self, term_nodes: List[PhysicalTile]) -> int:
-        indices = map(self._get_path_idx, term_nodes)
-        return min(indices)
-    
-    def _generate_edges(
+
+class SP_PART_DRE(SP_FULL_DRE):
+
+    def simplify_path(
         self, 
-        now_idx: int, 
-        upper_idx: int,
-        lower_idx: int,
-        path: List[MeshEdge], 
-        search_dir: Literal['up', 'down']
-    ) -> None:
-        if (search_dir == 'down' and now_idx == lower_idx) or (
-            search_dir == 'up' and now_idx == upper_idx):
-            return
+        src_node: PhysicalTile, 
+        term_nodes: List[PhysicalTile], 
+        edges: List[MeshEdge]
+    ) -> List[MeshEdge]:
         
-        nxt_idx = now_idx + (1 if search_dir == 'up' else -1)
-        path.append((self.rpath[now_idx], self.rpath[nxt_idx]))
-        self._generate_edges(
-            nxt_idx, upper_idx, lower_idx, 
-            path, search_dir
+        def tup2(a, b):
+            return (a, b) if self.outer_dir else (b, a)
+        
+        graph = nx.Graph()
+        graph.add_edges_from(edges)
+        direction = self.inner_dir
+        slayer_id = min(self.xy[1-self.outer_dir])
+        elayer_id = max(self.xy[1-self.outer_dir])
+
+        for i in range(slayer_id, elayer_id):
+            now = (1-direction) * (
+                (self.noc_h if self.outer_dir 
+                else self.noc_w) - 1)
+            
+            while True:
+                if (tup2(i+1, now) not in term_nodes) and (
+                    tup2(i, now) not in term_nodes):
+                    if graph.has_edge(tup2(i-1, now), tup2(i, now)) and (
+                        all(n[1-self.outer_dir] != i for n in term_nodes)):
+                        break
+                    graph.remove_edge(tup2(i, now), tup2(i+1, now))
+                    # print("layer: ", i, "now: ", now)
+                    nxt = now + (1 if direction else -1)
+                    graph.remove_edge(tup2(i, now), tup2(i, nxt))
+                    graph.remove_edge(tup2(i+1, now), tup2(i+1, nxt))
+                    graph.add_edge(tup2(i, nxt), tup2(i+1, nxt))
+                    now = nxt
+                else:
+                    break
+
+            direction = 1 - direction
+
+        digraph: nx.DiGraph = nx.bfs_tree(graph, src_node)
+        return list(digraph.edges)
+
+    def construct_one_tree(
+        self, 
+        src: PhysicalTile, 
+        term_nodes: List[PhysicalTile]
+    ) -> List[MeshEdge]:
+        self.randomize_shape()
+        self.xy = list(zip(*term_nodes))
+        edges = self.get_full_path(term_nodes)
+        print("term_nodes:", term_nodes)
+        print("outer_dir:", self.outer_dir)
+        print("inner_dir:", self.inner_dir)
+        return self.simplify_path(
+            src, term_nodes, edges
         )
-    
+
 
 __DRE_ACCESS_TABLE__ = {
-    DREMethod.DYXY              :DyxyDLE,
-    DREMethod.SP_REVERSE_S      :SP_ReverseS_DRE
+    DREMethod.DYXY              :DyxyDRE,
+    DREMethod.SP_FULL           :SP_FULL_DRE,
+    DREMethod.SP_PART           :SP_PART_DRE
 }
