@@ -18,8 +18,8 @@ node_size = 20
 arrow_size = 10
 dpi = 500
 
-def build_graph(w: int, h: int) -> Tuple[nx.DiGraph, Dict[Tuple, Tuple]]:
-    graph = nx.DiGraph()
+def build_graph(w: int, h: int) -> Tuple[nx.MultiDiGraph, Dict[Tuple, Tuple]]:
+    graph = nx.MultiDiGraph()
     legal_node = [
         RouterPort.WEST_I, 
         RouterPort.WEST_O, 

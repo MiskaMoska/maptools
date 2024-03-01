@@ -6,6 +6,7 @@ maptools/hardware/__pycache__/*
 network/scripts/__pycache__/*
 behavior_model/*
 onnx_models/*
+thesis/*
 mapsave/*
 inference/*
 build/*
@@ -15,3 +16,4 @@ make.sh
 .mypy_cache/*
 .vs/*
 maptools/.vscode/*
+

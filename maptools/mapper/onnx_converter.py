@@ -77,6 +77,7 @@ class OnnxConverter(object):
         self.arch = NNModelArch.RESNET
         self.mapname = 'newmap'
         self.quantize = False
+        self.regu_pads = True # regularize paddings when running conversion
         self.analyze_arrival_time = False
         self.__dict__.update(kwargs)
         assert isinstance(self.arch, NNModelArch), f"unsupported model arch: {self.arch}"
@@ -143,7 +144,8 @@ class OnnxConverter(object):
         self._construct_raw_graph()
         self.raw_graph.connect_concats()
         self.origin_graph = self.raw_graph.reduce(quantize=self.quantize)
-        regularize_pads(self.origin_graph)
+        if self.regu_pads:
+            regularize_pads(self.origin_graph)
         if self.quantize:
             self.insert_quant_info()
 

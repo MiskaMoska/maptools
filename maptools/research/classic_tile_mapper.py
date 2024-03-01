@@ -87,7 +87,7 @@ class ClassicTileMapper(TileMapper):
 
             unit_slices = []
             for box_index, box in enumerate(layer_config['block_boxes']):
-                box_len = box[1] - box[0] # the output channel numver of the preceding layer indexed as box_index
+                box_len = box[1] - box[0] # the output channel number of the preceding layer indexed as box_index
                 box_slices = math.ceil(box_len / self.w) # the number of slices of the current box
                 self.device_graph.dicts[layer_name]['block_nums'].append(box_slices)
                 for slice in range(box_slices):

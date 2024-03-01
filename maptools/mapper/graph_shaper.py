@@ -21,6 +21,7 @@ class BaseGraphShaper(Callable, metaclass=ABCMeta):
 class ResnetGraphShaper(BaseGraphShaper):
 
     def process(self, graph: DeviceGraph) -> None:
+        pass
         graph.fuse_act() 
         graph.fuse_pool()
         graph.regu_pool()

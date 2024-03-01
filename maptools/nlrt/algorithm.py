@@ -18,6 +18,7 @@ class BaseSimulatedAnnealing(Generic[_Solution], metaclass=ABCMeta):
         L: int = 300, 
         max_stay_counter: int = 150,
         silent: bool = False,
+        auxi_func: Callable[[_Solution], float] = None,
         **kwargs
     ) -> None:
         '''
@@ -53,6 +54,10 @@ class BaseSimulatedAnnealing(Generic[_Solution], metaclass=ABCMeta):
 
         dummy_sa: bool
             never accept worse solutions. 
+
+        auxi_func: Callable[[_Solution], float]
+            auxiliary evaluation function. this function is not for guiding the optimization,
+            but is used to reflect some other evaluation standards of the user.
         '''
         super().__init__()
 
@@ -69,11 +74,13 @@ class BaseSimulatedAnnealing(Generic[_Solution], metaclass=ABCMeta):
         self.max_stay_counter = max_stay_counter
         self.best_x = x0
         self.silent = silent
+        self.auxi_func = auxi_func
 
         self.best_y = self.func(self.best_x)
         self.T = self.T_max
         self.iter_cycle = 0
         self.generation_best_Y = [self.best_y]
+        self.auxiliary_best_Y = [] if self.auxi_func is None else [self.auxi_func(self.best_x)]
 
     def isclose(self, a, b, rel_tol=1e-09, abs_tol=1e-30) -> bool:
         return abs(a - b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
@@ -122,16 +129,20 @@ class BaseSimulatedAnnealing(Generic[_Solution], metaclass=ABCMeta):
                     log_accept_prob = 'N'
                 else: log_accept_prob = round(np.average(accept_probs), 4)
 
-                print('%-13s%-25s%-13s%-12s%-9s%-11s%-10s%-10s' % (
+                print('%-13s%-25s%-13s%-12s%-9s%-11s%-10s%-10s%-10s%-10s' % (
                     'temperature:', self.T,
                     'accept_prob:', log_accept_prob,
                     'y_value:', round(self.best_y, 4),
+                    'aux_value:', ('NA' if self.auxi_func is None 
+                        else round(self.auxi_func(self.best_x), 4)),
                     'stay_cnt:', stay_counter
                 ))
 
             self.iter_cycle += 1
             self.cool_down()
             self.generation_best_Y.append(self.best_y)
+            if self.auxi_func is not None:
+                self.auxiliary_best_Y.append(self.auxi_func(self.best_x))
 
             # if best_y stay for max_stay_counter times, stop iteration
             if self.isclose(self.generation_best_Y[-1], self.generation_best_Y[-2]):

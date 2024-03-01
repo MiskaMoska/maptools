@@ -64,6 +64,7 @@ class RoutingDesigner(object):
                 L=10, 
                 max_stay_counter=500,
                 silent=False,
+                auxi_func=self.obj_func_comm_load,
                 **kwargs
             )
 
@@ -77,16 +78,26 @@ class RoutingDesigner(object):
         x.decode() # this step is necessary
         freq_dict = {}
 
+        total_path_len = 0
         for path in x.path_dict.values():
             for edge in path:
                 if edge not in freq_dict:
                     freq_dict[edge] = 0
                 freq_dict[edge] += 1
+            total_path_len += len(path)
         
         conflicts = list(freq_dict.values())
+        # return (total_path_len / (2 * x.noc_w * x.noc_h)) * (sum(conflicts) / len(conflicts)) * max(conflicts)
         return (sum(conflicts) / len(conflicts)) * max(conflicts)
         # return (sum(conflicts) - len(conflicts))/50
         # return max(conflicts)
+    
+    def obj_func_comm_load(self, x: RoutingPatternCode) -> float:
+        x.decode() # this step is necessary
+        total_path_len = 0
+        for path in x.path_dict.values():
+            total_path_len += len(path)
+        return (total_path_len / (2 * x.noc_w * x.noc_h))
 
     def run_routing(self) -> None:
         print("\n\n"+"-"*70)
